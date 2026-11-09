@@ -1,0 +1,832 @@
+// Game math only: no DOM, no saved state. Tested in app/tests against the workbook's own results.
+const E = (() => {
+  const SPECIAL = ["S", "P", "E", "C", "I", "A", "L"];
+  const SPECIAL_NAMES = { S: "Strength", P: "Perception", E: "Endurance", C: "Charisma", I: "Intelligence", A: "Agility", L: "Luck" };
+  const SKILLS = [["BAR", "Barter", "C", "I"], ["EW", "Energy Weapons", "P", "I"], ["EXP", "Explosives", "I", "A"], ["SG", "Small Guns", "P", "A"], ["BG", "Big Guns", "P", "S"], ["LPK", "Lockpick", "A", "I"], ["MED", "Medicine", "E", "I"],
+    ["MW", "Melee Weapons", "S", "E"], ["REP", "Repair", "I", "P"], ["SCI", "Science", "I", "L"], ["SNK", "Sneak", "A", "L"], ["SPE", "Speech", "C", "L"], ["SUR", "Survival", "E", "L"]];
+  const ACTIVE_NAMES = ["Encumbered I", "Encumbered II", "Encumbered III", "Encumbered IV", "Encumbered V"];
+  const TOTAL_NAMES = ["Overencumbered I", "Overencumbered II", "Overencumbered III", "Immobilized"];
+  const low = (s) => String(s || "").trim().toLowerCase();
+  const fix = (x) => Math.round(x * 1e6) / 1e6;
+
+  function makeDb(data) {
+    const idx = new Map();
+    for (const [cat, list] of [["weapon", data.weapons], ["ammo", data.ammo], ["armor", data.armor], ["item", data.items], ["material", data.materials], ["mod", data.mods]])
+      for (const o of list) if (!idx.has(low(o.n))) idx.set(low(o.n), { cat, o });
+    const sc = new Map();
+    for (const r of data.sc) { const k = low(r.n); if (!sc.has(k)) sc.set(k, []); sc.get(k).push(r); }
+    const traitByCode = new Map(data.traits.map((t) => [t.code, t]));
+    const situations = data.sc.filter((r) => r.cat === "Situation" && r.sub);
+    const levelPerkFx = new Map(data.levelPerks.filter((p) => p.rows).map((p) => [low(p.n), p]));
+    return { data, idx, sc, traitByCode, situations, levelPerkFx, status: new Map(data.statuses.map((s) => [low(s.n), s])), enemies: new Map(data.enemies.map((e) => [low(e.n), e])) };
+  }
+
+  /** Item by name, with the DM's saved edits on top. */
+  function get(ctx, name) {
+    const hit = ctx.db.idx.get(low(name));
+    const ov = ctx.ov && ctx.ov[low(name)];
+    if (!hit) return ov ? { cat: "custom", o: { n: name, ...ov } } : null;
+    return ov ? { cat: hit.cat, o: { ...hit.o, ...ov } } : hit;
+  }
+  const weightOf = (ctx, name) => { const h = get(ctx, name); return (h && h.o.lb) || 0; };
+
+  // ---- reading numbers out of status and item text
+  function parseEffect(text, positive = true) {
+    const m = {}; let t = String(text || "");
+    const add = (k, v) => { m[k] = fix((m[k] || 0) + v); };
+    t = t.replace(/x\s?(\d+(?:\.\d+)?)\s*AP\b/gi, (_, x) => { add("apMul", Number(x) - 1); return ""; });  // "x1.5 AP" multiplies, it isn't +5 AP
+    t = t.replace(/\b(\d+)-\s?(?=STR|PER|END|CHA|INT|AGI|AGL|LCK|Luck)/g, "-$1 ");  // "1- INT" means -1 INT
+    const stat = /([+-]?)\s?(\d+)(\+?)\s*(STR|PER|END|CHA|INT|AGI|AGL|LCK|Luck|S\.P\.E\.C\.I\.A\.L|AP|DT|Initiative)\b(?!\s*(?:cost|to movement|to focus|for movement|for reload|per|to))/g;
+    const keys = { STR: "S", PER: "P", END: "E", CHA: "C", INT: "I", AGI: "A", AGL: "A", LCK: "L", Luck: "L", AP: "ap", DT: "dt", Initiative: "pri" };
+    for (const [, sign, num, , word] of t.matchAll(stat)) {
+      if (sign !== "-" && !positive) continue;
+      const v = (sign === "-" ? -1 : 1) * Number(num);
+      if (word === "S.P.E.C.I.A.L") SPECIAL.forEach((k) => add(k, v)); else add(keys[word], v);
+    }
+    for (const [, sign, num] of t.matchAll(/([+-]?)\s?(\d+)%?\+?\s*(?:acc\b|Hit Chance|chance to hit)/gi)) if (sign === "-" || positive) add("acc", (sign === "-" ? -1 : 1) * Number(num) / 100);
+    for (const [, sign, num] of t.matchAll(/([+-]?)\s?(\d+)%\+?\s*Damage\b(?!\s*Taken)/g)) if (sign === "-" || positive) add("dam", (sign === "-" ? -1 : 1) * Number(num) / 100);
+    for (const [, num] of t.matchAll(/(\d+)\+?\s*Max HP/g)) add("hp", Number(num));
+    // Crit: "+5% Crit Chance" raises crit chance. Stored as a fraction, so 5% is 0.05.
+    for (const [, sign, num] of t.matchAll(/([+-]?)\s?(\d+)%\+?\s*Crit/gi)) if (sign === "-" || positive) add("crit", (sign === "-" ? -1 : 1) * Number(num) / 100);
+    // Max health percent: "-10% max health", or "+10% HP" with a sign. A plain "25% HP" is a heal, so it doesn't count here.
+    for (const [, sign, num] of t.matchAll(/([+-]?)\s?(\d+)%\+?\s*max health/gi)) if (sign === "-" || positive) add("hpPct", (sign === "-" ? -1 : 1) * Number(num) / 100);
+    for (const [, sign, num] of t.matchAll(/([+-])\s?(\d+)%\s*HP\b/g)) if (sign === "-" || positive) add("hpPct", (sign === "-" ? -1 : 1) * Number(num) / 100);
+    // Healing received: "-25% healing" makes every heal on this character 25% weaker.
+    for (const [, num] of t.matchAll(/-\s?(\d+)%\s*healing/gi)) add("heal", -Number(num) / 100);
+    // DT percent: "-10% DT" shaves a share off total Damage Threshold.
+    for (const [, num] of t.matchAll(/-\s?(\d+)%\s*DT\b/g)) add("dtPct", -Number(num) / 100);
+    // Damage taken: "-5% Damage Taken" makes hits on this character weaker.
+    for (const [, sign, num] of t.matchAll(/([+-]?)\s?(\d+)%\s*Damage Taken/gi)) add("dmgTaken", (sign === "-" ? -1 : 1) * Number(num) / 100);
+    // Healing per turn: "+2 HP per turn" adds HP at the end of every round.
+    for (const [, num] of t.matchAll(/\+(\d+) HP per turn/gi)) add("regen", Number(num));
+    // Walking: "-25% mvm" or "-20% movement" makes moving cost more AP. "no movement" or "Immobile" stops it.
+    for (const [, num] of t.matchAll(/-\s?(\d+)%\s*(?:mvm|movement)/gi)) add("mvm", -Number(num) / 100);
+    if (/no movement|immobile/i.test(t)) m.immobile = 1;
+    // Action cost: "+2 AP cost" or "+1 AP to movement, attack, and items" makes attacks cost more AP.
+    for (const [, num] of t.matchAll(/\+(\d+) AP (?:cost|to movement)/gi)) add("apCost", Number(num));
+    // XP: "x1.5 xp" multiplies XP earned.
+    for (const [, x] of t.matchAll(/x(\d+(?:\.\d+)?) xp/gi)) add("xpMul", Number(x) - 1);
+    // Status resistance: stored and shown. The DM still decides what resisting means, since the sheet doesn't say.
+    for (const [, n, kind] of t.matchAll(/([+-]?\d+) (Mental|Physical) (?:Eff|Status)/gi)) if (Number(n) < 0 || positive) add(kind.toLowerCase() === "mental" ? "resistMental" : "resistPhysical", Number(n));
+    // "Crit Chance +5%" written the other way round, as on books.
+    for (const [, n] of t.matchAll(/Crit Chance \+(\d+)%/gi)) add("crit", Number(n) / 100);
+    // "1 PRI" is initiative. "ignore Tier 3 adverse effects" switches off harmful statuses up to that tier.
+    for (const [, n] of t.matchAll(/(\d+) PRI\b/g)) add("pri", Number(n));
+    const ig = t.match(/ignore Tier (\d)/i); if (ig) m.ignoreTier = Number(ig[1]);
+    const healUp = t.match(/Healing \+(\d+)%/i); if (healUp) add("heal", Number(healUp[1]) / 100);
+    const dmg = t.match(/(\d+) dmg/); if (dmg) m.dot = Number(dmg[1]);
+    const turns = t.match(/(\d+) turns?\b/i); if (turns) m.turns = Number(turns[1]);
+    return m;
+  }
+  function parseHeal(text) {
+    const t = String(text || "");
+    const pct = t.match(/(\d+)%\s*(?:HP|health)/); if (pct) return { pct: Number(pct[1]) / 100 };
+    const flat = t.match(/(-\s?)?(\d+)\s*\+?\s*HP/); if (!flat) return null;
+    const out = { flat: (flat[1] ? -1 : 1) * Number(flat[2]) };
+    const sk = t.match(/\(\s*(Medicine|Survival)\s*\/\s*(\d+)\s*\)/i); if (sk) { out.skill = sk[1].toLowerCase() === "medicine" ? "MED" : "SUR"; out.div = Number(sk[2]); }
+    if (/HP\s*\+\s*END\b/i.test(t)) out.end = true;
+    return out;
+  }
+  /** HP from an item's text: skill bonuses use the healer, END and percents use the patient. */
+  function healAmount(text, user, target) {
+    const h = parseHeal(text); if (!h) return 0;
+    const eff = 1 + ((target.m && target.m.heal) || 0);  // Burns and similar make heals weaker on this patient
+    if (h.pct) return Math.round(target.hp * h.pct * eff);
+    const raw = h.flat + (h.skill ? Math.floor((user.skills[h.skill] || 0) / h.div) : 0) + (h.end ? target.sp.E || 0 : 0);
+    return raw > 0 ? Math.round(raw * eff) : raw;
+  }
+  // Armor text such as "10+ Big Guns, +10 Explosives, 1+ END" or "AGL - 2".
+  function parseGear(text) {
+    const m = {}; const t = String(text || "").replace(/:/g, "");
+    const names = [...SKILLS.map(([k, n]) => [n, k]), ["Melee", "MW"], ["STR", "S"], ["PER", "P"], ["END", "E"], ["CHA", "C"], ["INT", "I"], ["AGI", "A"], ["AGL", "A"], ["LCK", "L"], ["Luck", "L"]];
+    for (const [word, key] of names) {
+      const re = new RegExp(`(?:\\b(\\d+)\\+\\s*|([+-])\\s*(\\d+)\\s+)${word}\\b|\\b${word}\\s*([+-])\\s*(\\d+)`, "gi");
+      for (const x of t.matchAll(re)) {
+        const v = x[1] ? Number(x[1]) : x[3] ? Number(x[2] + x[3]) : Number(x[4] + x[5]);
+        m[key] = (m[key] || 0) + v;
+      }
+    }
+    return m;
+  }
+  function statusInfo(ctx, st) {
+    const base = ctx.db.status.get(low(st.n));
+    const edited = ctx.ov && ctx.ov["status:" + low(st.n)];
+    const s = base && edited ? { ...base, ...edited } : base;
+    const text = (s && s.tiers && (s.tiers[(st.tier || 1) - 1] || s.tiers.find(Boolean))) || "";
+    // A status from a drink or drug carries that item's exact numbers. Otherwise use the tier's numbers from the status table.
+    const mods = st.fx || (s && s.fx && s.fx[(st.tier || 1) - 1]) || parseEffect(text, !s || s.tone !== "Negative");
+    return { text: st.text || text, mods, def: s };
+  }
+
+  // ---- modifiers (Stat Converter), same live columns as the sheet
+  function activeRows(e, ctx) {
+    const { db, scene } = ctx; const rows = [];
+    const add = (name, only) => { for (const r of db.sc.get(low(name)) || []) if (!only || only.includes(r.cat)) rows.push(r); };
+    if (e.kind === "pc") {
+      for (const code of e.traits || []) {
+        const t = db.traitByCode.get(code); if (!t) continue;
+        add(t.n);
+        for (const x of t.rows || []) rows.push({ n: t.n, cat: "Trait", mods: x.fx, when: x.when });
+        const st = (e.evolved || {})[code];
+        if (st === "E" && t.evo) add(t.evo);
+        if (st === "R" && t.rep) add(t.rep);
+      }
+      for (const v of e.variants || []) add(v);
+      for (const p of e.perks || []) { add(p, ["Skill Perk"]); const lp = db.levelPerkFx && db.levelPerkFx.get(low(p)); if (lp) for (const x of lp.rows || []) rows.push({ n: p, cat: "Level Perk", mods: x.fx, when: x.when }); }
+      for (const a of (e.gear && e.gear.acc) || []) add(a, ["Accessory", "Weapon Mod"]);
+      for (const n of [e.gear && e.gear.head, e.gear && e.gear.armor, e.gear && e.gear.vanity]) {
+        const it = n && get(ctx, n); if (!it) continue;
+        const mods = it.o.fx || parseGear(`${it.o.buffs || ""}, ${it.o.nerfs || ""}`);
+        if (Object.keys(mods).length) rows.push({ n: it.o.n, cat: "Gear", mods });
+      }
+      for (const l of e.inv || []) if (l.active) add(l.n, ["Accessory", "Weapon Mod"]);
+      if (scene) for (const k of ["time", "weather", "env"]) add(scene[k], ["Situation"]);
+    }
+    return rows;
+  }
+  function encumbrance(e, ctx, carry, m = {}) {
+    const r = ctx.rules; let total = (e.caps || 0) * 0.001, active = 0;
+    if (m.capsNoWeight) total = 0;  /* Money Dispenser Harness */
+    for (const l of e.inv || []) { const it = get(ctx, l.n); const one = weightOf(ctx, l.n) * (it && it.cat === "ammo" ? 1 + (m.ammoWeight || 0) : 1); const w = (m.lightHalf && one <= 2 ? one / 2 : one) * (l.q || 0); /* Pack Rat: light things weigh half */ total += w; if (l.active) active += w; }
+    const g = e.gear || {};
+    for (const n of [g.head, g.armor, g.vanity, ...(g.acc || []), ...(e.weapons || []).map((w) => w.n)]) { const w = weightOf(ctx, n); total += w; active += w; }
+    const capA = carry * r.activePct;
+    const iA = r.activeTiers.filter((t) => capA > 0 && active / capA >= t).length;
+    const iT = r.totalTiers.filter((t) => carry > 0 && total / carry >= t).length;
+    return { total: fix(total), active: fix(active), capActive: fix(capA), activeTier: iA ? ACTIVE_NAMES[iA - 1] : "", totalTier: iT ? TOTAL_NAMES[iT - 1] : "" };
+  }
+
+  // true or false if a condition depends only on this person. null means it has to wait for a particular shot.
+  const SELF_KEYS = ["ooc", "combat", "sober", "hasStatus", "hasEffect", "night", "indoors", "chemsMin"];
+  function selfHolds(w, e, ctx) {
+    const keys = Object.keys(w); if (!keys.length || !keys.every((k) => SELF_KEYS.includes(k))) return null;
+    const statuses = e.statuses || []; const chems = statuses.filter((x) => x.from).length;
+    if (w.ooc && ctx.combat) return false;
+    if (w.combat && !ctx.combat) return false;
+    if (w.sober && chems) return false;
+    if (w.hasStatus && !statuses.some((x) => w.hasStatus.includes(x.n))) return false;
+    if (w.hasEffect && !(e.effects || []).some((x) => x.label === w.hasEffect)) return false;
+    if (w.night && !/night|dark/i.test((ctx.scene && ctx.scene.time) || "")) return false;
+    if (w.indoors && !ctx.rules.indoorMaps.includes((ctx.scene && ctx.scene.map && ctx.scene.map.id) || "")) return false;
+    if (w.chemsMin && chems < w.chemsMin) return false;
+    return true;
+  }
+  /** Everything derived about a person or creature right now. */
+  function derive(e, ctx) {
+    const r = ctx.rules; const m = {}; const notes = []; const sources = []; const d0cond = [];
+    const bump = (mods) => { for (const k in mods) if (typeof mods[k] === "number" && k !== "turns" && k !== "dot") m[k] = fix((m[k] || 0) + mods[k]); };
+    const rowsNow = activeRows(e, ctx);
+    d0cond.length = 0;
+    // Night penalties: Electronic Shades halve them, scopes remove them. The lowest number wins.
+    const nightFactor = Math.min(1, ...rowsNow.filter((x) => x.mods && x.mods.nightPen != null).map((x) => x.mods.nightPen));
+    // Heritable and similar: every trait's numbers count for more.
+    const traitScale = 1 + rowsNow.reduce((t, x) => t + ((x.mods && x.mods.traitScale) || 0), 0);
+    for (const row of rowsNow) {
+      // A rule with a condition isn't always on. It waits in the list below and gets checked when it matters.
+      if (nightFactor < 1 && row.cat === "Situation" && /night|dark/i.test(row.n)) { const soft = {}; for (const [k, v] of Object.entries(row.mods || {})) soft[k] = typeof v === "number" && v < 0 ? fix(v * nightFactor) : v; bump(soft); sources.push(row); continue; }
+      // Conditions about the character's own state, not a particular shot, are settled right here.
+      if (row.when && r.conditions !== false && selfHolds(row.when, e, ctx) === false) continue;
+      if (row.when && r.conditions !== false && selfHolds(row.when, e, ctx) === true) { if (row.mods) bump(row.mods); sources.push(row); continue; }
+      if (row.when && r.conditions !== false) { d0cond.push(row); if (row.note) notes.push(`${row.n}: ${row.note}`); sources.push(row); continue; }
+      if (row.sheetMods && r.conditions === false) { bump(row.sheetMods); sources.push(row); continue; }
+      if (row.mods) bump(traitScale !== 1 && /^Trait/.test(row.cat || "") ? Object.fromEntries(Object.entries(row.mods).map(([k, v]) => [k, typeof v === "number" ? fix(v * traitScale) : v])) : row.mods);
+      if (row.mods || row.note) sources.push(row);
+      if (row.note) notes.push(`${row.n}: ${row.note}`);
+    }
+    // Sedated and similar switch off harmful statuses up to a tier. Numbing Salve switches off everything but bleeding for a while.
+    const ignore = Math.max(0, ...(e.statuses || []).map((st) => statusInfo(ctx, st).mods.ignoreTier || 0));
+    for (const st of e.statuses || []) {
+      const i = statusInfo(ctx, st);
+      if (e.numbed > 0 && st.n !== "Bleeding") continue;
+      if (i.def && i.def.tone === "Negative" && (st.tier || 1) <= ignore) continue;
+      bump(i.mods);
+    }
+    for (const fx of e.effects || []) bump(fx.mods || {});
+    const ov = e.ov || {};
+    const sp = {};
+    SPECIAL.forEach((k, i) => { const b = e.special[i]; sp[k] = b == null || b === "" ? null : Math.max(1, Number(b) + (m[k] || 0)); });
+    const skills = {};
+    for (const [k, , a, b] of SKILLS) {
+      const given = e.skills && e.skills[k];
+      const formula = sp[a] != null && sp[b] != null ? Math.floor((sp[a] * 3 + sp[b]) / 2) : 0;
+      const spent = ((e.spent || {})[k] || 0) * ((e.tags || []).includes(k) ? 2 : 1);
+      skills[k] = (given != null && given !== "" ? Number(given) : formula) + (m[k] || 0) + spent;
+    }
+    if (m.setC != null && sp.C != null) sp.C = m.setC;  // Ogrish: Charisma is fixed
+    const d = { sp, skills, m, notes, sources, cond: d0cond, level: e.level || 1 };
+    const S = sp.S || 0, P = sp.P || 0, En = sp.E || 0, A = sp.A || 0, L = sp.L || 0;
+    d.carry = fix((25 + (S + En / 4) * 25 + (m.carry || 0)) * (1 + (m.carryMul || 0)));
+    d.enc = encumbrance(e, ctx, d.carry, m);
+    if (e.mob) {
+      d.hp = Math.floor(((e.baseHp || 0) + (m.hp || 0)) * (e.hpMult || 1));
+      d.ap = Math.floor((e.baseAp || 0) + (m.ap || 0));
+      d.pri = (e.basePri || 0) + (m.pri || 0);
+      d.dt = (e.baseDt || 0) + (m.dt || 0);
+      d.save = 0;
+    } else {
+      const lvlHp = e.kind === "pc" ? (d.level - 1) : ((e.tier || 1) - 1) * 6;
+      d.hp = Math.floor((15 + En * 2 + lvlHp + (m.hp || 0)) * (m.hpMul ? m.hpMul : 1) * (1 + (m.hpPct || 0)) * (e.hpMult || 1));
+      if (e.kind === "pc") for (const name of [d.enc.activeTier, d.enc.totalTier]) if (name) for (const row of ctx.db.sc.get(low(name)) || []) if (row.mods) bump(row.mods);
+      d.ap = Math.max(0, Math.floor((5 + A + (m.ap || 0)) * (1 + (m.apMul || 0))));
+      d.pri = (A + P) / 2 + (m.pri || 0);
+      const g = e.gear || {};
+      const pieces = e.kind === "pc" ? [g.head, g.armor, ...(g.acc || [])] : [g.head, g.armor, g.vanity];
+      d.dt = pieces.reduce((t, n) => { const h = get(ctx, n); return t + ((h && h.o.dt) || 0); }, 0) + (m.dt || 0);
+      d.dt = fix(d.dt * (1 + (m.dtPct || 0)));  // Plasma Melt and similar remove a share of DT
+      d.save = saveTarget(L, skills.SUR, m.save || 0, e.timesRevived || 0, r);
+    }
+    d.pts = 10 + Math.floor((sp.I || 0) / 2) + (m.pts || 0);
+    d.buy = skills.BAR > 0 ? 100 / skills.BAR : 0;
+    d.sell = skills.BAR / 100;
+    for (const k of ["hp", "ap", "dt", "pri", "save"]) if (ov[k] != null && ov[k] !== "") d[k] = Number(ov[k]);
+    // Rules that depend only on how hurt you are. Checked last because they need max HP.
+    for (const row of d0cond) if (Object.keys(row.when).every((k) => k === "hpBelow" || k === "hpAbove") && e.hp != null && (row.when.hpBelow == null || e.hp < d.hp * row.when.hpBelow) && (row.when.hpAbove == null || e.hp > d.hp * row.when.hpAbove)) for (const k in row.mods) { if (k === "ap" || k === "dt" || k === "pri" || k === "hp") d[k] += row.mods[k]; else m[k] = fix((m[k] || 0) + row.mods[k]); }
+    if (m.saveMul) d.save = Math.round(d.save * (1 + m.saveMul));  // Last Stand doubles the odds
+    if (m.speechCap != null) skills.SPE = Math.min(skills.SPE, m.speechCap);
+    d.superCrit = e.superCrit != null && e.superCrit !== "" ? Number(e.superCrit) : r.superDefault;
+    return d;
+  }
+
+  /** Roll at or under this on a d20. Times Revived costs a share of the die. */
+  function saveTarget(lck, survival, mod, revived, r) {
+    const raw = Math.floor((lck * 0.1 + (survival / 2 / 100) / 2) * 20 + 1e-9) - 1;
+    return Math.min(raw, r.saveCap) + mod - revived * r.revivePenalty;
+  }
+
+  // ---- weapons
+  function weaponView(slot, e, d, ctx, mode = "pr") {
+    const h = slot && get(ctx, slot.n);
+    if (!h || (h.cat !== "weapon" && h.cat !== "custom")) return { n: slot ? slot.n : "No weapon", missing: true, ok: false, tab: "MW", melee: true, skill: "MW", base: 0, pen: 0, ap: 0, crit: 0, jam: 0, str: 0, req: 0, count: 1, usesAmmo: false, clearJam: 0, hitBase: () => null };
+    const w = h.o;
+    const v = { n: w.n, tab: w.tab, type: w.type, skill: w.skill || "MW", crit: (w.crit || 0) + (d.m.crit || 0), jam: w.jam || 0, str: w.str || 0, req: w.req || 0, ok: !!w.ok, status: w.status, note: w.note, thrown: !!w.thrown, radius: w.radius, melee: w.tab === "MW" };
+    const dm = (1 + (d.m.dam || 0)) * (e.dmgMult || 1);
+    if (v.melee) {
+      const se = mode === "se" && w.dmg2 != null;
+      v.mode = se ? "se" : "pr"; v.modeName = se ? w.seName : w.prName; v.hasSecondary = w.dmg2 != null;
+      v.base = (se ? w.dmg2 : w.dmg) || 0; v.pen = (se ? w.pen2 : w.pen) || 0; v.ap = (se ? w.ap2 : w.ap) || 0;
+      v.hitBase = () => (w.base != null ? w.base : 0.45);
+      v.base = (v.base || 0) + (d.m.damFlat && se ? d.m.damFlat : 0);
+      v.count = 1; v.usesAmmo = false;
+    } else {
+      v.ap = Math.max(0, (w.ap || 0) + (d.m.apCost || 0));
+      v.reload = Math.floor(Math.max(0, (w.reload || 0) + (d.m.reload || 0)) * (1 + (d.m.reloadMul || 0)));
+      v.count = (w.count || 1) + (d.m.count || 0); v.cap = Math.floor(((w.mag || 0) + (d.m.magAdd || 0)) * (1 + (d.m.magPct || 0))); v.perShot = w.perShot || 1;
+      v.hitBase = (rng) => (w.hit || [])[rng - 1];
+      v.reserve = w.ammo;
+      v.usesAmmo = !v.thrown && !!w.ammo && w.ammo !== "N/A" && v.cap > 0;
+      if (w.tab === "SG" || w.tab === "BG") {
+        const a = slot.ammo && get(ctx, slot.ammo);
+        v.reserve = slot.ammo; v.caliber = w.ammo; v.load = slot.ammo;
+        if (a) { v.base = a.o.dam; v.pen = a.o.pen; v.pellets = a.o.pellets; v.ammoNote = a.o.note; if (a.o.ok !== true) v.ok = false; } else { v.base = 0; v.pen = 0; v.noLoad = true; }
+      } else { v.base = w.dmg || 0; v.pen = w.pen || 0; }
+    }
+    v.clearJam = (ctx.rules.clearJam[v.type] != null ? ctx.rules.clearJam[v.type] : ctx.rules.clearJamDefault);
+    if (d.m.apCostMul) v.ap = Math.max(1, Math.round(v.ap * d.m.apCostMul));  // "AP Cost / 0.5" on a perk or mod
+    v.jam = Math.max(0, v.jam + (d.m.jam || 0));
+    v.base = fix((v.base || 0) * dm);
+    v.pen = (v.pen || 0) + (d.m.pen || 0);
+    v.clearJam = Math.max(0, v.clearJam + (d.m.clearJamAdd || 0));  // Quick Repair Harness
+    return v;
+  }
+  const loadsFor = (ctx, caliber) => ctx.db.data.ammo.filter((a) => low(a.cal) === low(caliber));
+
+  // ---- hit chance
+  function hitChance(att, A, target, T, v, range, ctx, cover) {
+    const r = ctx.rules; const rng = Math.min(10, Math.max(1, range || 1)); const parts = [];
+    const skill = Math.min(A.skills[v.skill] || 0, r.overskillCap);
+    const base = v.melee ? v.hitBase() : v.hitBase(rng);
+    if (base == null) return { hit: 0, raw: 0, parts: ["no hit data at this range"], noData: true, range: rng };
+    parts.push(["base", base]);
+    parts.push(["skill", (skill - v.req) / 2 / 100]);
+    if (r.perPenalty && !v.melee && A.sp.P != null && A.sp.P < rng) parts.push(["PER", -(rng - A.sp.P) * r.perPenalty]);
+    if ((v.melee || v.thrown ? r.strMelee : r.strGun) && A.sp.S != null && A.sp.S < v.str) parts.push(["STR", -(v.str - A.sp.S) * v.str * (v.melee || v.thrown ? r.strMelee : r.strGun)]);
+    let mods = A.m.acc || 0;
+    if (att.kind === "pc") mods += A.m["r" + (v.melee ? 1 : rng)] || 0;
+    if (att.kind !== "pc" && target && target.kind === "pc") mods += T.m.enemyAcc || 0;
+    for (const fx of (ctx.scene && ctx.scene.effects) || []) {
+      if (!fx.hit) continue;
+      const side = att.kind === "pc" || att.ally ? "party" : "enemies";
+      if (fx.who === "all" || fx.who === side || fx.who === att.id) mods += fx.hit;
+    }
+    if (mods) parts.push(["mods", mods]);
+    // Cover: the tier the aiming line crosses. "open" adds nothing.
+    if (cover && cover.hit) parts.push([`cover ${cover.tier}`, cover.hit]);
+    const raw = fix(parts.reduce((t, [, x]) => t + x, 0));
+    return { hit: Math.min(raw, r.maxHit), raw, parts, range: rng, capped: raw > r.maxHit };
+  }
+  const pct = (x) => fix(x * 100);
+  const sgn = (x) => (x >= 0 ? "+" : "−") + Math.abs(pct(x));
+  const hitLine = (hc) => (hc.noData ? hc.parts[0] : `${pct(hc.hit)}% = ` + hc.parts.map(([k, x], i) => (i === 0 ? `${k} ${pct(x)}` : `${k} ${sgn(x)}`)).join(", ") + (hc.capped ? ` (capped from ${pct(hc.raw)})` : ""));
+
+  // ---- attack roll bands. Numbers are percent thresholds on the 00-99 roll.
+  function bands(hit, jam, crit, superCrit, opts = {}) {
+    const r = opts.rules || {};
+    let jamAt = jam * 100, critAt = 100 - crit * 100;
+    if (r.jamMode === "sheet") jamAt = Math.min(99, jam * (10 / opts.lck) * 100 - 1 + (10 - (opts.cond != null ? opts.cond : 10))) + 1;
+    if (r.critMode === "sheet") critAt = 99 - crit * (opts.lck / 5) * hit * 100;
+    return { jamAt: fix(jamAt), hitAt: fix(100 - hit * 100), critAt: fix(critAt), superAt: fix(100 - superCrit * 100) };
+  }
+  function classify(roll, b) {
+    if (roll < b.jamAt) return "jam";
+    if (roll < b.hitAt) return "miss";
+    if (roll >= b.superAt) return "super";
+    if (roll >= b.critAt) return "crit";
+    return "hit";
+  }
+  /** Whole-number ranges for reading aloud, e.g. Jam 00-12 · Miss 13-29 · Hit 30-79 · Crit 80-97 · Super 98-99 */
+  function bandSpans(b) {
+    const c = (x) => Math.min(100, Math.max(0, Math.ceil(x - 1e-9)));
+    const j = c(b.jamAt), h = Math.max(j, c(b.hitAt)), s = Math.max(h, c(b.superAt)), k = Math.min(s, Math.max(h, c(b.critAt)));
+    const out = [];
+    const push = (id, label, a, z) => { if (z >= a) out.push({ id, label, from: a, to: z }); };
+    push("jam", "Jam", 0, j - 1); push("miss", "Miss", j, h - 1); push("hit", "Hit", h, k - 1); push("crit", "Crit", k, s - 1); push("super", "Super", s, 99);
+    return out;
+  }
+  const two = (n) => String(n).padStart(2, "0");
+  const bandText = (b) => bandSpans(b).map((s) => `${s.label} ${two(s.from)}-${two(s.to)}`).join(" · ");
+
+  /** Bullets landing in a burst: the hit band is cut into Count equal steps, higher rolls land more. */
+  function bullets(roll, b, count, outcome, rules) {
+    if (count <= 1) return 1;
+    if (outcome === "crit" || outcome === "super") return rules && rules.critAllBullets === false ? 1 : count;
+    const step = (b.critAt - b.hitAt) / count;
+    if (step <= 0) return count;
+    return Math.max(1, Math.min(count, 1 + Math.floor(fix(roll - b.hitAt) / fix(step))));
+  }
+
+  function damage(base, pen, dt, locMult, critMult, floor = 0.2) {
+    const x = base * locMult * critMult;
+    const raw = pen >= dt ? Math.max(1, x) : Math.max(1, x * pen / dt, Math.max(1, x) * floor);
+    return { x: fix(x), raw: fix(raw), final: Math.floor(raw + 1e-9) };
+  }
+
+  /** Resolve one attack from a typed roll. Pure: returns what happened, the caller applies it. */
+  function resolve(p) {
+    const { v, b, roll, loc, rules } = p; let dt = p.dt;
+    const sm = p.shot || {};  // this shooter's variables for this shot
+    let outcome = classify(roll, b);
+    if (outcome === "crit" && sm.critToSuper) outcome = "super";  // Hunter: crits become super crits against animals
+    if (outcome === "hit" && (sm.vengeNow || (sm.lucky && roll % 10 === (sm.luckyDigit != null ? sm.luckyDigit : 7)))) outcome = "crit";  // Vengeful, Lucky Number
+    if (outcome === "super" && sm.superIgnoreDT) dt = 0;  // Plinkster
+    const res = { outcome, bullets: 0, each: 0, total: 0, roll };
+    if (outcome === "jam" || outcome === "miss") return res;
+    const critName = outcome === "crit" ? "Crit" : outcome === "super" ? "Super" : "Hit";
+    // Crit Mult and Super Crit Mult variables add to the multiplier, Head Mult to head shots. Crit D is extra percent damage on any crit.
+    const cm = (rules.critMult[critName] + (outcome === "crit" ? sm.critMult || 0 : outcome === "super" ? sm.superMult || 0 : 0)) * (outcome === "hit" ? 1 : 1 + (sm.critDam || 0));
+    const lm = rules.loc[loc] + (loc === "Head" ? sm.headMult || 0 : 0) + (loc === "Limb" ? (p.taken && p.taken.limbMult) || 0 : 0);  // limbMult: hurt less in the limbs
+    const avail = p.available != null ? p.available : v.count;
+    res.bullets = Math.min(p.bulletsOv != null ? p.bulletsOv : bullets(roll, b, v.count, outcome, rules), Math.max(1, avail));
+    const pel = v.pellets || 0;
+    let dmg;
+    if (pel && rules.pelletMode === "each") { const one = damage(v.base, v.pen, dt, lm, cm, rules.damageFloor); dmg = { x: one.x, raw: one.raw, final: one.final * pel }; }
+    else dmg = damage(pel ? v.base * pel : v.base, v.pen, dt, lm, cm, rules.damageFloor);
+    // mult: cover and the target's damage-taken statuses, for example 0.9 behind soft cover.
+    const mult = p.mult != null ? p.mult : 1;
+    res.each = p.damageOv != null ? p.damageOv : Math.max(mult > 0 ? 1 : 0, Math.floor(dmg.final * mult + 1e-9));
+    res.total = res.each * res.bullets;
+    if (outcome === "super" && sm.superKill) { res.kill = true; res.total = Math.max(res.total, 99999); }  // perks that instantly kill on a super crit
+    const baseText = pel ? `${fix(v.base)}x${pel}` : String(fix(v.base));
+    res.math = `${baseText} × ${loc} ${lm} × ${critName} ${cm} = ${fix(dmg.x)}; Pen ${fix(v.pen)} ${v.pen >= dt ? "≥" : "<"} DT ${dt} → ${dmg.final}` + (res.bullets > 1 ? ` × ${res.bullets} bullets = ${res.total}` : "") + (mult !== 1 ? ` × ${fix(mult)} (cover, resistances) = ${res.each}` : "") + (p.damageOv != null ? ` (DM set ${p.damageOv})` : "");
+    return res;
+  }
+
+  // ---- skill checks
+  function checkNeeded(value, target, r) { return r.checkBase - Math.trunc((value - target) / r.checkStep); }
+  function checkResult(d20, needed) {
+    if (d20 === 1) return { pass: false, why: "natural 1" };
+    if (d20 === 20) return { pass: true, why: "natural 20" };
+    return { pass: d20 >= needed, why: "" };
+  }
+  const checkOdds = (needed) => Math.min(19, Math.max(1, 21 - needed)) * 5;
+
+  // ---- XP
+  const xpFor = (lvl, r) => r.levelXpStep * lvl * (lvl - 1);
+  function levelForXp(xp, r) { let l = 1; while (l < r.maxLevel && xp >= xpFor(l + 1, r)) l++; return l; }
+  const xpGain = (base, int, r) => fix(base * (1 + (int - 5) * r.xpIntStep));
+
+  // ---- enemies
+  const pick = (list, rng) => list[Math.floor(rng() * list.length)];
+  // Blank Value marks the one-offs on the tabs that price their weapons (GLT's Unique column is empty).
+  const isUnique = (w) => /unique/i.test(w.n) || (w.val == null && ["SG", "MW"].includes(w.tab));
+  function poolFor(ctx, tabs, tier) {
+    const all = ctx.db.data.weapons.filter((w) => tabs.includes(w.tab) && w.ok && w.tier > 0 && !ctx.rules.genExclude.includes(w.n) && !isUnique(w) && !w.thrown && (!["SG", "BG"].includes(w.tab) || loadsFor(ctx, w.ammo).length));
+    for (let t = tier; t >= 1; t--) { const p = all.filter((w) => w.tier === t); if (p.length) return p; }
+    return all;
+  }
+  function loadFor(ctx, w, tier, rng) {
+    const all = loadsFor(ctx, w.ammo);
+    const ok = all.filter((a) => a.ok && !a.pellets);
+    const inTier = ok.filter((a) => (a.tier || 1) <= tier);
+    return inTier.find((a) => a.load === "Standard") || (inTier.length && pick(inTier, rng)) || (ok.length && pick(ok, rng)) || all[0];
+  }
+  function slotFor(ctx, w, tier, rng) {
+    const s = { n: w.n, mag: w.mag || 0 };
+    if (w.tab === "SG" || w.tab === "BG") { const a = loadFor(ctx, w, tier, rng); if (a) s.ammo = a.n; }
+    return s;
+  }
+  function pickArmor(ctx, locs, tier, rng) {
+    const all = ctx.db.data.armor.filter((a) => locs.includes(a.loc) && a.dt > 0 && a.tier > 0 && a.tier < 100 && !a.faction);
+    for (let t = tier; t >= 1; t--) { const p = all.filter((a) => a.tier === t); if (p.length) return pick(p, rng).n; }
+    return "";
+  }
+  function rollCaps(text, rng) {
+    const m = String(text || "").match(/(\d+)\s*-\s*(\d+)/);
+    if (!m) return 0;
+    const a = Number(m[1]), b = Number(m[2]);
+    return a + Math.floor(rng() * (b - a + 1));
+  }
+  /** Weapons, armor, caps and loot for a human at this tier. */
+  function gearUp(e, ctx, rng) {
+    if (e.mob) return;
+    const tmpl = ctx.db.enemies.get(low(e.tmpl)) || {};
+    const sk = e.skills || {}; const tier = e.tier; const out = [];
+    const keep = e.keepTemplateGear;
+    const ranged = [["SG", sk.SG || 0], ["BG", sk.BG || 0], ["EW", sk.EW || 0]];
+    const atTier = ranged.filter(([t]) => (poolFor(ctx, [t], tier)[0] || {}).tier === tier);
+    const best = (atTier.length ? atTier : ranged).reduce((a, b) => (b[1] + rng() * 10 > a[1] ? b : a));
+    const main = keep && tmpl.w1 && get(ctx, tmpl.w1) ? get(ctx, tmpl.w1).o : pick(poolFor(ctx, [best[0]], tier), rng);
+    if (main) out.push(slotFor(ctx, main, tier, rng));
+    const side = keep && tmpl.w2 && get(ctx, tmpl.w2) ? get(ctx, tmpl.w2).o : keep ? null : pick(poolFor(ctx, ["MW"], tier), rng);
+    if (side) out.push(slotFor(ctx, side, tier, rng));
+    e.weapons = out; e.activeW = 0;
+    e.gear = keep ? { head: tmpl.head || "", armor: tmpl.armor || "", vanity: tmpl.vanity || "" } : { head: ctx.rules.genArmor && rng() < 0.5 ? pickArmor(ctx, ["Head"], tier, rng) : "", armor: ctx.rules.genArmor ? pickArmor(ctx, ["Body"], tier, rng) : "", vanity: "" };
+    e.caps = rollCaps(e.capsRange, rng);
+    const inv = [];
+    for (const s of out) { const w = get(ctx, s.n); const res = s.ammo || (w && w.o.ammo !== "N/A" && !w.o.thrown && w.o.mag ? w.o.ammo : null); if (res) inv.push({ n: res, q: Math.max(1, s.mag || 1) }); }
+    const cons = ctx.db.data.items.filter((i) => i.effect && Number(i.tier) && Number(i.tier) <= tier && ["Healing", "Chem/Drug", "Drink", "Food", "Alcohol"].includes(i.cat));
+    const n = Math.floor(rng() * (ctx.rules.genLootMax + 1));
+    for (let i = 0; i < n && cons.length; i++) inv.push({ n: pick(cons, rng).n, q: 1 });
+    e.inv = inv;
+  }
+  /** A vendor's shelf: this tier and the one below, never unique weapons. */
+  function vendorStock(ctx, tier, rng = Math.random) {
+    const d = ctx.db.data; const c = ctx.rules.vendorCounts;
+    const inTier = (o) => { const t = Number(o.tier); return t >= Math.max(1, tier - 1) && t <= tier; };
+    const draw = (list, n) => { const pool = [...list], out = []; while (out.length < n && pool.length) out.push(pool.splice(Math.floor(rng() * pool.length), 1)[0]); return out; };
+    const armor = d.armor.filter((a) => inTier(a) && a.tier < 100 && !a.faction);
+    const groups = [
+      [d.weapons.filter((w) => w.ok && inTier(w) && !isUnique(w) && !ctx.rules.genExclude.includes(w.n)), c.weapon, () => 1],
+      [armor.filter((a) => a.loc !== "Accessory"), c.armor, () => 1],
+      [armor.filter((a) => a.loc === "Accessory"), c.accessory, () => 1],
+      [d.items.filter((i) => i.effect && inTier({ tier: i.tier || 1 })), c.item, () => 1 + Math.floor(rng() * 3)],
+      [d.ammo.filter((a) => a.ok && inTier(a)), c.ammo, () => 10 + Math.floor(rng() * 41)],
+      [d.materials.filter((m) => inTier(m)), c.material, () => 1 + Math.floor(rng() * 5)],
+    ];
+    return groups.flatMap(([list, n, qty]) => draw(list, n).map((o) => ({ n: o.n, q: qty() })));
+  }
+  /** Base value of an item in caps. est means the workbook had no price, so this is the rules' placeholder. */
+  function valueOf(ctx, name) {
+    const it = get(ctx, name); if (!it) return { val: 0, est: true };
+    if (it.o.val != null && it.o.val > 0) return { val: it.o.val, est: false };
+    const t = Math.max(1, Math.min(6, Number(it.o.tier) || 1));
+    return { val: it.cat === "ammo" ? ctx.rules.ammoPrice * t : ctx.rules.noPrice[t - 1], est: true };
+  }
+  // The sheet's Buy is 100/Barter and Sell is Barter/100: that is a vendor at 100. Clamped so nobody can buy low and sell high to the same vendor.
+  const barterFactors = (mine, theirs) => ({ buy: Math.max(1, theirs / Math.max(1, mine)), sell: Math.max(0, Math.min(1, mine / theirs)) });
+  const optimalRange = (w) => { if (!w || !w.hit || w.tab === "MW") return 1; let best = -1, at = 1; w.hit.forEach((x, i) => { if (x != null && x > best) { best = x; at = i + 1; } }); return at; };
+  function spawn(tmpl, id, ctx, rng = Math.random, nameSuffix = "") {
+    const e = { id, kind: "npc", tmpl: tmpl.n, name: tmpl.n + nameSuffix, tier: tmpl.tier || 1, mob: !!tmpl.mob, special: [...(tmpl.special || [null, null, null, null, null, null, null])], skills: { ...(tmpl.skills || {}) }, xp: tmpl.xp || 0, capsRange: tmpl.caps || "", caps: 0, faction: tmpl.faction || "",
+      gear: { head: tmpl.head || "", armor: tmpl.armor || "", vanity: tmpl.vanity || "" }, weapons: [], activeW: 0, statuses: [], effects: [], inv: [], ov: {}, hpMult: 1, dmgMult: 1, keepTemplateGear: !!(tmpl.w1 && !tmpl.mob) };
+    if (tmpl.saved) Object.assign(e, JSON.parse(JSON.stringify(tmpl.saved)), { id, name: tmpl.saved.name + nameSuffix, statuses: [], effects: [] });
+    else if (e.mob) {
+      Object.assign(e, { baseHp: tmpl.hp || 0, baseAp: tmpl.ap || 0, baseDt: tmpl.dt || 0, basePri: tmpl.pri || 0 });
+      e.weapons = [...new Set([tmpl.w1, tmpl.w2].filter(Boolean))].map((n) => ({ n }));
+    } else gearUp(e, ctx, rng);
+    const d = derive(e, ctx);
+    e.hp = d.hp; e.ap = d.ap;
+    return e;
+  }
+  /** Boost a copy in place. Returns the rolled percentages for the log. */
+  function makeBoss(e, ctx, rng = Math.random) {
+    const lo = ctx.rules.bossMin, hi = ctx.rules.bossMax;
+    const roll = () => lo + rng() * (hi - lo);
+    const hp = roll(), dm = roll();
+    const before = derive(e, ctx).hp;
+    e.hpMult = fix((e.hpMult || 1) * (1 + hp));
+    e.dmgMult = fix((e.dmgMult || 1) * (1 + dm));
+    e.xp = Math.round((e.xp || 0) * (1 + (hp + dm) / 2));
+    if (!e.mob) e.weapons = (e.weapons || []).map((s) => {
+      const cur = get(ctx, s.n);
+      if (!cur || !cur.o.tab) return s;
+      const pool = poolFor(ctx, [cur.o.tab], (cur.o.tier || 1) + 1).filter((w) => w.tier > (cur.o.tier || 1));
+      const same = pool.filter((w) => w.type === cur.o.type);
+      const next = same.length ? pick(same, rng) : pool.length ? pick(pool, rng) : null;
+      return next ? slotFor(ctx, next, (cur.o.tier || 1) + 1, rng) : s;
+    });
+    e.boss = true;
+    const after = derive(e, ctx).hp;
+    e.hp = Math.min(after, (e.hp != null ? e.hp : before) + after - before);
+    return { hp, dm };
+  }
+
+  // ---- line of fire: which objects does a straight line from a to b cross?
+  // The part of an object that stops a shot. For a tree that's the trunk, not the leaves.
+  const trunkOf = (o, r) => { const c = r && r.mapItems && r.mapItems[o.item]; return (c && c.trunk) || (!o.item && o.kind === "tree" ? 0.2 : 0); };
+  const shotBox = (o, r) => { const t = trunkOf(o, r); return t ? { x: o.x, y: o.y, w: (o.w || 1) * t, h: (o.h || 1) * t } : o; };
+  // A turned object: spin the points the opposite way around its center, then treat it as an unturned box.
+  function unturn(p, o) {
+    if (!o.angle) return p;
+    const r = (o.angle * Math.PI) / 180, c = Math.cos(r), s = Math.sin(r), dx = p.x - o.x, dy = p.y - o.y;
+    return { x: o.x + dx * c + dy * s, y: o.y - dx * s + dy * c };
+  }
+  function crosses(a0, b0, o) {
+    const a = unturn(a0, o), b = unturn(b0, o);
+    // Standard box test: shrink the line to the part inside the box's x range, then its y range. Anything left means it crosses.
+    const hw = (o.w || 1) / 2, hh = (o.h || 1) / 2; let lo = 0, hi = 1; const dx = b.x - a.x, dy = b.y - a.y;
+    for (const [d, p, c, half] of [[dx, a.x, o.x, hw], [dy, a.y, o.y, hh]]) {
+      if (Math.abs(d) < 1e-9) { if (Math.abs(p - c) > half) return false; continue; }
+      let t1 = (c - half - p) / d, t2 = (c + half - p) / d; if (t1 > t2) [t1, t2] = [t2, t1];
+      lo = Math.max(lo, t1); hi = Math.min(hi, t2); if (lo > hi) return false;
+    }
+    return true;
+  }
+  const inside = (p0, o) => { const p = unturn(p0, o); return Math.abs(p.x - o.x) <= (o.w || 1) / 2 && Math.abs(p.y - o.y) <= (o.h || 1) / 2; };
+  const coverTier = (o, r) => o.cover || r.coverByKind[o.kind] || "open";
+  /** The worst cover between shooter and target. Something the shooter stands inside doesn't count: they can shoot out of a bush. */
+  function lineCover(a, b, objects, r) {
+    const rank = Object.keys(r.cover); let best = "open", by = null;
+    for (const o of objects || []) { const t = coverTier(o, r); const box = shotBox(o, r); if (rank.indexOf(t) > rank.indexOf(best) && !inside(a, box) && crosses(a, b, box)) { best = t; by = o; } }
+    return { tier: best, n: r.cover[best].n, hit: r.cover[best].hit, dam: r.cover[best].dam, by: by ? (by.label || (r.mapItems[by.item] || {}).n || "") : "" };
+  }
+  /** Does walking this path hit something solid, like a building? */
+  const pathBlocked = (a, b, objects) => (objects || []).some((o) => o.block && crosses(a, b, o));
+
+  /** Random furniture for a location. Count = area x density x 0.8 to 1.2, kept between the theme's min and max. */
+  function generateRoom(map, themeId, r, rng, keepClear = [], newId = (i) => "o" + i) {
+    const th = r.roomThemes[themeId]; const out = []; let n = 0;
+    const item = (key, x, y, w, h, rot) => { const c = r.mapItems[key]; const o = { id: newId(n++), item: key, kind: c.round ? "tree" : "cover", x: fix(x), y: fix(y), w: fix(w), h: fix(h), cover: c.cover, label: "" }; if (c.block) o.block = true; if (c.round) o.round = true; if (rot) o.rot = 90; return o; };
+    const clear = (x, y, w, h) => keepClear.every((p) => Math.abs(p.x - x) > w / 2 + 1 || Math.abs(p.y - y) > h / 2 + 1) && out.every((o) => Math.abs(o.x - x) > (o.w + w) / 2 + 0.5 || Math.abs(o.y - y) > (o.h + h) / 2 + 0.5);
+    // City streets: on a big enough map, lay out a grid of concrete blocks with streets between them.
+    if (th.blocks && Math.min(map.w, map.h) >= 30) {
+      const cell = 28, street = 9;
+      for (let cx = -map.w / 2 + cell / 2; cx + cell / 2 <= map.w / 2 + 1; cx += cell) for (let cy = -map.h / 2 + cell / 2; cy + cell / 2 <= map.h / 2 + 1; cy += cell) {
+        const w = cell - street - rng() * 5, h = cell - street - rng() * 5;
+        if (clear(cx, cy, w, h)) out.push(item("building", cx, cy, w, h));
+      }
+    }
+    const weights = Object.entries(th.items); const total = weights.reduce((t, [, v]) => t + v, 0);
+    const pick = () => { let x = rng() * total; for (const [k, v] of weights) { x -= v; if (x <= 0) return k; } return weights[0][0]; };
+    const count = Math.max(th.min, Math.min(th.max, Math.round(map.w * map.h * th.density * (0.8 + rng() * 0.4))));
+    for (let i = 0; i < count; i++) {
+      const key = pick(); const c = r.mapItems[key]; const flip = rng() < 0.5; const w = flip ? c.h : c.w, h = flip ? c.w : c.h;
+      for (let tries = 0; tries < 12; tries++) {
+        const x = (rng() - 0.5) * Math.max(0, map.w - w), y = (rng() - 0.5) * Math.max(0, map.h - h);
+        if (clear(x, y, w, h)) { out.push(item(key, x, y, w, h, flip)); break; }
+      }
+    }
+    return out;
+  }
+
+  // ---- rules with conditions: "vs robots", "first turn", "only with pistols".
+  function enemyType(e, r) {
+    if (!e || e.kind === "pc") return "human";
+    const name = low(e.tmpl || e.name);
+    for (const [type, pattern] of Object.entries(r.enemyTypes || {})) if (new RegExp(pattern, "i").test(name)) return type;
+    return e.mob ? "animal" : "human";
+  }
+  /** s describes this exact moment: shooter's weapon, target, range, round and so on. Does the rule's condition hold? */
+  function whenHolds(w, s, r) {
+    if (w.types && !(s.o && w.types.includes(s.o.type))) return false;
+    if (w.tabs && !(s.o && w.tabs.includes(s.o.tab))) return false;
+    if (w.vs && !w.vs.includes(s.vs)) return false;
+    if (w.firstTurn && s.round !== 1) return false;
+    if (w.afterFirst && s.round <= 1) return false;
+    if (w.sneak && !s.sneak) return false;
+    if (w.secondary && s.mode !== "se") return false;
+    if (w.auto && !(s.o && s.o.auto)) return false;
+    if (w.silenced && !(s.o && /silenc/i.test(`${s.o.n} ${s.o.note || ""}`))) return false;
+    if (w.magFull && !s.magFull) return false;
+    if (w.inCover && !s.inCover) return false;
+    if (w.targetMelee && !s.targetMelee) return false;
+    if (w.sameTarget && !s.sameTarget) return false;
+    if (w.oneHanded && !(s.o && r.oneHanded.includes(s.o.type))) return false;
+    if (w.rangeMin != null && !(s.range >= w.rangeMin)) return false;
+    if (w.rangeMax != null && !(s.range <= w.rangeMax)) return false;
+    if (w.part && s.part !== w.part) return false;
+    if (w.armor && !s.armorTypes.some((t) => new RegExp(w.armor, "i").test(t))) return false;
+    if (w.attackerTabs && !(s.attackerO && w.attackerTabs.includes(s.attackerO.tab))) return false;
+    if (w.attackerAuto && !(s.attackerO && s.attackerO.auto)) return false;
+    if (w.hpBelow != null && !(s.hpShare < w.hpBelow)) return false;
+    if (w.hpAbove != null && !(s.hpShare > w.hpAbove)) return false;
+    if (w.moved && !s.moved) return false;
+    if (w.notMoved && s.moved) return false;
+    if (w.melee && !(s.o && s.o.tab === "MW")) return false;
+    if (w.vsMob && !s.targetMob) return false;
+    if (w.attackerMob && !s.attackerMob) return false;
+    if (w.afterCrit && !s.afterCrit) return false;
+    if (w.lightLoad && !s.lightLoad) return false;
+    if (w.hpHigher && !s.hpHigher) return false;
+    if (w.armorFaction && !s.armorFaction) return false;
+    if (w.weaponStatus && !(s.o && new RegExp(w.weaponStatus, "i").test(String(s.o.status || "")))) return false;
+    if (w.nameRe && !(s.o && new RegExp(w.nameRe, "i").test(s.o.n || ""))) return false;
+    if (w.items && !w.items.includes(s.item)) return false;
+    if (w.cats && !w.cats.includes(s.itemCat)) return false;
+    return true;
+  }
+  /** A copy of someone's numbers with every condition that holds right now added in. Used for each shot, on both shooter and target. */
+  function forShot(d, e, s, ctx) {
+    const r = ctx.rules; const m = { ...d.m }; const skills = { ...d.skills }; const sp = { ...d.sp }; let extraDt = 0, extraAp = 0;
+    const g = e.gear || {};
+    const worn = [g.head, g.armor].map((n) => n && get(ctx, n)).filter(Boolean);
+    // armorTypes holds the type and the name, so a rule can say "Light" or "riot" or "reflect".
+    const s2 = { ...s, hpShare: d.hp ? (e.hp || 0) / d.hp : 1, armorTypes: worn.map((h) => `${h.o.type || ""} ${h.o.n}`), armorFaction: worn.some((h) => h.o.faction), lightLoad: d.enc && d.enc.total <= d.carry / 2 };
+    for (const row of d.cond || []) {
+      if (Object.keys(row.when).every((k) => k === "hpBelow" || k === "hpAbove")) continue;  // already counted in derive
+      if (!whenHolds(row.when, s2, r)) continue;
+      // Some rules grow with what has happened: rounds gone by, burst size, kills, hits taken and so on.
+      const w = row.when; const scale = w.perRound ? Math.max(0, s.round - 1) : w.per2Rounds ? Math.floor(Math.max(0, s.round - 1) / 2) : w.perCount ? (s.o && s.o.count) || 1 : w.perRange ? s.range || 1 : w.perKillHuman ? s.killsHuman || 0 : w.perHitTaken ? s.hitsTaken || 0 : w.perAfraid ? s.afraid || 0 : w.perBleed ? s.targetBleed || 0 : w.perDebuff ? s.targetDebuffs || 0 : w.perStreak ? s.streak || 0 : w.perStill ? s.still || 0 : w.perCaps100 ? Math.floor((e.caps || 0) / 100) : 1;
+      for (const [k, v] of Object.entries(row.mods || {})) {
+        if (typeof v !== "number") continue;
+        const x = fix(v * scale);
+        if (k === "weaponSkill") { if (s.o && s.o.skill && s.o.skill in skills) skills[s.o.skill] += x; continue; }
+        if (k in skills) skills[k] += x; else if (k in sp) sp[k] = (sp[k] || 0) + x; else if (k === "dt") extraDt += x; else if (k === "ap") extraAp += x; else m[k] = fix((m[k] || 0) + x);
+      }
+    }
+    return { ...d, m, skills, sp, dt: d.dt + extraDt, ap: d.ap + extraAp };
+  }
+
+  // ---- one list of every effect the rules can apply automatically. The Variables dev window shows this table.
+  const VARS = {
+    S: "Strength", P: "Perception", E: "Endurance", C: "Charisma", I: "Intelligence", A: "Agility", L: "Luck",
+    hp: "Max HP, flat", hpMul: "Max HP, multiplier", hpPct: "Max HP, percent", ap: "Max AP, flat", apMul: "Max AP, percent", dt: "Damage Threshold, flat", dtPct: "Damage Threshold, percent", pri: "Initiative", save: "Saving throw", carry: "Carry weight, flat", carryMul: "Carry weight, percent", pts: "Skill points per level",
+    acc: "Hit chance", enemyAcc: "Enemies' hit chance against you", dam: "Damage dealt, percent", dmgTaken: "Damage taken, percent", crit: "Crit chance", apCost: "AP cost of attacks", reload: "AP cost of reloads", pen: "Penetration", "r1 to r10": "Hit chance at that range band",
+    heal: "Healing received, percent", regen: "HP gained each round", dot: "HP lost each round", turns: "How long it lasts", mvm: "Walking speed, percent", immobile: "Can't walk", xpMul: "XP earned, percent", buy: "Vendor buy price, percent", sell: "Vendor sell price, percent", resistMental: "Mental status resistance (shown, DM decides)", resistPhysical: "Physical status resistance (shown, DM decides)",
+    critMult: "Crit damage multiplier, added", superMult: "Super crit multiplier, added", critDam: "Extra damage on any crit, percent", headMult: "Head shot multiplier, added", critToSuper: "Crits count as super crits", superKill: "Super crits kill outright", superRoll: "Widens the super crit band", failRoll: "Widens the jam band", enemyFail: "Widens enemies' jam band (shown, DM decides)", critBleed: "Crits also apply Bleeding at this tier", knockChance: "Chance a hit knocks the target out", debuffCh: "Chance to apply a status, percent", debuffEff: "Strength of statuses you apply (shown, DM decides)",
+    apCostMul: "Multiplies a weapon's AP cost", reloadMul: "Reload AP, percent", count: "Burst count", jam: "Jam chance", magAdd: "Magazine size, flat", magPct: "Magazine size, percent", damFlat: "Flat damage on the second melee attack", targetFree: "Aimed shots cost no extra AP", swapFree: "Swapping weapons costs no AP", itemFree: "Using items costs no AP", itemAP: "AP cost of items", clearJamAdd: "AP cost of clearing jams", moveAdd: "Extra AP for every move",
+    chemEff: "Strength of chems, percent", chemDur: "Duration of chems, percent", addict: "Addiction chance, percent", endHeal: "Heal this share of max HP after combat", killAP: "Regain this share of AP on a kill", apOnHit: "Gain this much AP when hit", enemyInit: "Enemies' initiative", lightHalf: "Items of 2 lb or less weigh half", traitScale: "All trait effects, percent", setC: "Sets Charisma to this",
+    "resist:Status": "Lowers that status's tier when it lands on you", weaponSkill: "Skill with weapons the rule names", healOut: "Healing you give, percent", accMul: "Multiplies final hit chance", nightPen: "Share of night penalties that still apply", critPerRange: "Crit chance multiplied by range band", superIgnoreDT: "Super crits ignore DT", critNoAmmo: "Crits use no ammo", critKnock: "Crits knock the target out", hitBleed: "Hits apply Bleeding at this tier", critDisorient: "Crits apply Disoriented at this tier", critLimb: "Crits cripple a random limb", crippleTaken: "Limb injuries on you are one tier worse", limbMult: "Limb hit multiplier on you, added", speechCap: "Highest your Speech can be", startAfraid: "Afraid tier at the start of each fight", noEW: "Can't use energy weapons", noItems: "Can't use items in a fight", capsMul: "Extra caps looted, percent", ammoWeight: "Ammo weight, percent", capsNoWeight: "Caps weigh nothing", counterAP: "AP cost of counter items", drinkAP: "AP cost of drinks", swapFreeMelee: "Free swap to melee", swapFreePistol: "Free swap to a pistol", saveMul: "Saving throw odds, percent", lucky: "A chosen last digit always crits", vengeful: "Your next hit crits after you take a crit", inspire: "Adds the Inspire action", auraEnemyAcc: "Enemies' hit chance on allies close to you", debuffAdd: "Status chance, added in percent", moveMaxM: "Farthest you can walk in one move", ignoreTier: "Ignores harmful statuses up to this tier", lunge: "Melee can reach R2",
+    ...Object.fromEntries(SKILLS.map(([k, n]) => [k, n + " skill"])),
+  };
+  const ALIAS = { bleed: "Bleeding", bleeding: "Bleeding", burn: "Burned", burned: "Burned", poison: "Poisoned", poisoned: "Poisoned", irradiated: "Irradiated", "crippled limb": "Injured Limb (Leg/Arm)", electrocuted: "Electrocuted", afraid: "Afraid", blinded: "Blinded", disoriented: "Disoriented" };
+  /**
+   * Turns the workbook's written effects into variables the rules can use. Runs when the app opens and after an import.
+   * Rows you import with their own fx or use columns keep them, so off-app edits win.
+   * Returns a list of everything it couldn't turn into a variable, for the skipped list.
+   */
+  function standardize(data, r) {
+    const skipped = [];
+    const worth = (o) => Object.keys(o).filter((k) => k !== "turns").length > 0;
+    // ---- statuses: one set of variables per tier. Cover moved to the rules (Settings) since the map handles it now.
+    data.statuses = data.statuses.filter((s) => s.n !== "Cover");
+    for (const s of data.statuses) {
+      const src = JSON.stringify(s.tiers || []);
+      if (!s.fx || s.fxFrom !== src) s.fx = (s.tiers || []).map((t) => {
+        const m = parseEffect(t, s.tone !== "Negative");
+        for (const [k, v] of Object.entries(parseGear(t))) if (m[k] == null) m[k] = v;  // "-10 Speech" and other skills
+        Object.assign(m, (r.statusRules || {})[s.n]);
+        // "-3 HP" on a status is read as lower max HP. Items handle HP changes as heals instead.
+        for (const [, n] of String(t).matchAll(/-(\d+) HP\b(?! per)/g)) m.hp = (m.hp || 0) - Number(n);
+        return m;
+      });
+      s.fxFrom = src;
+      const tiers = (s.tiers || []).filter(Boolean);
+      if (!tiers.length) skipped.push(["Status", s.n, "Blank in the workbook, so it has no numbers. It can still be applied and removed."]);
+      else if (s.fx.every((f) => !worth(f))) skipped.push(["Status", s.n, `Text only, needs the DM: "${tiers[0].slice(0, 60)}"`]);
+    }
+    const RESIST = { poison: "Poisoned", radiation: "Irradiated", sick: "Sick", weak: "Weak", hunger: "Hunger", bleed: "Bleeding", bleeding: "Bleeding", burn: "Burned", blind: "Blinded", electrocute: "Electrocuted", cold: "Frozen" };
+    // ---- consumables
+    const SKIP_CATS = new Set(["Healing", "Tool", "Literature"]);
+    for (const i of data.items) {
+      const t = String(i.effect || "");
+      if (i.use && i.useFrom === t) continue;  // already read. Change the written effect in a pack and this row is read again.
+      i.useFrom = t;
+      const use = { heal: null, applies: [], reduces: {}, removes: [], fx: {}, after: null };
+      // Heals are read by parseHeal when used, because they depend on who is healing whom.
+      const healing = parseHeal(t); if (healing) use.heal = true;
+      // Numbers: "+2 STR", "-10% Hit Chance", "STR +3".
+      Object.assign(use.fx, parseEffect(t.replace(/\d+\s*\+?\s*HP\b[^,]*/, "")));
+      for (const [k, v] of Object.entries(parseGear(t))) if (use.fx[k] == null) use.fx[k] = v;
+      for (const [, n] of t.matchAll(/chance to hit\s*-\s*(\d+)/gi)) use.fx.acc = -Number(n) / 100;
+      const hpUp = t.match(/\bHP \+(\d+)/); if (hpUp) { use.fx.hp = Number(hpUp[1]); use.heal = null; }
+      delete use.fx.turns;
+      // Painkillers: the workbook's "-25% Damage" on Med-X and friends means damage you take, not damage you deal.
+      if (i.cat === "Chem/Drug" && use.fx.dam < 0) { use.fx.dmgTaken = use.fx.dam; delete use.fx.dam; }
+      // "x1.5 AP" on a drug multiplies AP.
+      // Lowers a status: "Bleeding -1 Tier", "Afraid -1", "Blinded/Disoriented -2 Tier".
+      for (const [, names, n] of t.matchAll(/((?:Blinded\/Disoriented)|Crippled Limb|Bleed(?:ing)?|Burn(?:ed)?|Poison(?:ed)?|Irradiated|Electrocuted|Afraid)\s*-\s*(\d)/gi)) for (const w of names.split("/")) use.reduces[ALIAS[low(w)]] = Number(n);
+      // Removes a status: "Counters disoriented", "Blind Removed".
+      if (/counters disoriented/i.test(t)) use.removes.push("Disoriented");
+      if (/heal limb damage/i.test(t)) use.reduces["Injured Limb (Leg/Arm)"] = 1;
+      if (/revive downed ally/i.test(t)) use.revive = true;  // Surgeon's Kit is the one item the workbook says can stand someone up
+      const adds = t.match(/^Adds (\d+) (.+)$/i); if (adds) use.gives = [adds[2], Number(adds[1])];
+      const healBoost = t.match(/Healing \+(\d+)%/i); if (healBoost) use.fx.heal = Number(healBoost[1]) / 100;
+      // Resist X: that status lands one tier lower while this is active.
+      for (const [, w] of t.matchAll(/Resist (\w+)/gi)) { const st = RESIST[low(w)]; if (st) use.fx["resist:" + st] = 1; }
+      if (/temporarily removes all status effects/i.test(t)) use.numb = true;
+      const lim = t.match(/(?:reduces limb damage multiplier by \.(\d)|-(\d+)% Limb Damage)/i); if (lim) use.fx.limbMult = lim[1] ? -Number(lim[1]) / 10 : -Number(lim[2]) / 100;
+      const repairs = t.match(/Improves Weapon Con by Rep\/(\d+)/i); if (repairs) use.repairDiv = Number(repairs[1]);
+      if (/blind removed/i.test(t)) use.removes.push("Blinded");
+      // Poisons: "2+ Poison" applies Poisoned at that tier.
+      const poison = t.match(/(\d)\+\s*Poison/i); if (poison) use.applies.push({ n: "Poisoned", tier: Number(poison[1]) });
+      // Which status does this substance count as?
+      const byName = Object.entries(r.substanceByName || {}).find(([re]) => new RegExp(re, "i").test(i.n));
+      const sub = r.substances[i.n] || (/^Beer\b/.test(i.n) ? r.substances.Beer : null) || (byName && byName[1]) || (!t && (r.substanceByCat || {})[i.cat]) || null;
+      const numeric = worth(use.fx);
+      if (sub) {
+        // The first status carries the item's exact numbers. Extra statuses are labels, so nothing counts twice.
+        sub.forEach(([n, tier, guess], ix) => {
+          if (!data.statuses.some((x) => x.n === n)) return;
+          const a = { n, tier }; if (numeric) a.fx = ix === 0 ? { ...use.fx } : {};
+          use.applies.push(a);
+        });
+        if (numeric) use.fx = {};
+      } else if (!numeric && !healing && !worth(use.reduces) && !use.removes.length && !use.applies.length && !use.gives && !use.numb && !use.repairDiv && !use.revive && !/jack shit/i.test(t)) {
+        if (i.effect) skipped.push(["Item", i.n, `Text only, needs the DM: "${t.slice(0, 70)}"`]);
+        else if (!SKIP_CATS.has(i.cat)) skipped.push(["Item", i.n, "No effect written in the workbook, so nothing was changed."]);
+      }
+      // What comes after it wears off: "Hangover: -5 chance to hit", "Comedown: -5 AP", or a plain "INT -2".
+      if (i.after) {
+        const a = String(i.after); const after = /hangover/i.test(a) ? "Hangover" : /^Shock/i.test(a) ? "Shock" : /^Radiation/i.test(a) ? "Irradiated" : "Fatigue";
+        const fx = { ...parseEffect(a, false), ...parseGear(a) }; delete fx.turns;
+        for (const [, n] of a.matchAll(/-\s?(\d+) chance to hit/gi)) fx.acc = -Number(n) / 100;
+        use.after = worth(fx) ? { n: after, tier: 1, fx, text: a } : { n: after, tier: 1 };
+      }
+      i.use = use;
+    }
+    // ---- armor: buffs and nerfs as variables. Accessories already have rows in the Stat Converter table.
+    for (const a of data.armor) {
+      if (a.loc === "Accessory") continue;
+      const armorSrc = `${a.buffs || ""}|${a.nerfs || ""}`; if (a.fx !== undefined && a.fxFrom === armorSrc) continue; a.fxFrom = armorSrc;
+      const all = `${a.buffs || ""},${a.nerfs || ""},${a.mech || ""}`;
+      const fx = parseGear(`${a.buffs || ""}, ${a.nerfs || ""}`);
+      // Armor text that isn't a plain number: resistances, "- 1 AP to fire", "Cannot wear accessories".
+      for (const [word, st] of [[/poison|poisioin/i, "Poisoned"], [/bleeding/i, "Bleeding"], [/radiation/i, "Irradiated"]]) if (word.test(all)) fx["resist:" + st] = 1;
+      const fire = all.match(/-\s*(\d+) AP to fire/i); if (fire) fx.apCost = -Number(fire[1]);
+      if (/cannot wear accessories/i.test(all)) fx.noAccessories = 1;
+      if (worth(fx)) a.fx = fx;
+    }
+    // ---- level perks: only effects that are plain numbers. Everything else stays a reminder.
+    const PERK = [
+      [/^Improves AP by (\d+)/i, "ap"], [/^Improves DT by (\d+)/i, "dt"], [/^Permanently Gain (\d+) DT/i, "dt"], [/^Improves PEN by (\d+)$/i, "pen"], [/^Improves PRI by (\d+)$/i, "pri"], [/^Improves Saving throw by (\d+)/i, "save"], [/^(\d+)\+ HP$/i, "hp"], [/^(\d+)\+ base Intiative$/i, "pri"], [/^Increases physical status eff\. resistance by (\d+)/i, "resistPhysical"], [/^Increases phychological status eff\. resistance by (\d+)/i, "resistMental"],
+    ];
+    const PERKPCT = [[/^Improves buy prices by (\d+)%/i, "buy", -1], [/^Improves active inventory by (\d+)%/i, "carryMul", 1]];
+    const seen = new Set();
+    for (const p of data.levelPerks) {
+      if (!p.effect) continue;
+      const t = String(p.effect).trim();
+      if (p.rows && p.fxFrom === t) continue;
+      p.fxFrom = t;
+      // First the written table in rules.js, then simple sentences like "Improves AP by 1".
+      if (r.perkRules && r.perkRules[p.n]) { p.rows = r.perkRules[p.n]; p.fx = p.rows[0].fx; if (p.rows[0].when) p.when = p.rows[0].when; continue; }
+      const fx = {};
+      for (const [re, k] of PERK) { const m = t.match(re); if (m) fx[k] = Number(m[1]); }
+      for (const [re, k, sign] of PERKPCT) { const m = t.match(re); if (m) fx[k] = sign * Number(m[1]) / 100; }
+      const big = t.match(/^When below (\d+)% Health gain \+(\d+) AP, \+(\d+) DT, and \+(\d+)% Damage/i);
+      if (big) { p.fx = { ap: Number(big[2]), dt: Number(big[3]), dam: Number(big[4]) / 100 }; p.when = { hpBelow: Number(big[1]) / 100 }; p.rows = [{ fx: p.fx, when: p.when }]; continue; }
+      const when = t.match(/when health is below (\d+)%/i);
+      if (worth(fx)) { p.fx = fx; if (when) p.when = { hpBelow: Number(when[1]) / 100 }; p.rows = [{ fx, when: p.when }]; } else if (!seen.has(t)) { seen.add(t); skipped.push(["Level perk", p.n, `For the DM: "${t.slice(0, 80)}"`]); }
+    }
+    // ---- Stat Converter rows (traits, skill perks, accessories, mods): their reminder notes become variables and conditions.
+    const tr0 = (row) => (r.traitRules || {})[row.n];
+    const NOTE_KEYS = { "crit mult": "critMult", "super crit mult": "superMult", "crit d": "critDam", "head mult": "headMult", "ap cost": "apCostMul", "chem eff": "chemEff", "addict ch": "addict", "debuff ch": "debuffCh", "debuff eff": "debuffEff", count: "count", "fail ch": "jam", "super crit roll": "superRoll", "super fail roll": "failRoll", "enemy fail roll": "enemyFail", buy: "buy", sell: "sell" };
+    const NOTE_WHEN = [[/^vs\.? humans?$/i, { vs: ["human"] }], [/^(?:vs\.? robots?|if robot)$/i, { vs: ["robot"] }], [/^(?:when|if) sneak$/i, { sneak: true }], [/^if first turn$/i, { firstTurn: true }], [/^only if \(MAGAZINE=CAPACITY\)$/i, { magFull: true }], [/^(?:if silencer|when silenced)$/i, { silenced: true }], [/^when one handed$/i, { oneHanded: true }], [/^when power armor$/i, { armor: "Power" }], [/^<\s*25%$/, { hpBelow: 0.25 }], [/^only for movement$/i, null]];
+    for (const row of data.sc) {
+      if (row.noteFrom === (row.note || "") && row.parsed) continue;
+      row.noteFrom = row.note || ""; row.parsed = true;
+      const when = {}; const left = [];
+      for (const raw of String(row.note || "").split(";").map((x) => x.trim()).filter(Boolean)) {
+        const only = raw.match(/^Meant only for: (.+)$/i);
+        if (only) { when.types = only[1].split(",").map((x) => x.trim()); continue; }
+        if (/^Not automated:/i.test(raw)) {
+          for (const part of raw.replace(/^Not automated:\s*/i, "").split(",")) {
+            const m = part.trim().match(/^(.+?)\s*(\+\/-|\*|\/|\+)?\s*(-?[\d.]+)$/);
+            const key = m && NOTE_KEYS[low(m[1])];
+            if (m && /^capacity$/i.test(m[1])) { row.mods = { ...(row.mods || {}), [m[2] === "*" ? "magPct" : "magAdd"]: Number(m[3]) }; continue; }
+            if (!key) { left.push(part.trim()); continue; }
+            // "Chem Eff * 2.0" means double, so it's stored as +100%. "* -0.5" is already a percent.
+            const val = key === "chemEff" && Number(m[3]) > 0 ? fix(Number(m[3]) - 1) : Number(m[3]);
+            row.mods = { ...(row.mods || {}), [key]: val };
+          }
+          continue;
+        }
+        const hit = NOTE_WHEN.find(([re]) => re.test(raw));
+        if (hit) { if (hit[1]) Object.assign(when, hit[1]); else left.push(raw); continue; }
+        if (/if "?super"?.*instakill|instakill on "?super/i.test(raw)) { row.mods = { ...(row.mods || {}), superKill: 1 }; if (/sneak/i.test(raw)) when.sneak = true; continue; }
+        const kp = raw.match(/^Carry \/(\d)$/); if (kp) { row.mods = { ...(row.mods || {}), carryMul: 1 / Number(kp[1]) - 1 }; continue; }
+        left.push(raw);
+      }
+      if (Object.keys(when).length) row.when = when;
+      row.note = left.join("; ");
+      if (!row.note) delete row.note;
+      // The rule tables in rules.js settle whatever the note parser couldn't.
+      const nr = (r.noteRules || {})[row.n];
+      if ((nr || tr0(row)) && !row.sheetMods) row.sheetMods = row.mods || {};  // keeps the workbook's own numbers for comparing against the sheet
+      if (nr) { if (nr.fx) row.mods = { ...(row.mods || {}), ...nr.fx }; if (nr.when) row.when = { ...(row.when || {}), ...nr.when }; delete row.note; }
+      const tr = (r.traitRules || {})[row.n];
+      if (tr) { row.mods = { ...(row.mods || {}) }; for (const x of tr) Object.assign(row.mods, x.fx); if (tr[0].when) row.when = { ...(row.when || {}), ...tr[0].when }; delete row.note; }
+    }
+    for (const row of data.sc) if (row.note) skipped.push([row.cat || "Row", row.n, `For the DM: "${row.note.slice(0, 90)}"`]);
+    // Traits the workbook only describes in words: the rule table in rules.js.
+    const hasRow = new Set(data.sc.map((x) => low(x.n)));
+    for (const t of data.traits) {
+      const rule = r.traitRules && r.traitRules[t.n];
+      if (rule) { if (!hasRow.has(low(t.n))) t.rows = rule; continue; }  // a trait with a row already got its rule above
+      if (!hasRow.has(low(t.n))) skipped.push(["Trait", t.n, `For the DM: "${String(t.ben || "").slice(0, 70)}"`]);
+    }
+    for (const m of data.mods) if (!hasRow.has(low(m.n))) skipped.push(["Weapon mod", m.n, `Text only: "${String(m.effect || "blank").slice(0, 60)}"`]);
+    return skipped;
+  }
+
+  return { inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
+})();
+if (typeof module !== "undefined") module.exports = E;

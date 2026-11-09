@@ -1,0 +1,788 @@
+[
+ {
+  "n": "Long Barrel",
+  "skill": "Repair",
+  "group": "Ballistic",
+  "loc": "Barrel",
+  "effect": "Chance to hit +((range-6)*2)%",
+  "applies": "All SG and BG",
+  "lb": 0
+ },
+ {
+  "n": "Snub Barrel",
+  "skill": "Repair",
+  "group": "Ballistic",
+  "loc": "Barrel",
+  "effect": "Chance to hit +((5-range)*2)%",
+  "applies": "All SG and BG",
+  "lb": 0
+ },
+ {
+  "n": "Heavy Revolver Match Barrel",
+  "skill": "Repair",
+  "group": "Big Guns",
+  "loc": "Barrel",
+  "effect": "5+ Chance to hit",
+  "applies": "BG Revolver",
+  "lb": 0
+ },
+ {
+  "n": "Shotgun Long Tube",
+  "skill": "Repair",
+  "group": "Big Guns",
+  "loc": "Barrel",
+  "effect": "Mag Size +3",
+  "lb": 0
+ },
+ {
+  "n": "Shredder Barrels",
+  "tier": 1,
+  "skill": "Repair",
+  "group": "Big Guns",
+  "loc": "Barrel",
+  "effect": "Adds Slash Melee attack for 3 AP",
+  "lb": 0
+ },
+ {
+  "n": "Beam Splitter",
+  "skill": "Science",
+  "group": "Energy Weapons",
+  "loc": "Barrel",
+  "effect": "Converts to multi-projectile hit formula",
+  "applies": "Beam Based Weapons: Lasers, LAERS",
+  "lb": 0
+ },
+ {
+  "n": "Focus Optics",
+  "skill": "Science",
+  "group": "Energy Weapons",
+  "loc": "Barrel",
+  "effect": "Damage +5%",
+  "applies": "Laser and Holographic Weapons",
+  "lb": 0
+ },
+ {
+  "n": "Plasma Projectile Accelerator",
+  "skill": "Science",
+  "group": "Energy Weapons",
+  "loc": "Barrel",
+  "effect": "Chance to hit +(range*2)%",
+  "lb": 0
+ },
+ {
+  "n": "Plasma Splitter",
+  "skill": "Science",
+  "group": "Energy Weapons",
+  "loc": "Barrel",
+  "effect": "Converts to multi-projectile hit formula",
+  "applies": "Projectile Based Energy Weapons: Plasma, Holo",
+  "lb": 0
+ },
+ {
+  "n": "Alpha Strike Barrel",
+  "skill": "Science",
+  "group": "Explosives",
+  "loc": "Barrel",
+  "effect": "Chance to hit +5%",
+  "applies": "Rocket",
+  "lb": 0
+ },
+ {
+  "n": "Grenade Rifle Long Barrel",
+  "skill": "Repair",
+  "group": "Explosives",
+  "loc": "Barrel",
+  "effect": "Chance to hit >6 +5%, <3 -10%",
+  "applies": "25, 40 Launcher",
+  "lb": 0
+ },
+ {
+  "n": "HD Component",
+  "skill": "Repair",
+  "group": "Small Guns",
+  "loc": "Barrel",
+  "effect": "-1 Fail Chance",
+  "applies": "Pistols",
+  "lb": 0
+ },
+ {
+  "n": "Zeroing",
+  "skill": "Repair",
+  "group": "Small Guns",
+  "loc": "Barrel",
+  "effect": "(chosen range): +15%, All other ranges -5%",
+  "applies": "Sniper, DMR, Semi-Auto Rifle, Vintage Rifle",
+  "lb": 0
+ },
+ {
+  "n": "Carbon Fiber Parts",
+  "skill": "Repair",
+  "group": "Big Guns",
+  "loc": "Frame",
+  "effect": "Reduces Carry Weight (-20%)",
+  "applies": "AMR, Sniper, DMR, Fast Laser, Fast Plasma",
+  "lb": 0
+ },
+ {
+  "n": "Alloy Frame",
+  "skill": "Repair",
+  "group": "Melee Weapons",
+  "loc": "Frame",
+  "applies": "Factory-style weapons",
+  "lb": 0
+ },
+ {
+  "n": "Weapon Camouflaging (Desert)",
+  "skill": "Survival",
+  "group": "Ranged",
+  "loc": "Frame",
+  "effect": "-5% enemy Chance to hit in Desert",
+  "lb": 0
+ },
+ {
+  "n": "Weapon Camouflaging (Woodland)",
+  "skill": "Survival",
+  "group": "Ranged",
+  "loc": "Frame",
+  "effect": "-5% enenmy Chance to hit in Woodland",
+  "lb": 0
+ },
+ {
+  "n": "Fist Hi-Cap Valves",
+  "skill": "Science",
+  "group": "Melee Weapons",
+  "loc": "Grip",
+  "effect": "-1 AP Cost to Primary Attack",
+  "applies": "Hand Melee",
+  "lb": 0
+ },
+ {
+  "n": "Sword Balanced Grip",
+  "skill": "Repair",
+  "group": "Melee Weapons",
+  "loc": "Grip",
+  "effect": "-1 AP Cost to Slash",
+  "lb": 0
+ },
+ {
+  "n": "California Compliant Grip",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Grip",
+  "effect": "-Chance to Hit -5%, Formal Coeff -1",
+  "lb": 0
+ },
+ {
+  "n": "Comfort Grip",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Grip",
+  "effect": "Chance to Hit +3%",
+  "lb": 0
+ },
+ {
+  "n": "Sharpshooter's Grip",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Grip",
+  "effect": "Chance to Hit +5%",
+  "lb": 0
+ },
+ {
+  "n": "Sweetheart Grip Inlay",
+  "tier": 3,
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Grip",
+  "effect": "Weapon Crit Chance +1%",
+  "lb": 0
+ },
+ {
+  "n": "Taped Grip",
+  "tier": 1,
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Grip",
+  "effect": "Chance to Hit +1%",
+  "lb": 0
+ },
+ {
+  "n": "Added Rocket",
+  "skill": "Science",
+  "group": "Melee Weapons",
+  "loc": "Impact",
+  "effect": "Damage +20%, AP cost +15%",
+  "applies": "Blunt",
+  "lb": 0
+ },
+ {
+  "n": "Blades",
+  "skill": "Repair",
+  "group": "Melee Weapons",
+  "loc": "Impact",
+  "effect": "Converts Blunt Damage to Slash (-1 Damage, Bleed Chance)",
+  "applies": "Blunt",
+  "lb": 0
+ },
+ {
+  "n": "Carbide Teeth",
+  "skill": "Repair",
+  "group": "Melee Weapons",
+  "loc": "Impact",
+  "effect": "Damage +5, Adds Bleed Chance",
+  "applies": "Chain melee weapons",
+  "lb": 0
+ },
+ {
+  "n": "Concussion Pack",
+  "skill": "Science",
+  "group": "Melee Weapons",
+  "loc": "Impact",
+  "effect": "Adds Stun Chance",
+  "applies": "Blunt",
+  "lb": 0
+ },
+ {
+  "n": "Electric Coil",
+  "skill": "Science",
+  "group": "Melee Weapons",
+  "loc": "Impact",
+  "effect": "Adds Shock Chance",
+  "lb": 0
+ },
+ {
+  "n": "Heated Coil",
+  "skill": "Science",
+  "group": "Melee Weapons",
+  "loc": "Impact",
+  "effect": "Adds Fire Chance",
+  "lb": 0
+ },
+ {
+  "n": "Nuclear Coil",
+  "skill": "Science",
+  "group": "Melee Weapons",
+  "loc": "Impact",
+  "effect": "Adds Rads Chance",
+  "lb": 0
+ },
+ {
+  "n": "Ported Chambers",
+  "tier": 4,
+  "skill": "Repair",
+  "group": "Melee Weapons",
+  "loc": "Impact",
+  "effect": "-1 AP Cost",
+  "applies": "Hand",
+  "lb": 0
+ },
+ {
+  "n": "Serrated Blade",
+  "skill": "Repair",
+  "group": "Melee Weapons",
+  "loc": "Impact",
+  "effect": "Bleed Chance x2",
+  "lb": 0
+ },
+ {
+  "n": "Spikes",
+  "tier": 1,
+  "skill": "Repair",
+  "group": "Melee Weapons",
+  "loc": "Impact",
+  "effect": "Converts Blunt Damage to Pierce (-3 Damage, +3 Pen)",
+  "applies": "Blunt",
+  "lb": 0
+ },
+ {
+  "n": "Sword Authentic Blade",
+  "skill": "Repair",
+  "group": "Melee Weapons",
+  "loc": "Impact",
+  "effect": "Damage +2, Pen +2, Value +50%",
+  "applies": "Slash",
+  "lb": 0
+ },
+ {
+  "n": "Drum Magazine",
+  "skill": "Repair",
+  "group": "Ballistic",
+  "loc": "Magazine",
+  "effect": "Mag Count +30",
+  "lb": 0
+ },
+ {
+  "n": "Extended Magazine",
+  "skill": "Repair",
+  "group": "Ballistic",
+  "loc": "Magazine",
+  "effect": "Mag Count +10",
+  "lb": 0
+ },
+ {
+  "n": "Optimum Quick Mags",
+  "skill": "Repair",
+  "group": "Ballistic",
+  "loc": "Magazine",
+  "effect": "-1 Reload AP",
+  "lb": 0
+ },
+ {
+  "n": "Quick Eject Magazine",
+  "skill": "Repair",
+  "group": "Ballistic",
+  "loc": "Magazine",
+  "effect": "-1 Reload AP, -25% Capacity",
+  "lb": 0
+ },
+ {
+  "n": "Speed Mags",
+  "skill": "Repair",
+  "group": "Ballistic",
+  "loc": "Magazine",
+  "effect": "-1 Reload AP",
+  "applies": "Assault Rifles",
+  "lb": 0
+ },
+ {
+  "n": "Expanded Tanks",
+  "skill": "Science",
+  "group": "Energy Weapons",
+  "loc": "Magazine",
+  "effect": "Ammo Capacity +50%",
+  "applies": "Tank Based Weapons",
+  "lb": 0
+ },
+ {
+  "n": "Launcher Expanded Drum",
+  "skill": "Repair",
+  "group": "Explosives",
+  "loc": "Magazine",
+  "effect": "Ammo Capacity +2",
+  "applies": "Launcher",
+  "lb": 0
+ },
+ {
+  "n": "Revolver Extra Shot",
+  "skill": "Repair",
+  "group": "Small Guns",
+  "loc": "Magazine",
+  "effect": "Ammo Capacity +1",
+  "applies": "Revolver",
+  "lb": 0
+ },
+ {
+  "n": "Muzzle Break",
+  "skill": "Repair",
+  "group": "Ballistic",
+  "loc": "Muzzle",
+  "lb": 0
+ },
+ {
+  "n": "Recoil Compensator",
+  "skill": "Repair",
+  "group": "Ballistic",
+  "loc": "Muzzle",
+  "effect": "Chance to Hit +5",
+  "lb": 0
+ },
+ {
+  "n": "Silencer",
+  "skill": "Repair",
+  "group": "Ballistic",
+  "loc": "Muzzle",
+  "effect": "Allows for Sneak Crits (Roll for Sneak)",
+  "lb": 0
+ },
+ {
+  "n": "Shotgun Choke",
+  "skill": "Repair",
+  "group": "Big Guns",
+  "loc": "Muzzle",
+  "effect": "Increases longer range accuracy",
+  "applies": "shotgun",
+  "lb": 0
+ },
+ {
+  "n": "Automatic Receiver",
+  "skill": "Repair",
+  "group": "Ballistic",
+  "loc": "Receiver",
+  "effect": "Converts to automatic hit formula",
+  "lb": 0
+ },
+ {
+  "n": "Heavy Weapon Dampened Subframe",
+  "skill": "Repair",
+  "group": "Big Guns",
+  "loc": "Receiver",
+  "effect": "Chance to Hit +5",
+  "applies": "Heavy Auto Weapons",
+  "lb": 0
+ },
+ {
+  "n": "Advanvced Calibration",
+  "skill": "Science",
+  "group": "Energy Weapons",
+  "loc": "Receiver",
+  "effect": "Chance to hit +5",
+  "applies": "Holographic",
+  "lb": 0
+ },
+ {
+  "n": "EC Recycler",
+  "skill": "Science",
+  "group": "Energy Weapons",
+  "loc": "Receiver",
+  "effect": "-1 AP/Shot",
+  "lb": 0
+ },
+ {
+  "n": "ECW Recycler",
+  "skill": "Science",
+  "group": "Energy Weapons",
+  "loc": "Receiver",
+  "effect": "Every 4th Shot does not consume ammo",
+  "lb": 0
+ },
+ {
+  "n": "Gamma Wave Tuner",
+  "skill": "Science",
+  "group": "Energy Weapons",
+  "loc": "Receiver",
+  "effect": "Applies tier 1 burn efffect to bean weapons",
+  "lb": 0
+ },
+ {
+  "n": "Laser Auto Conversion",
+  "skill": "Science",
+  "group": "Energy Weapons",
+  "loc": "Receiver",
+  "effect": "Converts to automatic hit formula",
+  "lb": 0
+ },
+ {
+  "n": "MFC Recycler",
+  "skill": "Science",
+  "group": "Energy Weapons",
+  "loc": "Receiver",
+  "effect": "Every 4th Shot does not consume ammo",
+  "lb": 0
+ },
+ {
+  "n": "Grenade MG High-Speed Kit",
+  "skill": "Repair",
+  "group": "Explosives",
+  "loc": "Receiver",
+  "effect": "Burst Count +1",
+  "lb": 0
+ },
+ {
+  "n": "Grenade Rifle Upgraded Internals",
+  "skill": "Repair",
+  "group": "Explosives",
+  "loc": "Receiver",
+  "effect": "-1 AP/Shot",
+  "lb": 0
+ },
+ {
+  "n": "Red Glare Auto Launcher",
+  "skill": "Science",
+  "group": "Explosives",
+  "loc": "Receiver",
+  "effect": "-1 AP Cost",
+  "lb": 0
+ },
+ {
+  "n": "AMR Custom Bolt",
+  "skill": "Repair",
+  "group": "Small Guns",
+  "loc": "Receiver",
+  "effect": "-1 AP/Shot",
+  "lb": 0
+ },
+ {
+  "n": "Carbine Light Bolt",
+  "skill": "Repair",
+  "group": "Small Guns",
+  "loc": "Receiver",
+  "effect": "Burst Count +1",
+  "lb": 0
+ },
+ {
+  "n": "Custom Action",
+  "skill": "Repair",
+  "group": "Small Guns",
+  "loc": "Receiver",
+  "effect": "AP cost -1",
+  "applies": "Vintage Rifles, other Bolt Actions",
+  "lb": 0
+ },
+ {
+  "n": "LMG Upgraded Internals",
+  "skill": "Repair",
+  "group": "Small Guns",
+  "loc": "Receiver",
+  "effect": "Burst Count +1",
+  "lb": 0
+ },
+ {
+  "n": "Rapid Fire Receiver",
+  "skill": "Repair",
+  "group": "Small Guns",
+  "loc": "Receiver",
+  "effect": "-2 AP/Shot, -10% Chance to Hit",
+  "applies": "Automatic Weapons",
+  "lb": 0
+ },
+ {
+  "n": "Upgraded Springs",
+  "skill": "Repair",
+  "group": "Small Guns",
+  "loc": "Receiver",
+  "effect": "-1 AP/Shot",
+  "applies": "Semi-Auto Rifles",
+  "lb": 0
+ },
+ {
+  "n": "Glow Sights (Tritium)",
+  "tier": 2,
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Sight",
+  "effect": "1%+ Chance to hit",
+  "lb": 0
+ },
+ {
+  "n": "Hybrid Sight",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Sight",
+  "effect": "Boosts R3-5, OR Boosts R7-9 +5%",
+  "lb": 0
+ },
+ {
+  "n": "Long Range Scope",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Sight",
+  "effect": "Chance to hit >7: +5%, Other ranges -5%",
+  "lb": 0
+ },
+ {
+  "n": "Medium Range Scope",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Sight",
+  "effect": "Chance to hit 3-7: +5%, Other ranges -5%",
+  "lb": 0
+ },
+ {
+  "n": "Night Vision Scope",
+  "skill": "Science",
+  "group": "Ranged",
+  "loc": "Sight",
+  "effect": "Eliminates penalties at Night",
+  "lb": 0
+ },
+ {
+  "n": "Pipe Screw Scope",
+  "tier": 1,
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Sight",
+  "effect": "2+ Chance to hit R4-R8",
+  "applies": "All ranged",
+  "lb": 0.25
+ },
+ {
+  "n": "Recon Scope",
+  "skill": "Science",
+  "group": "Ranged",
+  "loc": "Sight",
+  "lb": 0
+ },
+ {
+  "n": "Red Dot Scope",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Sight",
+  "effect": "Chance to hit <5 +2%",
+  "lb": 0
+ },
+ {
+  "n": "Reflex Sight",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Sight",
+  "effect": "Chance to hit <5 +4%",
+  "lb": 0
+ },
+ {
+  "n": "Short Range Scope",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Sight",
+  "lb": 0
+ },
+ {
+  "n": "Thermal Scope",
+  "skill": "Science",
+  "group": "Ranged",
+  "loc": "Sight",
+  "effect": "Eliminates penalties at Night, PER with weapon +2",
+  "lb": 0
+ },
+ {
+  "n": "Variable Range Scope",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Sight",
+  "effect": "Chance to hit +5%, Changing range of target if >2 requires 1 AP",
+  "lb": 0
+ },
+ {
+  "n": "Adjustable Stock",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Stock",
+  "lb": 0
+ },
+ {
+  "n": "Marksman's Stock",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Stock",
+  "lb": 0
+ },
+ {
+  "n": "Pistol Added Stock",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Stock",
+  "applies": "Pistols",
+  "lb": 0
+ },
+ {
+  "n": "Recoil Compensating Stock",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Stock",
+  "lb": 0
+ },
+ {
+  "n": "Short Stock",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Stock",
+  "lb": 0
+ },
+ {
+  "n": "Hair Trigger",
+  "skill": "Repair",
+  "group": "Ballistic",
+  "loc": "Trigger",
+  "effect": "-1 AP for first shot of combat encounter",
+  "lb": 0
+ },
+ {
+  "n": "Targeting Computer Guidance System",
+  "tier": 5,
+  "skill": "Science",
+  "group": "Explosives",
+  "loc": "Trigger",
+  "effect": "Spend 5AP to lock on, automatically hits targeted opp. above R6",
+  "applies": "Missile, Rocket",
+  "lb": 0
+ },
+ {
+  "n": "Double Tap Trigger",
+  "skill": "Repair",
+  "group": "Small Guns",
+  "loc": "Trigger",
+  "effect": "Turns single shot into 2 round burst, -5% chance to hit",
+  "applies": "Semi Auto Rifles, DMRs",
+  "lb": 0
+ },
+ {
+  "n": "Bayonet",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Underbarrel",
+  "effect": "Adds bayonett melee attack to loadout, -2 Chance to Hit",
+  "lb": 0
+ },
+ {
+  "n": "Bipod",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Underbarrel",
+  "effect": "2 AP to deploy, increases Chance to hit by +10, Cannot move while deployed",
+  "applies": "Two Handed Rifles, LMGS, AMRs",
+  "lb": 0
+ },
+ {
+  "n": "Laser Attachment",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Underbarrel",
+  "effect": "3+ Chance to Hit",
+  "lb": 0
+ },
+ {
+  "n": "Strobe Light",
+  "tier": 2,
+  "skill": "Science",
+  "group": "Ranged",
+  "loc": "Underbarrel",
+  "effect": "-15% enemy chance to hit if Indoors",
+  "applies": "Some SG+some EW",
+  "lb": 0
+ },
+ {
+  "n": "Underbarrel Flamer",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Underbarrel",
+  "effect": "Adds Flamethrower to Loadout",
+  "applies": "Some SG+some EW",
+  "lb": 0
+ },
+ {
+  "n": "Underbarrel Grenade Launcher (v1)",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Underbarrel",
+  "effect": "Adds 25mm Explosive Launcher to loadout",
+  "applies": "Some SG+some EW",
+  "lb": 0
+ },
+ {
+  "n": "Underbarrel Grenade Launcher (v2)",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Underbarrel",
+  "effect": "Adds 40mm Explosive Launcher to loadout",
+  "applies": "Some SG+some EW",
+  "lb": 0
+ },
+ {
+  "n": "Underbarrel Shotgun",
+  "skill": "Repair",
+  "group": "Ranged",
+  "loc": "Underbarrel",
+  "effect": "Adds 20 Gauge Shotgun to Loadout",
+  "applies": "Some SG+some EW",
+  "lb": 0
+ },
+ {
+  "n": "Underbarrel Taser",
+  "tier": 4,
+  "skill": "Science",
+  "group": "Ranged",
+  "loc": "Underbarrel",
+  "effect": "Adds Pulse Gun to Loadout",
+  "applies": "Some SG+some EW",
+  "lb": 0
+ }
+]

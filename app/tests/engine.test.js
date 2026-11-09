@@ -1,0 +1,443 @@
+// Run: node --test app/tests/
+// fixtures.json and data.json are written by app/build.py from the workbook's saved results.
+const test = require("node:test");
+const assert = require("node:assert");
+const fs = require("fs");
+const path = require("path");
+const E = require("../src/engine.js");
+const { DEFAULT_RULES } = require("../src/rules.js");
+const data = JSON.parse(fs.readFileSync(path.join(__dirname, "data.json"), "utf8"));
+const fx = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures.json"), "utf8"));
+const skippedList = E.standardize(data, DEFAULT_RULES);
+const db = E.makeDb(data);
+const rules = JSON.parse(JSON.stringify(DEFAULT_RULES));
+Object.assign(rules, { perPenalty: 0.05, strGun: 0.0125, strMelee: 0.05, conditions: false });  // fixtures come from the sheet, which still has these
+const ctx = { db, rules, scene: { time: "Daytime", weather: "Clear", env: "Grassland", effects: [] }, ov: {} };
+const near = (a, b, msg) => assert.ok(Math.abs(a - b) < 1e-6, `${msg}: got ${a}, sheet says ${b}`);
+const gecko = E.spawn(db.enemies.get("gecko"), "e1", ctx, () => 0.5);
+const Tg = E.derive(gecko, ctx);
+
+for (const p of fx.players) {
+  const c = data.party.find((x) => x.name === p.name);
+  const d = E.derive(c, ctx);
+  test(`derived stats match Player Sheets: ${p.name}`, () => {
+    assert.deepStrictEqual(E.SPECIAL.map((k) => d.sp[k]), p.effective);
+    for (const k in p.skills) assert.strictEqual(d.skills[k], p.skills[k], k);
+    for (const k of ["hp", "dt", "ap", "carry", "pri", "save", "pts"]) near(d[k], p[k], k);
+  });
+  test(`hit chance matches Combat Sheet at every range: ${p.name}`, () => {
+    [[p.w1, p.hit1, p.load], [p.w2, p.hit2, ""]].forEach(([n, cached, load]) => {
+      const v = E.weaponView({ n, ammo: load }, c, d, ctx);
+      for (let r = 1; r <= 10; r++) {
+        if (v.melee && r !== 1 && r !== 6) continue;  // the sheet leaves the other melee cells empty
+        near(E.hitChance(c, d, gecko, Tg, v, r, ctx, false).raw, cached[r - 1], `${n} R${r}`);
+      }
+    });
+  });
+  test(`final damage matches Combat Sheet!M9: ${p.name}`, () => {
+    const v = E.weaponView({ n: p.w1, ammo: p.load }, c, d, ctx);
+    assert.strictEqual(E.damage(v.base, v.pen, Tg.dt, 1, 1).final, p.finalDmg);
+  });
+  test(`sheet-mode bands match Combat Sheet row 6: ${p.name}`, () => {
+    const v = E.weaponView({ n: p.w1, ammo: p.load }, c, d, ctx);
+    const hc = E.hitChance(c, d, gecko, Tg, v, v.melee ? 1 : p.range, ctx, false);
+    const b = E.bands(hc.raw, v.jam, v.crit, 0.01, { rules: { critMode: "sheet", jamMode: "sheet" }, lck: d.sp.L, cond: p.cond });
+    near(b.hitAt, p.hitAt, "hit threshold");
+    near(b.critAt, p.critAt, "crit threshold");
+    near(b.jamAt - 1, p.failAt, "fail threshold");
+  });
+}
+
+test("gecko's bite is 94.5% like the sheet", () => {
+  const c = data.party[0];
+  const d = E.derive(c, ctx);
+  const v = E.weaponView(gecko.weapons[0], gecko, Tg, ctx);
+  near(E.hitChance(gecko, Tg, c, d, v, 1, ctx, false).raw, 0.945, "gecko");
+});
+
+test("brief's band example, exactly", () => {
+  const b = E.bands(0.7, 0.13, 0.2, 0.02);
+  assert.strictEqual(E.bandText(b), "Jam 00-12 · Miss 13-29 · Hit 30-79 · Crit 80-97 · Super 98-99");
+  const cases = { 0: "jam", 12: "jam", 13: "miss", 29: "miss", 30: "hit", 79: "hit", 80: "crit", 97: "crit", 98: "super", 99: "super" };
+  for (const r in cases) assert.strictEqual(E.classify(Number(r), b), cases[r], r);
+});
+
+test("bands stay sane at the edges", () => {
+  assert.strictEqual(E.bandText(E.bands(0.95, 0, 0.1, 0.01)), "Miss 00-04 · Hit 05-89 · Crit 90-98 · Super 99-99");
+  const lowOdds = E.bands(0.05, 0.1, 0.2, 0.01);   // crit band starts below the hit band: every hit is a crit
+  assert.strictEqual(E.classify(50, lowOdds), "miss");
+  assert.strictEqual(E.classify(96, lowOdds), "crit");
+  assert.strictEqual(E.classify(5, lowOdds), "jam");
+  assert.strictEqual(E.bandText(lowOdds), "Jam 00-09 · Miss 10-94 · Crit 95-98 · Super 99-99");
+  const jamOverHit = E.bands(0.95, 0.1, 0.05, 0.01);  // jam eats the miss band
+  assert.strictEqual(E.bandText(jamOverHit), "Jam 00-09 · Hit 10-94 · Crit 95-98 · Super 99-99");
+  const impossible = E.bands(-0.2, 0.1, 0.05, 0.01);
+  assert.strictEqual(E.bandText(impossible), "Jam 00-09 · Miss 10-99");
+  assert.strictEqual(E.classify(99, impossible), "miss");
+});
+
+test("damage formula", () => {
+  assert.strictEqual(E.damage(8, 4, 0, 1, 1).final, 8);
+  assert.strictEqual(E.damage(8, 4, 8, 1, 1).final, 4);
+  assert.strictEqual(E.damage(8, 4, 40, 2, 3).final, 9);
+  assert.strictEqual(E.damage(8, 0, 25, 1, 1).final, 1);
+  assert.strictEqual(E.damage(3, 2, 2, 0.75, 1).final, 2);
+  assert.strictEqual(E.damage(1, 0, 10, 0.75, 1).final, 1);
+  assert.strictEqual(E.damage(5.5, 3, 0, 1, 1).final, 5);
+});
+
+test("skill checks", () => {
+  assert.strictEqual(E.checkNeeded(80, 80, rules), 11);
+  assert.strictEqual(E.checkNeeded(85, 80, rules), 10);
+  assert.strictEqual(E.checkNeeded(70, 80, rules), 13);
+  assert.strictEqual(E.checkNeeded(73, 80, rules), 12);
+  assert.strictEqual(E.checkNeeded(84, 80, rules), 11);
+  assert.strictEqual(E.checkNeeded(60, 80, rules), 15);  // PER 6 as 60
+  assert.deepStrictEqual(E.checkResult(1, 2), { pass: false, why: "natural 1" });
+  assert.deepStrictEqual(E.checkResult(20, 25), { pass: true, why: "natural 20" });
+  assert.strictEqual(E.checkResult(10, 11).pass, false);
+  assert.strictEqual(E.checkResult(11, 11).pass, true);
+  assert.strictEqual(E.checkOdds(11), 50);
+  assert.strictEqual(E.checkOdds(25), 5);
+  assert.strictEqual(E.checkOdds(-3), 95);
+});
+
+test("your rulings: overskill counts as 100, melee STR penalty applies, save caps at 20", () => {
+  const c = { kind: "pc", id: "x", special: [10, 10, 10, 10, 10, 10, 10], skills: { SG: 150, MW: 60 }, gear: {}, inv: [], weapons: [] };
+  const d = E.derive(c, ctx);
+  assert.strictEqual(d.skills.SG, 150);
+  const v = { melee: false, skill: "SG", req: 50, str: 0, hitBase: () => 0, thrown: false };
+  near(E.hitChance(c, d, gecko, Tg, v, 1, ctx, false).raw, 0.25, "skill 150 acts as 100");
+  const weak = { kind: "pc", id: "y", special: [5, 5, 5, 5, 5, 5, 5], gear: {}, inv: [], weapons: [] };
+  const dw = E.derive(weak, ctx);
+  const sledge = { melee: true, skill: "MW", req: dw.skills.MW, str: 8, hitBase: () => 0.45 };
+  near(E.hitChance(weak, dw, gecko, Tg, sledge, 1, ctx, false).raw, 0.45 - 1.2, "melee STR 5 vs 8");
+  assert.strictEqual(E.saveTarget(10, 100, 0, 0, rules), 20);   // the sheet's bug gave 19 here
+  assert.strictEqual(E.saveTarget(8, 7, 0, 0, rules), 15);
+  assert.strictEqual(E.saveTarget(8, 7, 0, 1, rules), 11);
+});
+
+test("hit chance is capped at the max", () => {
+  const c = { kind: "pc", id: "x", special: [10, 10, 10, 10, 10, 10, 10], skills: { SG: 100 }, gear: {}, inv: [], weapons: [] };
+  const d = E.derive(c, ctx);
+  const hc = E.hitChance(c, d, gecko, Tg, { melee: false, skill: "SG", req: 0, str: 0, hitBase: () => 0.9 }, 1, ctx, false);
+  assert.strictEqual(hc.hit, 0.95); assert.ok(hc.capped);
+});
+
+test("cover and carried-over scene effects change hit chance", () => {
+  const c = data.party[0]; const d = E.derive(c, ctx);
+  const v = E.weaponView(gecko.weapons[0], gecko, Tg, ctx);
+  const dark = { ...ctx, scene: { ...ctx.scene, effects: [{ label: "Darkness", who: "enemies", hit: -0.1 }] } };
+  near(E.hitChance(gecko, Tg, c, d, v, 1, dark, false).raw, 0.845, "darkness only hits enemies");
+  near(E.hitChance(gecko, Tg, c, d, v, 1, ctx, { tier: "custom", hit: -0.15, dam: 0 }).raw, 0.795, "cover");
+  const gun = E.weaponView({ n: "Pipe Shotgun", ammo: "20 Gauge - Buckshot" }, c, d, dark);
+  near(E.hitChance(c, d, gecko, Tg, gun, 2, dark, false).raw, 0.175, "party unaffected by enemy darkness");
+});
+
+test("bursts: higher rolls land more bullets, matching the sheet's steps", () => {
+  const b = { hitAt: 82.5, critAt: 96.2, jamAt: 0, superAt: 99 };
+  assert.strictEqual(E.bullets(85, b, 2, "hit", rules), 1);
+  assert.strictEqual(E.bullets(89.35, b, 2, "hit", rules), 2);
+  assert.strictEqual(E.bullets(95, b, 2, "hit", rules), 2);
+  assert.strictEqual(E.bullets(97, b, 5, "crit", rules), 5);
+  const r = E.resolve({ v: { base: 8, pen: 4, count: 2 }, b, roll: 90, dt: 8, loc: "Body", rules });
+  assert.strictEqual(r.outcome, "hit"); assert.strictEqual(r.bullets, 2); assert.strictEqual(r.each, 4); assert.strictEqual(r.total, 8);
+  assert.match(r.math, /8 × Body 1 × Hit 1 = 8; Pen 4 < DT 8 → 4 × 2 bullets = 8/);
+  const short = E.resolve({ v: { base: 8, pen: 4, count: 5 }, b, roll: 97, dt: 0, loc: "Body", rules, available: 2 });
+  assert.strictEqual(short.bullets, 2, "cannot land more than the magazine holds");
+});
+
+test("pellet ammo reads as damage x pellets", () => {
+  const a = data.ammo.find((x) => x.n === "12 Gauge - Buckshot");
+  assert.strictEqual(a.dam, 2); assert.strictEqual(a.pellets, 10);
+  const r = E.resolve({ v: { base: 2, pen: 3, count: 1, pellets: 10 }, b: { hitAt: 10, critAt: 90, jamAt: 0, superAt: 99 }, roll: 50, dt: 0, loc: "Body", rules });
+  assert.strictEqual(r.total, 20);
+});
+
+test("XP and levels", () => {
+  assert.strictEqual(E.xpFor(2, rules), 100);
+  assert.strictEqual(E.xpFor(30, rules), 43500);
+  assert.strictEqual(E.levelForXp(99, rules), 1);
+  assert.strictEqual(E.levelForXp(100, rules), 2);
+  assert.strictEqual(E.levelForXp(1e6, rules), 30);
+  assert.strictEqual(E.xpGain(10, 8, rules), 11.5);
+});
+
+test("status and item text become numbers", () => {
+  assert.deepStrictEqual(E.parseEffect("Zapped: -1 AP / -10% acc, x2 Damage to Robots/PA", false), { ap: -1, acc: -0.1 });
+  assert.deepStrictEqual(E.parseEffect("1 AP to focus, otherwise -10% Hit Chance/flee", false), { acc: -0.1 });
+  assert.deepStrictEqual(E.parseEffect("1+ STR, 1+ CHA, -1 INT"), { S: 1, C: 1, I: -1 });
+  assert.deepStrictEqual(E.parseEffect("Chilled:+1 AP to movement, attack, and items", false), { apCost: 1 });
+  assert.strictEqual(E.parseEffect("Slashed: 2 dmg", false).dot, 2);
+  assert.strictEqual(E.parseEffect("Dazed:-50% acc / 2 turns", false).turns, 2);
+  assert.strictEqual(E.parseEffect("Irradiated: -2 S.P.E.C.I.A.L", false).L, -2);
+  assert.deepStrictEqual(E.parseHeal("25% HP"), { pct: 0.25 });
+  assert.deepStrictEqual(E.parseHeal("10 HP + END"), { flat: 10, end: true });
+});
+
+test("spawned enemies are independent copies with stats and gear", () => {
+  let i = 0; const seq = () => (i++ * 0.137) % 1;
+  const t = db.enemies.get("raider");
+  const a = E.spawn(t, "a", ctx, seq), b = E.spawn(t, "b", ctx, seq);
+  a.special[0] = 10; a.name = "Raider Boss";
+  assert.strictEqual(t.special[0], 5); assert.strictEqual(b.special[0], 5); assert.strictEqual(t.n, "Raider");
+  assert.ok(a.weapons.length >= 1, "has a weapon");
+  for (const s of a.weapons) { const w = E.get(ctx, s.n).o; assert.ok(w.ok, s.n); assert.ok(w.tier <= 2, s.n); }
+  assert.strictEqual(E.derive(a, ctx).hp, 15 + 3 * 2 + 6);
+  assert.strictEqual(E.derive(a, ctx).ap, 12);
+});
+
+test("Make Boss boosts a copy only", () => {
+  const t = db.enemies.get("veteran");
+  const e = E.spawn(t, "b", ctx, () => 0.5);
+  const hp0 = E.derive(e, ctx).hp, w0 = E.get(ctx, e.weapons[0].n).o.tier, xp0 = e.xp;
+  const r = E.makeBoss(e, ctx, () => 0.5);
+  assert.ok(r.hp >= 0.1 && r.hp <= 0.3);
+  assert.ok(E.derive(e, ctx).hp > hp0); assert.ok(e.dmgMult > 1); assert.ok(e.xp > xp0);
+  assert.ok(E.get(ctx, e.weapons[0].n).o.tier > w0, "weapon goes up a tier");
+  assert.strictEqual(t.xp, xp0);
+});
+
+test("jam clear cost is by weapon type and every weapon type has one", () => {
+  const c = data.party[0]; const d = E.derive(c, ctx);
+  const v = E.weaponView({ n: "Pipe Shotgun", ammo: "20 Gauge - Buckshot" }, c, d, ctx);
+  assert.strictEqual(v.clearJam, rules.clearJam[v.type]);
+  for (const ty of new Set(data.weapons.map((w) => w.type))) assert.ok(rules.clearJam[ty] != null, `no clear cost for ${ty}`);
+});
+
+test("weapons with no ammo system never block on an empty magazine", () => {
+  const c = data.party[0]; const d = E.derive(c, ctx);
+  const crank = data.weapons.find((w) => w.ammo === "Crank");
+  assert.ok(crank);
+  assert.strictEqual(E.weaponView({ n: crank.n }, c, d, ctx).usesAmmo, false);
+  assert.strictEqual(E.weaponView({ n: "Pipe Flamer" }, c, d, ctx).usesAmmo, true);
+});
+
+test("overridden item data wins over the workbook", () => {
+  const c = data.party[0]; const d = E.derive(c, ctx);
+  const ov = { ...ctx, ov: { "pipe flamer": { dmg: 50 } } };
+  assert.strictEqual(E.weaponView({ n: "Pipe Flamer" }, c, d, ov).base, 50);
+});
+
+test("default rules: hit chance is base weapon and skill only", () => {
+  const c = { db, rules: JSON.parse(JSON.stringify(DEFAULT_RULES)), scene: ctx.scene, ov: {} };
+  const A = E.derive({ kind: "pc", special: [1, 1, 5, 5, 5, 5, 5], skills: {}, gear: {}, weapons: [] }, c);
+  const v = E.weaponView({ n: "Pipe Pistol", ammo: ".32 ACP - Standard" }, { kind: "pc" }, A, c);
+  const hc = E.hitChance({ kind: "pc" }, A, { kind: "npc" }, A, v, 8, c, false);
+  assert.deepStrictEqual(hc.parts.map(([k]) => k).filter((k) => k !== "mods"), ["base", "skill"]);
+});
+test("no placeholder gear in the data", () => {
+  for (const list of [data.armor, data.items, data.weapons, data.materials]) assert.ok(!list.some((x) => /^\(no /i.test(x.n)));
+  assert.ok(!data.enemies.some((e) => /^\(no /i.test(`${e.head || ""}`) || /^\(no /i.test(`${e.armor || ""}`)));
+});
+test("armor text reads into modifiers", () => {
+  assert.deepStrictEqual(E.parseGear("10+ Big Guns, +10 Explosives, 1+ END, AG:L - 2"), { BG: 10, EXP: 10, E: 1, A: -2 });
+  assert.deepStrictEqual(E.parseGear("Poison resistance, Sneak +10"), { SNK: 10 });
+});
+test("vendor stock stays in tier and has no unique weapons", () => {
+  for (const tier of [1, 3, 6]) {
+    const stock = E.vendorStock({ db, rules, ov: {} }, tier);
+    assert.ok(stock.length > 10);
+    for (const l of stock) {
+      const it = E.get({ db, ov: {} }, l.n); const t = Number(it.o.tier) || 1;
+      assert.ok(t <= tier && t >= Math.max(1, tier - 1), `${l.n} is tier ${t}`);
+      if (it.cat === "weapon") assert.ok(!E.isUnique(it.o), l.n);
+      assert.ok(l.q > 0);
+    }
+  }
+});
+test("barter: a vendor at 100 matches the sheet's price formula, and no resale profit", () => {
+  const f = E.barterFactors(40, 100); near(f.buy, 100 / 40, "buy"); near(f.sell, 40 / 100, "sell");
+  const g = E.barterFactors(90, 10); assert.ok(g.buy >= 1 && g.sell <= 1);
+});
+test("optimal range is the best band on the hit table", () => {
+  assert.strictEqual(E.optimalRange(data.weapons.find((w) => w.n === "Pipe Pistol")), 2);
+});
+
+test("item text: heals use the formula, penalties stay penalties", () => {
+  const user = { skills: { MED: 40, SUR: 30 }, sp: { E: 3 }, hp: 20 }, target = { skills: {}, sp: { E: 7 }, hp: 50 };
+  assert.strictEqual(E.healAmount("10 HP + (Medicine/5)", user, target), 18);
+  assert.strictEqual(E.healAmount("5 HP + (Survival/10), -1 AGI", user, target), 8);
+  assert.strictEqual(E.healAmount("10 HP + END", user, target), 17);
+  assert.strictEqual(E.healAmount("25% HP", user, target), 13);
+  assert.strictEqual(E.healAmount("2+ STR, 2+ CHA, -2 INT, -2 HP", user, target), -2);
+  assert.deepStrictEqual(E.parseEffect("x1.5 AP"), { apMul: 0.5 });
+  assert.deepStrictEqual(E.parseEffect("2+ CHA, 1- INT"), { C: 2, I: -1 });
+});
+test("a saved named NPC comes back without old statuses", () => {
+  const g = E.spawn(db.enemies.get("gecko"), "g", ctx, () => 0.5); g.statuses = [{ n: "Weak", tier: 2 }]; g.hp = 1;
+  const again = E.spawn({ n: "G", saved: JSON.parse(JSON.stringify(g)) }, "h", ctx, () => 0.5);
+  assert.deepStrictEqual(again.statuses, []); assert.ok(again.hp > 1);
+});
+
+test("20 archetypes: every kit item is real, and kits stay at the poverty bar", () => {
+  const list = DEFAULT_RULES.archetypes; assert.strictEqual(list.length, 20);
+  const has = (n) => !!E.get({ db, ov: {} }, n);
+  for (const a of list) {
+    assert.ok(has(a.w), `${a.n}: ${a.w}`);
+    if (a.ammo) { assert.ok(has(a.ammo[0]), `${a.n}: ${a.ammo[0]}`); assert.ok(a.ammo[1] <= 8, `${a.n} rounds`); }
+    for (const n of a.wear) assert.ok(has(n), `${a.n}: ${n}`);
+    for (const [n, q] of a.items) { assert.ok(has(n), `${a.n}: ${n}`); assert.ok(q <= 5); }
+    assert.ok(a.items.length <= 2, `${a.n} has too much`); assert.ok(a.wear.length <= 1, `${a.n} wears too much`);
+    assert.ok(Number(E.get({ db, ov: {} }, a.w).o.tier) === 1, `${a.n}: weapon must be tier 1`);
+  }
+});
+
+test("line of fire: the worst tier crossed wins, and open is the default", () => {
+  const r = DEFAULT_RULES; const a = { x: 0, y: 0 }, b = { x: 10, y: 0 };
+  assert.strictEqual(E.lineCover(a, b, [], r).tier, "open");
+  const bush = { x: 3, y: 0, w: 1, h: 1, cover: "concealment" }, rock = { x: 6, y: 0, w: 1, h: 1, cover: "soft" }, off = { x: 5, y: 5, w: 1, h: 1, cover: "impenetrable" };
+  assert.strictEqual(E.lineCover(a, b, [bush], r).hit, -0.1);
+  assert.strictEqual(E.lineCover(a, b, [bush, rock, off], r).tier, "soft", "misses the wall to the side");
+  assert.strictEqual(E.lineCover({ x: 3, y: 0 }, b, [bush], r).tier, "open", "you can shoot out of the bush you stand in");
+  assert.ok(E.pathBlocked(a, b, [{ x: 5, y: 0, w: 2, h: 2, block: true }])); assert.ok(!E.pathBlocked(a, b, [rock]));
+  assert.deepStrictEqual(Object.values(r.cover).map((c) => [c.hit, c.dam]), [[0, 0], [-0.1, 0], [-0.25, -0.1], [-0.5, -0.5], [-1, -1]]);
+});
+test("room generator: every theme fills a room, stays in bounds, no overlaps, city gets blocks", () => {
+  for (const id of Object.keys(DEFAULT_RULES.roomThemes)) {
+    const map = { w: 40, h: 30 }; const room = E.generateRoom(map, id, DEFAULT_RULES, Math.random, [{ x: -18, y: 0 }]);
+    assert.ok(room.length >= 2, id);
+    for (const o of room) { assert.ok(Math.abs(o.x) <= map.w / 2 + 0.01 && Math.abs(o.y) <= map.h / 2 + 0.01, `${id} ${o.item} out of bounds`); assert.ok(DEFAULT_RULES.cover[o.cover], o.item); }
+    room.forEach((p, i) => room.forEach((q, j) => { if (i < j) assert.ok(Math.abs(p.x - q.x) >= (p.w + q.w) / 2 || Math.abs(p.y - q.y) >= (p.h + q.h) / 2, `${id}: ${p.item} overlaps ${q.item}`); }));
+  }
+  const city = E.generateRoom({ w: 90, h: 70 }, "city", DEFAULT_RULES, Math.random);
+  assert.ok(city.filter((o) => o.item === "building" && o.block && o.cover === "impenetrable").length >= 2, "concrete blocks");
+  assert.ok(!E.generateRoom({ w: 12, h: 10 }, "city", DEFAULT_RULES, Math.random).some((o) => o.item === "building"), "no buildings in a small room");
+});
+test("standardized effects: substances, reductions, variables", () => {
+  const by = (n) => data.items.find((i) => i.n === n);
+  assert.strictEqual(data.statuses.find((s) => s.n === "Cover"), undefined, "Cover moved to the rules");
+  assert.deepStrictEqual(by("Med-X").use.applies[0], { n: "Anaesthetised", tier: 5, fx: { dmgTaken: -0.25 } }, "painkillers lower damage taken");
+  const beer = by("Beer - 714 Beer").use; assert.deepStrictEqual(beer.applies.map((a) => a.n), ["Loose", "Drunk"]); assert.deepStrictEqual(beer.applies[0].fx, { S: 1, C: 1, I: -1 }); assert.deepStrictEqual(beer.applies[1].fx, {}, "no double counting");
+  assert.strictEqual(beer.after.n, "Hangover");
+  assert.deepStrictEqual(by("Bandage").use.reduces, { Bleeding: 1 }); assert.ok(by("Jet").use.removes.includes("Disoriented")); assert.deepStrictEqual(by("Splint").use.reduces, { "Injured Limb (Leg/Arm)": 1 });
+  assert.strictEqual(by("Stimpak").use.applies.length, 0, "medical items stay plain heals"); assert.ok(by("Stimpak").use.heal);
+  const s = (n, t) => data.statuses.find((x) => x.n === n).fx[t];
+  assert.strictEqual(s("Burned", 0).hpPct, -0.1); assert.strictEqual(s("Burned", 0).heal, -0.1); assert.strictEqual(s("Plasma Melt", 1).dtPct, -0.2); assert.strictEqual(s("Calm", 0).crit, 0.05); assert.strictEqual(s("Injured Limb (Leg/Arm)", 1).mvm, -0.25); assert.strictEqual(s("Injured Limb (Leg/Arm)", 4).immobile, 1); assert.strictEqual(s("Anaesthetised", 0).dmgTaken, -0.05);
+  const perk = data.levelPerks.find((p) => /^Improves AP by 1 when/.test(p.effect)); assert.deepStrictEqual([perk.fx, perk.when], [{ ap: 1 }, { hpBelow: 0.2 }]);
+  assert.ok(skippedList.length > 0);
+});
+test("a hurt-only perk counts only when hurt", () => {
+  const perk = data.levelPerks.find((p) => /^Improves DT by 1 when/.test(p.effect));
+  const on = { ...ctx, rules: DEFAULT_RULES };
+  const pc = (hp) => E.derive({ kind: "pc", hp, special: [5, 5, 5, 5, 5, 5, 5], perks: [perk.n], gear: {}, inv: [], weapons: [], statuses: [], effects: [], level: 1 }, on).dt;
+  assert.strictEqual(pc(1) - pc(25), 1);
+});
+test("cover and damage-taken multiply damage", () => {
+  const v = { base: 10, pen: 99, count: 1 }; const b = E.bands(0.9, 0, 0, 0, { rules: {} });
+  const res = (mult) => E.resolve({ v, b, roll: 50, dt: 0, loc: "Body", rules: DEFAULT_RULES, mult }).total;
+  assert.strictEqual(res(1), 10); assert.strictEqual(res(0.5), 5); assert.strictEqual(res(0), 0);
+});
+
+test("conditions: reminders turned into rules that switch on for the right shot", () => {
+  const c = { db, rules: DEFAULT_RULES, scene: ctx.scene, ov: {} };
+  const pc = (perks, extra = {}) => ({ kind: "pc", hp: 20, special: [5, 5, 5, 5, 5, 5, 5], perks, gear: {}, inv: [], weapons: [], statuses: [], effects: [], level: 1, ...extra });
+  const shot = (e, s) => { const d = E.derive(e, c); return E.forShot(d, e, s, c); };
+  assert.strictEqual(shot(pc(["Robotics Expert"]), { vs: "robot", round: 1 }).m.dam, 0.25);
+  assert.strictEqual(shot(pc(["Robotics Expert"]), { vs: "human", round: 1 }).m.dam, undefined, "not against humans");
+  assert.strictEqual(shot(pc(["Opportune Strike"]), { round: 3 }).m.crit, 0.04, "grows each round");
+  assert.strictEqual(shot(pc(["Quickdraw"]), { round: 1, range: 1, o: { tab: "SG" } }).m.acc, 0.2);
+  assert.strictEqual(shot(pc(["Quickdraw"]), { round: 2, range: 1, o: { tab: "SG" } }).m.acc, undefined, "first turn only");
+  assert.strictEqual(shot(pc(["Hit The Deck"]), { round: 1, attackerO: { tab: "EX" } }).dt - E.derive(pc(["Hit The Deck"]), c).dt, 12, "defensive rule");
+  assert.strictEqual(E.enemyType({ kind: "npc", tmpl: "Protectron", mob: true }, DEFAULT_RULES), "robot");
+  assert.strictEqual(E.enemyType({ kind: "npc", tmpl: "Giant Ant", mob: true }, DEFAULT_RULES), "insect");
+  const pistolero = data.sc.find((r) => r.n === "Pistolero"); assert.ok(pistolero.when.types.includes("Revolver"), "Meant only for became a condition");
+  const finesse = data.sc.find((r) => r.n === "Finesse"); assert.strictEqual(finesse.mods.critDam, 0.25, "Not automated became a variable");
+});
+test("crit variables change the math", () => {
+  const v = { base: 10, pen: 99, count: 1 }; const b = E.bands(0.9, 0, 0.5, 0.01, { rules: {} });
+  const go = (roll, shot, loc = "Body") => E.resolve({ v, b, roll, dt: 0, loc, rules: DEFAULT_RULES, shot });
+  assert.strictEqual(go(60, {}).total, 20); assert.strictEqual(go(60, { critMult: 1 }).total, 30); assert.strictEqual(go(60, { critDam: 0.5 }).total, 30);
+  assert.strictEqual(go(60, { critToSuper: 1 }).outcome, "super"); assert.ok(go(99, { superKill: 1 }).kill);
+});
+
+test("every preset map is whole grid squares, with its objects inside and real", () => {
+  const r = DEFAULT_RULES;
+  for (const [id, m] of Object.entries(r.maps)) {
+    assert.strictEqual(m.w % r.gridM, 0, `${id} width`); assert.strictEqual(m.h % r.gridM, 0, `${id} height`);
+    for (const [key, x, y, w, h] of m.objs || []) {
+      assert.ok(r.mapItems[key], `${id}: ${key} isn't a catalog item`);
+      assert.ok(Math.abs(x) + w / 2 <= m.w / 2 + 0.01 && Math.abs(y) + h / 2 <= m.h / 2 + 0.01, `${id}: ${key} sticks out of the map`);
+    }
+    for (const [key] of m.scatter || []) assert.ok(r.mapItems[key], `${id}: ${key}`);
+  }
+  assert.strictEqual(r.mapItems.tree.cover, "soft"); assert.strictEqual(r.mapItems.bigTree.cover, "soft");
+  assert.deepStrictEqual(["concealment", "soft", "hard", "impenetrable"].map((k) => r.cover[k].opacity), [0.3, 0.5, 0.7, 1]);
+});
+
+test("trees: only the trunk stops a shot, the leaves don't", () => {
+  const r = DEFAULT_RULES; const tree = { item: "tree", kind: "tree", cover: "soft", x: 5, y: 0, w: 4, h: 4 };
+  assert.strictEqual(E.lineCover({ x: 0, y: 0 }, { x: 10, y: 0 }, [tree], r).tier, "soft", "through the trunk");
+  assert.strictEqual(E.lineCover({ x: 0, y: 1.5 }, { x: 10, y: 1.5 }, [tree], r).tier, "open", "through the leaves only");
+  const crate = { item: "crate", kind: "cover", cover: "soft", x: 5, y: 0, w: 4, h: 4 };
+  assert.strictEqual(E.lineCover({ x: 0, y: 1.5 }, { x: 10, y: 1.5 }, [crate], r).tier, "soft", "a crate stops it across its whole size");
+});
+
+test("rotation: shots and walking follow the turned shape", () => {
+  const r = DEFAULT_RULES; const wall = { kind: "wall", cover: "impenetrable", block: true, x: 5, y: 0, w: 10, h: 0.4 };
+  const a = { x: 5, y: -3 }, b = { x: 5, y: 3 }, side = { x: 0, y: 3 }, side2 = { x: 10, y: 3 };
+  assert.strictEqual(E.lineCover(a, b, [wall], r).tier, "impenetrable", "crosses it flat");
+  assert.strictEqual(E.lineCover(side, side2, [wall], r).tier, "open", "passes above it");
+  const turned = { ...wall, angle: 90 };
+  assert.strictEqual(E.lineCover(side, side2, [turned], r).tier, "impenetrable", "turned upright it's in the way");
+  assert.ok(E.pathBlocked(side, side2, [turned]));
+  assert.strictEqual(E.lineCover({ x: 8, y: -3 }, { x: 8, y: 3 }, [turned], r).tier, "open", "and no longer reaches here");
+  const diag = { ...wall, angle: 45 };
+  assert.strictEqual(E.lineCover({ x: 8, y: 0 }, { x: 8, y: 6 }, [diag], r).tier, "impenetrable", "a diagonal blocks along its diagonal");
+  assert.strictEqual(E.lineCover({ x: 8, y: -6 }, { x: 8, y: -1 }, [diag], r).tier, "open");
+  assert.ok(E.inside({ x: 5, y: 4 }, turned)); assert.ok(!E.inside({ x: 5, y: 4 }, wall));
+});
+
+test("tracked reminders: counts and situations drive the rules", () => {
+  const c = { db, rules: DEFAULT_RULES, scene: { ...ctx.scene, effects: [] }, ov: {} };
+  const pc = (perks, extra = {}) => ({ kind: "pc", hp: 20, special: [5, 5, 5, 5, 5, 5, 5], perks, gear: {}, inv: [], weapons: [], statuses: [], effects: [], level: 1, ...extra });
+  const shot = (e, s) => E.forShot(E.derive(e, c), e, { round: 1, ...s }, c);
+  assert.strictEqual(shot(pc(["Concentrated Gunfire"]), { streak: 3 }).m.acc, 0.15, "subsequent hits add up");
+  assert.strictEqual(shot(pc(["Concentrated Gunfire"]), { streak: 0 }).m.acc || 0, 0);
+  const row = (n) => data.sc.find((r) => r.n === n);
+  assert.deepStrictEqual(row("Underworld Nationalist").when, { perKillHuman: true }); assert.strictEqual(row("Underworld Nationalist").note, undefined);
+  assert.strictEqual(row("Police Gas Mask").mods["resist:Poisoned"], 1);
+  assert.strictEqual(data.items.find((i) => i.n === "Rad-X").use.fx["resist:Irradiated"], 1);
+  assert.strictEqual(data.items.find((i) => i.n === "Numbing Salve").use.numb, true);
+  assert.strictEqual(data.statuses.find((s) => s.n === "Sedated").fx[2].ignoreTier, 3);
+  const weak = pc([], { statuses: [{ n: "Weak", tier: 2 }, { n: "Sedated", tier: 3 }] }); assert.strictEqual(E.derive(weak, c).sp.S, 5, "Sedated ignores low-tier harm");
+  const numb = pc([], { statuses: [{ n: "Weak", tier: 2 }], numbed: 2 }); assert.strictEqual(E.derive(numb, c).sp.S, 5, "Numbing Salve suspends statuses");
+  assert.strictEqual(shot(pc(["Loyal Party Member"], { traits: [] }), {}).m.weaponSkill, undefined);
+  const lp = pc(["Lucky Number"], {}); const m = shot(lp, {}).m; assert.strictEqual(m.lucky, 1);
+  const v = { base: 10, pen: 99, count: 1 }; const b = E.bands(0.9, 0, 0.1, 0.01, { rules: {} });
+  assert.strictEqual(E.resolve({ v, b, roll: 47, dt: 0, loc: "Body", rules: DEFAULT_RULES, shot: { lucky: 1, luckyDigit: 7 } }).outcome, "crit");
+  assert.strictEqual(E.resolve({ v, b, roll: 46, dt: 0, loc: "Body", rules: DEFAULT_RULES, shot: { lucky: 1, luckyDigit: 7 } }).outcome, "hit");
+});
+
+test("enemy list: factions on everyone real, and every new enemy spawns with working weapons", () => {
+  const real = data.enemies.filter((e) => !e.test);
+  assert.ok(real.length >= 177, `${real.length} enemies`);
+  assert.deepStrictEqual(real.filter((e) => !e.faction).map((e) => e.n), [], "every enemy has a faction");
+  const names = real.map((e) => e.n); assert.strictEqual(new Set(names).size, names.length, "no duplicate names");
+  for (const f of ["Jackals", "Vipers", "Fiends", "Rogue Scavengers", "Highwaymen", "City Muggers", "Omertas", "Garrets", "Chairmen", "White Glove Society", "The Kings", "Unaligned"]) assert.ok(real.some((e) => e.faction === f), f);
+  const c = { db, rules: DEFAULT_RULES, scene: { effects: [] }, ov: {} };
+  for (const e of real.filter((x) => !x.mob && x.w1)) {
+    const s = E.spawn(e, "x", c, () => 0.5); assert.ok(s.hp > 0 && s.weapons.length >= 1, e.n);
+    assert.ok(E.get(c, s.weapons[0].n), `${e.n}: ${s.weapons[0].n}`);
+  }
+});
+
+test("new enemies follow the workbook's pattern for skills, SPECIAL and XP", () => {
+  const names = JSON.parse(fs.readFileSync(path.join(__dirname, "new_enemies.json"), "utf8"));
+  const by = new Map(data.enemies.map((e) => [e.n, e])); const fresh = names.map((n) => by.get(n)); assert.strictEqual(fresh.length, 50);
+  const mine = data.enemies.filter((e) => !e.test && !e.mob && !names.includes(e.n) && e.skills && e.skills.MW != null && e.skills.EW != null);
+  // The bands come straight from the DM's own enemies at each tier.
+  const band = (t, f) => { const v = mine.filter((e) => e.tier === t).map(f); return [Math.min(...v), Math.max(...v)]; };
+  const top = (e) => Math.max(e.skills.EW, e.skills.SG, e.skills.BG, e.skills.MW); const sum = (e) => e.special.reduce((a, b) => a + (b || 0), 0);
+  for (const e of fresh) {
+    assert.deepStrictEqual(Object.keys(e.skills).slice(0, 4), ["EW", "SG", "BG", "MW"], `${e.n}: the same four skills in the same order`);
+    assert.ok(Object.keys(e.skills).every((k) => ["EW", "SG", "BG", "MW", "EXP"].includes(k)), `${e.n}: no other skills`);
+    assert.ok(Object.values(e.skills).every((v) => v % 5 === 0), `${e.n}: multiples of 5`);
+    assert.strictEqual(e.special.length, 7);
+    const [lo, hi] = band(e.tier, top); const [slo, shi] = band(e.tier, sum);
+    assert.ok(top(e) >= Math.min(lo, 20) && top(e) <= hi + 10, `${e.n} top skill ${top(e)} vs tier ${e.tier} band ${lo}-${hi}`);
+    assert.ok(sum(e) <= shi + 1 && sum(e) >= slo - 2, `${e.n} SPECIAL total ${sum(e)} vs tier ${e.tier} band ${slo}-${shi}`);
+    assert.ok(/^\d+-\d+$/.test(e.caps), e.n);
+  }
+});
+

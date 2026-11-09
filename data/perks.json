@@ -1,0 +1,3445 @@
+[
+ {
+  "kind": "Level",
+  "n": "Reactive Instinct",
+  "level": "2.0",
+  "group": "General",
+  "effect": "Improves AP by 1 when health is below 20%",
+  "req": "",
+  "fxFrom": "Improves AP by 1 when health is below 20%",
+  "fx": {
+   "ap": 1
+  },
+  "when": {
+   "hpBelow": 0.2
+  },
+  "rows": [
+   {
+    "fx": {
+     "ap": 1
+    },
+    "when": {
+     "hpBelow": 0.2
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "Emergency Means",
+  "level": "2.0",
+  "group": "General",
+  "effect": "Improves DT by 1 when health is below 20%",
+  "req": "",
+  "fxFrom": "Improves DT by 1 when health is below 20%",
+  "fx": {
+   "dt": 1
+  },
+  "when": {
+   "hpBelow": 0.2
+  },
+  "rows": [
+   {
+    "fx": {
+     "dt": 1
+    },
+    "when": {
+     "hpBelow": 0.2
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "Deep Pockets",
+  "level": "2.0",
+  "group": "General",
+  "effect": "Improves active inventory by 5%",
+  "req": "",
+  "fxFrom": "Improves active inventory by 5%",
+  "fx": {
+   "carryMul": 0.05
+  },
+  "rows": [
+   {
+    "fx": {
+     "carryMul": 0.05
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "Saved by the Bell",
+  "level": "2.0",
+  "group": "General",
+  "effect": "Improves Saving throw by 1 roll",
+  "req": "",
+  "fxFrom": "Improves Saving throw by 1 roll",
+  "fx": {
+   "save": 1
+  },
+  "rows": [
+   {
+    "fx": {
+     "save": 1
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "Better Targets",
+  "level": "2.0",
+  "group": "General",
+  "effect": "Improves PEN by 1",
+  "req": "",
+  "fxFrom": "Improves PEN by 1",
+  "fx": {
+   "pen": 1
+  },
+  "rows": [
+   {
+    "fx": {
+     "pen": 1
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "Durability",
+  "level": "4.0",
+  "group": "General",
+  "effect": "Permanently Gain 1 DT",
+  "req": "",
+  "fxFrom": "Permanently Gain 1 DT",
+  "fx": {
+   "dt": 1
+  },
+  "rows": [
+   {
+    "fx": {
+     "dt": 1
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "Hardbody",
+  "level": "4.0",
+  "group": "General",
+  "effect": "Increases physical status eff. resistance by 1",
+  "req": "",
+  "fxFrom": "Increases physical status eff. resistance by 1",
+  "fx": {
+   "resistPhysical": 1
+  },
+  "rows": [
+   {
+    "fx": {
+     "resistPhysical": 1
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "Acclimation",
+  "level": "4.0",
+  "group": "General",
+  "effect": "Increases phychological status eff. resistance by 1",
+  "req": "",
+  "fxFrom": "Increases phychological status eff. resistance by 1",
+  "fx": {
+   "resistMental": 1
+  },
+  "rows": [
+   {
+    "fx": {
+     "resistMental": 1
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "Heritable",
+  "level": "4.0",
+  "group": "General",
+  "effect": "Increased all effects (positive/negative) of every trait by 25%",
+  "req": "",
+  "fxFrom": "Increased all effects (positive/negative) of every trait by 25%",
+  "rows": [
+   {
+    "fx": {
+     "traitScale": 0.25
+    }
+   }
+  ],
+  "fx": {
+   "traitScale": 0.25
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Bookworm",
+  "level": "4.0",
+  "group": "General",
+  "effect": "Increases Skill Gained from books by 1, magazines by 5",
+  "req": "",
+  "fxFrom": "Increases Skill Gained from books by 1, magazines by 5"
+ },
+ {
+  "kind": "Level",
+  "n": "Bargin Bin Hunter",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "Improves buy prices by 5%",
+  "req": "10 Barter",
+  "fxFrom": "Improves buy prices by 5%",
+  "fx": {
+   "buy": -0.05
+  },
+  "rows": [
+   {
+    "fx": {
+     "buy": -0.05
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "Elementary",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "Improves elemental chance rolls for Energy Weapons by 1",
+  "req": "10 Energy Weapons",
+  "fxFrom": "Improves elemental chance rolls for Energy Weapons by 1",
+  "rows": [
+   {
+    "fx": {
+     "debuffAdd": 1
+    },
+    "when": {
+     "tabs": [
+      "EW"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "debuffAdd": 1
+  },
+  "when": {
+   "tabs": [
+    "EW"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Shrapnel",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "Critical Hits can induce bleeding",
+  "req": "10 Explosives",
+  "fxFrom": "Critical Hits can induce bleeding",
+  "rows": [
+   {
+    "fx": {
+     "critBleed": 1
+    }
+   }
+  ],
+  "fx": {
+   "critBleed": 1
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Quickdraw",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "Improves SG chance to hit at R1 by 20 on the first turn",
+  "req": "10 Small Guns",
+  "fxFrom": "Improves SG chance to hit at R1 by 20 on the first turn",
+  "rows": [
+   {
+    "fx": {
+     "acc": 0.2
+    },
+    "when": {
+     "tabs": [
+      "SG"
+     ],
+     "rangeMax": 1,
+     "firstTurn": true
+    }
+   }
+  ],
+  "fx": {
+   "acc": 0.2
+  },
+  "when": {
+   "tabs": [
+    "SG"
+   ],
+   "rangeMax": 1,
+   "firstTurn": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Hunker Down",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "Increases accuracy with Big Guns by 5 when in cover",
+  "req": "10 Big Guns",
+  "fxFrom": "Increases accuracy with Big Guns by 5 when in cover",
+  "rows": [
+   {
+    "fx": {
+     "acc": 0.05
+    },
+    "when": {
+     "tabs": [
+      "BG"
+     ],
+     "inCover": true
+    }
+   }
+  ],
+  "fx": {
+   "acc": 0.05
+  },
+  "when": {
+   "tabs": [
+    "BG"
+   ],
+   "inCover": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Sticky Fingers",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "Can roll to steal objects in world",
+  "req": "10 Lockpick",
+  "fxFrom": "Can roll to steal objects in world"
+ },
+ {
+  "kind": "Level",
+  "n": "Safe Treatment",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "Increases effectiveness of Antiseptic Rub by +10%",
+  "req": "10 Medicine",
+  "fxFrom": "Increases effectiveness of Antiseptic Rub by +10%",
+  "rows": [
+   {
+    "fx": {
+     "healOut": 0.1
+    },
+    "when": {
+     "items": [
+      "Antiseptic Rub"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "healOut": 0.1
+  },
+  "when": {
+   "items": [
+    "Antiseptic Rub"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Backup Plan",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "Increases secondary attack damage by 1",
+  "req": "10 Melee Weapons",
+  "fxFrom": "Increases secondary attack damage by 1",
+  "rows": [
+   {
+    "fx": {
+     "damFlat": 1
+    },
+    "when": {
+     "secondary": true
+    }
+   }
+  ],
+  "fx": {
+   "damFlat": 1
+  },
+  "when": {
+   "secondary": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Pipe Weaponsmith",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "Can craft pipe weapons",
+  "req": "10 Repair",
+  "fxFrom": "Can craft pipe weapons"
+ },
+ {
+  "kind": "Level",
+  "n": "Field Remedy",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "Can craft a Numbing Salve",
+  "req": "10 Science",
+  "fxFrom": "Can craft a Numbing Salve"
+ },
+ {
+  "kind": "Level",
+  "n": "Forgettable Face",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "NPCs will treat you neutrally more often",
+  "req": "10 Sneak",
+  "fxFrom": "NPCs will treat you neutrally more often"
+ },
+ {
+  "kind": "Level",
+  "n": "Trustworthy",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "Critical success on speech checks yield the entire party (XP of check) x 2 and auto pass on their next Speech check with NPC",
+  "req": "10 Speech",
+  "fxFrom": "Critical success on speech checks yield the entire party (XP of check) x 2 and auto pass on their next Speech check with NPC"
+ },
+ {
+  "kind": "Level",
+  "n": "One Man's Trash...",
+  "level": "4.0",
+  "group": "Skill Dependent",
+  "effect": "Improves odds of looting Crafting Materials +5%",
+  "req": "10 Survival",
+  "fxFrom": "Improves odds of looting Crafting Materials +5%"
+ },
+ {
+  "kind": "Level",
+  "n": "Mysterious Stranger",
+  "level": "6.0",
+  "group": "General",
+  "effect": "DM rolls secret d20, in that amount of turns mysterious stranger appears and super crits with .44. Then rolls again to reset timer. Stranger targets top initiative enemy",
+  "req": "",
+  "fxFrom": "DM rolls secret d20, in that amount of turns mysterious stranger appears and super crits with .44. Then rolls again to reset timer. Stranger targets top initiative enemy"
+ },
+ {
+  "kind": "Level",
+  "n": "Intense Training",
+  "level": "6.0",
+  "group": "General",
+  "effect": "Gain 1 SPECIAL of Choice",
+  "req": "",
+  "fxFrom": "Gain 1 SPECIAL of Choice"
+ },
+ {
+  "kind": "Level",
+  "n": "Ready Up",
+  "level": "6.0",
+  "group": "General",
+  "effect": "Improves PRI by 1",
+  "req": "",
+  "fxFrom": "Improves PRI by 1",
+  "fx": {
+   "pri": 1
+  },
+  "rows": [
+   {
+    "fx": {
+     "pri": 1
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "Opportune Strike",
+  "level": "6.0",
+  "group": "General",
+  "effect": "Improves Crit Chance by 2% every turn after first",
+  "req": "",
+  "fxFrom": "Improves Crit Chance by 2% every turn after first",
+  "rows": [
+   {
+    "fx": {
+     "crit": 0.02
+    },
+    "when": {
+     "perRound": true
+    }
+   }
+  ],
+  "fx": {
+   "crit": 0.02
+  },
+  "when": {
+   "perRound": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Life Giver",
+  "level": "6.0",
+  "group": "General",
+  "effect": "5+ HP",
+  "req": "",
+  "fxFrom": "5+ HP",
+  "fx": {
+   "hp": 5
+  },
+  "rows": [
+   {
+    "fx": {
+     "hp": 5
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "Caphound",
+  "level": "6.0",
+  "group": "Skill Dependent",
+  "effect": "Doubles odds of finding money on looted enemies",
+  "req": "20 Barter",
+  "fxFrom": "Doubles odds of finding money on looted enemies",
+  "rows": [
+   {
+    "fx": {
+     "capsMul": 1
+    }
+   }
+  ],
+  "fx": {
+   "capsMul": 1
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "The Future is Now",
+  "level": "6.0",
+  "group": "Skill Dependent",
+  "effect": "Energy damage against human enemies +10%",
+  "req": "20 Energy Weapons",
+  "fxFrom": "Energy damage against human enemies +10%",
+  "rows": [
+   {
+    "fx": {
+     "dam": 0.1
+    },
+    "when": {
+     "tabs": [
+      "EW"
+     ],
+     "vs": [
+      "human"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "dam": 0.1
+  },
+  "when": {
+   "tabs": [
+    "EW"
+   ],
+   "vs": [
+    "human"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Crowhop",
+  "level": "6.0",
+  "group": "Skill Dependent",
+  "effect": "Increases STR by 1 when using Thrown weapons",
+  "req": "20 Explosives",
+  "fxFrom": "Increases STR by 1 when using Thrown weapons",
+  "rows": [
+   {
+    "fx": {
+     "S": 1
+    },
+    "when": {
+     "tabs": [
+      "EX"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "S": 1
+  },
+  "when": {
+   "tabs": [
+    "EX"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "War of Attrition",
+  "level": "6.0",
+  "group": "Skill Dependent",
+  "effect": "Increases PEN by 1 every turn after 1",
+  "req": "20 Small Guns",
+  "fxFrom": "Increases PEN by 1 every turn after 1",
+  "rows": [
+   {
+    "fx": {
+     "pen": 1
+    },
+    "when": {
+     "perRound": true
+    }
+   }
+  ],
+  "fx": {
+   "pen": 1
+  },
+  "when": {
+   "perRound": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Continued Fire",
+  "level": "6.0",
+  "group": "Skill Dependent",
+  "effect": "Increases Burst Count by 1 every 2 turns (auto only)",
+  "req": "20 Big Guns",
+  "fxFrom": "Increases Burst Count by 1 every 2 turns (auto only)",
+  "rows": [
+   {
+    "fx": {
+     "count": 1
+    },
+    "when": {
+     "auto": true,
+     "per2Rounds": true
+    }
+   }
+  ],
+  "fx": {
+   "count": 1
+  },
+  "when": {
+   "auto": true,
+   "per2Rounds": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "New World Methods",
+  "level": "6.0",
+  "group": "Skill Dependent",
+  "effect": "Increases effectiveness of Healing Powder and Healing Potulice by 25%",
+  "req": "20 Medicine",
+  "fxFrom": "Increases effectiveness of Healing Powder and Healing Potulice by 25%",
+  "rows": [
+   {
+    "fx": {
+     "healOut": 0.25
+    },
+    "when": {
+     "items": [
+      "Healing Powder",
+      "Healing Poultice"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "healOut": 0.25
+  },
+  "when": {
+   "items": [
+    "Healing Powder",
+    "Healing Poultice"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Lunge",
+  "level": "6.0",
+  "group": "Skill Dependent",
+  "effect": "Can hit r2 at half accuracy for double AP cost",
+  "req": "20 Melee Weapons",
+  "fxFrom": "Can hit r2 at half accuracy for double AP cost",
+  "rows": [
+   {
+    "fx": {
+     "accMul": -0.5,
+     "apCostMul": 2,
+     "lunge": 1
+    },
+    "when": {
+     "melee": true,
+     "rangeMin": 2,
+     "rangeMax": 2
+    }
+   }
+  ],
+  "fx": {
+   "accMul": -0.5,
+   "apCostMul": 2,
+   "lunge": 1
+  },
+  "when": {
+   "melee": true,
+   "rangeMin": 2,
+   "rangeMax": 2
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Breakdown",
+  "level": "6.0",
+  "group": "Skill Dependent",
+  "effect": "Can break down looted weapons into useful parts",
+  "req": "20 Repair",
+  "fxFrom": "Can break down looted weapons into useful parts"
+ },
+ {
+  "kind": "Level",
+  "n": "Old World Blues",
+  "level": "6.0",
+  "group": "Skill Dependent",
+  "effect": "Can craft the Rudimentary Third Arm Accessory",
+  "req": "20 Science",
+  "fxFrom": "Can craft the Rudimentary Third Arm Accessory"
+ },
+ {
+  "kind": "Level",
+  "n": "Double or Nothing",
+  "level": "6.0",
+  "group": "Skill Dependent",
+  "effect": "Can reroll a failed speech check at half odds",
+  "req": "20 Speech",
+  "fxFrom": "Can reroll a failed speech check at half odds"
+ },
+ {
+  "kind": "Level",
+  "n": "Scrounger",
+  "level": "6.0",
+  "group": "Skill Dependent",
+  "effect": "Increases odds (Not Count) of finding ammo in buildings by 50%",
+  "req": "20 Survival",
+  "fxFrom": "Increases odds (Not Count) of finding ammo in buildings by 50%"
+ },
+ {
+  "kind": "Level",
+  "n": "Last Stand",
+  "level": "8.0",
+  "group": "General",
+  "effect": "If downed by non-critical hit, lose all initiative, but gain one turn to fire weapon before out",
+  "req": "",
+  "fxFrom": "If downed by non-critical hit, lose all initiative, but gain one turn to fire weapon before out",
+  "rows": [
+   {
+    "fx": {
+     "saveMul": 1
+    }
+   }
+  ],
+  "fx": {
+   "saveMul": 1
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Rapid Reload",
+  "level": "8.0",
+  "group": "Skill Dependent",
+  "effect": "-25% AP cost for reload, rounded down (Min 4)",
+  "req": "30 Small Guns",
+  "fxFrom": "-25% AP cost for reload, rounded down (Min 4)",
+  "rows": [
+   {
+    "fx": {
+     "reloadMul": -0.25
+    }
+   }
+  ],
+  "fx": {
+   "reloadMul": -0.25
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Friend of the Night",
+  "level": "8.0",
+  "group": "Skill Dependent",
+  "effect": "Reduced Chance to Hit penalty in nighttime conditions",
+  "req": "30 Sneak",
+  "fxFrom": "Reduced Chance to Hit penalty in nighttime conditions",
+  "rows": [
+   {
+    "fx": {
+     "nightPen": 0.5
+    }
+   }
+  ],
+  "fx": {
+   "nightPen": 0.5
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "...and Carry a Long Stick",
+  "level": "8.0",
+  "group": "Skill Dependent",
+  "effect": "Intimidation Checks use greatest weapon skill",
+  "req": "30 Speech",
+  "fxFrom": "Intimidation Checks use greatest weapon skill"
+ },
+ {
+  "kind": "Level",
+  "n": "Hunter",
+  "level": "8.0",
+  "group": "Skill Dependent",
+  "effect": "Criticals improve to Super Crit against Animals",
+  "req": "30 Survival",
+  "fxFrom": "Criticals improve to Super Crit against Animals",
+  "rows": [
+   {
+    "fx": {
+     "critToSuper": 1
+    },
+    "when": {
+     "vs": [
+      "animal"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "critToSuper": 1
+  },
+  "when": {
+   "vs": [
+    "animal"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Unstoppable Force",
+  "level": "10.0",
+  "group": "9 Special Perks",
+  "effect": "Can Strength Roll Locks, Gates, and Light Walls. Can destroy concealment for 3 AP",
+  "req": "9+ STR",
+  "fxFrom": "Can Strength Roll Locks, Gates, and Light Walls. Can destroy concealment for 3 AP",
+  "rows": [
+   {
+    "fx": {
+     "dam": 0.25
+    },
+    "when": {
+     "targetMelee": true
+    }
+   }
+  ],
+  "fx": {
+   "dam": 0.25
+  },
+  "when": {
+   "targetMelee": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Seen It Coming",
+  "level": "10.0",
+  "group": "9 Special Perks",
+  "effect": "3+ initiative and no cost for targeted body or headshot on first turn",
+  "req": "9+ PER",
+  "fxFrom": "3+ initiative and no cost for targeted body or headshot on first turn",
+  "rows": [
+   {
+    "fx": {
+     "pri": 3
+    }
+   },
+   {
+    "fx": {
+     "targetFree": 1
+    },
+    "when": {
+     "firstTurn": true
+    }
+   }
+  ],
+  "fx": {
+   "pri": 3
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Bounceback",
+  "level": "10.0",
+  "group": "9 Special Perks",
+  "effect": "Regain 20% HP at end of combat",
+  "req": "9+ END",
+  "fxFrom": "Regain 20% HP at end of combat",
+  "rows": [
+   {
+    "fx": {
+     "endHeal": 0.2
+    }
+   }
+  ],
+  "fx": {
+   "endHeal": 0.2
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Fame",
+  "level": "10.0",
+  "group": "9 Special Perks",
+  "effect": "You have become famous in civilized society",
+  "req": "9+ CHA",
+  "fxFrom": "You have become famous in civilized society"
+ },
+ {
+  "kind": "Level",
+  "n": "Nerd Rage",
+  "level": "10.0",
+  "group": "9 Special Perks",
+  "effect": "When below 20% Health gain +5 AP, +5 DT, and +20% Damage",
+  "req": "9+ INT",
+  "fxFrom": "When below 20% Health gain +5 AP, +5 DT, and +20% Damage",
+  "fx": {
+   "ap": 5,
+   "dt": 5,
+   "dam": 0.2
+  },
+  "when": {
+   "hpBelow": 0.2
+  },
+  "rows": [
+   {
+    "fx": {
+     "ap": 5,
+     "dt": 5,
+     "dam": 0.2
+    },
+    "when": {
+     "hpBelow": 0.2
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "First to Draw",
+  "level": "10.0",
+  "group": "9 Special Perks",
+  "effect": "3+ initiative and no AP cost for switching weapons, using chems first turn",
+  "req": "9+ AGL",
+  "fxFrom": "3+ initiative and no AP cost for switching weapons, using chems first turn",
+  "rows": [
+   {
+    "fx": {
+     "pri": 3
+    }
+   },
+   {
+    "fx": {
+     "swapFree": 1,
+     "itemFree": 1
+    },
+    "when": {
+     "firstTurn": true
+    }
+   }
+  ],
+  "fx": {
+   "pri": 3
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Lucky Number",
+  "level": "10.0",
+  "group": "9 Special Perks",
+  "effect": "Always Critical Hit on Hit combat Rolls ending with a chosen number (0-9)",
+  "req": "9+ LCK",
+  "fxFrom": "Always Critical Hit on Hit combat Rolls ending with a chosen number (0-9)",
+  "rows": [
+   {
+    "fx": {
+     "lucky": 1
+    }
+   }
+  ],
+  "fx": {
+   "lucky": 1
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "One Punch Man",
+  "level": "10.0",
+  "group": "General",
+  "effect": "SuperCrits on unarmed insta kill",
+  "req": "10+ STR, 10+ END, Unarmed 75",
+  "fxFrom": "SuperCrits on unarmed insta kill",
+  "rows": [
+   {
+    "fx": {
+     "superKill": 1
+    },
+    "when": {
+     "types": [
+      "Hand"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "superKill": 1
+  },
+  "when": {
+   "types": [
+    "Hand"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Junk Rounds",
+  "level": "10.0",
+  "group": "Skill Dependent",
+  "effect": "Craft Junk ammunition from Scrap Metal, Tin Cans and the appropriate casing",
+  "req": "40 Repair",
+  "fxFrom": "Craft Junk ammunition from Scrap Metal, Tin Cans and the appropriate casing"
+ },
+ {
+  "kind": "Level",
+  "n": "Entymologist",
+  "level": "10.0",
+  "group": "Skill Dependent",
+  "effect": "50%+ Damage against Mutated Insects",
+  "req": "40 Survival",
+  "fxFrom": "50%+ Damage against Mutated Insects",
+  "rows": [
+   {
+    "fx": {
+     "dam": 0.5
+    },
+    "when": {
+     "vs": [
+      "insect"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "dam": 0.5
+  },
+  "when": {
+   "vs": [
+    "insect"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Iron Grip",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Big Guns +10 chance to hit above R7, plus +20 at R10",
+  "req": "7+ STR 7+ PER",
+  "fxFrom": "Big Guns +10 chance to hit above R7, plus +20 at R10",
+  "rows": [
+   {
+    "fx": {
+     "acc": 0.1
+    },
+    "when": {
+     "tabs": [
+      "BG"
+     ],
+     "rangeMin": 8
+    }
+   },
+   {
+    "fx": {
+     "acc": 0.2
+    },
+    "when": {
+     "tabs": [
+      "BG"
+     ],
+     "rangeMin": 10
+    }
+   }
+  ],
+  "fx": {
+   "acc": 0.1
+  },
+  "when": {
+   "tabs": [
+    "BG"
+   ],
+   "rangeMin": 8
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Sicilia Con Furore",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Can roll (Melee/100) to block hand attacks",
+  "req": "7+ STR 7+ END",
+  "fxFrom": "Can roll (Melee/100) to block hand attacks"
+ },
+ {
+  "kind": "Level",
+  "n": "Looksmaxxing",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Can Mog roll (STR+CHA out of 20) certain speech checks",
+  "req": "7+ STR 7+ CHA",
+  "fxFrom": "Can Mog roll (STR+CHA out of 20) certain speech checks"
+ },
+ {
+  "kind": "Level",
+  "n": "Percussive Maintinence",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Can Strength roll locks and terminals",
+  "req": "7+ STR 7+ INT",
+  "fxFrom": "Can Strength roll locks and terminals"
+ },
+ {
+  "kind": "Level",
+  "n": "Counterattack",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Upon crit by enemy melee/unarmed, you may immediately roll a counter attack during their turn (melee/unarmed)",
+  "req": "7+ STR 7+ AGL",
+  "fxFrom": "Upon crit by enemy melee/unarmed, you may immediately roll a counter attack during their turn (melee/unarmed)"
+ },
+ {
+  "kind": "Level",
+  "n": "Opportunity Knocks",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Gain +10% Crit Damage vs Melee Enemies at Range 1",
+  "req": "7+ STR 7+ LCK",
+  "fxFrom": "Gain +10% Crit Damage vs Melee Enemies at Range 1",
+  "rows": [
+   {
+    "fx": {
+     "critDam": 0.1
+    },
+    "when": {
+     "targetMelee": true,
+     "rangeMax": 1
+    }
+   }
+  ],
+  "fx": {
+   "critDam": 0.1
+  },
+  "when": {
+   "targetMelee": true,
+   "rangeMax": 1
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Turnaround",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Can counter roll a physical status effect inflicted at same odds, if passed no effect inflicted on you",
+  "req": "7+ PER 7+ END",
+  "fxFrom": "Can counter roll a physical status effect inflicted at same odds, if passed no effect inflicted on you"
+ },
+ {
+  "kind": "Level",
+  "n": "The Look",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Will be prompted whenever a Romance roll is possible for any party member",
+  "req": "7+ PER 7+ CHA",
+  "fxFrom": "Will be prompted whenever a Romance roll is possible for any party member"
+ },
+ {
+  "kind": "Level",
+  "n": "Lead Your Shots",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "If an enemy you have targeted moves, roll the next turn from the higher range",
+  "req": "7+ PER 7+ INT",
+  "fxFrom": "If an enemy you have targeted moves, roll the next turn from the higher range"
+ },
+ {
+  "kind": "Level",
+  "n": "Dual Reflex",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "4+ base Intiative",
+  "req": "7+ PER 7+ AGL",
+  "fxFrom": "4+ base Intiative",
+  "fx": {
+   "pri": 4
+  },
+  "rows": [
+   {
+    "fx": {
+     "pri": 4
+    }
+   }
+  ]
+ },
+ {
+  "kind": "Level",
+  "n": "Instinct",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "-2 Initiative for enemies, random encounters start at longer ranges",
+  "req": "7+ PER 7+ LCK",
+  "fxFrom": "-2 Initiative for enemies, random encounters start at longer ranges",
+  "rows": [
+   {
+    "fx": {
+     "enemyInit": -2
+    }
+   }
+  ],
+  "fx": {
+   "enemyInit": -2
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Master Lover",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Sleeping with charachtewrs may yeild for favorable results",
+  "req": "7+ END 7+ CHA",
+  "fxFrom": "Sleeping with charachtewrs may yeild for favorable results"
+ },
+ {
+  "kind": "Level",
+  "n": "Biological Optimization",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Boost Healling from Mecidal devices (pre war healing and chems)",
+  "req": "7+ END 7+ INT",
+  "fxFrom": "Boost Healling from Mecidal devices (pre war healing and chems)",
+  "rows": [
+   {
+    "fx": {
+     "healOut": 0.25
+    },
+    "when": {
+     "cats": [
+      "Healing"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "healOut": 0.25
+  },
+  "when": {
+   "cats": [
+    "Healing"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Neo",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Automatic attacks against you have a -15 Chance to Hit",
+  "req": "7+ END 7+ AGL",
+  "fxFrom": "Automatic attacks against you have a -15 Chance to Hit",
+  "rows": [
+   {
+    "fx": {
+     "enemyAcc": -0.15
+    },
+    "when": {
+     "attackerAuto": true
+    }
+   }
+  ],
+  "fx": {
+   "enemyAcc": -0.15
+  },
+  "when": {
+   "attackerAuto": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Last Stand",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Gain a turn to fight before Saving Throw, *2 odds on Saving Throw",
+  "req": "7+ END 7+ LCK",
+  "fxFrom": "Gain a turn to fight before Saving Throw, *2 odds on Saving Throw",
+  "rows": [
+   {
+    "fx": {
+     "saveMul": 1
+    }
+   }
+  ],
+  "fx": {
+   "saveMul": 1
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Leader of Men",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Spend 2 AP to \"inspire\" party, boosting party chance by +10 to hit for next turn",
+  "req": "7+ CHA 7+ INT",
+  "fxFrom": "Spend 2 AP to \"inspire\" party, boosting party chance by +10 to hit for next turn",
+  "rows": [
+   {
+    "fx": {
+     "inspire": 1
+    }
+   }
+  ],
+  "fx": {
+   "inspire": 1
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Pack Animals",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Party gains -10 Enemy Chance to Hit when within 1 range of you",
+  "req": "7+ CHA 7+ AGL",
+  "fxFrom": "Party gains -10 Enemy Chance to Hit when within 1 range of you",
+  "rows": [
+   {
+    "fx": {
+     "auraEnemyAcc": -0.1
+    }
+   }
+  ],
+  "fx": {
+   "auraEnemyAcc": -0.1
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Sowwy",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Can roll (CHA+LCK/20) to \"undo\" Speech failures",
+  "req": "7+ CHA 7+ LCK",
+  "fxFrom": "Can roll (CHA+LCK/20) to \"undo\" Speech failures"
+ },
+ {
+  "kind": "Level",
+  "n": "CQB",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "No chance to hit penalties and +2 initiative in urban/indoor environmenr",
+  "req": "7+ INT 7+ AGL",
+  "fxFrom": "No chance to hit penalties and +2 initiative in urban/indoor environmenr",
+  "rows": [
+   {
+    "fx": {
+     "pri": 2
+    }
+   }
+  ],
+  "fx": {
+   "pri": 2
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Opportune Strike",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Can Bank a Critical Hit Roll, can convert a hit to crit, or crit to super crit",
+  "req": "7+ INT 7+ LCK",
+  "fxFrom": "Can Bank a Critical Hit Roll, can convert a hit to crit, or crit to super crit",
+  "rows": [
+   {
+    "fx": {
+     "crit": 0.02
+    },
+    "when": {
+     "perRound": true
+    }
+   }
+  ],
+  "fx": {
+   "crit": 0.02
+  },
+  "when": {
+   "perRound": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Fat Roll",
+  "level": "12.0",
+  "group": "7+7 SPECIAL",
+  "effect": "Can roll (AGI+LCK/20) to fat roll away from an explosive",
+  "req": "7+ AGL 7+ LCK",
+  "fxFrom": "Can roll (AGI+LCK/20) to fat roll away from an explosive"
+ },
+ {
+  "kind": "Level",
+  "n": "Super Slam",
+  "level": "12.0",
+  "group": "Skill Dependent",
+  "effect": "15% chance to knockdown a target while using an Unarmed or one-handed Melee Weapon; 30% chance while using a two-handed Melee Weapon",
+  "req": "50 Energy Weapons",
+  "fxFrom": "15% chance to knockdown a target while using an Unarmed or one-handed Melee Weapon; 30% chance while using a two-handed Melee Weapon",
+  "rows": [
+   {
+    "fx": {
+     "knockChance": 0.15
+    },
+    "when": {
+     "oneHanded": true
+    }
+   }
+  ],
+  "fx": {
+   "knockChance": 0.15
+  },
+  "when": {
+   "oneHanded": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Light Touch",
+  "level": "12.0",
+  "group": "Skill Dependent",
+  "effect": "5% Critical Chance and enemies suffer -25% Critical Chance while you wear Light armor",
+  "req": "50 Repair",
+  "fxFrom": "5% Critical Chance and enemies suffer -25% Critical Chance while you wear Light armor",
+  "rows": [
+   {
+    "fx": {
+     "crit": 0.05
+    },
+    "when": {
+     "armor": "Light"
+    }
+   }
+  ],
+  "fx": {
+   "crit": 0.05
+  },
+  "when": {
+   "armor": "Light"
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Robotics Expert",
+  "level": "12.0",
+  "group": "Skill Dependent",
+  "effect": "25%+ damage to robots",
+  "req": "50 Science",
+  "fxFrom": "25%+ damage to robots",
+  "rows": [
+   {
+    "fx": {
+     "dam": 0.25
+    },
+    "when": {
+     "vs": [
+      "robot"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "dam": 0.25
+  },
+  "when": {
+   "vs": [
+    "robot"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Devil in a New Dress",
+  "level": "12.0",
+  "group": "Skill Dependent",
+  "effect": "Much higher likelihood to pass with faction armor",
+  "req": "50 Sneak",
+  "fxFrom": "Much higher likelihood to pass with faction armor"
+ },
+ {
+  "kind": "Level",
+  "n": "Old World Gourmet",
+  "level": "12.0",
+  "group": "Skill Dependent",
+  "effect": "25% addiction resistance",
+  "req": "50 Survival",
+  "fxFrom": "25% addiction resistance",
+  "rows": [
+   {
+    "fx": {
+     "addict": -0.25
+    }
+   }
+  ],
+  "fx": {
+   "addict": -0.25
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Concentrated Fire",
+  "level": "14.0",
+  "group": "Skill Dependent",
+  "effect": "5% increased hit chance for subsequent hits",
+  "req": "60 Energy Weapons",
+  "fxFrom": "5% increased hit chance for subsequent hits",
+  "rows": [
+   {
+    "fx": {
+     "acc": 0.05
+    },
+    "when": {
+     "sameTarget": true
+    }
+   }
+  ],
+  "fx": {
+   "acc": 0.05
+  },
+  "when": {
+   "sameTarget": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Concentrated Gunfire",
+  "level": "14.0",
+  "group": "Skill Dependent",
+  "effect": "5% increased hit chance for subsequent hits",
+  "req": "60 Small Guns",
+  "fxFrom": "5% increased hit chance for subsequent hits",
+  "rows": [
+   {
+    "fx": {
+     "acc": 0.05
+    },
+    "when": {
+     "perStreak": true
+    }
+   }
+  ],
+  "fx": {
+   "acc": 0.05
+  },
+  "when": {
+   "perStreak": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Concentrated Heavy Fire",
+  "level": "14.0",
+  "group": "Skill Dependent",
+  "effect": "5% increased hit chance for subsequent hits",
+  "req": "60 Big Guns",
+  "fxFrom": "5% increased hit chance for subsequent hits",
+  "rows": [
+   {
+    "fx": {
+     "acc": 0.05
+    },
+    "when": {
+     "perStreak": true,
+     "tabs": [
+      "BG"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "acc": 0.05
+  },
+  "when": {
+   "perStreak": true,
+   "tabs": [
+    "BG"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Chemist",
+  "level": "14.0",
+  "group": "Skill Dependent",
+  "effect": "100% increased duration for chem effects",
+  "req": "60 Medicine",
+  "fxFrom": "100% increased duration for chem effects",
+  "rows": [
+   {
+    "fx": {
+     "chemDur": 1
+    }
+   }
+  ],
+  "fx": {
+   "chemDur": 1
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "In Shining Armor",
+  "level": "14.0",
+  "group": "Skill Dependent",
+  "effect": "5+ DT against Energy Weapons while wearing reflective armor, 2+ DT against Energy Weapons while wearing reflective eyewear, Enemy Crit fails reflect back",
+  "req": "60 Science",
+  "fxFrom": "5+ DT against Energy Weapons while wearing reflective armor, 2+ DT against Energy Weapons while wearing reflective eyewear, Enemy Crit fails reflect back",
+  "rows": [
+   {
+    "fx": {
+     "dt": 5
+    },
+    "when": {
+     "attackerTabs": [
+      "EW"
+     ],
+     "armor": "reflect"
+    }
+   },
+   {
+    "fx": {
+     "dt": 2
+    },
+    "when": {
+     "attackerTabs": [
+      "EW"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "dt": 5
+  },
+  "when": {
+   "attackerTabs": [
+    "EW"
+   ],
+   "armor": "reflect"
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Mr. Sandman",
+  "level": "14.0",
+  "group": "Skill Dependent",
+  "effect": "Silently kill any sleeping person",
+  "req": "60 Sneak",
+  "fxFrom": "Silently kill any sleeping person"
+ },
+ {
+  "kind": "Level",
+  "n": "Them's Good Eatin'",
+  "level": "14.0",
+  "group": "Skill Dependent",
+  "effect": "Living creatures have a 50% chance of having Thin Red Paste or Blood Sausage when killed",
+  "req": "60 Survival",
+  "fxFrom": "Living creatures have a 50% chance of having Thin Red Paste or Blood Sausage when killed"
+ },
+ {
+  "kind": "Level",
+  "n": "Grim Reaper's Sprint",
+  "level": "16.0",
+  "group": "General",
+  "effect": "Gain 25% AP back after each kill",
+  "req": "",
+  "fxFrom": "Gain 25% AP back after each kill",
+  "rows": [
+   {
+    "fx": {
+     "killAP": 0.25
+    }
+   }
+  ],
+  "fx": {
+   "killAP": 0.25
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Pack Rat",
+  "level": "16.0",
+  "group": "Skill Dependent",
+  "effect": "Items with a weight of two or less weigh half as much",
+  "req": "70 Barter",
+  "fxFrom": "Items with a weight of two or less weigh half as much",
+  "rows": [
+   {
+    "fx": {
+     "lightHalf": 1
+    }
+   }
+  ],
+  "fx": {
+   "lightHalf": 1
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Meltdown",
+  "level": "16.0",
+  "group": "Skill Dependent",
+  "effect": "Enemies Killed have a chance to Explode into a corona, which can chain to other enemies",
+  "req": "70 Energy Weapons",
+  "fxFrom": "Enemies Killed have a chance to Explode into a corona, which can chain to other enemies"
+ },
+ {
+  "kind": "Level",
+  "n": "Hit The Deck",
+  "level": "16.0",
+  "group": "Skill Dependent",
+  "effect": "12+ DT against Explosives",
+  "req": "70 Explosives",
+  "fxFrom": "12+ DT against Explosives",
+  "rows": [
+   {
+    "fx": {
+     "dt": 12
+    },
+    "when": {
+     "attackerTabs": [
+      "EX"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "dt": 12
+  },
+  "when": {
+   "attackerTabs": [
+    "EX"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Infiltrator",
+  "level": "16.0",
+  "group": "Skill Dependent",
+  "effect": "Gives you a second attempt at a lock that you previously broke while trying to force it.",
+  "req": "70 Lockpick",
+  "fxFrom": "Gives you a second attempt at a lock that you previously broke while trying to force it."
+ },
+ {
+  "kind": "Level",
+  "n": "Living Anatomy",
+  "level": "16.0",
+  "group": "Skill Dependent",
+  "effect": "5%+ Damage against Humans and Ghouls",
+  "req": "70 Medicine",
+  "fxFrom": "5%+ Damage against Humans and Ghouls",
+  "rows": [
+   {
+    "fx": {
+     "dam": 0.05
+    },
+    "when": {
+     "vs": [
+      "human",
+      "ghoul"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "dam": 0.05
+  },
+  "when": {
+   "vs": [
+    "human",
+    "ghoul"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Hand Loader",
+  "level": "16.0",
+  "group": "Skill Dependent",
+  "effect": "Twice as likely to recover ammunition cases",
+  "req": "70 Repair",
+  "fxFrom": "Twice as likely to recover ammunition cases"
+ },
+ {
+  "kind": "Level",
+  "n": "Computer Whiz",
+  "level": "16.0",
+  "group": "Skill Dependent",
+  "effect": "Another attempt to hack any locked computer",
+  "req": "70 Science",
+  "fxFrom": "Another attempt to hack any locked computer"
+ },
+ {
+  "kind": "Level",
+  "n": "The Professional",
+  "level": "16.0",
+  "group": "Skill Dependent",
+  "effect": "20%+ Sneak Attack Critical damage with all pistols and all SMGs",
+  "req": "70 Sneak",
+  "fxFrom": "20%+ Sneak Attack Critical damage with all pistols and all SMGs",
+  "rows": [
+   {
+    "fx": {
+     "critDam": 0.2
+    },
+    "when": {
+     "sneak": true,
+     "types": [
+      "Revolver",
+      "Semi-Auto Pistol",
+      "Plinker Pistol",
+      "Machine Pistol",
+      "Pistol",
+      "SMG"
+     ]
+    }
+   }
+  ],
+  "fx": {
+   "critDam": 0.2
+  },
+  "when": {
+   "sneak": true,
+   "types": [
+    "Revolver",
+    "Semi-Auto Pistol",
+    "Plinker Pistol",
+    "Machine Pistol",
+    "Pistol",
+    "SMG"
+   ]
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Tribal Wisdom",
+  "level": "16.0",
+  "group": "Skill Dependent",
+  "effect": "-50% Limb Damage from Animals, Mutated Animals, and Mutated Insects, +25% Poison Resistance",
+  "req": "70 Survival",
+  "fxFrom": "-50% Limb Damage from Animals, Mutated Animals, and Mutated Insects, +25% Poison Resistance",
+  "rows": [
+   {
+    "fx": {
+     "limbMult": -0.5
+    },
+    "when": {
+     "attackerMob": true
+    }
+   }
+  ],
+  "fx": {
+   "limbMult": -0.5
+  },
+  "when": {
+   "attackerMob": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Kurkulator",
+  "level": "20.0",
+  "group": "Skill Dependent",
+  "effect": "-1AP penalty for targeted headshot at R4+ with scoped weapons",
+  "req": "90 Small Guns",
+  "fxFrom": "-1AP penalty for targeted headshot at R4+ with scoped weapons",
+  "rows": [
+   {
+    "fx": {
+     "targetFree": 1
+    },
+    "when": {
+     "part": "Head",
+     "rangeMin": 4
+    }
+   }
+  ],
+  "fx": {
+   "targetFree": 1
+  },
+  "when": {
+   "part": "Head",
+   "rangeMin": 4
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Unstoppable Force",
+  "level": "20.0",
+  "group": "Skill Dependent",
+  "effect": "25%+ Damage against enemy melee attackers",
+  "req": "90 Melee Weapons",
+  "fxFrom": "25%+ Damage against enemy melee attackers",
+  "rows": [
+   {
+    "fx": {
+     "dam": 0.25
+    },
+    "when": {
+     "targetMelee": true
+    }
+   }
+  ],
+  "fx": {
+   "dam": 0.25
+  },
+  "when": {
+   "targetMelee": true
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Nuka Chemist",
+  "level": "20.0",
+  "group": "Skill Dependent",
+  "effect": "Unlock special Nuka-Cola recipes at the workbench",
+  "req": "90 Science",
+  "fxFrom": "Unlock special Nuka-Cola recipes at the workbench"
+ },
+ {
+  "kind": "Level",
+  "n": "Hot Potato",
+  "level": "22.0",
+  "group": "Skill Dependent",
+  "effect": "When using explosives at R1 instantly jump two hexes out of the way",
+  "req": "100 Explosives",
+  "fxFrom": "When using explosives at R1 instantly jump two hexes out of the way"
+ },
+ {
+  "kind": "Level",
+  "n": "Center Mass",
+  "level": "22.0",
+  "group": "Skill Dependent",
+  "effect": "15%+ damage when targeting the torso",
+  "req": "100 Small Guns",
+  "fxFrom": "15%+ damage when targeting the torso",
+  "rows": [
+   {
+    "fx": {
+     "dam": 0.15
+    },
+    "when": {
+     "part": "Body"
+    }
+   }
+  ],
+  "fx": {
+   "dam": 0.15
+  },
+  "when": {
+   "part": "Body"
+  }
+ },
+ {
+  "kind": "Level",
+  "n": "Roughin It",
+  "level": "22.0",
+  "group": "Skill Dependent",
+  "effect": "Can sleep anywhere with no debuffs",
+  "req": "100 Survival",
+  "fxFrom": "Can sleep anywhere with no debuffs"
+ },
+ {
+  "kind": "Skill",
+  "n": "Aspiring Producer",
+  "group": "Barter",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Sell price increased by 10%"
+ },
+ {
+  "kind": "Skill",
+  "n": "Fixer",
+  "group": "Barter",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Can sell stolen goods with no discount"
+ },
+ {
+  "kind": "Skill",
+  "n": "Hazard Pay",
+  "group": "Barter",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Access to smuggling networks and investment in illegal businesses which pay out items relevant"
+ },
+ {
+  "kind": "Skill",
+  "n": "Wet Worker",
+  "group": "Barter",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Receive unique mercenary/contractor jobs and higher payouts for criminal jobs"
+ },
+ {
+  "kind": "Skill",
+  "n": "Entrepaneur",
+  "group": "Barter",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Can start businesses in towns. Specialize in spedific skill. Can set up courier networks givng profits (roll for profits.)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Capitalist",
+  "group": "Barter",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Always pass pro-owner speech checks, can buy businesses, your couriers pay you more sell"
+ },
+ {
+  "kind": "Skill",
+  "n": "Free Trade",
+  "group": "Barter",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Stolen/looted goods no longer have a discount sell"
+ },
+ {
+  "kind": "Skill",
+  "n": "Proud Consumer",
+  "group": "Barter",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Buy price reduced by 10%"
+ },
+ {
+  "kind": "Skill",
+  "n": "Trader",
+  "group": "Barter",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Access to requisition forms with certain shops: can order bulk and surplus items and ammo in large supply from certain vendors"
+ },
+ {
+  "kind": "Skill",
+  "n": "Arms Trader",
+  "group": "Barter",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Boosts access to high tier weapons and discounts for typical weaponry, can order high tier ammunition and armor to be delivered buy"
+ },
+ {
+  "kind": "Skill",
+  "n": "Mutual Aid",
+  "group": "Barter",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Party can order from couriers to deliver supplies (ammo, items, etc.) on a weekly basis. Expansion improves quality of items, not caps. Buy"
+ },
+ {
+  "kind": "Skill",
+  "n": "Haggler",
+  "group": "Barter",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Can \"haggle\" for unequal exchange with context-dependent barter roll"
+ },
+ {
+  "kind": "Skill",
+  "n": "Bazaar master",
+  "group": "Barter",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can trade items 1:1 with a roll"
+ },
+ {
+  "kind": "Skill",
+  "n": "Money Talks",
+  "group": "Barter",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "If you have a mastery in another category, you can 25% discount on buy power for the category"
+ },
+ {
+  "kind": "Skill",
+  "n": "Quantum Physicist",
+  "group": "Energy Weapons",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Improves chance to hit with Laser and Electromagnetic Energy Weapons"
+ },
+ {
+  "kind": "Skill",
+  "n": "Laser Focusing",
+  "group": "Energy Weapons",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Improved crit chance, inflict laser burn"
+ },
+ {
+  "kind": "Skill",
+  "n": "Dazzler",
+  "group": "Energy Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "super crits blind and laser burn crit lasts permaenenty for combat"
+ },
+ {
+  "kind": "Skill",
+  "n": "Hit-Scan",
+  "group": "Energy Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "incresed accuracy across all ranges, -1 AP to fire,"
+ },
+ {
+  "kind": "Skill",
+  "n": "Faraday",
+  "group": "Energy Weapons",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Electromagnetic attacks have a chance to pierce/chain at 75% if enemies are at sequential range at -15 chance to hit per chance."
+ },
+ {
+  "kind": "Skill",
+  "n": "Boltzman",
+  "group": "Energy Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Chain Lightning effect for 100% damage and no chance to hit modifier. +10 chance to hit. Critical Fails hit YOU"
+ },
+ {
+  "kind": "Skill",
+  "n": "Kevin Gaussman",
+  "group": "Energy Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Gauss Critical Hits shatter Armor (DT halved), all hits apply stack of Afraid"
+ },
+ {
+  "kind": "Skill",
+  "n": "Classical Physicist",
+  "group": "Energy Weapons",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Improves chance to hit with Plasma and Elemental Weapons"
+ },
+ {
+  "kind": "Skill",
+  "n": "Plasmatic Obsession",
+  "group": "Energy Weapons",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Explosive Meltdown on kills. Improved Damage."
+ },
+ {
+  "kind": "Skill",
+  "n": "The Fourth State",
+  "group": "Energy Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": ""
+ },
+ {
+  "kind": "Skill",
+  "n": "Metal Melter",
+  "group": "Energy Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": ""
+ },
+ {
+  "kind": "Skill",
+  "n": "Avatar",
+  "group": "Energy Weapons",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "(Elemental)"
+ },
+ {
+  "kind": "Skill",
+  "n": "High Octane",
+  "group": "Energy Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": ""
+ },
+ {
+  "kind": "Skill",
+  "n": "Big Empty Tester",
+  "group": "Energy Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": ""
+ },
+ {
+  "kind": "Skill",
+  "n": "Minelayer",
+  "group": "Explosives",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": ""
+ },
+ {
+  "kind": "Skill",
+  "n": "Precise Demolition",
+  "group": "Explosives",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "(Grenades)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Sapper",
+  "group": "Explosives",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(grenades as primary)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Demolition Expert",
+  "group": "Explosives",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(grenades as secondary)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Booby-Trapper",
+  "group": "Explosives",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "(Mines)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Catch and Kill",
+  "group": "Explosives",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(mines as primary)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Guerilla Technican",
+  "group": "Explosives",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(mines as secondary)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Launcher",
+  "group": "Explosives",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": ""
+ },
+ {
+  "kind": "Skill",
+  "n": "Propelled Power",
+  "group": "Explosives",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Increases range and chance to hit with rockets."
+ },
+ {
+  "kind": "Skill",
+  "n": "Missile Man",
+  "group": "Explosives",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(missile)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Rocketeer",
+  "group": "Explosives",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(rocket)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Nukem",
+  "group": "Explosives",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(troll fat man build)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Thumper",
+  "group": "Explosives",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Improves range and explosion radius of grenades. Reduces Blowback."
+ },
+ {
+  "kind": "Skill",
+  "n": "25 and its Live",
+  "group": "Explosives",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(25 mm)"
+ },
+ {
+  "kind": "Skill",
+  "n": "40 Oh Lordy",
+  "group": "Explosives",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(40 mm)"
+ },
+ {
+  "kind": "Skill",
+  "n": "One Handed",
+  "group": "Small Guns",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Improves chance to hit with One Handed Guns (+5)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Pistolero",
+  "group": "Small Guns",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Critical hits reload AP, Improves chance to hit, lower reload AP cost, Dual Wield Any Pistol"
+ },
+ {
+  "kind": "Skill",
+  "n": "Earp's Disciple",
+  "group": "Small Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "0 AP cost for next reload after kill and additional 2x for headshot mult"
+ },
+ {
+  "kind": "Skill",
+  "n": "Plinkster",
+  "group": "Small Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(.32 and .22LR) Small Pistol calibers boosted in crit mult to 4x and supercrit can bypass armor altogether"
+ },
+ {
+  "kind": "Skill",
+  "n": "Trigger Finger",
+  "group": "Small Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "halved AP cost for semi auto pistols and higher crit chance"
+ },
+ {
+  "kind": "Skill",
+  "n": "Mobile Firepower",
+  "group": "Small Guns",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Improved Chance per hit by Count, crit chance increased"
+ },
+ {
+  "kind": "Skill",
+  "n": "Bullet Hose",
+  "group": "Small Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Super crit gurantees full burst hit and - 1AP to fire"
+ },
+ {
+  "kind": "Skill",
+  "n": "Rearguard",
+  "group": "Small Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Flat increase at range and reduced reload cost"
+ },
+ {
+  "kind": "Skill",
+  "n": "Spec Ops",
+  "group": "Small Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "SMG crit mult increased by x1 and reduce cost to snapshoot by 2 AP on first turn"
+ },
+ {
+  "kind": "Skill",
+  "n": "Two Handed",
+  "group": "Small Guns",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Improves chance to hit with Two Handed Guns (+5)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Sharpshooter",
+  "group": "Small Guns",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Higher accuracy at range, higher crit chance based on range"
+ },
+ {
+  "kind": "Skill",
+  "n": "Precision Sniper",
+  "group": "Small Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Snipers receive lower AP cost and super-cries insta kill enemies past R8"
+ },
+ {
+  "kind": "Skill",
+  "n": "Man With No Name",
+  "group": "Small Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(Vintage Rifles)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Designated Marksman",
+  "group": "Small Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "DMRs receive a +15 in accuracy from R5 to R9, crit mult boosted by 0.5x"
+ },
+ {
+  "kind": "Skill",
+  "n": "Rifleman",
+  "group": "Small Guns",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Improved Critical Damage, lower AP cost"
+ },
+ {
+  "kind": "Skill",
+  "n": "Guerilla Fighter",
+  "group": "Small Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(Auto)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Carabiner",
+  "group": "Small Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(Carbine)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Operator",
+  "group": "Small Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(Semi Auto)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Heavy Gunner",
+  "group": "Big Guns",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": ""
+ },
+ {
+  "kind": "Skill",
+  "n": "Breacher",
+  "group": "Big Guns",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Criticals knock down target, lowers DT of target"
+ },
+ {
+  "kind": "Skill",
+  "n": "Trench Raider",
+  "group": "Big Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Lowers DT of target by 10"
+ },
+ {
+  "kind": "Skill",
+  "n": "Buckshot Roulette",
+  "group": "Big Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(20 g)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Suppressing Fire",
+  "group": "Big Guns",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "(something about suppression)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Bipod God",
+  "group": "Big Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(LMG)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Lead Storm",
+  "group": "Big Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(Heavy)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Specialized Equipment",
+  "group": "Big Guns",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": ""
+ },
+ {
+  "kind": "Skill",
+  "n": "Trailblazer",
+  "group": "Big Guns",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "(Pistol Style)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Screaming Eagle",
+  "group": "Big Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(Pistol)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Geneva is Gone",
+  "group": "Big Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(Creation)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Ranged Support",
+  "group": "Big Guns",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "(Rifle Style)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Anti-Materialist",
+  "group": "Big Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(AMR)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Artemis' Arrow",
+  "group": "Big Guns",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(Rifle)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Infiltrator",
+  "group": "Lockpick",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Can force any lock (10% success chance, failure prevents future lockpicking attempts"
+ },
+ {
+  "kind": "Skill",
+  "n": "Unstoppable",
+  "group": "Lockpick",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Lockpick success chance +10% for boxes"
+ },
+ {
+  "kind": "Skill",
+  "n": "Watchmaker",
+  "group": "Lockpick",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "25% to lock opened boxes (inaccessible for NPCs)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Tumbler Cracker",
+  "group": "Lockpick",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "25% chance to lockpick boxes that otherwise can't be picked"
+ },
+ {
+  "kind": "Skill",
+  "n": "Contortionist",
+  "group": "Lockpick",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Lockpick success chance +10% for entryways"
+ },
+ {
+  "kind": "Skill",
+  "n": "Locksmith",
+  "group": "Lockpick",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "25% to lock opened entryways (inaccessible for NPCs)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Oiled Hinges",
+  "group": "Lockpick",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "25% chance to lockpick entryways that otherwise can't be picked"
+ },
+ {
+  "kind": "Skill",
+  "n": "Sleight of Hand",
+  "group": "Lockpick",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "10% chance for NPCs to not turn hostile when discovered pickpocketing"
+ },
+ {
+  "kind": "Skill",
+  "n": "Silent Entry",
+  "group": "Lockpick",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Can place items in an NPCs inventory with a pickpocket roll"
+ },
+ {
+  "kind": "Skill",
+  "n": "Anesthetcian",
+  "group": "Lockpick",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Ability to inject NPC with item"
+ },
+ {
+  "kind": "Skill",
+  "n": "Hot Potato",
+  "group": "Lockpick",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can place live grenades in an NPCs inventory"
+ },
+ {
+  "kind": "Skill",
+  "n": "Sticky Fingers",
+  "group": "Lockpick",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Can pickpocket an NPC multiple times per successful pickpocket roll"
+ },
+ {
+  "kind": "Skill",
+  "n": "Disarming Personality",
+  "group": "Lockpick",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can pickpocket an NPCs equipped item (additional roll)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Red Thumb",
+  "group": "Lockpick",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Ability to cripple an NPCs limb with successful pickpocket (100% detection)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Combat Medic",
+  "group": "Medicine",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "10% resist chance to debuffs"
+ },
+ {
+  "kind": "Skill",
+  "n": "Surgeon",
+  "group": "Medicine",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "5% chance to heal one party member by +25% after combat"
+ },
+ {
+  "kind": "Skill",
+  "n": "Trauma Surgeon",
+  "group": "Medicine",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can mend crippled limbs in combat without an item for 2 AP"
+ },
+ {
+  "kind": "Skill",
+  "n": "Field Medicine",
+  "group": "Medicine",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can reduce any party member's afflicted debuff by 1 tier at the cost of 5 AP"
+ },
+ {
+  "kind": "Skill",
+  "n": "Physician",
+  "group": "Medicine",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Spend an OoC turn to heal a party member or NPC by +50%"
+ },
+ {
+  "kind": "Skill",
+  "n": "Doctor's Note",
+  "group": "Medicine",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "NPCs will pay 200% for treatment and medical items"
+ },
+ {
+  "kind": "Skill",
+  "n": "Routine Checkups",
+  "group": "Medicine",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "NPCs who you treat have a chance to be recruited"
+ },
+ {
+  "kind": "Skill",
+  "n": "Chemist",
+  "group": "Medicine",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Can craft chems"
+ },
+ {
+  "kind": "Skill",
+  "n": "Heisenberg",
+  "group": "Medicine",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "25% chance to create better chems per craft"
+ },
+ {
+  "kind": "Skill",
+  "n": "Myron's Apprentice",
+  "group": "Medicine",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Chem crafting recipes only require half the ingredients"
+ },
+ {
+  "kind": "Skill",
+  "n": "Chemmaxxing",
+  "group": "Medicine",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "All chem effects are boosted by +50%/+2 S.P.E.C.I.A.L"
+ },
+ {
+  "kind": "Skill",
+  "n": "Pharmacist",
+  "group": "Medicine",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Significantly increases amount of healing items found in the wasteland"
+ },
+ {
+  "kind": "Skill",
+  "n": "Optimal Dosage",
+  "group": "Medicine",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "All healing from items is now doubled"
+ },
+ {
+  "kind": "Skill",
+  "n": "Pharma Exec",
+  "group": "Medicine",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can craft stimpacks, super stimpacks and ultra stimpaks"
+ },
+ {
+  "kind": "Skill",
+  "n": "Spammer",
+  "group": "Melee Weapons",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Lowers AP cost of weapon's primary attack by 1"
+ },
+ {
+  "kind": "Skill",
+  "n": "Cutting Edge",
+  "group": "Melee Weapons",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Improves slash damage by 15%, can inflict higher degrees of bleed"
+ },
+ {
+  "kind": "Skill",
+  "n": "Death by a Thousand Cuts",
+  "group": "Melee Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(S-P) Slash bleed effects stack"
+ },
+ {
+  "kind": "Skill",
+  "n": "Breaker Blade",
+  "group": "Melee Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(S-B)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Point of Order",
+  "group": "Melee Weapons",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Increased DT pen by 5"
+ },
+ {
+  "kind": "Skill",
+  "n": "Second Option",
+  "group": "Melee Weapons",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Lowers AP cost of weapon's secondary attack by 1"
+ },
+ {
+  "kind": "Skill",
+  "n": "Hammertime",
+  "group": "Melee Weapons",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Blunt critical hits knock opponents down"
+ },
+ {
+  "kind": "Skill",
+  "n": "Blunt Force Trauma",
+  "group": "Melee Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(B-P) (improves DT pen?)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Internal Bleeding",
+  "group": "Melee Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(B-S) (adds bleed bamage?)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Handyman",
+  "group": "Melee Weapons",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "50%+ Effectiveness of Hand effect, +10 status effect chance"
+ },
+ {
+  "kind": "Skill",
+  "n": "Paralyzing Palm",
+  "group": "Melee Weapons",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "30% chance to paralyze an opponent"
+ },
+ {
+  "kind": "Skill",
+  "n": "Mechanic",
+  "group": "Repair",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Improves Repair in dialogue and in OOC rolls by +10"
+ },
+ {
+  "kind": "Skill",
+  "n": "Jumpsuit Johnny",
+  "group": "Repair",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": ""
+ },
+ {
+  "kind": "Skill",
+  "n": "Engine Maintenance",
+  "group": "Repair",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Allows you to fix and use vehicles found, depending on state of condition, for vehicles, skill checks reduced and parts availability raised"
+ },
+ {
+  "kind": "Skill",
+  "n": "Seabee",
+  "group": "Repair",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can alter battlefield conditions and situations, i.e. cutting power, enviromental traps"
+ },
+ {
+  "kind": "Skill",
+  "n": "Torbjorn",
+  "group": "Repair",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Can roll for repair improvisation for minor changes in combat (Create cover, etc.)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Quartermaster",
+  "group": "Repair",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can construct battlefield emplacements and use heavy fixed weapons (Artillery, Anti-Air)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Combat Engineer",
+  "group": "Repair",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can construct battlefield fortifications and defenses"
+ },
+ {
+  "kind": "Skill",
+  "n": "Technician",
+  "group": "Repair",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Unlocks hand load ammo and Proficiency-Tier weapon mods"
+ },
+ {
+  "kind": "Skill",
+  "n": "Weaponsmith",
+  "group": "Repair",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Can craft Expert tier weapon mods and Homemade weapons"
+ },
+ {
+  "kind": "Skill",
+  "n": "Engraver",
+  "group": "Repair",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(Mastery level weapon mods - boosts by a solid tier) tech"
+ },
+ {
+  "kind": "Skill",
+  "n": "Precise Pouring",
+  "group": "Repair",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can craft Master level ammo at bench, and all basic ammo in field with (Master Travel Toolkit) tech"
+ },
+ {
+  "kind": "Skill",
+  "n": "Jury Rigging",
+  "group": "Repair",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "(can repair weapons with somewhat similar weapons)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Zero Tolerances",
+  "group": "Repair",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can craft dart pistol, syringer, Brain scrambler"
+ },
+ {
+  "kind": "Skill",
+  "n": "Practical",
+  "group": "Science",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Can Request enemy DT and health"
+ },
+ {
+  "kind": "Skill",
+  "n": "Roboticist",
+  "group": "Science",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "10+ Critical Chance vs. Robots"
+ },
+ {
+  "kind": "Skill",
+  "n": "Scrapper",
+  "group": "Science",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "crit kills pulse-explode robots, more ammo and scrap produced"
+ },
+ {
+  "kind": "Skill",
+  "n": "Master-Slave",
+  "group": "Science",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can hack and make robots friendly"
+ },
+ {
+  "kind": "Skill",
+  "n": "Computer Whiz",
+  "group": "Science",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "-10 chance to get locked out of hacking"
+ },
+ {
+  "kind": "Skill",
+  "n": "NEET",
+  "group": "Science",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can remove certain mental status effects from using computer"
+ },
+ {
+  "kind": "Skill",
+  "n": "IT Support",
+  "group": "Science",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "30+ to computer checks and never get locked out"
+ },
+ {
+  "kind": "Skill",
+  "n": "Theory",
+  "group": "Science",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Much higher chance for fission batteries and scrap electronics"
+ },
+ {
+  "kind": "Skill",
+  "n": "Mad Scientist",
+  "group": "Science",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "10+ Science speech checks"
+ },
+ {
+  "kind": "Skill",
+  "n": "Outside The Box",
+  "group": "Science",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can roll to ruminate and come up with outrageous solutions to problems"
+ },
+ {
+  "kind": "Skill",
+  "n": "Sink Technician",
+  "group": "Science",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Boosted checks for scientific checks"
+ },
+ {
+  "kind": "Skill",
+  "n": "Master Inventor",
+  "group": "Science",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Access to Expert level crafting recipes"
+ },
+ {
+  "kind": "Skill",
+  "n": "Professor Gadget",
+  "group": "Science",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Build robotic companion"
+ },
+ {
+  "kind": "Skill",
+  "n": "Novel Methods",
+  "group": "Science",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can sythnesize new combined items and substancesi i.e. Med-Out (MedX and Buffout combined)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Covert Ops.",
+  "group": "Sneak",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Increased Sneak Crit Bonus"
+ },
+ {
+  "kind": "Skill",
+  "n": "Assassin",
+  "group": "Sneak",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Increased Sneak Crit Bonus with firearms"
+ },
+ {
+  "kind": "Skill",
+  "n": "Smoking Silencer",
+  "group": "Sneak",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "One-Handed with a silencer receive a 3x additional crit mult and 15% higher crit chance"
+ },
+ {
+  "kind": "Skill",
+  "n": "Ghillie in the Mist",
+  "group": "Sneak",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Rifles with silencers receive a 2x crit mult and +15% accuracy at R7-9"
+ },
+ {
+  "kind": "Skill",
+  "n": "Spontaneous Combustion",
+  "group": "Sneak",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Energy weapons are silent if sneak crit occurs, inflict AoE relevant status on crit"
+ },
+ {
+  "kind": "Skill",
+  "n": "Sandman",
+  "group": "Sneak",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Greatly increased Sneak Crit Bonus with Melee, kills regen AP"
+ },
+ {
+  "kind": "Skill",
+  "n": "Close n Personal",
+  "group": "Sneak",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "sneak crits now inflict Tier 3 bleeding, 3x mult for sneak, Reduce AP cost for next action if 1S1K"
+ },
+ {
+  "kind": "Skill",
+  "n": "Backstabber",
+  "group": "Sneak",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Sneak attack reduces target DT by 60%, suoercrit will instakill in stealth, 2x sneak mult"
+ },
+ {
+  "kind": "Skill",
+  "n": "Forced Slumber",
+  "group": "Sneak",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "apply Tier 3 of concussion, random limb crippled per crit regardless of placement"
+ },
+ {
+  "kind": "Skill",
+  "n": "Ghost",
+  "group": "Sneak",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Improved effectiveness of wearing hostile faction armor, lowers NPC detection"
+ },
+ {
+  "kind": "Skill",
+  "n": "Glitch",
+  "group": "Sneak",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Lowered hit chance from robots"
+ },
+ {
+  "kind": "Skill",
+  "n": "Systems Jammer",
+  "group": "Sneak",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Significantly lowered hit chance from robots"
+ },
+ {
+  "kind": "Skill",
+  "n": "Blip on the Radar",
+  "group": "Sneak",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Become undetectable by robots unless interacted with"
+ },
+ {
+  "kind": "Skill",
+  "n": "Concealed Carry",
+  "group": "Sneak",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Can smuggle improved holdout weapons into secured locations"
+ },
+ {
+  "kind": "Skill",
+  "n": "Ocean's 100",
+  "group": "Sneak",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can smuggle master level concealed weapons into secured locations"
+ },
+ {
+  "kind": "Skill",
+  "n": "Stuck it up Your Ass",
+  "group": "Sneak",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can smuggle holdout weapons into ultra-secure locations"
+ },
+ {
+  "kind": "Skill",
+  "n": "Camoflauge",
+  "group": "Sneak",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Lowers enemy chance to hit, can roll to disappear"
+ },
+ {
+  "kind": "Skill",
+  "n": "Plain Sight",
+  "group": "Sneak",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Lowered chance of detection in general sneaking"
+ },
+ {
+  "kind": "Skill",
+  "n": "Deep Cover",
+  "group": "Sneak",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Low chance to be detected in disguise"
+ },
+ {
+  "kind": "Skill",
+  "n": "Manipulation",
+  "group": "Speech",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Speech checks towards manipulation are +5% easier"
+ },
+ {
+  "kind": "Skill",
+  "n": "Deception",
+  "group": "Speech",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Speech checks towards lies are +10% easier"
+ },
+ {
+  "kind": "Skill",
+  "n": "Silver Tongue",
+  "group": "Speech",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Even the most outlandish lies have a chance to work on even the smartest NPCs"
+ },
+ {
+  "kind": "Skill",
+  "n": "Pants On Fire!",
+  "group": "Speech",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "NPCs no longer react negatively if caught in a lie"
+ },
+ {
+  "kind": "Skill",
+  "n": "Suave",
+  "group": "Speech",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Speech checks towards NPCs attracted to you are +10% easier"
+ },
+ {
+  "kind": "Skill",
+  "n": "Bisexual Legend",
+  "group": "Speech",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Can make sentient NPCs of any gender attracted to you regardless of gender or sexuality"
+ },
+ {
+  "kind": "Skill",
+  "n": "Charmer",
+  "group": "Speech",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Greatly improve chance to seduce NPCs attracted to you"
+ },
+ {
+  "kind": "Skill",
+  "n": "Mediation",
+  "group": "Speech",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Speech checks towards peaceful resolutions are +5% easier"
+ },
+ {
+  "kind": "Skill",
+  "n": "Leadership",
+  "group": "Speech",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Spend 5 AP in combat to give a rousing speech (one chosen S.P.E.C.I.A.L for all party members +1 until end of combat or downed)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Vanguard",
+  "group": "Speech",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "50% chance to revive a downed party member once per member per combat (full turn)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Lead by Example",
+  "group": "Speech",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Party members may tag an additional skill from your tagged skills"
+ },
+ {
+  "kind": "Skill",
+  "n": "Body Language Reader",
+  "group": "Speech",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "Immediately tell if any NPC means you harm"
+ },
+ {
+  "kind": "Skill",
+  "n": "Noir Detective",
+  "group": "Speech",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "50% to discover if any given piece of dialogue is the whole truth or not"
+ },
+ {
+  "kind": "Skill",
+  "n": "Diplomat",
+  "group": "Speech",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "A peaceful solution can be reached to almost any encounter with sentient NPCs"
+ },
+ {
+  "kind": "Skill",
+  "n": "Lived Experience",
+  "group": "Survival",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Better looting"
+ },
+ {
+  "kind": "Skill",
+  "n": "Practical Skills",
+  "group": "Survival",
+  "rank": "Proficiency",
+  "need": 60,
+  "effect": "Better counters and items"
+ },
+ {
+  "kind": "Skill",
+  "n": "Items",
+  "group": "Survival",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "(improves items)"
+ },
+ {
+  "kind": "Skill",
+  "n": "Safe Use",
+  "group": "Survival",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Reduced addiction chance"
+ },
+ {
+  "kind": "Skill",
+  "n": "Sinner",
+  "group": "Survival",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Boost tobacco alcohol and caffeine"
+ },
+ {
+  "kind": "Skill",
+  "n": "Counters",
+  "group": "Survival",
+  "rank": "Expertise",
+  "need": 80,
+  "effect": "(improves counters_"
+ },
+ {
+  "kind": "Skill",
+  "n": "Built Different",
+  "group": "Survival",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Counter and deflect physical status effects"
+ },
+ {
+  "kind": "Skill",
+  "n": "Strong Constitution",
+  "group": "Survival",
+  "rank": "Mastery",
+  "need": 100,
+  "effect": "Counter and detect mental status effects"
+ }
+]

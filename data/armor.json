@@ -1,0 +1,2757 @@
+[
+ {
+  "n": "Black Gloves",
+  "tier": 1,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Sneak +10",
+  "nerfs": "Reload AP +1"
+ },
+ {
+  "n": "Eye Patch",
+  "tier": 1,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Speech",
+  "nerfs": "Chance to hit -2(Range)"
+ },
+ {
+  "n": "Eyeglasses",
+  "tier": 1,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Corrects Eyesight nerfs"
+ },
+ {
+  "n": "Light Satchel",
+  "tier": 1,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Carry Weight"
+ },
+ {
+  "n": "Medical Mask",
+  "tier": 1,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Medicine +5"
+ },
+ {
+  "n": "Scarf",
+  "tier": 1,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Sunglasses",
+  "tier": 1,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "CHA +1",
+  "nerfs": "PER -1 Indoors or Dark"
+ },
+ {
+  "n": "Welding Goggles",
+  "tier": 1,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Blind Resist +5",
+  "nerfs": "-2 PER"
+ },
+ {
+  "n": "Improvized Plate Armor",
+  "tier": 1,
+  "lb": 40,
+  "type": "Heavy (10%)",
+  "loc": "Body",
+  "dt": 6,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Gecko Skin Armor",
+  "tier": 1,
+  "lb": 12,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Miner's Chest Protection",
+  "tier": 1,
+  "lb": 15,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Raider Scavanged Armor",
+  "tier": 1,
+  "lb": 20,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 3,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Cowboy Hat",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Head",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Face Cover",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Head",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Baseball Helmet",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Head",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Fire Helmet",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Head",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Flight Helmet",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Head",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Football Helmet",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Head",
+  "dt": 3,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Hockey Helmet",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Head",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Mascot Head",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Head",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Mining Helmet",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Head",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Motorcycle Helmet",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Head",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Prison Guard Helmet",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Head",
+  "dt": 4,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Sack Hood",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Head",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Salvaged Helmet",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Head",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Welding Helmet",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Head",
+  "dt": 3,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Athletic Clothing",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Beanie",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Caravaneer Outfit",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Engineer Jumpsuit",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Field Hand Outfit",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Handyman Jumpsuit",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Jailhouse Outfit",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Leather Jacket",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Powder Gang Plain Outfit",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Powder Gang Simple Outfit",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Pre-War Businesswear",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Pre-War Casualwear",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Prospector Outfit",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Repairman Jumpsuit",
+  "tier": 1,
+  "lb": 5,
+  "val": 40,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "buffs": "5+ Repair",
+  "fxFrom": "5+ Repair|",
+  "fx": {
+   "REP": 5
+  }
+ },
+ {
+  "n": "RobCo Jumpsuit",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Settler Outfit",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Tribal Garb",
+  "tier": 1,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Assault Gas Mask",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Whole Head",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Lobster Trap Helmet",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Whole Head",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Tourist Space Hemet",
+  "tier": 1,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Whole Head",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Batting Gloves",
+  "tier": 2,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "5+ Melee Weapons"
+ },
+ {
+  "n": "Electronic Shades",
+  "tier": 2,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "1/2 Debuff for Night"
+ },
+ {
+  "n": "Mojave Express Light Backpack",
+  "tier": 2,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "20+ Carry Weight"
+ },
+ {
+  "n": "Mojave Express Satchel",
+  "tier": 2,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "15+ Carry Weight"
+ },
+ {
+  "n": "Police Gas Mask",
+  "tier": 2,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 1,
+  "buffs": "Rad Resist +10, Poison Resist +10",
+  "nerfs": "AGI -1, PER -1"
+ },
+ {
+  "n": "Rudimentary Third Arm",
+  "tier": 2,
+  "lb": 35,
+  "val": 248,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Reload cost -1 AP, Active item use cost -1 AP"
+ },
+ {
+  "n": "Tribal Icon",
+  "tier": 2,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Crit Chance +3"
+ },
+ {
+  "n": "Tribal Sling",
+  "tier": 2,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "15+ Carry Weight"
+ },
+ {
+  "n": "Wedding Ring",
+  "tier": 2,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "LCK +1",
+  "nerfs": "Romance Speech -15",
+  "formal": -1
+ },
+ {
+  "n": "Robot Plating Armor",
+  "tier": 2,
+  "lb": 36,
+  "type": "Heavy (10%)",
+  "loc": "Body",
+  "dt": 8,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Leather Armor",
+  "tier": 2,
+  "lb": 22,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 7,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Lightweight Leather Armor",
+  "tier": 2,
+  "lb": 18,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 5,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Prison Guard Body Armor",
+  "tier": 2,
+  "lb": 10,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 4,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Scout Body Armor",
+  "tier": 2,
+  "lb": 14,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 8,
+  "buffs": "5+ Sneak",
+  "fxFrom": "5+ Sneak|",
+  "fx": {
+   "SNK": 5
+  }
+ },
+ {
+  "n": "Tribal Basic Armor",
+  "tier": 2,
+  "lb": 15,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 6,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Tribal Hide Armor",
+  "tier": 2,
+  "lb": 20,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 7,
+  "buffs": "5+ Survival",
+  "fxFrom": "5+ Survival|",
+  "fx": {
+   "SUR": 5
+  }
+ },
+ {
+  "n": "Army Fatigues",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Baseball Uniform",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Dead Money Jumpsuit",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Dress",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Lab Technician Outfit",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Merc Outfit",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "NCR Diplomatic Attire",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "New Caanan Outfit",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Powder Gang Soldier Outfit",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Pre-War Suit",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Prostitute Outfit",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Sexy Sleepwear",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Sherrif's Duster",
+  "tier": 2,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 3,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Legion Recruit Armor",
+  "tier": 2,
+  "lb": 24,
+  "type": "Light (20%)",
+  "loc": "Whole Body",
+  "dt": 6,
+  "faction": "Legion",
+  "fxFrom": "|"
+ },
+ {
+  "n": "Active Filter Headset",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "PER +1",
+  "formal": 0
+ },
+ {
+  "n": "Activewear Underlayer",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "AGI +1",
+  "formal": 0
+ },
+ {
+  "n": "Ammo Satchel Harness",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "5+ Carry weight for ammo (20), -1 AP to reload, can throw magazine",
+  "formal": 3,
+  "note": "T1 comes in 3 forms: Hip, Back, Chest. Combine for (Full)"
+ },
+ {
+  "n": "Army Gas Mask",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 1,
+  "buffs": "Radiation Resistance +5, Poison (Gas) Resist +5",
+  "nerfs": "AGI -1"
+ },
+ {
+  "n": "Aviators",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "CHA +1"
+ },
+ {
+  "n": "Back Brace",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "STR +1",
+  "formal": 0
+ },
+ {
+  "n": "Bandolier",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "5+ Big Guns skill (20), +25 (100) BG mag capacity",
+  "mech": "Add any ammo onto belt OOC, Bandolier must be refilled after use",
+  "formal": 3,
+  "note": "T1 comes in 3 forms: Hip, Back, Chest. Combine for (Full)"
+ },
+ {
+  "n": "Basic Night Vision Goggles",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Eliminates Night and Dark Penalty",
+  "nerfs": "-3 PER in day/light conditions, x2 Blind Chance",
+  "mech": "Choose to activate, 1 AP"
+ },
+ {
+  "n": "Basic Thermal Visison Goggles",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Increases Chance to hit by + 2x(Range-2)",
+  "nerfs": "-3 PER if fire/flare in battle, Penalty at R1and2, x2 Blind Chance",
+  "mech": "Choose to activate (1 AP), Thermal applies to living only"
+ },
+ {
+  "n": "Black Balaclava",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Sneak",
+  "nerfs": "-10 Barter",
+  "formal": 0
+ },
+ {
+  "n": "Brainwave Aligner",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "INT +1",
+  "formal": 0
+ },
+ {
+  "n": "Bromine Lined Undergarments",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Burn Resistance +5",
+  "nerfs": "Movement AP +1"
+ },
+ {
+  "n": "Camo Baseball Hat",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Small Guns",
+  "nerfs": "-10 Medicine",
+  "formal": 0
+ },
+ {
+  "n": "Cocoa Butter Hand Balm",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Lockpick",
+  "nerfs": "-10 Repair",
+  "formal": 0,
+  "note": "Your hands are too nice to get dirty"
+ },
+ {
+  "n": "Combat Medic Harness",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "5+ Medicine skill (20), -1 AP cost to use medical items",
+  "formal": 3,
+  "note": "T1 comes in 3 forms: Hip, Back, Chest. Combine for (Full)"
+ },
+ {
+  "n": "Cut Gloves",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 1,
+  "buffs": "Bleed Resist +5",
+  "nerfs": "Reload AP +1"
+ },
+ {
+  "n": "Diamond Stud Earring",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Barter",
+  "nerfs": "-10 Small Guns",
+  "formal": 0
+ },
+ {
+  "n": "Electrolyte Supplements",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "END +1",
+  "formal": 0
+ },
+ {
+  "n": "Explosive Harness",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "5+ Explosive skill (20), -1 AP to use thrown",
+  "mech": "Equip any throwable onto active loadout (1 AP swap) (2 slots per (6))",
+  "formal": 3,
+  "note": "T1 comes in 3 forms: Hip, Back, Chest. Combine for (Full)"
+ },
+ {
+  "n": "Explosives Backpack",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Carry Weight, +10 Explosives",
+  "nerfs": "-1 AGI"
+ },
+ {
+  "n": "Field Sterilization Belt",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Medicine",
+  "nerfs": "-10 Science",
+  "formal": 0,
+  "note": "The Various Mixtures make it hard to keep track for non-medical application"
+ },
+ {
+  "n": "Gold Tooth",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Speech",
+  "nerfs": "-10 Energy Weapons",
+  "formal": 0
+ },
+ {
+  "n": "Grease Covered Towel",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Repair",
+  "nerfs": "-10 Speech",
+  "formal": 0
+ },
+ {
+  "n": "Grounding Mechanism",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Electrocute Resist"
+ },
+ {
+  "n": "Heatproof Gloves",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Explosives",
+  "nerfs": "-10 Lockpick,",
+  "formal": 0
+ },
+ {
+  "n": "Hip Rotation Limiter",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Big Guns",
+  "nerfs": "-10 Melee Weapons",
+  "formal": 0
+ },
+ {
+  "n": "Incense Diffuser",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Survival",
+  "nerfs": "-10 Explosives",
+  "formal": 0
+ },
+ {
+  "n": "Lucky 8 Ball",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "LCK +1",
+  "formal": 0
+ },
+ {
+  "n": "Melee Harness",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "5+ Melee skill (20), -1 AP cost to swap to one handed",
+  "mech": "Equip any one-hand MW onto active loadout (1 AP swap) (2 slots per (6))",
+  "formal": 3,
+  "note": "T1 comes in 3 forms: Hip, Back, Chest. Combine for (Full)"
+ },
+ {
+  "n": "Money Dispenser Harness",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "5+ Barter skill (20), Money does not count towards carry weight",
+  "formal": 2
+ },
+ {
+  "n": "Nuka Cola Backpack",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "25+ Carry Weight"
+ },
+ {
+  "n": "Old World Fragrance",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "CHA +1",
+  "formal": 0
+ },
+ {
+  "n": "Pistol Harness",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "5+ Small Guns skill (20), -1 AP cost to swap to pistol",
+  "mech": "Equip any small pistol onto active loadout (1 AP swap) (2 slots per (6))",
+  "formal": 3,
+  "note": "T1 comes in 3 forms: Hip, Back, Chest. Combine for (Full)"
+ },
+ {
+  "n": "Pocket Protector",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Science",
+  "nerfs": "-10 Survival",
+  "formal": 0
+ },
+ {
+  "n": "Prospector Backpack",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "30+ Carry Weight",
+  "nerfs": "-1 AGI"
+ },
+ {
+  "n": "Quick Repair Harness",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "5+ Repair skill (20), -1 AP cost to unjam",
+  "formal": 3,
+  "note": "T1 comes in 3 forms: Hip, Back, Chest. Combine for (Full)"
+ },
+ {
+  "n": "Septum Piercing",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Energy Weapons",
+  "nerfs": "-10 Big Guns",
+  "formal": 0
+ },
+ {
+  "n": "Steel Toed Boots",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 1,
+  "buffs": "10+ Melee Weapons",
+  "nerfs": "-10 Sneak",
+  "formal": 0
+ },
+ {
+  "n": "Sunset Sarsaparilla Backpack",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "25+ Carry Weight"
+ },
+ {
+  "n": "Survival Kit",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "10+ Carry Weight, +10 Survival",
+  "nerfs": "-1 AGI"
+ },
+ {
+  "n": "Survival Toolbelt",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "5+ Survival skill (20), -1 AP cost to use improvised items",
+  "mech": "Equip any counter of tool onto active loadout (1 AP swap) (2 slots per (6))",
+  "formal": 3,
+  "note": "T1 comes in 3 forms: Hip, Back, Chest. Combine for (Full)"
+ },
+ {
+  "n": "Tactical Drink Harness",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "-1 AP cost to consume drink/alcohol",
+  "mech": "Equip any drink into slot",
+  "formal": 2,
+  "note": "T1 comes in 3 forms: Hip, Back, Chest. Combine for (Full)"
+ },
+ {
+  "n": "Tesla Harness",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "5+ Energy Weapon skill (20), -1 AP cost to reload",
+  "mech": "Equip any small EW onto active loadout (1 AP swap) (2 slots per (6))",
+  "formal": 3,
+  "note": "T1 comes in 3 forms: Hip, Back, Chest. Combine for (Full)"
+ },
+ {
+  "n": "Thermal Underwear",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Cold Resistance +5",
+  "nerfs": "Chance to hit in Hot environment -10",
+  "formal": -1
+ },
+ {
+  "n": "White Gloves",
+  "tier": 3,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Formal Score -3"
+ },
+ {
+  "n": "Gecko Backed Leather Armor",
+  "tier": 3,
+  "lb": 25,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 10,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Lightweight Metal Armor",
+  "tier": 3,
+  "lb": 32,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 12,
+  "fxFrom": "|"
+ },
+ {
+  "n": "New Caanan Chest Armor",
+  "tier": 3,
+  "lb": 25,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 11,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Security Armor",
+  "tier": 3,
+  "lb": 28,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 13,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Tribal Armored Leather",
+  "tier": 3,
+  "lb": 20,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 8,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Vault Excursion Armor (Armored Suit)",
+  "tier": 3,
+  "lb": 22,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 8,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Vault Security Armor",
+  "tier": 3,
+  "lb": 30,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 11,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Combat Armor Mk. I",
+  "tier": 3,
+  "lb": 36,
+  "type": "Medium (15%)",
+  "loc": "Body",
+  "dt": 15,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Marked Armor",
+  "tier": 3,
+  "lb": 34,
+  "type": "Medium (15%)",
+  "loc": "Body",
+  "dt": 14,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Metal Armor",
+  "tier": 3,
+  "lb": 38,
+  "type": "Medium (15%)",
+  "loc": "Body",
+  "dt": 13,
+  "fxFrom": "|"
+ },
+ {
+  "n": "NCR Standard Issue Armor",
+  "tier": 3,
+  "lb": 30,
+  "type": "Medium (15%)",
+  "loc": "Body",
+  "dt": 12,
+  "faction": "NCR",
+  "fxFrom": "|"
+ },
+ {
+  "n": "Reinforced Gecko Backed Leather Armor",
+  "tier": 3,
+  "lb": 27,
+  "type": "Medium (15%)",
+  "loc": "Body",
+  "dt": 14,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Reinforced Leather Armor",
+  "tier": 3,
+  "lb": 28,
+  "type": "Medium (15%)",
+  "loc": "Body",
+  "dt": 12,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Boomer Flightsuit",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 4,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Bounty Hunter Duster",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 6,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Brotherhood Fatigues",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Checkered Suit",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Dapper Gambler Suit/Dress",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Fancy Gambler Suit/Dress",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Followers Doctor Coat",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Followers Lab Coat",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Formal Wear",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Ranger Outfit",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Regulator Duster",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Scientist Outfit",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Snakeskin Outfit",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Tuxedo",
+  "tier": 3,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Courier Duster",
+  "tier": 3,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Vanity",
+  "dt": 3,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Diving Suit",
+  "tier": 3,
+  "lb": 25,
+  "type": "Light (20%)",
+  "loc": "Whole Body",
+  "dt": 10,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Courser Outfit",
+  "tier": 3,
+  "lb": 14,
+  "type": "Medium (15%)",
+  "loc": "Whole Body",
+  "dt": 8,
+  "fxFrom": "|"
+ },
+ {
+  "n": "American Firearms Association Membership Card (PDW)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Baseball Eye Black (Blunt/Slash)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Breathing Mask",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "20+% Radiation Resist"
+ },
+ {
+  "n": "Burgundy Headband (LMG)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Cleats",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "AGI +2",
+  "nerfs": "-1 CHA",
+  "formal": 0
+ },
+ {
+  "n": "Cuban Link Necklace (Machine Pistol)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Desert Rose Necklace",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Double Helix Bracelet (Fast Laser)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Duck Call Lanyard (20 Gauge)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Eagle Scout's Shooting Patch (Vintage Rifle)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Eclipse Pin (Fast Plasma)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Firefighter's Badge (Fueled Elemental)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Gas Station Nametag (12 Gauge)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Give Peace A Chance Pin (Semi-Auto Rifle)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Glowing Loaded Dice",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "LCK +2",
+  "nerfs": "-1 INT",
+  "formal": 0
+ },
+ {
+  "n": "Green Headband (Missile)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Gunpowder Pouch (40mm)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "formal": 0
+ },
+ {
+  "n": "Heavy Weaponry Back Support",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "15+ Chance to hit with Big Guns",
+  "nerfs": "-2 AGI, -5 Sneak"
+ },
+ {
+  "n": "Hiking Backpack",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "40+ Carry Weight",
+  "nerfs": "-2 AGI, -5 Sneak"
+ },
+ {
+  "n": "Hockey Mask (Slash/Pierce)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Lava Lamp Charm (Hot Laser)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Licenced Firework Technician Lanyard (Rocket)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Lucky Bullet (Heavy)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Marathon Runner's Shoes",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "END +2",
+  "nerfs": "-1 STR",
+  "formal": 0,
+  "note": "Cardio kills gains"
+ },
+ {
+  "n": "Aviators (Semi-Auto Pistol)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Military Grade Goggles",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 2,
+  "buffs": "Eliminates Night and Dark Penalty OR Increases Chance to hit by + 2x(Range-2)",
+  "nerfs": "-3 PER if fire/flare or daytime in battle (depends), Penalty at R1and2, x2 Blind Chance",
+  "mech": "Choose to activate (1 AP), Thermal applies to living only"
+ },
+ {
+  "n": "Mirrored Glasses",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "PER +2",
+  "nerfs": "-1 LCK",
+  "formal": 0
+ },
+ {
+  "n": "Nootropic Auto-Injector",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "INT +2",
+  "nerfs": "-1 END",
+  "formal": 0
+ },
+ {
+  "n": "Obsidian Ring (Slash/Blunt)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Operator Watch (SMG)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Ornate Chrome Pendant (Heavy Pistol)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Paratrooper's Insignia (Carbine)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Pip-Boy 2000",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Plasma Globe Charm (Hot Plasma)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Pocket Hologram Icon (Powered Elemental)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Poppy Flower (AMR)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Pure Ivory Bracelet (Heavy Rifle)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Red and White Pocket Square (Auto Rifle)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "note": "Scarface Final Scene Reference"
+ },
+ {
+  "n": "Red Flannel Shirt (Blunt/Pierce)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Rudimentary Exoskeleton",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 3,
+  "buffs": "STR +2",
+  "nerfs": "-1 AGI",
+  "formal": 0
+ },
+ {
+  "n": "Shamrock Pin (Mines)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Sharktooth Necklace (Pierce/Slash)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Sherrif's Badge (Revolver)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "formal": 1
+ },
+ {
+  "n": "Shutter Shades",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "CHA +2",
+  "nerfs": "-1 PER",
+  "formal": 0
+ },
+ {
+  "n": "Spent Energy Cell Necklace (Electric)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Spent Shell Necklace (25mm)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Spider Tack (Thrown)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Spirit of Juba Keffiyeh (DMR)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Strangely Sparkling Necklace (Magnetic)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Tactical Gloves",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "-1 AP for reload",
+  "formal": -1
+ },
+ {
+  "n": "The Evil Eye Necklace",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Valence Radii-Accentuator",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 4
+ },
+ {
+  "n": "Very Lucky Coin (Pierce/Blunt)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Voroshilov Sharpshooter's Badge (Sniper Rifle)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "note": "This"
+ },
+ {
+  "n": "Wrist Weights (Hand)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Composite Military Armor",
+  "tier": 4,
+  "lb": 15,
+  "type": "Heavy (10%)",
+  "loc": "Body",
+  "dt": 20,
+  "buffs": "10+ Big Guns, +10 Explosives, 1+ END",
+  "nerfs": "AG:L - 2",
+  "fxFrom": "10+ Big Guns, +10 Explosives, 1+ END|AG:L - 2",
+  "fx": {
+   "EXP": 10,
+   "BG": 10,
+   "E": 1,
+   "A": -2
+  }
+ },
+ {
+  "n": "Gecko Leather Backed Metal Armor",
+  "tier": 4,
+  "lb": 39,
+  "type": "Heavy (10%)",
+  "loc": "Body",
+  "dt": 14,
+  "buffs": "Poison resistance, 10+ Survival, 10+ Melee Weapons",
+  "nerfs": "AGL - 1",
+  "fxFrom": "Poison resistance, 10+ Survival, 10+ Melee Weapons|AGL - 1",
+  "fx": {
+   "MW": 20,
+   "SUR": 10,
+   "A": -1,
+   "resist:Poisoned": 1
+  }
+ },
+ {
+  "n": "Kevlar-Jacketed Steel Plate Armor",
+  "tier": 4,
+  "lb": 38,
+  "type": "Heavy (10%)",
+  "loc": "Body",
+  "dt": 18,
+  "buffs": "1+ END",
+  "nerfs": "AGL -2",
+  "fxFrom": "1+ END|AGL -2",
+  "fx": {
+   "E": 1,
+   "A": -2
+  }
+ },
+ {
+  "n": "Plated-Metal Armor",
+  "tier": 4,
+  "lb": 35,
+  "type": "Heavy (10%)",
+  "loc": "Body",
+  "dt": 16,
+  "buffs": "1+ END",
+  "nerfs": "AGL -1",
+  "fxFrom": "1+ END|AGL -1",
+  "fx": {
+   "E": 1,
+   "A": -1
+  }
+ },
+ {
+  "n": "Legion Veteran Armor",
+  "tier": 4,
+  "lb": 40,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 10,
+  "faction": "Legion",
+  "fxFrom": "|"
+ },
+ {
+  "n": "Reinforced Security Armor",
+  "tier": 4,
+  "lb": 35,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 15,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Combat Armor Mk. II",
+  "tier": 4,
+  "lb": 45,
+  "type": "Medium (15%)",
+  "loc": "Body",
+  "dt": 18,
+  "fxFrom": "|"
+ },
+ {
+  "n": "NCR Ranger Combat Armor",
+  "tier": 4,
+  "lb": 52,
+  "type": "Medium (15%)",
+  "loc": "Body",
+  "dt": 17,
+  "faction": "NCR",
+  "fxFrom": "|"
+ },
+ {
+  "n": "Police Patrol Armor",
+  "tier": 4,
+  "lb": 32,
+  "type": "Medium (15%)",
+  "loc": "Body",
+  "dt": 15,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Polymer-Composite Body Armor",
+  "tier": 4,
+  "lb": 35,
+  "type": "Medium (15%)",
+  "loc": "Body",
+  "dt": 15,
+  "buffs": "1+ END",
+  "nerfs": "AGL - 1,",
+  "fxFrom": "1+ END|AGL - 1,",
+  "fx": {
+   "E": 1,
+   "A": -1
+  }
+ },
+ {
+  "n": "Empty Power Armor Frame",
+  "tier": 4,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Power",
+  "dt": 15,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Big MT. Scrubs",
+  "tier": 4,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Enclave Scientist Suit",
+  "tier": 4,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 3,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Naval Coat",
+  "tier": 4,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Ranger Vest Outfit",
+  "tier": 4,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Ghillie Suit (Desert)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Vanity",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Ghillie Suit (Woodland)",
+  "tier": 4,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Vanity",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Marine Armor",
+  "tier": 4,
+  "lb": 33,
+  "type": "Heavy (10%)",
+  "loc": "Whole Body",
+  "dt": 18,
+  "note": "Can come in Children of Atom Decoration",
+  "fxFrom": "|"
+ },
+ {
+  "n": "Salvaged Power Armor",
+  "tier": 4,
+  "lb": 80,
+  "type": "Heavy (10%)",
+  "loc": "Whole Body",
+  "dt": 24,
+  "nerfs": "AGL -3",
+  "note": "Can come in Faction Decoration",
+  "fxFrom": "|AGL -3",
+  "fx": {
+   "A": -3
+  }
+ },
+ {
+  "n": "Advanced Radiation Suit",
+  "tier": 4,
+  "lb": 19,
+  "type": "Light (20%)",
+  "loc": "Whole Body",
+  "dt": 6,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Gladiator Armor",
+  "tier": 4,
+  "lb": 25,
+  "type": "Light (20%)",
+  "loc": "Whole Body",
+  "dt": 13,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Legion Prime Armor",
+  "tier": 4,
+  "lb": 30,
+  "type": "Light (20%)",
+  "loc": "Whole Body",
+  "dt": 12,
+  "faction": "Legion",
+  "fxFrom": "|"
+ },
+ {
+  "n": "Space Suit",
+  "tier": 4,
+  "lb": 40,
+  "type": "Light (20%)",
+  "loc": "Whole Body",
+  "dt": 10,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Stealth Suit",
+  "tier": 4,
+  "lb": 25,
+  "type": "Light (20%)",
+  "loc": "Whole Body",
+  "dt": 13,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Legion Centourion Armor",
+  "tier": 4,
+  "lb": 48,
+  "type": "Medium (15%)",
+  "loc": "Whole Body",
+  "dt": 17,
+  "faction": "Legion",
+  "fxFrom": "|"
+ },
+ {
+  "n": "Recon Armor",
+  "tier": 4,
+  "lb": 31,
+  "type": "Medium (15%)",
+  "loc": "Whole Body",
+  "dt": 15,
+  "faction": "BOS",
+  "fxFrom": "|"
+ },
+ {
+  "n": "Riot Gear",
+  "tier": 4,
+  "lb": 50,
+  "type": "Medium (15%)",
+  "loc": "Whole Body",
+  "dt": 19,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Marine Helmet",
+  "tier": 4,
+  "lb": 0,
+  "type": "Heavy (10%)",
+  "loc": "Whole Head",
+  "dt": 5,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Sierra Madre Security Helmet",
+  "tier": 4,
+  "lb": 0,
+  "type": "Light (20%)",
+  "loc": "Whole Head",
+  "dt": 4,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Adventurer's Backpack",
+  "tier": 5,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "50+ Carry Weight, +10 Survival",
+  "nerfs": "-3 AGI"
+ },
+ {
+  "n": "Assassin Mask",
+  "tier": 5,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 5
+ },
+ {
+  "n": "Atomic-Valence Tri-Radii-Oscillator",
+  "tier": 5,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 8
+ },
+ {
+  "n": "Climbing Claws",
+  "tier": 5,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Fancy Timepiece",
+  "tier": 5,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Heavy Backpack",
+  "tier": 5,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "60+ Carry Weight",
+  "nerfs": "-3 AGI, -10 Sneak"
+ },
+ {
+  "n": "Mad Scientist Goggles",
+  "tier": 5,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 2
+ },
+ {
+  "n": "Military Backpack",
+  "tier": 5,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "50+ Carry Weight, 25% Ammo Weight Reduction",
+  "nerfs": "-2 AGI, +10 Enemy Chance to Hit, -10 Sneak"
+ },
+ {
+  "n": "Pip-Boy 3000",
+  "tier": 5,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Rebreather",
+  "tier": 5,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0,
+  "buffs": "Can swim for unlimited turns",
+  "nerfs": "-1 AGI"
+ },
+ {
+  "n": "Californian Heavy Armor",
+  "tier": 5,
+  "lb": 70,
+  "type": "Heavy (10%)",
+  "loc": "Body",
+  "dt": 25,
+  "buffs": "5+ Small Guns, 5+ Big Guns, 1+ PER, 1+ END",
+  "nerfs": "AGL - 3, -10 Sneak",
+  "faction": "NCR",
+  "fxFrom": "5+ Small Guns, 5+ Big Guns, 1+ PER, 1+ END|AGL - 3, -10 Sneak",
+  "fx": {
+   "SG": 5,
+   "BG": 5,
+   "SNK": -10,
+   "P": 1,
+   "E": 1,
+   "A": -3
+  }
+ },
+ {
+  "n": "Institute Composite Armor",
+  "tier": 5,
+  "lb": 45,
+  "type": "Heavy (10%)",
+  "loc": "Body",
+  "dt": 30,
+  "buffs": "5+ Science, 5+ Energy Weapons",
+  "nerfs": "AGL - 2, -10 Small Guns, -10 Big Guns, -10 Explosives",
+  "fxFrom": "5+ Science, 5+ Energy Weapons|AGL - 2, -10 Small Guns, -10 Big Guns, -10 Explosives",
+  "fx": {
+   "EW": 5,
+   "EXP": -10,
+   "SG": -10,
+   "BG": -10,
+   "SCI": 5,
+   "A": -2
+  }
+ },
+ {
+  "n": "Military-Grade Ceramic Body Armor",
+  "tier": 5,
+  "lb": 50,
+  "type": "Heavy (10%)",
+  "loc": "Body",
+  "dt": 21,
+  "buffs": "1+ END",
+  "nerfs": "AGL -2",
+  "fxFrom": "1+ END|AGL -2",
+  "fx": {
+   "E": 1,
+   "A": -2
+  }
+ },
+ {
+  "n": "Reinforced Curiassier Armor",
+  "tier": 5,
+  "lb": 45,
+  "type": "Heavy (10%)",
+  "loc": "Body",
+  "dt": 25,
+  "buffs": "15+ Small Arms. 1+ PER, - 1 AP to fire",
+  "nerfs": "AGL -2",
+  "fxFrom": "15+ Small Arms. 1+ PER, - 1 AP to fire|AGL -2",
+  "fx": {
+   "P": 1,
+   "A": -2,
+   "apCost": -1
+  }
+ },
+ {
+  "n": "Ranger Armor",
+  "tier": 5,
+  "lb": 57,
+  "type": "Medium (15%)",
+  "loc": "Body",
+  "dt": 16,
+  "fxFrom": "|"
+ },
+ {
+  "n": "T-45 Power Armor",
+  "tier": 5,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Power",
+  "dt": 32,
+  "fxFrom": "|"
+ },
+ {
+  "n": "T-51 Power Armor",
+  "tier": 5,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Power",
+  "dt": 35,
+  "buffs": "END + 2, STR + 3, status resistance against bleeding, poisioin, radiation and plasma",
+  "nerfs": "AGL - 3,, CHA - 3 weak to eletrcity and EMF",
+  "mech": "Cannot wear accessories",
+  "fxFrom": "END + 2, STR + 3, status resistance against bleeding, poisioin, radiation and plasma|AGL - 3,, CHA - 3 weak to eletrcity and EMF",
+  "fx": {
+   "S": 3,
+   "E": 2,
+   "C": -3,
+   "A": -3,
+   "resist:Poisoned": 1,
+   "resist:Bleeding": 1,
+   "resist:Irradiated": 1,
+   "noAccessories": 1
+  }
+ },
+ {
+  "n": "T-60 Power Armor",
+  "tier": 5,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Power",
+  "dt": 38,
+  "fxFrom": "|"
+ },
+ {
+  "n": "X-01 Power Armor",
+  "tier": 5,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Power",
+  "dt": 42,
+  "fxFrom": "|"
+ },
+ {
+  "n": "X-02 Power Armor",
+  "tier": 5,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Power",
+  "dt": 45,
+  "fxFrom": "|"
+ },
+ {
+  "n": "X-03 \"Hellfire\" Power Armor",
+  "tier": 5,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Power",
+  "dt": 50,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Armored Battlecoat",
+  "tier": 5,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 8,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Brotherhood Elder Robe",
+  "tier": 5,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Enclave Officer Uniform",
+  "tier": 5,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "NCR General Outfit",
+  "tier": 5,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Pimp Suit",
+  "tier": 5,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 0,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Legion Ceremonial Armor",
+  "tier": 5,
+  "lb": 80,
+  "type": "Heavy (10%)",
+  "loc": "Whole Body",
+  "dt": 20,
+  "faction": "Legion",
+  "fxFrom": "|"
+ },
+ {
+  "n": "Assassin Suit",
+  "tier": 5,
+  "lb": 30,
+  "type": "Light (20%)",
+  "loc": "Whole Body",
+  "dt": 16,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Chinese Stealth Suit",
+  "tier": 5,
+  "lb": 25,
+  "type": "Light (20%)",
+  "loc": "Whole Body",
+  "dt": 15,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Legion Praetorian Armor",
+  "tier": 5,
+  "lb": 63,
+  "type": "Light (20%)",
+  "loc": "Whole Body",
+  "dt": 12,
+  "faction": "Legion",
+  "fxFrom": "|"
+ },
+ {
+  "n": "Advanced Riot Gear",
+  "tier": 5,
+  "lb": 50,
+  "type": "Medium (15%)",
+  "loc": "Whole Body",
+  "dt": 25,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Desert Ranger Combat Armor",
+  "tier": 5,
+  "lb": 55,
+  "type": "Medium (15%)",
+  "loc": "Whole Body",
+  "dt": 24,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Elite Riot Gear",
+  "tier": 5,
+  "lb": 53,
+  "type": "Medium (15%)",
+  "loc": "Whole Body",
+  "dt": 22,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Future Proof Vision Goggles",
+  "tier": 6,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 5
+ },
+ {
+  "n": "Pimp-Boy 3 Billion",
+  "tier": 6,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 1
+ },
+ {
+  "n": "Joshua Graham's Armor",
+  "tier": 6,
+  "lb": 28,
+  "type": "Light (20%)",
+  "loc": "Body",
+  "dt": 20,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Gannon Family Tesla Armor",
+  "tier": 6,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Power",
+  "dt": 55,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Scorched Sierra Power Armor",
+  "tier": 6,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Power",
+  "dt": 36,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Benny's Suit",
+  "tier": 6,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 1,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Daniel's Outfit",
+  "tier": 6,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Dr. Klein's Scrubs",
+  "tier": 6,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 4,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Dr. Mobius' Scrubs",
+  "tier": 6,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 6,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Father Elijah's Robe",
+  "tier": 6,
+  "lb": 0,
+  "type": "Clothing (20%)",
+  "loc": "Vanity",
+  "dt": 2,
+  "fxFrom": "|"
+ },
+ {
+  "n": "Armor of the 87th Tribe",
+  "tier": 6,
+  "lb": 75,
+  "type": "Heavy (10%)",
+  "loc": "Whole Body",
+  "dt": 28,
+  "fxFrom": "|"
+ },
+ {
+  "n": "T-45 Power Armor Helmet",
+  "tier": 6,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Whole Head",
+  "dt": 4,
+  "fxFrom": "|"
+ },
+ {
+  "n": "T-51 Power Armor Helmet",
+  "tier": 6,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Whole Head",
+  "dt": 5,
+  "buffs": "PER + 2",
+  "nerfs": "CHA - 2",
+  "fxFrom": "PER + 2|CHA - 2",
+  "fx": {
+   "P": 2,
+   "C": -2
+  }
+ },
+ {
+  "n": "T-60 Power Armor Helmet",
+  "tier": 6,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Whole Head",
+  "dt": 7,
+  "fxFrom": "|"
+ },
+ {
+  "n": "X-01 Power Armor Helmet",
+  "tier": 6,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Whole Head",
+  "dt": 8,
+  "fxFrom": "|"
+ },
+ {
+  "n": "X-02 Power Armor Helmet",
+  "tier": 6,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Whole Head",
+  "dt": 10,
+  "fxFrom": "|"
+ },
+ {
+  "n": "X-03 \"Hellfire\" Power Armor Helmet",
+  "tier": 6,
+  "lb": 0,
+  "type": "Power (5%)",
+  "loc": "Whole Head",
+  "dt": 14,
+  "fxFrom": "|"
+ },
+ {
+  "n": "LV Sandals",
+  "tier": 666,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ },
+ {
+  "n": "Sneakers",
+  "tier": 666,
+  "lb": 0,
+  "type": "Gear (N/A)",
+  "loc": "Accessory",
+  "dt": 0
+ }
+]

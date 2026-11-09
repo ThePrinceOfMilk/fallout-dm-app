@@ -1,0 +1,604 @@
+[
+ {
+  "n": "Case .22 LR",
+  "tier": "1",
+  "lb": 0.00152,
+  "val": 0.076,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case .32 ACP",
+  "tier": "1",
+  "lb": 0.0032,
+  "val": 0.16,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case 9mm Parabellum",
+  "tier": "1",
+  "lb": 0.0058000000000000005,
+  "val": 0.29000000000000004,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case 10mm Auto",
+  "tier": "1",
+  "lb": 0.0066,
+  "val": 0.33,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case .45 ACP",
+  "tier": "1",
+  "lb": 0.013000000000000001,
+  "val": 0.65,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case .357 Magnum",
+  "tier": "1",
+  "lb": 0.007000000000000001,
+  "val": 0.35000000000000003,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case .44 Magnum",
+  "tier": "1",
+  "lb": 0.0086,
+  "val": 0.43,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case .45-70 GOVT",
+  "tier": "1",
+  "lb": 0.013000000000000001,
+  "val": 0.65,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case 12.7mm HPM",
+  "tier": "1",
+  "lb": 0.0128,
+  "val": 0.64,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case 5mm NATO",
+  "tier": "1",
+  "lb": 0.0034000000000000002,
+  "val": 0.17,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case 5.56mm NATO",
+  "tier": "1",
+  "lb": 0.0052,
+  "val": 0.26,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case .308 WIN",
+  "tier": "1",
+  "lb": 0.011,
+  "val": 0.5499999999999999,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case .277 Fury",
+  "tier": "1",
+  "lb": 0.004,
+  "val": 0.2,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case .338 Lapua Magnum",
+  "tier": "1",
+  "lb": 0.02,
+  "val": 1,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case .50 BMG",
+  "tier": "1",
+  "lb": 0.05,
+  "val": 2.5,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case 20 Gauge",
+  "tier": "1",
+  "lb": 0.013000000000000001,
+  "val": 0.65,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case 12 Gauge",
+  "tier": "1",
+  "lb": 0.015,
+  "val": 0.75,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case 4 Gauge",
+  "tier": "1",
+  "lb": 0.05,
+  "val": 2.5,
+  "cat": "Casing"
+ },
+ {
+  "n": "Case 2mm EC",
+  "tier": "1",
+  "lb": 0.05,
+  "val": 2.5,
+  "cat": "Casing"
+ },
+ {
+  "n": "Shell Missile",
+  "tier": "1",
+  "lb": 0.3,
+  "val": 15,
+  "cat": "Casing"
+ },
+ {
+  "n": "Shell Rocket",
+  "tier": "1",
+  "lb": 0.05,
+  "val": 2.5,
+  "cat": "Casing"
+ },
+ {
+  "n": "Empty 40mm Shell",
+  "tier": "1",
+  "lb": 0.1,
+  "val": 5,
+  "cat": "Casing"
+ },
+ {
+  "n": "Empty 25mm Shell",
+  "tier": "1",
+  "lb": 0.05,
+  "val": 2.5,
+  "cat": "Casing"
+ },
+ {
+  "n": "Microfusion Cell",
+  "tier": "1",
+  "lb": 0.1,
+  "val": 5,
+  "cat": "Energy"
+ },
+ {
+  "n": "Energy Cell",
+  "tier": "1",
+  "lb": 0.05,
+  "val": 2.5,
+  "cat": "Energy"
+ },
+ {
+  "n": "Electron Charge Pack",
+  "tier": "1",
+  "lb": 0.075,
+  "val": 3.75,
+  "cat": "Energy"
+ },
+ {
+  "n": "Drained Flamer Fuel",
+  "tier": "1",
+  "lb": 0.25,
+  "val": 12.5,
+  "cat": "Energy"
+ },
+ {
+  "n": "Nitrogen Tank",
+  "tier": "1",
+  "lb": 0.35,
+  "val": 12.5,
+  "cat": "Energy"
+ },
+ {
+  "n": "Drained MFC",
+  "tier": "1",
+  "lb": 0.1,
+  "val": 5,
+  "cat": "Energy"
+ },
+ {
+  "n": "Drained EC",
+  "tier": "1",
+  "lb": 0.05,
+  "val": 2.5,
+  "cat": "Energy"
+ },
+ {
+  "n": "Drained ECP",
+  "tier": "1",
+  "lb": 0.075,
+  "val": 3.75,
+  "cat": "Energy"
+ },
+ {
+  "n": "Flamer Fuel",
+  "tier": "1",
+  "lb": 0.3,
+  "val": 18,
+  "cat": "Energy"
+ },
+ {
+  "n": "Drained Nitrogen Tank",
+  "tier": "1",
+  "lb": 0.25,
+  "val": 12.5,
+  "cat": "Energy"
+ },
+ {
+  "n": "Broc Flower",
+  "tier": "1",
+  "lb": 0.001,
+  "val": 0.25,
+  "cat": "Natural"
+ },
+ {
+  "n": "Xander Root",
+  "tier": "1",
+  "lb": 0.05,
+  "val": 1,
+  "cat": "Natural"
+ },
+ {
+  "n": "Mutfruit",
+  "tier": "2",
+  "lb": 0.2,
+  "val": 3,
+  "cat": "Natural"
+ },
+ {
+  "n": "Powder, Pistol",
+  "tier": "2",
+  "lb": 0.001,
+  "val": 3,
+  "cat": "Powder"
+ },
+ {
+  "n": "Powder, Rifle",
+  "tier": "2",
+  "lb": 0.001,
+  "val": 3,
+  "cat": "Powder"
+ },
+ {
+  "n": "Powder, Shotgun",
+  "tier": "2",
+  "lb": 0.001,
+  "val": 3,
+  "cat": "Powder"
+ },
+ {
+  "n": "Gunpowder",
+  "tier": "3",
+  "lb": 0.001,
+  "val": 5,
+  "cat": "Powder"
+ },
+ {
+  "n": "Primer, Small Pistol",
+  "tier": "2",
+  "lb": 0.005,
+  "val": 5,
+  "cat": "Primer"
+ },
+ {
+  "n": "Primer, Standard Pistol",
+  "tier": "2",
+  "lb": 0.005,
+  "val": 5,
+  "cat": "Primer"
+ },
+ {
+  "n": "Primer, Heavy Pistol",
+  "tier": "2",
+  "lb": 0.005,
+  "val": 5,
+  "cat": "Primer"
+ },
+ {
+  "n": "Primer, Standard Rifle",
+  "tier": "2",
+  "lb": 0.005,
+  "val": 5,
+  "cat": "Primer"
+ },
+ {
+  "n": "Primer, Heavy Rifle",
+  "tier": "2",
+  "lb": 0.005,
+  "val": 5,
+  "cat": "Primer"
+ },
+ {
+  "n": "Primer, Shotgun",
+  "tier": "2",
+  "lb": 0.005,
+  "val": 5,
+  "cat": "Primer"
+ },
+ {
+  "n": "Acid",
+  "tier": "4",
+  "lb": 0.1,
+  "val": 2,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Adhesive",
+  "tier": "5",
+  "lb": 0.1,
+  "val": 8,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Aluminum",
+  "tier": "3",
+  "lb": 0.1,
+  "val": 3,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Antiseptic",
+  "tier": "4",
+  "lb": 0.1,
+  "val": 3,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Asbestos",
+  "tier": "4",
+  "lb": 0.1,
+  "val": 6,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Ballistic Fiber",
+  "tier": "4",
+  "lb": 0.1,
+  "val": 5,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Battery",
+  "tier": "2",
+  "lb": 0.2,
+  "val": 8,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Bone",
+  "tier": "1",
+  "lb": 1,
+  "val": 1,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Ceramic",
+  "tier": "1",
+  "lb": 0.1,
+  "val": 1,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Circuitry",
+  "tier": "4",
+  "lb": 0.3,
+  "val": 5,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Cloth",
+  "tier": "1",
+  "lb": 0.1,
+  "val": 1,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Concrete",
+  "tier": "1",
+  "lb": 3,
+  "val": 1,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Copper",
+  "tier": "3",
+  "lb": 0.1,
+  "val": 4,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Cork",
+  "tier": "3",
+  "lb": 0.1,
+  "val": 1,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Crystal",
+  "tier": "4",
+  "lb": 0.2,
+  "val": 4,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Explosive Component",
+  "tier": "2",
+  "lb": 0.25,
+  "val": 10,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Fertilizer",
+  "tier": "3",
+  "lb": 0.1,
+  "val": 1,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Fiberglass",
+  "tier": "3",
+  "lb": 0.1,
+  "val": 5,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Fiberoptics",
+  "tier": "4",
+  "lb": 0.1,
+  "val": 6,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Gear",
+  "tier": "3",
+  "lb": 0.2,
+  "val": 3,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Glass",
+  "tier": "3",
+  "lb": 0.1,
+  "val": 2,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Gold",
+  "tier": "4",
+  "lb": 0.1,
+  "val": 9,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Hydraulics",
+  "tier": "3",
+  "lb": 1,
+  "val": 8,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Lead",
+  "tier": "3",
+  "lb": 0.3,
+  "val": 1,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Leather",
+  "tier": "1",
+  "lb": 0.1,
+  "val": 2,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Nuclear Material",
+  "tier": "4",
+  "lb": 0.1,
+  "val": 10,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Oil",
+  "tier": "5",
+  "lb": 0.1,
+  "val": 4,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Plastic",
+  "tier": "1",
+  "lb": 0.1,
+  "val": 1,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Rubber",
+  "tier": "1",
+  "lb": 0.1,
+  "val": 2,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Screws",
+  "tier": "3",
+  "lb": 0.1,
+  "val": 2,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Silver",
+  "tier": "3",
+  "lb": 0.1,
+  "val": 6,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Springs",
+  "tier": "3",
+  "lb": 0.1,
+  "val": 3,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Steel",
+  "tier": "1",
+  "lb": 0.2,
+  "val": 1,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Weapon Parts",
+  "tier": "2",
+  "lb": 1,
+  "val": 25,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Wood",
+  "tier": "1",
+  "lb": 0.2,
+  "val": 1,
+  "cat": "Salvage"
+ },
+ {
+  "n": "Pre War Money",
+  "tier": "1",
+  "lb": 0.0005,
+  "val": 1,
+  "cat": "Other"
+ },
+ {
+  "n": "NCR Dogtag",
+  "tier": "3",
+  "lb": 0.05,
+  "val": 2,
+  "cat": "Other"
+ },
+ {
+  "n": "BoS Holotag",
+  "tier": "3",
+  "lb": 0.05,
+  "val": 3,
+  "cat": "Other"
+ },
+ {
+  "n": "Enclave Holotag",
+  "tier": "3",
+  "lb": 0.05,
+  "val": 5,
+  "cat": "Other"
+ },
+ {
+  "n": "Money",
+  "tier": "1",
+  "lb": 0.001,
+  "val": 1,
+  "cat": "Other"
+ }
+]

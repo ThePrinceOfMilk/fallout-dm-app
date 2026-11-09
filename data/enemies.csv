@@ -1,0 +1,185 @@
+n,tier,test,special,skills,w1,w2,head,vanity,armor,faction,xp,caps,mob,hp,ap,pri,dt
+(NO ENEMY),1,true,"[0,0,0,0,0,0,0]","{""BAR"":0,""EW"":0,""EXP"":0,""SG"":0,""BG"":0,""LPK"":0,""MED"":0,""MW"":0,""REP"":0,""SCI"":0,""SNK"":0,""SPE"":0,""SUR"":0}",Commonwealth Assault Rifle,Chinese Carbine (C96 Carbine),,,,,,,,,,,
+(middle opp.),1,true,"[5,5,5,5,5,5,5]","{""BAR"":50,""EW"":50,""EXP"":50,""SG"":50,""BG"":50,""LPK"":50,""MED"":50,""MW"":50,""REP"":50,""SCI"":50,""SNK"":50,""SPE"":50,""SUR"":50}",World War Carbine (M1),Combat Knife,,,,,,,,,,,
+(min opp.),1,true,"[1,1,1,1,1,1,1]","{""BAR"":10,""EW"":10,""EXP"":10,""SG"":10,""BG"":10,""LPK"":10,""MED"":10,""MW"":10,""REP"":10,""SCI"":10,""SNK"":10,""SPE"":10,""SUR"":10}",SMG 08/18,Recharger Pistol,,,,,,,,,,,
+(max opp.),1,true,"[10,10,10,10,10,10,10]","{""BAR"":100,""EW"":100,""EXP"":100,""SG"":100,""BG"":100,""LPK"":100,""MED"":100,""MW"":100,""REP"":100,""SCI"":100,""SNK"":100,""SPE"":100,""SUR"":100}",Police pistol,Lewis Gun,,,,,,,,,,,
+EVIL TEST,1,true,"[5,5,5,5,5,5,5]","{""BAR"":10,""EW"":15,""EXP"":20,""SG"":25,""BG"":30,""LPK"":35,""MED"":40,""MW"":45,""REP"":50,""SCI"":55,""SNK"":60,""SPE"":65,""SUR"":70}",Pipe Auto Pistol,Pickaxe,Football Helmet,Powder Gang Plain Outfit,,,,,,,,,
+Agamemnon,6,true,"[9,4,7,4,7,5,1]","{""BAR"":50,""EW"":50,""EXP"":50,""SG"":50,""BG"":50,""LPK"":50,""MED"":50,""MW"":100,""REP"":50,""SCI"":50,""SNK"":50,""SPE"":50,""SUR"":50}",Hailberd,Counting (Kirk),T-45 Power Armor Helmet,,T-45 Power Armor,,,,,,,,
+Testy Tessie,4,true,"[3,7,5,4,1,8,7]","{""BAR"":54,""EW"":65,""EXP"":48,""SG"":20,""BG"":64,""LPK"":44,""MED"":48,""MW"":55,""REP"":48,""SCI"":18,""SNK"":87,""SPE"":15,""SUR"":84}",Vance's 9mm SMG,Marine Rifle (FAL),Cowboy Hat,Caravaneer Outfit,Prison Body Armor,,,,,,,,
+Powder Ganger 1,1,,"[2,4,3,4,2,4,5]","{""SG"":15,""MW"":25}",Police pistol,Basic Fighting,,Powder Gang Plain Outfit,,Powder Gangers,,,,,,,
+Powder Ganger 2,1,,"[3,5,2,1,2,3,3]","{""EXP"":10,""SG"":25}",Pipe Pistol,Dynamite,,Powder Gang Plain Outfit,,Powder Gangers,,,,,,,
+Powder Ganger Ringleader,1,,"[3,4,3,5,5,4,5]","{""SG"":15,""BG"":25}",Police pistol,Single Shotgun,Cowboy Hat,Powder Gang Soldier Outfit,Raider Scavanged Armor,Powder Gangers,,,,,,,
+Powder Ganger Sharpshooter,1,,"[2,6,3,4,2,4,5]","{""SG"":30,""MW"":10}",Pipe Bolt Action Rifle,Hatchet,Sunglasses,Powder Gang Simple Outfit,,Powder Gangers,,,,,,,
+Sunny Smiles,1,,"[6,5,4,4,4,5,4]",{},Varmint rifle,Basic Fighting,,,Leather Jacket,Goodsprings,,,,,,,
+Displaced Resident,1,,"[null,null,null,null,null,null,null]",{},,,,,,Goodsprings,,,,,,,
+Farmer,1,,"[4,5,1,4,3,2,5]","{""EW"":5,""SG"":10,""BG"":0,""MW"":15}",,,,,,Unaligned,5,0-5,,,,,
+Strong Farmer,1,,"[4,5,1,4,3,2,5]","{""EW"":10,""SG"":15,""BG"":5,""MW"":20}",,,,,,Unaligned,7,0-5,,,,,
+Scavenger,1,,"[5,8,4,3,6,3,4]","{""EW"":15,""SG"":20,""BG"":10,""MW"":20}",,,,,,Unaligned,7,5-15,,,,,
+Strong Scavenger,1,,"[5,8,4,3,6,3,4]","{""EW"":20,""SG"":25,""BG"":15,""MW"":25}",,,,,,Unaligned,10,5-15,,,,,
+Raider,2,,"[5,5,3,2,3,7,3]","{""EW"":10,""SG"":20,""BG"":15,""MW"":25}",,,,,,Raiders,10,10-20,,,,,
+Strong Raider,2,,"[5,5,3,2,3,7,3]","{""EW"":15,""SG"":25,""BG"":20,""MW"":30}",,,,,,Raiders,15,10-20,,,,,
+Fiend,3,,"[5,3,7,2,2,6,5]","{""EW"":25,""SG"":45,""BG"":30,""MW"":35}",,,,,,Fiends,20,20-50,,,,,
+Strong Fiend,3,,"[5,3,7,2,2,6,5]","{""EW"":30,""SG"":50,""BG"":35,""MW"":45}",,,,,,Fiends,25,20-50,,,,,
+Tribal,2,,"[7,5,5,3,4,5,2]","{""EW"":0,""SG"":5,""BG"":0,""MW"":40}",,,,,,Tribals,10,0-10,,,,,
+Strong Tribal,2,,"[7,5,5,3,4,5,2]","{""EW"":5,""SG"":10,""BG"":5,""MW"":50}",,,,,,Tribals,15,0-10,,,,,
+Mercenary,3,,"[6,5,6,4,4,6,3]","{""EW"":40,""SG"":50,""BG"":40,""MW"":40}",,,,,,Unaligned,20,20-50,,,,,
+Strong Mercenary,3,,"[6,5,6,4,4,6,3]","{""EW"":45,""SG"":60,""BG"":45,""MW"":45}",,,,,,Unaligned,25,20-50,,,,,
+Recruit,2,,"[5,4,5,4,5,5,6]","{""EW"":20,""SG"":30,""BG"":15,""MW"":20}",,,,,,NCR,10,15-30,,,,,
+Strong Recruit,2,,"[5,4,5,4,5,5,6]","{""EW"":25,""SG"":35,""BG"":20,""MW"":25}",,,,,,NCR,15,15-30,,,,,
+Soldier,3,,"[6,4,6,3,4,6,5]","{""EW"":30,""SG"":50,""BG"":30,""MW"":35}",,,,,,NCR,20,25-40,,,,,
+Strong Soldier,3,,"[6,4,6,3,4,6,5]","{""EW"":35,""SG"":55,""BG"":35,""MW"":40}",,,,,,NCR,25,25-40,,,,,
+Veteran,4,,"[7,4,7,2,3,7,5]","{""EW"":50,""SG"":70,""BG"":50,""MW"":60}",,,,,,NCR,30,30-55,,,,,
+Strong Veteran,4,,"[7,4,7,2,3,7,5]","{""EW"":55,""SG"":75,""BG"":55,""MW"":65}",,,,,,NCR,35,30-55,,,,,
+Ranger,5,,"[6,6,6,4,5,7,6]","{""EW"":70,""SG"":90,""BG"":60,""MW"":70}",,,,,,NCR,40,50-100,,,,,
+Strong Ranger,5,,"[6,6,6,4,5,7,6]","{""EW"":75,""SG"":95,""BG"":65,""MW"":75}",,,,,,NCR,45,50-100,,,,,
+Legion Recruit,2,,"[6,4,6,3,4,6,5]","{""EW"":0,""SG"":5,""BG"":0,""MW"":20}",,,,,,Caesar's Legion,10,15-30,,,,,
+Strong Legion Recruit,2,,"[6,4,6,3,4,6,5]","{""EW"":5,""SG"":10,""BG"":5,""MW"":30}",,,,,,Caesar's Legion,15,50-100,,,,,
+Legion Soldier,3,,"[7,4,7,2,3,7,5]","{""EW"":5,""SG"":15,""BG"":5,""MW"":50}",,,,,,Caesar's Legion,20,25-40,,,,,
+Strong Legion Soldier,3,,"[7,4,7,2,3,7,5]","{""EW"":10,""SG"":20,""BG"":10,""MW"":60}",,,,,,Caesar's Legion,25,25-40,,,,,
+Legion Veteran,4,,"[8,4,8,1,2,8,3]","{""EW"":30,""SG"":50,""BG"":40,""MW"":80}",,,,,,Caesar's Legion,30,30-55,,,,,
+Strong Legion Veteran,4,,"[8,4,8,1,2,8,3]","{""EW"":35,""SG"":60,""BG"":45,""MW"":90}",,,,,,Caesar's Legion,35,30-55,,,,,
+Legion Frumentarus,5,,"[5,8,5,7,6,5,2]","{""EW"":70,""SG"":80,""BG"":35,""MW"":65}",,,,,,Caesar's Legion,40,50-100,,,,,
+Strong Legion Frumentarus,5,,"[5,8,5,7,6,5,2]","{""EW"":75,""SG"":85,""BG"":40,""MW"":70}",,,,,,Caesar's Legion,45,50-100,,,,,
+PA Initiate,3,,"[7,5,6,4,6,4,3]","{""EW"":40,""SG"":30,""BG"":35,""MW"":35}",,,,,,Brotherhood of Steel,30,25-40,,,,,
+Strong PA Recruit,3,,"[7,5,6,4,6,4,3]","{""EW"":50,""SG"":40,""BG"":45,""MW"":40}",,,,,,Brotherhood of Steel,35,25-40,,,,,
+PA Knight,4,,"[8,5,7,3,6,3,3]","{""EW"":60,""SG"":50,""BG"":55,""MW"":50}",,,,,,Brotherhood of Steel,40,30-55,,,,,
+Strong PA Knight,4,,"[8,5,7,3,6,3,3]","{""EW"":75,""SG"":65,""BG"":70,""MW"":55}",,,,,,Brotherhood of Steel,45,30-55,,,,,
+PA Paladin,5,,"[9,5,8,2,7,3,1]","{""EW"":85,""SG"":75,""BG"":80,""MW"":75}",,,,,,Brotherhood of Steel,50,50-100,,,,,
+Strong PA Paladin,5,,"[9,5,8,2,7,3,1]","{""EW"":90,""SG"":80,""BG"":85,""MW"":80}",,,,,,Brotherhood of Steel,55,50-100,,,,,
+Gangster,2,,"[6,4,5,4,2,5,5]","{""EW"":10,""SG"":40,""BG"":25,""MW"":35}",,,,,,Crime Families,10,15-30,,,,,
+Strong Gangster,2,,"[6,4,5,4,2,5,5]","{""EW"":15,""SG"":50,""BG"":30,""MW"":40}",,,,,,Crime Families,15,15-30,,,,,
+Mobster,3,,"[5,4,5,7,2,6,6]","{""EW"":30,""SG"":60,""BG"":55,""MW"":40}",,,,,,Crime Families,20,25-40,,,,,
+Strong Mobster,3,,"[5,4,5,7,2,6,6]","{""EW"":40,""SG"":70,""BG"":65,""MW"":45}",,,,,,Crime Families,25,25-40,,,,,
+Supermutant,4,,"[10,3,9,1,2,4,2]","{""EW"":40,""SG"":50,""BG"":70,""MW"":70}",,,,,,Super Mutants,40,50-100,,,,,
+Strong Supermutant,4,,"[10,3,9,1,2,4,2]","{""EW"":45,""SG"":55,""BG"":80,""MW"":80}",,,,,,Super Mutants,45,50-100,,,,,
+Supermutant Lieutenant,5,,"[10,5,10,1,2,6,2]","{""EW"":50,""SG"":70,""BG"":85,""MW"":85}",,,,,,Super Mutants,50,75-200,,,,,
+Strong Supermutant Lieutenant,5,,"[10,5,10,1,2,6,2]","{""EW"":60,""SG"":75,""BG"":95,""MW"":95}",,,,,,Super Mutants,55,75-200,,,,,
+Ant,1,,"[null,2,null,null,null,null,5]","{""MW"":100}",Ant,Ant,,,,Unaligned,3,,true,12,3,,
+Assaultron,3,,"[null,null,null,null,null,null,null]","{""EW"":1}",Assaultron Arm,Assaultron Head,,,,Unaligned,,,true,,,,
+Fire Ant Soldier,2,,"[null,4,null,null,null,null,5]","{""EW"":1,""MW"":100}",Fire Ant Soldier,Fire Ant Soldier,,,,Unaligned,5,,true,20,7,6,
+Fire Ant Worker,2,,"[null,2,null,null,null,null,5]","{""EW"":1,""MW"":100}",Fire Ant Worker,Fire Ant Worker,,,,Unaligned,5,,true,15,3,,
+Giant Ant Queen,6,,"[null,5,null,null,null,null,5]","{""EW"":1,""MW"":100}",Giant Ant Queen,Giant Ant Queen,,,,Unaligned,50,,true,75,10,10,4
+Giant Soldier Ant,3,,"[null,3,null,null,null,null,5]","{""MW"":100}",Giant Soldier Ant,Giant Soldier Ant,,,,Unaligned,10,,true,40,7,5,3
+Giant Worker Ant,3,,"[null,3,null,null,null,null,5]","{""MW"":100}",Giant Worker Ant,Giant Worker Ant,,,,Unaligned,10,,true,30,3,1,3
+Bark Scorpion,1,,"[null,3,null,null,null,null,5]","{""MW"":100}",Bark Scorpion,Bark Scorpion,,,,Unaligned,2,,true,10,5,3,4
+Bark Scorpion Hunter,2,,"[null,3,null,null,null,null,5]","{""MW"":100}",Bark Scorpion Hunter,Bark Scorpion Hunter,,,,Unaligned,5,,true,20,8,6,2
+Bighorner,1,,"[null,2,null,null,null,null,5]","{""MW"":100}",Bighorner,Bighorner,,,,Unaligned,2,,true,40,4,1,
+Bighorner Bull,1,,"[null,4,null,null,null,null,5]","{""MW"":100}",Bighorner Bull,Bighorner Bull,,,,Unaligned,2,,true,60,6,5,
+Bighorner Calf,1,,"[null,2,null,null,null,null,5]","{""MW"":100}",Bighorner Calf,Bighorner Calf,,,,Unaligned,1,,true,15,2,-1,
+Bloatfly,1,,"[null,6,null,null,null,null,5]","{""EW"":1,""MW"":100}",Bloatfly,Bloatfly,,,,Unaligned,1,,true,6,2,3,
+Legendary Bloatfly,6,,"[null,9,null,null,null,null,5]","{""EW"":1,""MW"":100}",Legendary Bloatfly,Legendary Bloatfly,,,,Unaligned,50,,true,200,12,16,20
+Brahmin,1,,"[null,3,null,null,null,null,5]","{""MW"":100}",Brahmin,Brahmin,,,,Unaligned,2,,true,40,5,3,
+Cazador,3,,"[null,9,null,null,null,null,5]","{""MW"":100}",Cazador,Cazador,,,,Unaligned,50,,true,25,8,12,
+Giant Cazador,5,,"[null,9,null,null,null,null,5]","{""MW"":100}",Giant Cazador,Giant Cazador,,,,Unaligned,50,,true,35,10,14,5
+Legendary Cazador,6,,"[null,10,null,null,null,null,5]","{""MW"":100}",Legendary Cazador,Legendary Cazador,,,,Unaligned,50,,true,75,12,17,11
+Centaur,3,,"[null,6,null,null,null,null,5]","{""EW"":1,""MW"":100}",Centaur,Centaur,,,,Unaligned,10,,true,25,3,4,9
+Evolved Centaur,4,,"[null,7,null,null,null,null,5]","{""EW"":1,""MW"":100}",Evolved Centaur,Evolved Centaur,,,,Unaligned,20,,true,35,6,8,11
+Giant Evolved Centaur,5,,"[null,8,null,null,null,null,5]","{""EW"":1,""MW"":100}",Giant Evolved Centaur,Giant Evolved Centaur,,,,Unaligned,25,,true,45,8,11,13
+Coyote Den Mother,2,,"[null,8,null,null,null,null,5]","{""MW"":100}",Coyote Den Mother,Coyote Den Mother,,,,Unaligned,5,,true,20,7,10,5
+Coyote Pack Alpha,3,,"[null,8,null,null,null,null,5]","{""MW"":100}",Coyote Pack Alpha,Coyote Pack Alpha,,,,Unaligned,10,,true,25,9,12,2
+Coyote Pup,1,,"[null,6,null,null,null,null,5]","{""MW"":100}",Coyote Pup,Coyote Pup,,,,Unaligned,1,,true,5,10,11,
+Deathclaw,5,,"[null,7,null,null,null,null,5]","{""MW"":100}",Deathclaw,Deathclaw,,,,Unaligned,50,,true,90,10,12,20
+Deathclaw Alpha Male,6,,"[null,10,null,null,null,null,5]","{""MW"":100}",Deathclaw Alpha Male,Deathclaw Alpha Male,,,,Unaligned,50,,true,150,12,17,25
+Deathclaw Baby,3,,"[null,6,null,null,null,null,5]","{""MW"":100}",Deathclaw Baby,Deathclaw Baby,,,,Unaligned,50,,true,50,4,5,12
+Legendary Deathclaw,6,,"[null,10,null,null,null,null,5]","{""MW"":100}",Legendary Deathclaw,Legendary Deathclaw,,,,Unaligned,50,,true,300,14,19,40
+Mother Deathclaw,6,,"[null,8,null,null,null,null,5]","{""MW"":100}",Mother Deathclaw,Mother Deathclaw,,,,Unaligned,50,,true,250,13,16,30
+Young Deathclaw,4,,"[null,6,null,null,null,null,5]","{""MW"":100}",Young Deathclaw,Young Deathclaw,,,,Unaligned,50,,true,80,5,6,10
+Coyote,1,,"[null,8,null,null,null,null,5]","{""MW"":100}",Coyote,Coyote,,,,Unaligned,3,,true,10,5,8,
+Dog,1,,"[null,6,null,null,null,null,5]","{""MW"":100}",Dog,Dog,,,,Unaligned,3,,true,12,5,6,
+Cyberdog,3,,"[null,5,null,null,null,null,5]","{""MW"":100}",Cyberdog,Cyberdog,,,,Unaligned,10,,true,20,6,6,8
+Police Cyberdog,4,,"[null,10,null,null,null,null,5]","{""EW"":1,""MW"":100}",Police Cyberdog,Police Cyberdog,,,,Unaligned,15,,true,30,7,12,15
+Large Dog,2,,"[null,6,null,null,null,null,5]","{""MW"":100}",Large Dog,Large Dog,,,,Unaligned,5,,true,18,8,9,
+Mongrel,1,,"[null,8,null,null,null,null,5]","{""MW"":100}",Mongrel,Mongrel,,,,Unaligned,3,,true,12,6,9,
+Large Mongrel,2,,"[null,6,null,null,null,null,5]","{""MW"":100}",Large Mongrel,Large Mongrel,,,,Unaligned,5,,true,18,8,9,
+Civilian Eyebot,1,,"[null,5,null,null,null,null,5]","{""EW"":1,""MW"":100}",Civilian Eyebot,Civilian Eyebot,,,,Unaligned,5,,true,30,3,3,
+Military Eyebot,3,,"[null,10,null,null,null,null,5]","{""EW"":1,""MW"":100}",Military Eyebot,Military Eyebot,,,,Unaligned,20,,true,20,8,13,12
+Feral Ghoul,2,,"[null,3,null,null,null,null,5]","{""MW"":100}",Feral Ghoul,Feral Ghoul,,,,Unaligned,10,,true,20,5,3,
+Feral Ghoul Roamer,3,,"[null,4,null,null,null,null,5]","{""MW"":100}",Feral Ghoul Roamer,Feral Ghoul Roamer,,,,Unaligned,20,,true,25,6,5,3
+Feral Ghoul Reaver,4,,"[null,7,null,null,null,null,5]","{""MW"":100}",Feral Ghoul Reaver,Feral Ghoul Reaver,,,,Unaligned,30,,true,30,6,8,12
+Glowing One,4,,"[null,5,null,null,null,null,5]","{""EW"":1,""MW"":100}",Glowing One,Glowing One,,,,Unaligned,40,,true,50,8,8,8
+Fire Gecko,3,,"[null,7,null,null,null,null,5]","{""EW"":1,""MW"":100}",Fire Gecko,Fire Gecko,,,,Unaligned,15,,true,20,7,9,
+Legendary Fire Gecko,5,,"[null,8,null,null,null,null,5]","{""EW"":1,""MW"":100}",Legendary Fire Gecko,Legendary Fire Gecko,,,,Unaligned,50,,true,65,8,11,
+Gecko,1,,"[null,3,null,null,null,null,5]","{""MW"":100}",Gecko,Gecko,,,,Unaligned,3,,true,15,4,2,
+Gecko Hunter,2,,"[null,3,null,null,null,null,5]","{""MW"":100}",Gecko Hunter,Gecko Hunter,,,,Unaligned,5,,true,18,8,6,
+Green Gecko,2,,"[null,8,null,null,null,null,5]","{""MW"":100}",Green Gecko,Green Gecko,,,,Unaligned,10,,true,15,6,9,
+Golden Gecko,3,,"[null,5,null,null,null,null,5]","{""MW"":100}",Golden Gecko,Golden Gecko,,,,Unaligned,15,,true,20,6,6,
+Giant Mantis,1,,"[null,6,null,null,null,null,5]","{""MW"":100}",Giant Mantis,Giant Mantis,,,,Unaligned,2,,true,10,5,6,
+Giant Mantis Nymph,1,,"[null,6,null,null,null,null,5]","{""MW"":100}",Giant Mantis Nymph,Giant Mantis Nymph,,,,Unaligned,2,,true,2,6,7,
+Giant Rat,1,,"[null,4,null,null,null,null,5]","{""MW"":100}",Giant Rat,Giant Rat,,,,Unaligned,2,,true,10,6,5,
+Giant Rat Pup,1,,"[null,2,null,null,null,null,5]","{""MW"":100}",Giant Rat Pup,Giant Rat Pup,,,,Unaligned,1,,true,12,4,1,
+Lakelurk,3,,"[null,7,null,null,null,null,5]","{""EW"":1,""MW"":100}",Lakelurk,Lakelurk,,,,Unaligned,15,,true,32,6,8,5
+Alpha Male Lakelurk,4,,"[null,7,null,null,null,null,5]","{""EW"":1,""MW"":100}",Alpha Male Lakelurk,Alpha Male Lakelurk,,,,Unaligned,25,,true,50,8,10,6
+Lakelurk King,6,,"[null,8,null,null,null,null,5]","{""EW"":1,""MW"":100}",Lakelurk King,Lakelurk King,,,,Unaligned,50,,true,90,10,13,8
+Mister Gutsy,4,,"[null,6,null,null,null,null,5]","{""EW"":1,""MW"":100}",Mister Gutsy,Mister Gutsy,,,,Unaligned,25,,true,35,5,6,12
+Hardened Mister Gutsy,5,,"[null,5,null,null,null,null,5]","{""EW"":1,""MW"":100}",Hardened Mister Gutsy,Hardened Mister Gutsy,,,,Unaligned,40,,true,50,8,8,18
+Mister Handy,2,,"[null,5,null,null,null,null,5]","{""EW"":1,""MW"":100}",Mister Handy,Mister Handy,,,,Unaligned,5,,true,20,4,4,6
+Mole Rat,1,,"[null,2,null,null,null,null,5]","{""MW"":100}",Mole Rat,Mole Rat,,,,Unaligned,2,,true,5,5,2,
+Mole Rat Pup,1,,"[null,1,null,null,null,null,5]","{""MW"":100}",Mole Rat Pup,Mole Rat Pup,,,,Unaligned,1,,true,2,3,-1,
+Nightstalker,3,,"[null,9,null,null,null,null,5]","{""MW"":100}",Nightstalker,Nightstalker,,,,Unaligned,15,,true,25,7,11,
+Nightstalker Den Mother,5,,"[null,9,null,null,null,null,5]","{""MW"":100}",Nightstalker Den Mother,Nightstalker Den Mother,,,,Unaligned,25,,true,45,9,13,
+Legendary Nightstalker,6,,"[null,10,null,null,null,null,5]","{""MW"":100}",Legendary Nightstalker,Legendary Nightstalker,,,,Unaligned,50,,true,135,6,11,
+Young Nightstalker,2,,"[null,8,null,null,null,null,5]","{""MW"":100}",Young Nightstalker,Young Nightstalker,,,,Unaligned,10,,true,12,8,11,
+Protectron,3,,"[null,4,null,null,null,null,5]","{""EW"":1,""MW"":100}",Protectron,Protectron,,,,Unaligned,25,,true,45,4,3,8
+Radroach,1,,"[null,3,null,null,null,null,5]","{""MW"":100}",Radroach,Radroach,,,,Unaligned,1,,true,12,4,2,
+Radscorpion,2,,"[null,4,null,null,null,null,5]","{""MW"":100}",Radscorpion,Radscorpion,,,,Unaligned,5,,true,18,4,3,2
+Giant Radscorpion,3,,"[null,6,null,null,null,null,5]","{""MW"":100}",Giant Radscorpion,Giant Radscorpion,,,,Unaligned,15,,true,25,3,4,4
+Radscorpion Queen,6,,"[null,6,null,null,null,null,5]","{""MW"":100}",Radscorpion Queen,Radscorpion Queen,,,,Unaligned,50,,true,80,4,5,
+Robobrain,2,,"[null,5,null,null,null,null,5]","{""EW"":1,""EXP"":1,""MW"":100}",Robobrain,Robobrain,,,,Unaligned,10,,true,32,2,2,6
+Securitron,3,,"[null,6,null,null,null,null,5]","{""EW"":1,""EXP"":1,""MW"":100}",Securitron,Securitron,,,,Unaligned,25,,true,50,7,8,15
+Sentry Bot,4,,"[null,7,null,null,null,null,5]","{""EW"":1,""EXP"":1,""MW"":100}",Sentry Bot,Sentry Bot,,,,Unaligned,50,,true,80,6,8,20
+Hardened Sentry Bot,5,,"[null,8,null,null,null,null,5]","{""EW"":1,""EXP"":1,""MW"":100}",Hardened Sentry Bot,Hardened Sentry Bot,,,,Unaligned,50,,true,90,8,11,25
+Spore Carrier,3,,"[null,4,null,null,null,null,5]","{""MW"":100}",Spore Carrier,Spore Carrier,,,,Unaligned,5,,true,22,5,4,
+Spore Carrier Beast,5,,"[null,7,null,null,null,null,5]","{""MW"":100}",Spore Carrier Beast,Spore Carrier Beast,,,,Unaligned,15,,true,85,7,9,
+Spore Plant,2,,"[null,10,null,null,null,null,5]","{""EW"":1,""MW"":100}",Spore Plant,Spore Plant,,,,Unaligned,3,,true,15,4,9,
+Giant Spore Plant,4,,"[null,8,null,null,null,null,5]","{""EW"":1,""MW"":100}",Giant Spore Plant,Giant Spore Plant,,,,Unaligned,20,,true,30,6,9,
+Wild Boar,666,,"[null,15,null,null,null,null,5]","{""MW"":100}",Wild Boar,Wild Boar,,,,Unaligned,,,true,50,10,20,20
+Jackal Pup,1,,"[5,4,4,3,3,4,4]","{""EW"":5,""SG"":15,""BG"":5,""MW"":20}",Pipe Pistol,Knife,,,,Jackals,5,5-15,,,,,
+Jackal Hanger-On,1,,"[5,4,4,3,3,4,4]","{""EW"":5,""SG"":15,""BG"":5,""MW"":20}",Hatchet,Basic Fighting,,,,Jackals,5,5-15,,,,,
+Jackal Gang Member,1,,"[4,6,3,3,4,4,4]","{""EW"":10,""SG"":25,""BG"":10,""MW"":15}",Pipe Rifle,Prison Shiv,,,,Jackals,5,5-15,,,,,
+Jackal Pack Leader,2,,"[6,4,5,4,2,5,5]","{""EW"":10,""SG"":40,""BG"":25,""MW"":35}",.357 Magnum revolver,Lead Pipe,,,,Jackals,15,10-20,,,,,
+Jackal Dog Handler,2,,"[7,5,5,3,4,5,2]","{""EW"":0,""SG"":5,""BG"":0,""MW"":40}",Baseball Bat,Basic Fighting,,,,Jackals,10,10-20,,,,,
+Viper Cutthroat,1,,"[3,6,3,4,4,6,4]","{""EW"":5,""SG"":20,""BG"":5,""MW"":20}",Switchblade,Pipe Pistol,,,,Vipers,5,5-15,,,,,
+Viper Gunslinger,2,,"[5,4,5,4,5,5,6]","{""EW"":20,""SG"":30,""BG"":15,""MW"":20}",Lever Action Rifle,Knife,,,,Vipers,10,10-20,,,,,
+Viper Snake Handler,2,,"[4,6,4,4,4,6,4]","{""EW"":10,""SG"":30,""BG"":10,""MW"":30}",Straight Razor,Basic Fighting,,,,Vipers,10,10-20,,,,,
+Viper Road Warrior,2,,"[7,5,5,3,4,5,2]","{""EW"":0,""SG"":5,""BG"":0,""MW"":40}",Tire Iron,Pipe Shotgun,,,,Vipers,10,10-20,,,,,
+Viper Gang Leader,3,,"[5,4,5,7,2,6,6]","{""EW"":30,""SG"":60,""BG"":55,""MW"":40}",Cowboy repeater,War Club,,,,Vipers,25,25-40,,,,,
+Fiend Junkie,2,,"[5,3,6,2,2,5,5]","{""EW"":15,""SG"":30,""BG"":20,""MW"":25}",Lead Pipe,Pipe Pistol,,,,Fiends,10,10-20,,,,,
+Fiend Stoner,2,,"[5,3,6,2,2,5,5]","{""EW"":15,""SG"":30,""BG"":20,""MW"":25}",9mm Auto Pistol (Glock),Tire Iron,,,,Fiends,10,10-20,,,,,
+Fiend Psycho,3,,"[5,3,7,2,2,6,5]","{""EW"":25,""SG"":45,""BG"":30,""MW"":35}",Sledgehammer,Basic Fighting,,,,Fiends,20,20-50,,,,,
+Fiend Enforcer,3,,"[5,3,7,2,2,6,5]","{""EW"":25,""SG"":45,""BG"":30,""MW"":35}",Battle rifle,War Club,,,,Fiends,20,20-50,,,,,
+Fiend Chem Cook,3,,"[5,3,7,2,2,6,5]","{""EW"":25,""SG"":45,""BG"":30,""MW"":35}",Compact 10mm SMG (Uzi),Knife,,,,Fiends,20,20-50,,,,,
+Fiend Warlord,4,,"[6,3,8,2,2,6,5]","{""EW"":40,""SG"":60,""BG"":45,""MW"":50}",Handmade Rifle (AK47),Mace,,,,Fiends,35,30-55,,,,,
+Fiend Pyro,3,,"[5,3,7,2,2,6,5]","{""EW"":25,""SG"":45,""BG"":30,""MW"":35}",Pipe Flamer,Lead Pipe,,,,Fiends,20,20-50,,,,,
+Rogue Scavenger,1,,"[5,8,4,3,6,3,4]","{""EW"":15,""SG"":20,""BG"":10,""MW"":20}",Pipe Rifle,Pipe Wrench,,,,Rogue Scavengers,5,5-15,,,,,
+Scav Picker,1,,"[5,8,4,3,6,3,4]","{""EW"":15,""SG"":20,""BG"":10,""MW"":20}",Knife,Pipe Pistol,,,,Rogue Scavengers,5,5-15,,,,,
+Scav Salvager,2,,"[5,8,4,3,6,3,4]","{""EW"":20,""SG"":25,""BG"":15,""MW"":25}",10mm Carbine,Crowbar,,,,Rogue Scavengers,10,15-30,,,,,
+Scav Tinkerer,2,,"[5,8,4,3,6,3,4]","{""EW"":20,""SG"":25,""BG"":15,""MW"":25}",Taser,Hammer,,,,Rogue Scavengers,10,15-30,,,,,
+Scav Crew Boss,3,,"[6,8,5,3,6,4,4]","{""EW"":30,""SG"":40,""BG"":25,""MW"":35}",Marksman carbine,Shovel,,,,Rogue Scavengers,25,25-40,,,,,
+Highwayman Lookout,1,,"[4,6,3,3,4,4,4]","{""EW"":10,""SG"":25,""BG"":10,""MW"":15}",Varmint rifle,Knife,,,,Highwaymen,5,5-15,,,,,
+Highwayman Bandit,2,,"[5,5,3,2,3,7,3]","{""EW"":10,""SG"":20,""BG"":15,""MW"":25}",RSC SMG,Tire Iron,,,,Highwaymen,10,10-20,,,,,
+Highwayman Sharpshooter,3,,"[6,4,6,3,4,6,5]","{""EW"":30,""SG"":50,""BG"":30,""MW"":35}",Marksman carbine,Knife,,,,Highwaymen,20,25-40,,,,,
+Highwayman Toll Collector,2,,"[7,5,5,3,4,5,2]","{""EW"":0,""SG"":5,""BG"":0,""MW"":40}",Shovel,.45 Auto pistol,,,,Highwaymen,10,10-20,,,,,
+Highwayman Captain,4,,"[7,4,7,2,3,7,5]","{""EW"":50,""SG"":70,""BG"":50,""MW"":60}",Trail carbine,Mace,,,,Highwaymen,35,30-55,,,,,
+City Mugger,1,,"[5,4,4,3,3,4,4]","{""EW"":5,""SG"":15,""BG"":5,""MW"":20}",Switchblade,Basic Fighting,,,,City Muggers,5,0-10,,,,,
+Back-Alley Mugger,1,,"[3,6,3,4,4,6,4]","{""EW"":5,""SG"":20,""BG"":5,""MW"":20}",Straight Razor,.32 Pistol,,,,City Muggers,5,0-10,,,,,
+Pickpocket Crew Lookout,1,,"[3,6,3,4,4,6,4]","{""EW"":5,""SG"":20,""BG"":5,""MW"":20}",Knife,Basic Fighting,,,,City Muggers,5,0-10,,,,,
+Street Tough,2,,"[7,5,5,3,4,5,2]","{""EW"":0,""SG"":5,""BG"":0,""MW"":40}",Lead Pipe,Brass Knuckles,,,,City Muggers,10,15-30,,,,,
+Corner Boss,3,,"[5,4,5,7,2,6,6]","{""EW"":30,""SG"":60,""BG"":55,""MW"":40}",Burst Pistol,Police Baton,,,,City Muggers,25,25-40,,,,,
+Omerta Thug,2,,"[6,4,5,4,2,5,5]","{""EW"":10,""SG"":40,""BG"":25,""MW"":35}",.45 Auto pistol,Police Baton,,,,Omertas,10,15-30,,,,,
+Omerta Button Man,3,,"[5,4,5,7,2,6,6]","{""EW"":30,""SG"":60,""BG"":55,""MW"":40}",Compact 10mm SMG (Uzi),Knife,,,,Omertas,20,25-40,,,,,
+Omerta Capo,4,,"[5,4,6,6,3,6,5]","{""EW"":40,""SG"":70,""BG"":65,""MW"":50}",Silenced Mercenary Rifle,Rebar Club,,,,Omertas,35,30-55,,,,,
+Garret Bouncer,2,,"[7,5,5,3,4,5,2]","{""EW"":0,""SG"":5,""BG"":0,""MW"":40}",Baseball Bat,.45 Auto pistol,,,,Garrets,10,15-30,,,,,
+Garret Enforcer,3,,"[5,4,5,7,2,6,6]","{""EW"":30,""SG"":60,""BG"":55,""MW"":40}",Burst Pistol,Pool Cue,,,,Garrets,20,25-40,,,,,
+Chairman Greeter,2,,"[6,4,5,4,2,5,5]","{""EW"":10,""SG"":40,""BG"":25,""MW"":35}",9mm Auto Pistol (Glock),Knife,,,,Chairmen,10,15-30,,,,,
+Chairman Hitman,3,,"[4,7,4,4,4,7,3]","{""EW"":20,""SG"":45,""BG"":15,""MW"":40}",Burst Pistol,Switchblade,,,,Chairmen,20,25-40,,,,,
+Chairman Boss,4,,"[5,4,6,6,3,6,5]","{""EW"":40,""SG"":70,""BG"":65,""MW"":50}",Silenced Mercenary Rifle,Rebar Club,,,,Chairmen,35,30-55,,,,,
+White Glove Attendant,2,,"[4,6,4,4,4,6,4]","{""EW"":10,""SG"":30,""BG"":10,""MW"":30}",Silenced .22 pistol,Knife,,,,White Glove Society,10,15-30,,,,,
+White Glove Butcher,3,,"[7,4,7,2,3,7,5]","{""EW"":5,""SG"":15,""BG"":5,""MW"":50}",Cleaver,Burst Pistol,,,,White Glove Society,20,25-40,,,,,
+King Greaser,2,,"[6,4,5,4,2,5,5]","{""EW"":10,""SG"":40,""BG"":25,""MW"":35}",.357 Magnum revolver,Switchblade,,,,The Kings,10,15-30,,,,,
+King Lieutenant,3,,"[5,4,5,7,2,6,6]","{""EW"":30,""SG"":60,""BG"":55,""MW"":40}",Police Carbine (M1Carbine),Tire Iron,,,,The Kings,25,25-40,,,,,
+Great Khan Raider,2,,"[5,5,3,2,3,7,3]","{""EW"":10,""SG"":20,""BG"":15,""MW"":25}",Pipe Shotgun,Baseball Bat,,,,Great Khans,10,10-20,,,,,
+Great Khan Armorer,3,,"[8,4,7,3,3,3,5]","{""EW"":25,""SG"":40,""BG"":55,""MW"":40}",Battle rifle,Sledgehammer,,,,Great Khans,20,25-40,,,,,
+Great Khan Warlord,4,,"[7,4,7,2,3,7,5]","{""EW"":50,""SG"":70,""BG"":50,""MW"":60}",Brush gun,War Hammer,,,,Great Khans,35,30-55,,,,,
+Boomer Spotter,3,,"[5,6,5,3,6,5,3]","{""EW"":20,""SG"":40,""BG"":30,""MW"":25,""EXP"":40}",Battle rifle,Knife,,,,Boomers,20,25-40,,,,,
+Van Graff Thug,4,,"[5,6,6,3,8,4,3]","{""EW"":60,""SG"":50,""BG"":55,""MW"":50}",Radium Rifle,Mace,,,,Van Graffs,30,30-55,,,,,
+Crimson Caravan Guard,2,,"[5,4,5,4,5,5,6]","{""EW"":20,""SG"":30,""BG"":15,""MW"":20}",Lever Action Rifle,Knife,,,,Crimson Caravan,10,15-30,,,,,

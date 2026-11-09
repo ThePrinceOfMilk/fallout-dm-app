@@ -1,0 +1,5558 @@
+[
+ {
+  "n": "Atomic Cocktail",
+  "tier": "3",
+  "lb": 0,
+  "cat": "Alcohol",
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1
+    },
+    {
+     "n": "Drunk",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Battle Brew",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Alcohol",
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1
+    },
+    {
+     "n": "Drunk",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - 714 Beer",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Blackwater Brew Beer",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Catalina Cerveza",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Dirty Fenster Brown Ale",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Dunwick's Irish Red",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Fishbrau Pale Ale",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Gamma Gulp Beer",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Gwinnett Ale",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Gwinnett Lager",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Gwinnett Pale",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Gwinnett Pilsner",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Gwinnett Stout",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - High Voltage Hefe",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Hoppy Hunter IPA",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Horowitz Lager",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Illusion IPA",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - New River Red Ale",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Oak Holler Lager",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Objecto Cerveza",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Pickaxe Pilsner",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Beer - Tres Zetas Cerveza",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 1,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Bennessy",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 1,
+  "uses": 20,
+  "effect": "1+ STR, 1+ CHA, -1 INT",
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "1+ STR, 1+ CHA, -1 INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "S": 1,
+      "C": 1,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Green Lady Absinthe",
+  "tier": "3",
+  "lb": 0,
+  "cat": "Alcohol",
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1
+    },
+    {
+     "n": "Drunk",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Moonshine",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 2,
+  "uses": 5,
+  "effect": "2+ STR, 2+ CHA, -2 INT, -2 HP",
+  "dur": 48,
+  "after": "Hangover: -5 chance to hit, -1 END, roll for puking",
+  "trigger": "3 uses",
+  "addict": 0.05,
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "2+ STR, 2+ CHA, -2 INT, -2 HP",
+  "use": {
+   "heal": true,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 2,
+     "fx": {
+      "S": 2,
+      "C": 2,
+      "I": -2
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 2,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END, roll for puking"
+   }
+  }
+ },
+ {
+  "n": "New World Wine",
+  "tier": "3",
+  "lb": 0,
+  "cat": "Alcohol",
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1
+    },
+    {
+     "n": "Drunk",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Nukashine",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Alcohol",
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Old Possum",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Alcohol",
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1
+    },
+    {
+     "n": "Drunk",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Pre-War Wine",
+  "tier": "5",
+  "lb": 0,
+  "cat": "Alcohol",
+  "ap": 3,
+  "uses": 12,
+  "effect": "2+ CHA, 1- INT",
+  "dur": 24,
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "2+ CHA, 1- INT",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1,
+     "fx": {
+      "C": 2,
+      "I": -1
+     }
+    },
+    {
+     "n": "Drunk",
+     "tier": 1,
+     "fx": {}
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Rum & Nuka",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Alcohol",
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1
+    },
+    {
+     "n": "Drunk",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Scotch",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Alcohol",
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1
+    },
+    {
+     "n": "Drunk",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Sierra Madre Martini",
+  "tier": "3",
+  "lb": 0,
+  "cat": "Alcohol",
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1
+    },
+    {
+     "n": "Drunk",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Vodka",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Alcohol",
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1
+    },
+    {
+     "n": "Drunk",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Wasteland Tequila",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Alcohol",
+  "after": "Hangover: -5 chance to hit, -1 END",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1
+    },
+    {
+     "n": "Drunk",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Hangover",
+    "tier": 1,
+    "fx": {
+     "E": -1,
+     "acc": -0.05
+    },
+    "text": "Hangover: -5 chance to hit, -1 END"
+   }
+  }
+ },
+ {
+  "n": "Whiskey",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Alcohol",
+  "withdrawal": "-1 AGI, -1 CHA, (Something else)",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Loose",
+     "tier": 1
+    },
+    {
+     "n": "Drunk",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Adderall",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "uses": 5,
+  "effect": "Counters disoriented, +10 lockpicking, +10 repair, +10 science, +3 AP",
+  "after": "Comedown: -5 AP",
+  "useFrom": "Counters disoriented, +10 lockpicking, +10 repair, +10 science, +3 AP",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Stimulated",
+     "tier": 2,
+     "fx": {
+      "ap": 3,
+      "REP": 10,
+      "SCI": 10
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1,
+    "fx": {
+     "ap": -5
+    },
+    "text": "Comedown: -5 AP"
+   }
+  }
+ },
+ {
+  "n": "Adrenaline",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented, speed boost, +5 AP for one turn,",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented, speed boost, +5 AP for one turn,",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Amped",
+     "tier": 1,
+     "fx": {
+      "ap": 5
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Ant Nectar",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Ant Queen Pheremones",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Blood (if drinks blood)",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "req": "Target Bleeds",
+  "effect": "3+ AP, 15 HP",
+  "useFrom": "3+ AP, 15 HP",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "ap": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Buffout",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented: +2 STR, +2 END, +20% max health",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented: +2 STR, +2 END, +20% max health",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Roided",
+     "tier": 2,
+     "fx": {
+      "S": 2,
+      "E": 2,
+      "hpPct": 0.2
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Cannabis (Loud)",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "after": "INT -2",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "High",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1,
+    "fx": {
+     "I": -2
+    },
+    "text": "INT -2"
+   }
+  }
+ },
+ {
+  "n": "Cannabis (Mid)",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Afraid -1",
+  "after": "INT -1",
+  "useFrom": "Afraid -1",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "High",
+     "tier": 1
+    }
+   ],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1,
+    "fx": {
+     "I": -1
+    },
+    "text": "INT -1"
+   }
+  }
+ },
+ {
+  "n": "Cateye",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Combat PER +1",
+  "useFrom": "Combat PER +1",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Acuity",
+     "tier": 1,
+     "fx": {
+      "P": 1
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Cocaine",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented, +3AP, -1 AP cost melee and unarmed, +10 speech",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented, +3AP, -1 AP cost melee and unarmed, +10 speech",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Stimulated",
+     "tier": 2,
+     "fx": {
+      "ap": 3,
+      "SPE": 10
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Combat Stim",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "x1.5 AP",
+  "useFrom": "x1.5 AP",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Amped",
+     "tier": 2,
+     "fx": {
+      "apMul": 0.5
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Combat Ultra Stim",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "x2 AP",
+  "useFrom": "x2 AP",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Amped",
+     "tier": 3,
+     "fx": {
+      "apMul": 1
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Fent-X",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "-50% Damage",
+  "useFrom": "-50% Damage",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Anaesthetised",
+     "tier": 5,
+     "fx": {
+      "dmgTaken": -0.5
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Fire Ant Nectar",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Ghost Sight",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Combat PER +2",
+  "useFrom": "Combat PER +2",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Acuity",
+     "tier": 1,
+     "fx": {
+      "P": 2
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Heroin",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "-40% Damage,",
+  "useFrom": "-40% Damage,",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Anaesthetised",
+     "tier": 5,
+     "fx": {
+      "dmgTaken": -0.4
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Hydra",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Heal Limb Damage, -10% Limb Damage",
+  "useFrom": "Heal Limb Damage, -10% Limb Damage",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Injured Limb (Leg/Arm)": 1
+   },
+   "removes": [],
+   "fx": {
+    "limbMult": -0.1
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Jet",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented, +2 AP",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented, +2 AP",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Stimulated",
+     "tier": 1,
+     "fx": {
+      "ap": 2
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Ketamine",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Sedated effect",
+  "after": "Comedown:",
+  "useFrom": "Sedated effect",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Sedated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Lean",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "-10% Damage",
+  "useFrom": "-10% Damage",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Anaesthetised",
+     "tier": 2,
+     "fx": {
+      "dmgTaken": -0.1
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Med-X",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "-25% Damage",
+  "after": "Comedown:",
+  "useFrom": "-25% Damage",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Anaesthetised",
+     "tier": 5,
+     "fx": {
+      "dmgTaken": -0.25
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Med-X Styrette",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "-10% Damage",
+  "after": "Comedown:",
+  "useFrom": "-10% Damage",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Anaesthetised",
+     "tier": 2,
+     "fx": {
+      "dmgTaken": -0.1
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Mentats",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Bliss",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Methamphetamine",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented, +3 AP",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented, +3 AP",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Stimulated",
+     "tier": 2,
+     "fx": {
+      "ap": 3
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Modafanil",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "2+ CHA,",
+  "useFrom": "2+ CHA,",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Sociable",
+     "tier": 1,
+     "fx": {
+      "C": 2
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Molly",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "after": "Comedown:",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Bliss",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Oxycotyin",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "-20% Damage",
+  "after": "Comedown:",
+  "useFrom": "-20% Damage",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Anaesthetised",
+     "tier": 4,
+     "fx": {
+      "dmgTaken": -0.2
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Party Time Mentats",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Bliss",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Percocet",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "-20% Damage",
+  "after": "Comedown:",
+  "useFrom": "-20% Damage",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Anaesthetised",
+     "tier": 4,
+     "fx": {
+      "dmgTaken": -0.2
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Psycho",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented: 25% Damage",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented: 25% Damage",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Rage",
+     "tier": 3,
+     "fx": {
+      "dam": 0.25
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Quaalude",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Calm",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Rebound",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Stimulated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Rocket",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Stimulated",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Rushing Water",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Sacred Datura",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Hallucinations,",
+  "useFrom": "Hallucinations,",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Halucinating",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Slasher",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Rage",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Special Glowing Mushrooms",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Steady",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "after": "Comedown:",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Focused",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Steroids",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "req": "Medicine 25",
+  "effect": "STR +3, HP +10",
+  "useFrom": "STR +3, HP +10",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Roided",
+     "tier": 3,
+     "fx": {
+      "S": 3,
+      "hp": 10
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Tramadol",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Anaesthetised",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Tranq",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Extreme Sedated Effect, -25% Limb Damage",
+  "withdrawal": "Cripples Limbs slowly, Lose HP",
+  "useFrom": "Extreme Sedated Effect, -25% Limb Damage",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Sedated",
+     "tier": 5,
+     "fx": {
+      "limbMult": -0.25
+     }
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Turbo",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Stimulated",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "UltraJet",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "effect": "Counters disoriented",
+  "after": "Comedown:",
+  "useFrom": "Counters disoriented",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Stimulated",
+     "tier": 3
+    }
+   ],
+   "reduces": {},
+   "removes": [
+    "Disoriented"
+   ],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Xanax",
+  "lb": 0,
+  "cat": "Chem/Drug",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Calm",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Antiseptic Rub",
+  "tier": "1",
+  "lb": 0,
+  "cat": "Counter",
+  "ap": 1,
+  "effect": "Healing +25%",
+  "useFrom": "Healing +25%",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "heal": 0.25
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Antivenom",
+  "lb": 0,
+  "cat": "Counter",
+  "effect": "Poison -3",
+  "useFrom": "Poison -3",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Poisoned": 3
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Anti-Bleed Bandage",
+  "lb": 0,
+  "cat": "Counter",
+  "ap": 1,
+  "uses": 1,
+  "effect": "Bleed -1, Burn -1",
+  "useFrom": "Bleed -1, Burn -1",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Bleeding": 1,
+    "Burned": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Burn Balm",
+  "lb": 0,
+  "cat": "Counter",
+  "effect": "Burn -2",
+  "useFrom": "Burn -2",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Burned": 2
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Datura Antivenom",
+  "lb": 0,
+  "cat": "Counter",
+  "effect": "Poison -3",
+  "useFrom": "Poison -3",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Poisoned": 3
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Firey Purgative",
+  "lb": 0,
+  "cat": "Counter",
+  "effect": "Poison -3,",
+  "useFrom": "Poison -3,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Poisoned": 3
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Fixer",
+  "lb": 0,
+  "cat": "Counter",
+  "effect": "Addictions and Withdrawal removed temporarily",
+  "useFrom": "Addictions and Withdrawal removed temporarily",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Fixer",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Frostbite Kit",
+  "lb": 0,
+  "cat": "Counter",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Hemostatic Injector",
+  "lb": 0,
+  "cat": "Counter",
+  "effect": "Bleed -3",
+  "useFrom": "Bleed -3",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Bleeding": 3
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Military Bandage",
+  "lb": 0,
+  "cat": "Counter",
+  "ap": 1,
+  "effect": "Bleed -2",
+  "useFrom": "Bleed -2",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Bleeding": 2
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Retina Repair Machine",
+  "lb": 0,
+  "cat": "Counter",
+  "ap": 5,
+  "effect": "Blind Removed",
+  "useFrom": "Blind Removed",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [
+    "Blinded"
+   ],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Snakebite Tourniquet",
+  "lb": 0,
+  "cat": "Counter",
+  "ap": 1,
+  "effect": "Poison -1",
+  "useFrom": "Poison -1",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Poisoned": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Bandage",
+  "tier": "1",
+  "lb": 1,
+  "val": 10,
+  "cat": "Counter",
+  "req": "10.0",
+  "ap": 1,
+  "effect": "Bleeding -1 Tier",
+  "useFrom": "Bleeding -1 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Bleeding": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Clots-a-Lot Pills",
+  "tier": "3",
+  "lb": 1,
+  "val": 40,
+  "cat": "Counter",
+  "req": "50.0",
+  "ap": 1,
+  "effect": "Bleeding -3 Tier",
+  "useFrom": "Bleeding -3 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Bleeding": 3
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Auto-Suture",
+  "tier": "4",
+  "lb": 1,
+  "val": 75,
+  "cat": "Counter",
+  "req": "75.0",
+  "ap": 3,
+  "effect": "Bleeding -4 Tier",
+  "useFrom": "Bleeding -4 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Bleeding": 4
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Antacid",
+  "tier": "1",
+  "lb": 1,
+  "val": 10,
+  "cat": "Counter",
+  "req": "10.0",
+  "ap": 1,
+  "effect": "Poisoned -1 Tier",
+  "useFrom": "Poisoned -1 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Poisoned": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Iron Liver Injection",
+  "tier": "4",
+  "lb": 1,
+  "val": 75,
+  "cat": "Counter",
+  "req": "75.0",
+  "ap": 1,
+  "effect": "Poisoned -4 Tier",
+  "useFrom": "Poisoned -4 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Poisoned": 4
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Strange Fungus",
+  "tier": "1",
+  "lb": 1,
+  "val": 10,
+  "cat": "Counter",
+  "req": "10.0",
+  "ap": 1,
+  "effect": "Irradiated -1 Tier",
+  "useFrom": "Irradiated -1 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Irradiated": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Radaway",
+  "tier": "2",
+  "lb": 1,
+  "val": 20,
+  "cat": "Counter",
+  "req": "25.0",
+  "ap": 1,
+  "effect": "Irradiated -2 Tier",
+  "useFrom": "Irradiated -2 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Irradiated": 2
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Military Radaway",
+  "tier": "3",
+  "lb": 1,
+  "val": 40,
+  "cat": "Counter",
+  "req": "50.0",
+  "ap": 1,
+  "effect": "Irradiated -3 Tier",
+  "useFrom": "Irradiated -3 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Irradiated": 3
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Experimental Radaway",
+  "tier": "4",
+  "lb": 1,
+  "val": 75,
+  "cat": "Counter",
+  "req": "75.0",
+  "ap": 1,
+  "effect": "Irradiated -4 Tier",
+  "useFrom": "Irradiated -4 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Irradiated": 4
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "DNA Resplicer",
+  "tier": "5",
+  "lb": 3,
+  "val": 100,
+  "cat": "Counter",
+  "req": "90.0",
+  "ap": 3,
+  "effect": "Irradiated -5 Tier",
+  "useFrom": "Irradiated -5 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Irradiated": 5
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Tobacco Chew",
+  "tier": "1",
+  "lb": 1,
+  "val": 10,
+  "cat": "Counter",
+  "req": "10.0",
+  "ap": 1,
+  "effect": "Blinded/Disoriented -1 Tier",
+  "useFrom": "Blinded/Disoriented -1 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Blinded": 1,
+    "Disoriented": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Chinese Cigarettes",
+  "tier": "2",
+  "lb": 1,
+  "val": 20,
+  "cat": "Counter",
+  "req": "25.0",
+  "ap": 1,
+  "effect": "Blinded/Disoriented -2 Tier",
+  "useFrom": "Blinded/Disoriented -2 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Blinded": 2,
+    "Disoriented": 2
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nightstalker Squeezin's",
+  "tier": "5",
+  "lb": 1,
+  "val": 100,
+  "cat": "Counter",
+  "req": "90.0",
+  "ap": 1,
+  "effect": "Blinded/Disoriented -5 Tier",
+  "useFrom": "Blinded/Disoriented -5 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Blinded": 5,
+    "Disoriented": 5
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Splint",
+  "tier": "1",
+  "lb": 6,
+  "val": 10,
+  "cat": "Counter",
+  "req": "10.0",
+  "ap": 2,
+  "effect": "Crippled Limb -1 Tier",
+  "useFrom": "Crippled Limb -1 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Injured Limb (Leg/Arm)": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Medical Brace",
+  "tier": "2",
+  "lb": 6,
+  "val": 20,
+  "cat": "Counter",
+  "req": "25.0",
+  "ap": 3,
+  "effect": "Crippled Limb -2 Tier",
+  "useFrom": "Crippled Limb -2 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Injured Limb (Leg/Arm)": 2
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Cast-in-a-Can",
+  "tier": "3",
+  "lb": 1,
+  "val": 40,
+  "cat": "Counter",
+  "req": "50.0",
+  "ap": 1,
+  "effect": "Crippled Limb -3 Tier",
+  "useFrom": "Crippled Limb -3 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Injured Limb (Leg/Arm)": 3
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nurse's Bag",
+  "tier": "4",
+  "lb": 9,
+  "val": 75,
+  "cat": "Counter",
+  "req": "75.0",
+  "ap": 4,
+  "effect": "Crippled Limb -4 Tier",
+  "useFrom": "Crippled Limb -4 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Injured Limb (Leg/Arm)": 4
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Doctor's Bag",
+  "tier": "5",
+  "lb": 10,
+  "val": 100,
+  "cat": "Counter",
+  "req": "Medicine 90",
+  "ap": 5,
+  "effect": "Crippled Limb -5 Tier",
+  "after": "Stitches: *2 bleed chance, Shock level 2",
+  "useFrom": "Crippled Limb -5 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Injured Limb (Leg/Arm)": 5
+   },
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Static Shock Releaser",
+  "tier": "1",
+  "lb": 1,
+  "val": 10,
+  "cat": "Counter",
+  "req": "10.0",
+  "ap": 1,
+  "effect": "Electrocuted -1 Tier",
+  "useFrom": "Electrocuted -1 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Electrocuted": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Battery Recharger",
+  "tier": "2",
+  "lb": 1,
+  "val": 20,
+  "cat": "Counter",
+  "req": "25.0",
+  "ap": 1,
+  "effect": "Electrocuted -2 Tier",
+  "useFrom": "Electrocuted -2 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Electrocuted": 2
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Portable Lightning Rod",
+  "tier": "3",
+  "lb": 5,
+  "val": 40,
+  "cat": "Counter",
+  "req": "50.0",
+  "ap": 1,
+  "effect": "Electrocuted -3 Tier",
+  "useFrom": "Electrocuted -3 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Electrocuted": 3
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Industrial Dejolter",
+  "tier": "4",
+  "lb": 7,
+  "val": 75,
+  "cat": "Counter",
+  "req": "75.0",
+  "ap": 2,
+  "effect": "Electrocuted -4 Tier",
+  "useFrom": "Electrocuted -4 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Electrocuted": 4
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Lichtenberg's Bane",
+  "tier": "5",
+  "lb": 5,
+  "val": 100,
+  "cat": "Counter",
+  "req": "90.0",
+  "ap": 2,
+  "effect": "Electrocuted -5 Tier",
+  "useFrom": "Electrocuted -5 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Electrocuted": 5
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Aloe Rub",
+  "tier": "1",
+  "lb": 1,
+  "val": 10,
+  "cat": "Counter",
+  "req": "10.0",
+  "ap": 2,
+  "effect": "Burned -1 Tier",
+  "useFrom": "Burned -1 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Burned": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Cooling Bandage",
+  "tier": "3",
+  "lb": 1,
+  "val": 40,
+  "cat": "Counter",
+  "req": "50.0",
+  "ap": 2,
+  "effect": "Burned -3 Tier",
+  "useFrom": "Burned -3 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Burned": 3
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "SPF 5000 Pills",
+  "tier": "4",
+  "lb": 1,
+  "val": 75,
+  "cat": "Counter",
+  "req": "75.0",
+  "ap": 1,
+  "effect": "Burned -4 Tier",
+  "useFrom": "Burned -4 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Burned": 4
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "First-Degree Retardant",
+  "tier": "5",
+  "lb": 3,
+  "val": 100,
+  "cat": "Counter",
+  "req": "90.0",
+  "ap": 1,
+  "effect": "Burned -5 Tier",
+  "useFrom": "Burned -5 Tier",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Burned": 5
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Numbing Salve",
+  "tier": "1",
+  "lb": 0.5,
+  "val": 25,
+  "cat": "Counter",
+  "req": "Field Remedy Perk",
+  "ap": 2,
+  "uses": 1,
+  "effect": "Temporarily removes all status effects (except bleeding)",
+  "dur": 1,
+  "useFrom": "Temporarily removes all status effects (except bleeding)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null,
+   "numb": true
+  }
+ },
+ {
+  "n": "Agilic Non-Alcoholic Beer",
+  "lb": 0,
+  "cat": "Drink",
+  "ap": 2,
+  "uses": 1,
+  "effect": "Jack shit",
+  "dur": 1,
+  "after": "Disappointment -1 Speech",
+  "trigger": "1.0",
+  "addict": 0.00001,
+  "withdrawal": "-1 INT",
+  "useFrom": "Jack shit",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1,
+    "fx": {
+     "SPE": -1
+    },
+    "text": "Disappointment -1 Speech"
+   }
+  }
+ },
+ {
+  "n": "Black Coffee",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "withdrawal": "-1 AP",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Black Tea",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Canned Coffee",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Chinese Tea",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Crazy Passionfruit Drink",
+  "lb": 0,
+  "cat": "Drink",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Hydrated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Green Tea",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Juice",
+  "lb": 0,
+  "cat": "Drink",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Hydrated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Brahmin Milk",
+  "lb": 0,
+  "cat": "Drink",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Hydrated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Mutant Energy Drink",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nuka Cherry",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nuka Cola",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nuka Cola Clear",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nuka Cola Cranberry",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nuka Cola Dark",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nuka Cola Orange",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nuka Cola Quantum",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nuka Cola Quartz",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nuka Cola Twist",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nuka Cola VIctory",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nuka Cola Wild",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Nuka Grape",
+  "lb": 0,
+  "cat": "Drink",
+  "addict": 0.01,
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Sunset Sarsaparilla",
+  "lb": 0,
+  "cat": "Drink",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Hydrated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Stinger (Energy Drink)",
+  "lb": 0,
+  "cat": "Drink",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Vim Captain's Blend",
+  "lb": 0,
+  "cat": "Drink",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Vim Quartz",
+  "lb": 0,
+  "cat": "Drink",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Vim Refresh",
+  "lb": 0,
+  "cat": "Drink",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Vim!",
+  "lb": 0,
+  "cat": "Drink",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Caffenated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Water (Purified)",
+  "lb": 0,
+  "cat": "Drink",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Hydrated",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Water (Dirty)",
+  "lb": 0,
+  "cat": "Drink",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Hydrated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Water (Irradiated)",
+  "lb": 0,
+  "cat": "Drink",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Hydrated",
+     "tier": 1
+    },
+    {
+     "n": "Irradiated",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Bighorner Steak",
+  "lb": 0,
+  "cat": "Food",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Well Fed",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Iguana on a Stick",
+  "lb": 0,
+  "cat": "Food",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Well Fed",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Pork N Beans",
+  "lb": 0,
+  "cat": "Food",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Well Fed",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Auto Inject Stimpak",
+  "tier": "3",
+  "lb": 1.25,
+  "val": 150,
+  "cat": "Healing",
+  "req": "<HP 25%",
+  "ap": 0,
+  "effect": "10 HP + (Medicine/5)",
+  "useFrom": "10 HP + (Medicine/5)",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Auto Inject Super Stimpak",
+  "tier": "5",
+  "lb": 1.75,
+  "val": 300,
+  "cat": "Healing",
+  "req": "<HP 25%",
+  "ap": 0,
+  "effect": "15 HP + (Medicine/5)",
+  "useFrom": "15 HP + (Medicine/5)",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Auto Inject Ultra Stimpak",
+  "tier": "6",
+  "lb": 2.25,
+  "val": 500,
+  "cat": "Healing",
+  "req": "<HP 25%",
+  "ap": 0,
+  "effect": "20 HP + (Medicine/4)",
+  "useFrom": "20 HP + (Medicine/4)",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Bitter Drink",
+  "tier": "3",
+  "lb": 1,
+  "val": 27,
+  "cat": "Healing",
+  "req": "Survival 75",
+  "ap": 1,
+  "effect": "2+ HP every round (stackable)",
+  "useFrom": "2+ HP every round (stackable)",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Blood Pack",
+  "tier": "2",
+  "lb": 1.15,
+  "val": 33,
+  "cat": "Healing",
+  "req": "Medicine 25",
+  "ap": 2,
+  "effect": "10 HP + END",
+  "useFrom": "10 HP + END",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Golden Blood",
+  "tier": "6",
+  "lb": 1.15,
+  "val": 500,
+  "cat": "Healing",
+  "req": "Golden Blood Donor",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Healing Poultice",
+  "tier": "2",
+  "lb": 0.4,
+  "val": 45,
+  "cat": "Healing",
+  "req": "Survival 50",
+  "ap": 2,
+  "effect": "5 HP + (Survival/10), Heal limb damage (slightly), -1 AGI",
+  "useFrom": "5 HP + (Survival/10), Heal limb damage (slightly), -1 AGI",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {
+    "Injured Limb (Leg/Arm)": 1
+   },
+   "removes": [],
+   "fx": {
+    "A": -1
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Healing Powder",
+  "tier": "1",
+  "lb": 0.2,
+  "val": 25,
+  "cat": "Healing",
+  "req": "Survival 25",
+  "ap": 1,
+  "effect": "8 HP + (Medicine/10)",
+  "dur": 4,
+  "after": "-1 PER",
+  "useFrom": "8 HP + (Medicine/10)",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1,
+    "fx": {
+     "P": -1
+    },
+    "text": "-1 PER"
+   }
+  }
+ },
+ {
+  "n": "Improvised Hemostatic Pill",
+  "tier": "2",
+  "lb": 0.0001,
+  "val": 5,
+  "cat": "Counter",
+  "ap": 1,
+  "effect": "Reduces limb damage multiplier by .1,",
+  "useFrom": "Reduces limb damage multiplier by .1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "limbMult": -0.1
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Irradiated Blood Pack",
+  "tier": "2",
+  "lb": 1.15,
+  "val": 25,
+  "cat": "Healing",
+  "req": "Medicine 25",
+  "ap": 2,
+  "effect": "10 HP + END",
+  "after": "Radiation +1",
+  "useFrom": "10 HP + END",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Irradiated",
+    "tier": 1
+   }
+  }
+ },
+ {
+  "n": "Medkit (Battle Medic)",
+  "tier": "5",
+  "lb": 12,
+  "val": 500,
+  "cat": "Healing",
+  "req": "Medicine 50",
+  "ap": 4,
+  "uses": 1,
+  "effect": "25% HP",
+  "useFrom": "25% HP",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Medkit (Combat)",
+  "tier": "4",
+  "lb": 12.5,
+  "val": 750,
+  "cat": "Healing",
+  "req": "Medicine 75",
+  "ap": 4,
+  "uses": 1,
+  "effect": "33% HP",
+  "useFrom": "33% HP",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Medkit (Improvised)",
+  "tier": "2",
+  "lb": 10,
+  "val": 300,
+  "cat": "Healing",
+  "req": "Medicine 30",
+  "ap": 6,
+  "uses": 1,
+  "effect": "25% HP",
+  "useFrom": "25% HP",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Medkit (Physician)",
+  "tier": "6",
+  "lb": 25,
+  "val": 1000,
+  "cat": "Healing",
+  "req": "Medicine 100",
+  "ap": 5,
+  "uses": 1,
+  "effect": "75% HP",
+  "useFrom": "75% HP",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Medkit (Scientific)",
+  "tier": "5",
+  "lb": 20,
+  "val": 750,
+  "cat": "Healing",
+  "req": "Medicine 75",
+  "ap": 6,
+  "uses": 1,
+  "effect": "50% HP",
+  "useFrom": "50% HP",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Medkit (Small)",
+  "tier": "3",
+  "lb": 7.5,
+  "val": 500,
+  "cat": "Healing",
+  "req": "Medicine 50",
+  "ap": 5,
+  "uses": 1,
+  "effect": "33% HP",
+  "useFrom": "33% HP",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Medkit (Tribal)",
+  "tier": "3",
+  "lb": 8,
+  "val": 250,
+  "cat": "Healing",
+  "req": "Survival 50",
+  "ap": 3,
+  "effect": "25% HP",
+  "useFrom": "25% HP",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Medkit (Survivalist's)",
+  "tier": "4",
+  "lb": 12,
+  "val": 375,
+  "cat": "Healing",
+  "req": "Survival 75",
+  "ap": 3,
+  "effect": "33% HP",
+  "useFrom": "33% HP",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Sterilized Blood Pack",
+  "tier": "3",
+  "lb": 1.2,
+  "val": 100,
+  "cat": "Healing",
+  "req": "Medicine 25",
+  "ap": 2,
+  "uses": 1,
+  "effect": "10 HP + END",
+  "useFrom": "10 HP + END",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Stimpak",
+  "tier": "2",
+  "lb": 1,
+  "val": 100,
+  "cat": "Healing",
+  "ap": 2,
+  "uses": 1,
+  "effect": "10 HP + (Medicine/5)",
+  "useFrom": "10 HP + (Medicine/5)",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Super Stimpak",
+  "tier": "4",
+  "lb": 1.5,
+  "val": 200,
+  "cat": "Healing",
+  "ap": 3,
+  "uses": 1,
+  "effect": "15 HP + (Medicine/5)",
+  "useFrom": "15 HP + (Medicine/5)",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Surgeon's Kit",
+  "tier": "5",
+  "lb": 13,
+  "val": 800,
+  "cat": "Healing",
+  "req": "Medicine 75",
+  "ap": 8,
+  "effect": "Heals Head/Chest Trauma, Revive Downed Ally, restores 25% health",
+  "after": "Stitches: *2 bleed chance, Shock level 1",
+  "useFrom": "Heals Head/Chest Trauma, Revive Downed Ally, restores 25% health",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Fatigue",
+    "tier": 1
+   },
+   "revive": true
+  }
+ },
+ {
+  "n": "Tribal Medical Kit",
+  "tier": "3",
+  "lb": 15,
+  "val": 200,
+  "cat": "Healing",
+  "req": "Survival 50",
+  "effect": "10% HP every round (stackable)",
+  "useFrom": "10% HP every round (stackable)",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Ultra Stimpack",
+  "tier": "5",
+  "lb": 2,
+  "val": 350,
+  "cat": "Healing",
+  "ap": 3,
+  "uses": 1,
+  "effect": "20 HP + (Medicine/4)",
+  "useFrom": "20 HP + (Medicine/4)",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Human Blood (As Healing)",
+  "tier": "1",
+  "lb": 0,
+  "val": 0,
+  "cat": "Healing",
+  "req": "The Masquerade",
+  "ap": 2,
+  "effect": "10+ HP",
+  "useFrom": "10+ HP",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Fixin' Things",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Repair +10",
+  "useFrom": "Repair +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "REP": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Future Weapons Today",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Energy Weapons +10",
+  "useFrom": "Energy Weapons +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "EW": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Lad's Life",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Survival +10",
+  "useFrom": "Survival +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "SUR": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "¡La Fantoma!",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Sneak +10",
+  "useFrom": "Sneak +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "SNK": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Locksmith's Reader",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Lockpick +10",
+  "useFrom": "Lockpick +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "LPK": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Meeting People",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Speech +10",
+  "useFrom": "Speech +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "SPE": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Milsurp Review",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Small Guns +10",
+  "useFrom": "Small Guns +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "SG": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Global War Monitor",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Big Guns +10",
+  "useFrom": "Big Guns +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "BG": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Patriot's Cookbook",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Explosives +10",
+  "useFrom": "Explosives +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "EXP": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Programmer's Digest",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Science +10",
+  "useFrom": "Science +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "SCI": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Salesman Weekly",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Barter +10",
+  "useFrom": "Barter +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "BAR": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Tæles of Chivalrie",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Melee +10",
+  "useFrom": "Melee +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "MW": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Today's Physician",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Medicine +10",
+  "useFrom": "Medicine +10",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "MED": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "True Police Stories",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Crit Chance +5%",
+  "useFrom": "Crit Chance +5%",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "crit": 0.05
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Tales of a Junktown Jerky Vendor",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Barter +3 (Permanently)",
+  "useFrom": "Barter +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "BAR": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Nikola Tesla and You",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Energy Weapons +3 (Permanently)",
+  "useFrom": "Energy Weapons +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "EW": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Duck and Cover!",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Explosives +3 (Permanently)",
+  "useFrom": "Explosives +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "EXP": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Guns and Bullets",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Small Guns +3 (Permanently)",
+  "useFrom": "Small Guns +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "SG": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Weapons Policy Guidelines",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Big Guns +3 (Permanently)",
+  "useFrom": "Big Guns +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "BG": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Tumblers Today",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Lockpick +3 (Permanently)",
+  "useFrom": "Lockpick +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "LPK": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "D.C. Journal of Internal Medicine",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Medicine +3 (Permanently)",
+  "useFrom": "Medicine +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "MED": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Grognak the Barbarian",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Melee Weapons +3 (Permanently)",
+  "useFrom": "Melee Weapons +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "MW": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Dean's Electronics",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Repair +3 (Permanently)",
+  "useFrom": "Repair +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "REP": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Big Book of Science",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Science +3 (Permanently)",
+  "useFrom": "Science +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "SCI": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Chinese Army: Special Ops Training Manual",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Sneak +3 (Permanently)",
+  "useFrom": "Sneak +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "SNK": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Lying, Congressional Style",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Speech +3 (Permanently)",
+  "useFrom": "Speech +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "SPE": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Wasteland Survival Guide",
+  "tier": "4",
+  "lb": 0,
+  "cat": "Literature",
+  "effect": "Survival +3 (Permanently)",
+  "useFrom": "Survival +3 (Permanently)",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "SUR": 3
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Bleak Venom",
+  "lb": 0,
+  "cat": "Poison",
+  "effect": "2+ Poison",
+  "useFrom": "2+ Poison",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Poisoned",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Cloud Kiss",
+  "lb": 0,
+  "cat": "Poison",
+  "effect": "2+ Poison",
+  "useFrom": "2+ Poison",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Poisoned",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Dark Datura",
+  "lb": 0,
+  "cat": "Poison",
+  "effect": "1+ Poison",
+  "useFrom": "1+ Poison",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Poisoned",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Mother Darkness Poison",
+  "lb": 0,
+  "cat": "Poison",
+  "effect": "3+ Poison",
+  "useFrom": "3+ Poison",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Poisoned",
+     "tier": 3
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Silver Sting Poison",
+  "lb": 0,
+  "cat": "Poison",
+  "effect": "2+ Poison",
+  "useFrom": "2+ Poison",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Poisoned",
+     "tier": 2
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Tremble Poison",
+  "lb": 0,
+  "cat": "Poison",
+  "effect": "1+ Poison, Chance to hit -25",
+  "useFrom": "1+ Poison, Chance to hit -25",
+  "use": {
+   "heal": null,
+   "applies": [
+    {
+     "n": "Poisoned",
+     "tier": 1
+    }
+   ],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "acc": -0.25
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Blood Shield",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Resistance",
+  "effect": "Resist Poison",
+  "useFrom": "Resist Poison",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "resist:Poisoned": 1
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Datura Hide",
+  "tier": "3",
+  "lb": 0,
+  "cat": "Resistance",
+  "useFrom": "",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Rad-X",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Resistance",
+  "effect": "Resist Radiation",
+  "useFrom": "Resist Radiation",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "resist:Irradiated": 1
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Weapon Binding Ritual",
+  "tier": "3",
+  "lb": 0,
+  "cat": "Resistance",
+  "effect": "Heal limb damage, +10 Melee/Unarmed Damage, -10 HP",
+  "useFrom": "Heal limb damage, +10 Melee/Unarmed Damage, -10 HP",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {
+    "Injured Limb (Leg/Arm)": 1
+   },
+   "removes": [],
+   "fx": {
+    "MW": 10
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Antibiotics",
+  "tier": "3",
+  "lb": 0,
+  "cat": "Resistance",
+  "effect": "Resist Sick",
+  "useFrom": "Resist Sick",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "resist:Sick": 1
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Vitamins",
+  "tier": "2",
+  "lb": 0,
+  "cat": "Resistance",
+  "effect": "Resist Weak",
+  "useFrom": "Resist Weak",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "resist:Weak": 1
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Peptides",
+  "tier": "3",
+  "lb": 0,
+  "cat": "Resistance",
+  "effect": "Resist Hunger",
+  "useFrom": "Resist Hunger",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "resist:Hunger": 1
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Pipe",
+  "lb": 0,
+  "cat": "Tobacco",
+  "effect": "Afraid -1,",
+  "useFrom": "Afraid -1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Backwaters Cigarillos",
+  "lb": 0,
+  "cat": "Tobacco",
+  "effect": "Afraid -1,",
+  "useFrom": "Afraid -1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Chew Tobacco",
+  "lb": 0,
+  "cat": "Tobacco",
+  "effect": "Afraid -1,",
+  "useFrom": "Afraid -1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Coyote Loose Leaf",
+  "lb": 0,
+  "cat": "Tobacco",
+  "effect": "Afraid -1,",
+  "useFrom": "Afraid -1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Fortune's Favor Cigarettes",
+  "lb": 0,
+  "cat": "Tobacco",
+  "effect": "Afraid -1,",
+  "useFrom": "Afraid -1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Golden Crane Cigarettes",
+  "lb": 0,
+  "cat": "Tobacco",
+  "effect": "Afraid -1,",
+  "useFrom": "Afraid -1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Huntington Menthol Cigarettes",
+  "lb": 0,
+  "cat": "Tobacco",
+  "effect": "Afraid -1,",
+  "useFrom": "Afraid -1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Marborough Gold Cigarettes",
+  "lb": 0,
+  "cat": "Tobacco",
+  "effect": "Afraid -1,",
+  "useFrom": "Afraid -1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Marborough Red Cigarettes",
+  "lb": 0,
+  "cat": "Tobacco",
+  "effect": "Afraid -1,",
+  "useFrom": "Afraid -1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Sweeper Sweet Cigarillos",
+  "lb": 0,
+  "cat": "Tobacco",
+  "effect": "Afraid -1,",
+  "useFrom": "Afraid -1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Tribal Wisdom Natural Cigarettes",
+  "lb": 0,
+  "cat": "Tobacco",
+  "effect": "Afraid -1,",
+  "useFrom": "Afraid -1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Wilson Cigarettes",
+  "lb": 0,
+  "cat": "Tobacco",
+  "effect": "Afraid -1,",
+  "useFrom": "Afraid -1,",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {
+    "Afraid": 1
+   },
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Armor Repair Kit",
+  "lb": 0,
+  "cat": "Tool",
+  "effect": "Improves Armor Con by Rep/20",
+  "useFrom": "Improves Armor Con by Rep/20",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Blood Draw Kit",
+  "lb": 0,
+  "cat": "Tool",
+  "effect": "Adds 1 Blood Pack",
+  "after": "Shock +1",
+  "useFrom": "Adds 1 Blood Pack",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": {
+    "n": "Shock",
+    "tier": 1
+   },
+   "gives": [
+    "Blood Pack",
+    1
+   ]
+  }
+ },
+ {
+  "n": "Stealth Boy",
+  "lb": 0,
+  "cat": "Tool",
+  "effect": "Sneak +100",
+  "useFrom": "Sneak +100",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "SNK": 100
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Sterilized Blood Draw Kit",
+  "lb": 0,
+  "cat": "Tool",
+  "effect": "Adds 1 Sterilized Blood Pack",
+  "useFrom": "Adds 1 Sterilized Blood Pack",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null,
+   "gives": [
+    "Sterilized Blood Pack",
+    1
+   ]
+  }
+ },
+ {
+  "n": "Weapon Repair Kit",
+  "lb": 0,
+  "cat": "Tool",
+  "effect": "Improves Weapon Con by Rep/20",
+  "useFrom": "Improves Weapon Con by Rep/20",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null,
+   "repairDiv": 20
+  }
+ }
+]

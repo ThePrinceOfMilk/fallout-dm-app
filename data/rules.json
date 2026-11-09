@@ -1,0 +1,3063 @@
+{
+ "maxHit": 0.95,
+ "damageFloor": 0.2,
+ "overskillCap": 100,
+ "perPenalty": 0,
+ "strGun": 0,
+ "strMelee": 0,
+ "loc": {
+  "Body": 1,
+  "Limb": 0.75,
+  "Head": 2
+ },
+ "critMult": {
+  "Hit": 1,
+  "Crit": 2,
+  "Super": 3
+ },
+ "superDefault": 0.01,
+ "critMode": "weapon",
+ "jamMode": "weapon",
+ "pelletMode": "combined",
+ "critAllBullets": true,
+ "targetAP": {
+  "Body": 0,
+  "Limb": 1,
+  "Head": 2
+ },
+ "swapAP": 1,
+ "jamSpendsAP": true,
+ "clearJamDefault": 2,
+ "clearJam": {
+  "Revolver": 1,
+  "Semi-Auto Pistol": 1,
+  "Plinker Pistol": 1,
+  "Pistol": 1,
+  "Machine Pistol": 2,
+  "SMG": 2,
+  "PDW": 2,
+  "Carbine": 2,
+  "Semi-Auto Rifle": 2,
+  "Auto Rifle": 2,
+  "Lever-Action Rifle": 2,
+  "DMR": 2,
+  "Sniper Rifle": 3,
+  "Special": 2,
+  "Light Shotgun": 2,
+  "Heavy Shotgun": 3,
+  "LMG": 3,
+  "Heavy": 4,
+  "Anti-Mat": 3,
+  "Rifle": 2,
+  "Crossbow": 2,
+  "Longbow": 1,
+  "Fast Laser": 2,
+  "Hot Laser": 2,
+  "Fast Plasma": 2,
+  "Hot Plasma": 3,
+  "Electric": 2,
+  "Magnetic": 2,
+  "Fueled": 3,
+  "Powered": 3,
+  "Launcher": 3,
+  "Missile": 4,
+  "Grenade": 0,
+  "Mine/Trap": 0,
+  "B-P": 1,
+  "B-S": 1,
+  "S-P": 1,
+  "S-B": 1,
+  "P-B": 1,
+  "P-S": 1,
+  "Hand": 1
+ },
+ "moveAP": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  7,
+  9,
+  12,
+  15
+ ],
+ "bandMeters": [
+  0.5,
+  1,
+  3,
+  5,
+  10,
+  25,
+  50,
+  75,
+  100,
+  150
+ ],
+ "autoStatus": true,
+ "autoWeaponStatus": true,
+ "critTier": {
+  "Crit": 1,
+  "Super": 2
+ },
+ "critStatus": {
+  "Head": "Disoriented",
+  "Body": "",
+  "Arm": "Injured Limb (Leg/Arm)",
+  "Leg": "Injured Limb (Leg/Arm)"
+ },
+ "perkEvery": 2,
+ "gridM": 2,
+ "enemyTypes": {
+  "robot": "robot|protectron|assaultron|sentry|eyebot|handy|gutsy|turret|securitron|synth",
+  "insect": "ant\\b|cazador|bloatfly|scorpion|mantis|roach",
+  "ghoul": "ghoul",
+  "animal": "gecko|coyote|deathclaw|bighorner|brahmin|mole rat|dog|yao|rat\\b|lizard|bear|centaur"
+ },
+ "oneHanded": [
+  "Revolver",
+  "Semi-Auto Pistol",
+  "Plinker Pistol",
+  "Machine Pistol",
+  "Pistol",
+  "SMG",
+  "PDW",
+  "Hand",
+  "S-P",
+  "B-P",
+  "P-B"
+ ],
+ "perkRules": {
+  "Heritable": [
+   {
+    "fx": {
+     "traitScale": 0.25
+    }
+   }
+  ],
+  "Shrapnel": [
+   {
+    "fx": {
+     "critBleed": 1
+    }
+   }
+  ],
+  "Quickdraw": [
+   {
+    "fx": {
+     "acc": 0.2
+    },
+    "when": {
+     "tabs": [
+      "SG"
+     ],
+     "rangeMax": 1,
+     "firstTurn": true
+    }
+   }
+  ],
+  "Hunker Down": [
+   {
+    "fx": {
+     "acc": 0.05
+    },
+    "when": {
+     "tabs": [
+      "BG"
+     ],
+     "inCover": true
+    }
+   }
+  ],
+  "Backup Plan": [
+   {
+    "fx": {
+     "damFlat": 1
+    },
+    "when": {
+     "secondary": true
+    }
+   }
+  ],
+  "Opportune Strike": [
+   {
+    "fx": {
+     "crit": 0.02
+    },
+    "when": {
+     "perRound": true
+    }
+   }
+  ],
+  "The Future is Now": [
+   {
+    "fx": {
+     "dam": 0.1
+    },
+    "when": {
+     "tabs": [
+      "EW"
+     ],
+     "vs": [
+      "human"
+     ]
+    }
+   }
+  ],
+  "Crowhop": [
+   {
+    "fx": {
+     "S": 1
+    },
+    "when": {
+     "tabs": [
+      "EX"
+     ]
+    }
+   }
+  ],
+  "War of Attrition": [
+   {
+    "fx": {
+     "pen": 1
+    },
+    "when": {
+     "perRound": true
+    }
+   }
+  ],
+  "Continued Fire": [
+   {
+    "fx": {
+     "count": 1
+    },
+    "when": {
+     "auto": true,
+     "per2Rounds": true
+    }
+   }
+  ],
+  "Rapid Reload": [
+   {
+    "fx": {
+     "reloadMul": -0.25
+    }
+   }
+  ],
+  "Hunter": [
+   {
+    "fx": {
+     "critToSuper": 1
+    },
+    "when": {
+     "vs": [
+      "animal"
+     ]
+    }
+   }
+  ],
+  "Seen It Coming": [
+   {
+    "fx": {
+     "pri": 3
+    }
+   },
+   {
+    "fx": {
+     "targetFree": 1
+    },
+    "when": {
+     "firstTurn": true
+    }
+   }
+  ],
+  "Bounceback": [
+   {
+    "fx": {
+     "endHeal": 0.2
+    }
+   }
+  ],
+  "First to Draw": [
+   {
+    "fx": {
+     "pri": 3
+    }
+   },
+   {
+    "fx": {
+     "swapFree": 1,
+     "itemFree": 1
+    },
+    "when": {
+     "firstTurn": true
+    }
+   }
+  ],
+  "One Punch Man": [
+   {
+    "fx": {
+     "superKill": 1
+    },
+    "when": {
+     "types": [
+      "Hand"
+     ]
+    }
+   }
+  ],
+  "Entymologist": [
+   {
+    "fx": {
+     "dam": 0.5
+    },
+    "when": {
+     "vs": [
+      "insect"
+     ]
+    }
+   }
+  ],
+  "Iron Grip": [
+   {
+    "fx": {
+     "acc": 0.1
+    },
+    "when": {
+     "tabs": [
+      "BG"
+     ],
+     "rangeMin": 8
+    }
+   },
+   {
+    "fx": {
+     "acc": 0.2
+    },
+    "when": {
+     "tabs": [
+      "BG"
+     ],
+     "rangeMin": 10
+    }
+   }
+  ],
+  "Opportunity Knocks": [
+   {
+    "fx": {
+     "critDam": 0.1
+    },
+    "when": {
+     "targetMelee": true,
+     "rangeMax": 1
+    }
+   }
+  ],
+  "Instinct": [
+   {
+    "fx": {
+     "enemyInit": -2
+    }
+   }
+  ],
+  "Neo": [
+   {
+    "fx": {
+     "enemyAcc": -0.15
+    },
+    "when": {
+     "attackerAuto": true
+    }
+   }
+  ],
+  "CQB": [
+   {
+    "fx": {
+     "pri": 2
+    }
+   }
+  ],
+  "Super Slam": [
+   {
+    "fx": {
+     "knockChance": 0.15
+    },
+    "when": {
+     "oneHanded": true
+    }
+   }
+  ],
+  "Light Touch": [
+   {
+    "fx": {
+     "crit": 0.05
+    },
+    "when": {
+     "armor": "Light"
+    }
+   }
+  ],
+  "Robotics Expert": [
+   {
+    "fx": {
+     "dam": 0.25
+    },
+    "when": {
+     "vs": [
+      "robot"
+     ]
+    }
+   }
+  ],
+  "Old World Gourmet": [
+   {
+    "fx": {
+     "addict": -0.25
+    }
+   }
+  ],
+  "Concentrated Fire": [
+   {
+    "fx": {
+     "acc": 0.05
+    },
+    "when": {
+     "sameTarget": true
+    }
+   }
+  ],
+  "Chemist": [
+   {
+    "fx": {
+     "chemDur": 1
+    }
+   }
+  ],
+  "Grim Reaper's Sprint": [
+   {
+    "fx": {
+     "killAP": 0.25
+    }
+   }
+  ],
+  "Pack Rat": [
+   {
+    "fx": {
+     "lightHalf": 1
+    }
+   }
+  ],
+  "Hit The Deck": [
+   {
+    "fx": {
+     "dt": 12
+    },
+    "when": {
+     "attackerTabs": [
+      "EX"
+     ]
+    }
+   }
+  ],
+  "Living Anatomy": [
+   {
+    "fx": {
+     "dam": 0.05
+    },
+    "when": {
+     "vs": [
+      "human",
+      "ghoul"
+     ]
+    }
+   }
+  ],
+  "The Professional": [
+   {
+    "fx": {
+     "critDam": 0.2
+    },
+    "when": {
+     "sneak": true,
+     "types": [
+      "Revolver",
+      "Semi-Auto Pistol",
+      "Plinker Pistol",
+      "Machine Pistol",
+      "Pistol",
+      "SMG"
+     ]
+    }
+   }
+  ],
+  "Elementary": [
+   {
+    "fx": {
+     "debuffAdd": 1
+    },
+    "when": {
+     "tabs": [
+      "EW"
+     ]
+    }
+   }
+  ],
+  "New World Methods": [
+   {
+    "fx": {
+     "healOut": 0.25
+    },
+    "when": {
+     "items": [
+      "Healing Powder",
+      "Healing Poultice"
+     ]
+    }
+   }
+  ],
+  "Safe Treatment": [
+   {
+    "fx": {
+     "healOut": 0.1
+    },
+    "when": {
+     "items": [
+      "Antiseptic Rub"
+     ]
+    }
+   }
+  ],
+  "Biological Optimization": [
+   {
+    "fx": {
+     "healOut": 0.25
+    },
+    "when": {
+     "cats": [
+      "Healing"
+     ]
+    }
+   }
+  ],
+  "Caphound": [
+   {
+    "fx": {
+     "capsMul": 1
+    }
+   }
+  ],
+  "Lunge": [
+   {
+    "fx": {
+     "accMul": -0.5,
+     "apCostMul": 2,
+     "lunge": 1
+    },
+    "when": {
+     "melee": true,
+     "rangeMin": 2,
+     "rangeMax": 2
+    }
+   }
+  ],
+  "Last Stand": [
+   {
+    "fx": {
+     "saveMul": 1
+    }
+   }
+  ],
+  "Friend of the Night": [
+   {
+    "fx": {
+     "nightPen": 0.5
+    }
+   }
+  ],
+  "Lucky Number": [
+   {
+    "fx": {
+     "lucky": 1
+    }
+   }
+  ],
+  "Leader of Men": [
+   {
+    "fx": {
+     "inspire": 1
+    }
+   }
+  ],
+  "Pack Animals": [
+   {
+    "fx": {
+     "auraEnemyAcc": -0.1
+    }
+   }
+  ],
+  "Concentrated Gunfire": [
+   {
+    "fx": {
+     "acc": 0.05
+    },
+    "when": {
+     "perStreak": true
+    }
+   }
+  ],
+  "Concentrated Heavy Fire": [
+   {
+    "fx": {
+     "acc": 0.05
+    },
+    "when": {
+     "perStreak": true,
+     "tabs": [
+      "BG"
+     ]
+    }
+   }
+  ],
+  "In Shining Armor": [
+   {
+    "fx": {
+     "dt": 5
+    },
+    "when": {
+     "attackerTabs": [
+      "EW"
+     ],
+     "armor": "reflect"
+    }
+   },
+   {
+    "fx": {
+     "dt": 2
+    },
+    "when": {
+     "attackerTabs": [
+      "EW"
+     ]
+    }
+   }
+  ],
+  "Tribal Wisdom": [
+   {
+    "fx": {
+     "limbMult": -0.5
+    },
+    "when": {
+     "attackerMob": true
+    }
+   }
+  ],
+  "Kurkulator": [
+   {
+    "fx": {
+     "targetFree": 1
+    },
+    "when": {
+     "part": "Head",
+     "rangeMin": 4
+    }
+   }
+  ],
+  "Unstoppable Force": [
+   {
+    "fx": {
+     "dam": 0.25
+    },
+    "when": {
+     "targetMelee": true
+    }
+   }
+  ],
+  "Center Mass": [
+   {
+    "fx": {
+     "dam": 0.15
+    },
+    "when": {
+     "part": "Body"
+    }
+   }
+  ]
+ },
+ "indoorMaps": [
+  "smallRoom",
+  "mediumRoom",
+  "bigRoom",
+  "hallway",
+  "interior",
+  "warehouse"
+ ],
+ "noteRules": {
+  "Mobile Firepower": {
+   "when": {
+    "perCount": true
+   }
+  },
+  "Sharpshooter": {
+   "fx": {
+    "critPerRange": 1
+   }
+  },
+  "Plinkster": {
+   "fx": {
+    "superIgnoreDT": 1
+   }
+  },
+  "Bullet Hose": {
+   "fx": {
+    "critNoAmmo": 1
+   }
+  },
+  "Doctor's Note": {},
+  "Chemmaxxing": {},
+  "Optimal Dosage": {
+   "fx": {
+    "healOut": 1
+   }
+  },
+  "Hammertime": {
+   "fx": {
+    "critKnock": 1
+   }
+  },
+  "Mechanic": {
+   "when": {
+    "ooc": true
+   }
+  },
+  "Ghost": {
+   "when": {
+    "armorFaction": true
+   }
+  },
+  "Sandman": {
+   "fx": {
+    "killAP": 1
+   },
+   "when": {
+    "sneak": true
+   }
+  },
+  "Close n Personal": {
+   "fx": {
+    "hitBleed": 3
+   },
+   "when": {
+    "sneak": true
+   }
+  },
+  "Forced Slumber": {
+   "fx": {
+    "critDisorient": 3,
+    "critLimb": 1
+   },
+   "when": {
+    "sneak": true
+   }
+  },
+  "Addict in Recovery": {
+   "when": {
+    "sober": true
+   }
+  },
+  "Alcoholic in Recovery": {
+   "when": {
+    "sober": true
+   }
+  },
+  "Autistic": {
+   "fx": {
+    "speechCap": 50
+   }
+  },
+  "Bigoted": {
+   "when": {
+    "vsMob": true
+   }
+  },
+  "Boozer": {
+   "when": {
+    "hasStatus": [
+     "Loose",
+     "Drunk"
+    ]
+   }
+  },
+  "Ceramic Tiger": {
+   "fx": {
+    "crippleTaken": 1
+   }
+  },
+  "Wembanyama": {
+   "fx": {
+    "crippleTaken": 1
+   }
+  },
+  "Coward": {
+   "when": {
+    "combat": true
+   }
+  },
+  "Dry Spell": {
+   "when": {
+    "afterCrit": true
+   }
+  },
+  "One Eye Lost": {
+   "when": {
+    "moved": true
+   }
+  },
+  "Paranoid": {
+   "fx": {
+    "startAfraid": 3
+   }
+  },
+  "Old School": {
+   "fx": {
+    "noEW": 1
+   }
+  },
+  "Underworld Nationalist": {
+   "fx": {
+    "crit": 0.05
+   },
+   "when": {
+    "perKillHuman": true
+   }
+  },
+  "Hermit": {
+   "when": {
+    "lightLoad": true
+   }
+  },
+  "Ravenous Murderer": {
+   "when": {
+    "perBleed": true
+   }
+  },
+  "Robotripper": {
+   "when": {
+    "chemsMin": 3
+   }
+  },
+  "IDF Soldier (Riot Gear)": {
+   "when": {
+    "armor": "riot"
+   }
+  },
+  "Somatic Heart Healing": {},
+  "Eagle Eyed": {
+   "fx": {
+    "superRoll": 5
+   },
+   "when": {
+    "rangeMin": 8
+   }
+  },
+  "New Vegas Legend": {
+   "when": {
+    "perCaps100": true
+   }
+  },
+  "Arrogance (Weaker)": {
+   "when": {
+    "hpHigher": true
+   }
+  },
+  "Pack Rat": {
+   "fx": {
+    "lightHalf": 1
+   }
+  },
+  "Courser": {
+   "when": {
+    "hasEffect": "Stealth Boy"
+   }
+  },
+  "Neurotic Devotion": {
+   "when": {
+    "perHitTaken": true
+   }
+  },
+  "Menace 2 Society": {
+   "when": {
+    "perDebuff": true
+   }
+  },
+  "Turtle": {
+   "when": {
+    "perStill": true
+   }
+  },
+  "Hades": {
+   "when": {
+    "weaponStatus": "Irradiated"
+   }
+  },
+  "Now is Not The Time for Fear": {
+   "when": {
+    "perAfraid": true
+   }
+  },
+  "Welding Goggles": {
+   "fx": {
+    "resist:Blinded": 1
+   }
+  },
+  "Electronic Shades": {
+   "fx": {
+    "nightPen": 0.5
+   }
+  },
+  "Police Gas Mask": {
+   "fx": {
+    "resist:Poisoned": 1,
+    "resist:Irradiated": 1
+   }
+  },
+  "Army Gas Mask": {
+   "fx": {
+    "resist:Poisoned": 1,
+    "resist:Irradiated": 1
+   }
+  },
+  "Ammo Satchel Harness": {
+   "fx": {
+    "carry": 5
+   }
+  },
+  "Bandolier": {},
+  "Basic Night Vision Goggles": {
+   "fx": {
+    "nightPen": 0
+   }
+  },
+  "Basic Thermal Visison Goggles": {
+   "fx": {
+    "nightPen": 0
+   }
+  },
+  "Bromine Lined Undergarments": {
+   "fx": {
+    "resist:Burned": 1
+   }
+  },
+  "Combat Medic Harness": {
+   "fx": {
+    "itemAP": -1
+   }
+  },
+  "Cut Gloves": {
+   "fx": {
+    "resist:Bleeding": 1
+   }
+  },
+  "Explosive Harness": {
+   "fx": {
+    "apCost": -1
+   },
+   "when": {
+    "tabs": [
+     "EX"
+    ]
+   }
+  },
+  "Grounding Mechanism": {
+   "fx": {
+    "resist:Electrocuted": 1
+   }
+  },
+  "Melee Harness": {
+   "fx": {
+    "swapFreeMelee": 1
+   }
+  },
+  "Money Dispenser Harness": {
+   "fx": {
+    "capsNoWeight": 1
+   }
+  },
+  "Pistol Harness": {
+   "fx": {
+    "swapFreePistol": 1
+   }
+  },
+  "Quick Repair Harness": {
+   "fx": {
+    "clearJamAdd": -1
+   }
+  },
+  "Survival Toolbelt": {
+   "fx": {
+    "counterAP": -1
+   }
+  },
+  "Tactical Drink Harness": {
+   "fx": {
+    "drinkAP": -1
+   }
+  },
+  "Tesla Harness": {},
+  "Thermal Underwear": {
+   "fx": {
+    "resist:Frozen": 1
+   }
+  },
+  "Military Backpack": {
+   "fx": {
+    "ammoWeight": -0.25
+   }
+  },
+  "Night Vision Scope": {
+   "fx": {
+    "nightPen": 0
+   }
+  },
+  "Thermal Scope": {
+   "fx": {
+    "nightPen": 0
+   }
+  },
+  "Strobe Light": {
+   "when": {
+    "indoors": true
+   }
+  },
+  "Carbon Fiber Parts": {}
+ },
+ "statusRules": {
+  "Blinded": {
+   "acc": -1,
+   "moveMaxM": 2
+  }
+ },
+ "traitRules": {
+  "Loyal Party Member": [
+   {
+    "fx": {
+     "weaponSkill": 15
+    },
+    "when": {
+     "nameRe": "Chinese|Russian|Soviet"
+    }
+   }
+  ],
+  "Patriot": [
+   {
+    "fx": {
+     "weaponSkill": 15
+    },
+    "when": {
+     "nameRe": "American|Service|Liberty|Marine|Colt|\\bUS\\b"
+    }
+   }
+  ],
+  "Sneering Imperialist": [
+   {
+    "fx": {
+     "weaponSkill": 15
+    },
+    "when": {
+     "nameRe": "European|German|British|French|Gehwer|Luger|Parabellum"
+    }
+   }
+  ],
+  "Tribal": [
+   {
+    "fx": {
+     "weaponSkill": 15
+    },
+    "when": {
+     "nameRe": "Tribal|Hunting|Makeshift|Bow|Spear"
+    }
+   }
+  ],
+  "Weaboo": [
+   {
+    "fx": {
+     "weaponSkill": 20
+    },
+    "when": {
+     "nameRe": "Katana|Wakizashi|Tanto|Ninja|Samurai|Machete"
+    }
+   }
+  ],
+  "Vengeful": [
+   {
+    "fx": {
+     "vengeful": 1
+    }
+   }
+  ],
+  "Peacock": [
+   {
+    "fx": {
+     "C": 2,
+     "pri": 100
+    }
+   }
+  ],
+  "Petulant Snob": [
+   {
+    "fx": {
+     "I": 3
+    }
+   }
+  ],
+  "Lethargic": [
+   {
+    "fx": {
+     "ap": 2,
+     "acc": 0.05
+    },
+    "when": {
+     "afterFirst": true
+    }
+   }
+  ],
+  "Fear of Death": [
+   {
+    "fx": {
+     "C": 2,
+     "I": 2,
+     "acc": 0.2
+    },
+    "when": {
+     "hpAbove": 0.5
+    }
+   }
+  ],
+  "Ogrish": [
+   {
+    "fx": {
+     "setC": 1
+    }
+   }
+  ],
+  "New Gen Synth": [
+   {
+    "fx": {
+     "dmgTaken": 0.1
+    },
+    "when": {
+     "attackerTabs": [
+      "EW"
+     ]
+    }
+   }
+  ],
+  "Old Gen Synth": [
+   {
+    "fx": {
+     "dmgTaken": 0.2
+    },
+    "when": {
+     "attackerTabs": [
+      "EW"
+     ]
+    }
+   }
+  ],
+  "Ascetic": [
+   {
+    "fx": {
+     "carryMul": -0.5
+    }
+   }
+  ],
+  "Bad Leg": [
+   {
+    "fx": {
+     "mvm": -0.1,
+     "acc": -0.1
+    }
+   }
+  ],
+  "Child At Heart": [
+   {
+    "fx": {
+     "xpMul": 0.15
+    }
+   }
+  ],
+  "Erratic Mood Swings (Good)": [
+   {
+    "fx": {
+     "xpMul": 0.05
+    }
+   }
+  ],
+  "Erratic Mood Swings (Bad)": [
+   {
+    "fx": {
+     "xpMul": -0.05
+    }
+   }
+  ],
+  "Masochist": [
+   {
+    "fx": {
+     "apOnHit": 2
+    }
+   }
+  ],
+  "Thick-Skin": [
+   {
+    "fx": {
+     "moveAdd": 1,
+     "noItems": 1
+    }
+   }
+  ],
+  "Empath": [
+   {
+    "fx": {
+     "resistMental": -2
+    }
+   }
+  ],
+  "Stoic": [
+   {
+    "fx": {
+     "resistMental": 2
+    }
+   }
+  ],
+  "High EQ": [
+   {
+    "fx": {
+     "resistMental": 1
+    }
+   }
+  ]
+ },
+ "substanceByCat": {
+  "Alcohol": [
+   [
+    "Loose",
+    1
+   ],
+   [
+    "Drunk",
+    1
+   ]
+  ]
+ },
+ "substanceByName": {
+  "^Nuka": [
+   [
+    "Caffenated",
+    1
+   ]
+  ],
+  "^Vim": [
+   [
+    "Caffenated",
+    1
+   ]
+  ],
+  "^Juice|^Brahmin Milk|Passionfruit": [
+   [
+    "Hydrated",
+    1
+   ]
+  ]
+ },
+ "vendorBarter": [
+  10,
+  25,
+  35,
+  50,
+  60,
+  75,
+  85,
+  100
+ ],
+ "vendorCounts": {
+  "weapon": 4,
+  "armor": 3,
+  "accessory": 2,
+  "item": 6,
+  "ammo": 5,
+  "material": 3
+ },
+ "ammoPrice": 1,
+ "noPrice": [
+  5,
+  10,
+  20,
+  40,
+  80,
+  150
+ ],
+ "checkBase": 11,
+ "checkStep": 5,
+ "specialAsSkill": 10,
+ "checksPerPlayer": 1,
+ "difficulty": {
+  "Trivial": 10,
+  "Easy": 25,
+  "Average": 40,
+  "Hard": 60,
+  "Very hard": 80,
+  "Extreme": 100
+ },
+ "sneakDiv": 5,
+ "sneakSub": 5,
+ "caughtInit": -10,
+ "saveCap": 20,
+ "revivePenalty": 4,
+ "reviveAP": 3,
+ "reviveHP": 1,
+ "reviveShockTier": 1,
+ "xpAward": "each",
+ "xpIntStep": 0.05,
+ "defeatXpPct": 0,
+ "levelXpStep": 50,
+ "maxLevel": 30,
+ "activePct": 0.25,
+ "activeTiers": [
+  1,
+  1.25,
+  1.5,
+  1.75,
+  2
+ ],
+ "totalTiers": [
+  1,
+  1.2,
+  1.4,
+  1.5
+ ],
+ "passiveHealPct": 0.1,
+ "bossMin": 0.1,
+ "bossMax": 0.3,
+ "genArmor": true,
+ "genLootMax": 2,
+ "genExclude": [],
+ "sceneDefaults": {
+  "time": "Daytime",
+  "weather": "Clear",
+  "env": "Grassland",
+  "map": "wild",
+  "theme": "desert"
+ },
+ "startPool": 40,
+ "startSpecial": 5,
+ "cover": {
+  "open": {
+   "n": "Open",
+   "hit": 0,
+   "dam": 0,
+   "opacity": 0.25
+  },
+  "concealment": {
+   "n": "Concealment",
+   "hit": -0.1,
+   "dam": 0,
+   "opacity": 0.3
+  },
+  "soft": {
+   "n": "Soft cover",
+   "hit": -0.25,
+   "dam": -0.1,
+   "opacity": 0.5
+  },
+  "hard": {
+   "n": "Hard cover",
+   "hit": -0.5,
+   "dam": -0.5,
+   "opacity": 0.7
+  },
+  "impenetrable": {
+   "n": "Impenetrable",
+   "hit": -1,
+   "dam": -1,
+   "opacity": 1
+  }
+ },
+ "coverByKind": {
+  "cover": "soft",
+  "hard": "hard",
+  "wall": "impenetrable",
+  "tree": "soft",
+  "hazard": "open",
+  "note": "open"
+ },
+ "canopyOpacity": 0.15,
+ "trunkOpacity": 0.3,
+ "mapItems": {
+  "desk": {
+   "n": "Desk",
+   "cover": "soft",
+   "w": 1.6,
+   "h": 0.8
+  },
+  "officeChair": {
+   "n": "Office chair",
+   "cover": "concealment",
+   "w": 0.6,
+   "h": 0.6
+  },
+  "cabinet": {
+   "n": "Filing cabinet",
+   "cover": "hard",
+   "w": 0.6,
+   "h": 0.6
+  },
+  "bookshelf": {
+   "n": "Bookshelf",
+   "cover": "soft",
+   "w": 2,
+   "h": 0.4
+  },
+  "copier": {
+   "n": "Copier",
+   "cover": "soft",
+   "w": 1,
+   "h": 0.8
+  },
+  "cooler": {
+   "n": "Water cooler",
+   "cover": "concealment",
+   "w": 0.5,
+   "h": 0.5,
+   "round": true
+  },
+  "pottedPlant": {
+   "n": "Potted plant",
+   "cover": "concealment",
+   "w": 0.7,
+   "h": 0.7,
+   "round": true
+  },
+  "partition": {
+   "n": "Cubicle partition",
+   "cover": "concealment",
+   "w": 2,
+   "h": 0.2
+  },
+  "couch": {
+   "n": "Couch",
+   "cover": "soft",
+   "w": 2,
+   "h": 0.9
+  },
+  "officeSafe": {
+   "n": "Safe",
+   "cover": "hard",
+   "w": 1,
+   "h": 1
+  },
+  "conveyor": {
+   "n": "Conveyor",
+   "cover": "soft",
+   "w": 5,
+   "h": 1
+  },
+  "pressMachine": {
+   "n": "Press machine",
+   "cover": "hard",
+   "w": 2,
+   "h": 2
+  },
+  "boiler": {
+   "n": "Boiler",
+   "cover": "hard",
+   "w": 2.5,
+   "h": 2.5,
+   "round": true
+  },
+  "workbench": {
+   "n": "Workbench",
+   "cover": "soft",
+   "w": 2,
+   "h": 0.8
+  },
+  "oilDrum": {
+   "n": "Oil drum",
+   "cover": "soft",
+   "w": 0.8,
+   "h": 0.8,
+   "round": true
+  },
+  "pipeRack": {
+   "n": "Pipe rack",
+   "cover": "concealment",
+   "w": 3,
+   "h": 0.5
+  },
+  "generator": {
+   "n": "Generator",
+   "cover": "hard",
+   "w": 2,
+   "h": 1.5
+  },
+  "toolCart": {
+   "n": "Tool cart",
+   "cover": "concealment",
+   "w": 1,
+   "h": 0.6
+  },
+  "shelves": {
+   "n": "Shelves",
+   "cover": "soft",
+   "w": 6,
+   "h": 1
+  },
+  "crate": {
+   "n": "Crate",
+   "cover": "soft",
+   "w": 1,
+   "h": 1
+  },
+  "crateStack": {
+   "n": "Crate stack",
+   "cover": "hard",
+   "w": 2,
+   "h": 2
+  },
+  "pallet": {
+   "n": "Pallet",
+   "cover": "concealment",
+   "w": 1.2,
+   "h": 1.2
+  },
+  "forklift": {
+   "n": "Forklift",
+   "cover": "hard",
+   "w": 2.4,
+   "h": 1.2
+  },
+  "barrels": {
+   "n": "Barrels",
+   "cover": "soft",
+   "w": 1.6,
+   "h": 0.8
+  },
+  "cellBars": {
+   "n": "Cell bars",
+   "cover": "concealment",
+   "w": 3,
+   "h": 0.2
+  },
+  "lockers": {
+   "n": "Lockers",
+   "cover": "hard",
+   "w": 2,
+   "h": 0.5
+  },
+  "sandbags": {
+   "n": "Sandbags",
+   "cover": "hard",
+   "w": 2,
+   "h": 0.6
+  },
+  "bench": {
+   "n": "Bench",
+   "cover": "soft",
+   "w": 1.8,
+   "h": 0.5
+  },
+  "frontCounter": {
+   "n": "Front counter",
+   "cover": "hard",
+   "w": 4,
+   "h": 0.8
+  },
+  "armoryCage": {
+   "n": "Armory cage",
+   "cover": "concealment",
+   "w": 3,
+   "h": 2
+  },
+  "bedroll": {
+   "n": "Bedroll",
+   "cover": "open",
+   "w": 1.8,
+   "h": 0.7
+  },
+  "cot": {
+   "n": "Cot",
+   "cover": "concealment",
+   "w": 1.8,
+   "h": 0.7
+  },
+  "footlocker": {
+   "n": "Footlocker",
+   "cover": "soft",
+   "w": 1,
+   "h": 0.5
+  },
+  "campfire": {
+   "n": "Campfire",
+   "cover": "open",
+   "w": 1,
+   "h": 1,
+   "round": true
+  },
+  "tarpWall": {
+   "n": "Tarp wall",
+   "cover": "concealment",
+   "w": 3,
+   "h": 0.2
+  },
+  "tentPole": {
+   "n": "Tent pole",
+   "cover": "open",
+   "w": 0.3,
+   "h": 0.3,
+   "round": true
+  },
+  "smallRock": {
+   "n": "Small rock",
+   "cover": "concealment",
+   "w": 1,
+   "h": 1,
+   "round": true
+  },
+  "rock": {
+   "n": "Medium rock",
+   "cover": "soft",
+   "w": 2,
+   "h": 2,
+   "round": true
+  },
+  "boulder": {
+   "n": "Boulder",
+   "cover": "hard",
+   "w": 4,
+   "h": 4,
+   "round": true
+  },
+  "dune": {
+   "n": "Dune",
+   "cover": "concealment",
+   "w": 6,
+   "h": 3,
+   "round": true
+  },
+  "cactus": {
+   "n": "Cactus",
+   "cover": "concealment",
+   "w": 1,
+   "h": 1,
+   "round": true
+  },
+  "deadTree": {
+   "n": "Dead tree",
+   "cover": "soft",
+   "w": 2.5,
+   "h": 2.5,
+   "round": true,
+   "trunk": 0.25
+  },
+  "wreck": {
+   "n": "Rusted wreck",
+   "cover": "hard",
+   "w": 4,
+   "h": 2
+  },
+  "ruinWall": {
+   "n": "Ruined wall",
+   "cover": "hard",
+   "w": 3,
+   "h": 0.5
+  },
+  "bush": {
+   "n": "Bush",
+   "cover": "concealment",
+   "w": 1.5,
+   "h": 1.5,
+   "round": true
+  },
+  "tree": {
+   "n": "Tree",
+   "cover": "soft",
+   "w": 3.5,
+   "h": 3.5,
+   "round": true,
+   "trunk": 0.2
+  },
+  "bigTree": {
+   "n": "Big tree",
+   "cover": "soft",
+   "w": 6,
+   "h": 6,
+   "round": true,
+   "trunk": 0.2
+  },
+  "log": {
+   "n": "Fallen log",
+   "cover": "soft",
+   "w": 3,
+   "h": 0.8
+  },
+  "thicket": {
+   "n": "Thicket",
+   "cover": "concealment",
+   "w": 3,
+   "h": 3,
+   "round": true
+  },
+  "stump": {
+   "n": "Stump",
+   "cover": "soft",
+   "w": 0.8,
+   "h": 0.8,
+   "round": true
+  },
+  "car": {
+   "n": "Wrecked car",
+   "cover": "hard",
+   "w": 4.5,
+   "h": 2
+  },
+  "bus": {
+   "n": "Burned-out bus",
+   "cover": "hard",
+   "w": 9,
+   "h": 2.5
+  },
+  "dumpster": {
+   "n": "Dumpster",
+   "cover": "hard",
+   "w": 2,
+   "h": 1
+  },
+  "mailbox": {
+   "n": "Mailbox",
+   "cover": "soft",
+   "w": 0.6,
+   "h": 0.6
+  },
+  "hydrant": {
+   "n": "Hydrant",
+   "cover": "soft",
+   "w": 0.5,
+   "h": 0.5,
+   "round": true
+  },
+  "lamppost": {
+   "n": "Lamp post",
+   "cover": "concealment",
+   "w": 0.4,
+   "h": 0.4,
+   "round": true
+  },
+  "barricade": {
+   "n": "Concrete barrier",
+   "cover": "hard",
+   "w": 3,
+   "h": 0.6
+  },
+  "rubble": {
+   "n": "Rubble",
+   "cover": "soft",
+   "w": 3,
+   "h": 2
+  },
+  "building": {
+   "n": "Concrete building",
+   "cover": "impenetrable",
+   "w": 18,
+   "h": 18,
+   "block": true
+  },
+  "concreteWall": {
+   "n": "Concrete wall",
+   "cover": "impenetrable",
+   "w": 6,
+   "h": 0.4,
+   "block": true
+  },
+  "lDesk": {
+   "n": "L-shaped desk",
+   "cover": "soft",
+   "w": 2,
+   "h": 2
+  },
+  "kitchenTable": {
+   "n": "Kitchen table",
+   "cover": "soft",
+   "w": 1.8,
+   "h": 1.2
+  },
+  "bed": {
+   "n": "Bed",
+   "cover": "soft",
+   "w": 2,
+   "h": 1.4
+  },
+  "toilet": {
+   "n": "Toilet",
+   "cover": "concealment",
+   "w": 0.7,
+   "h": 0.9
+  },
+  "bathtub": {
+   "n": "Bathtub",
+   "cover": "hard",
+   "w": 1.8,
+   "h": 0.8
+  },
+  "sink": {
+   "n": "Sink",
+   "cover": "concealment",
+   "w": 0.8,
+   "h": 0.6
+  },
+  "stove": {
+   "n": "Stove",
+   "cover": "hard",
+   "w": 0.8,
+   "h": 0.8
+  },
+  "fridge": {
+   "n": "Fridge",
+   "cover": "hard",
+   "w": 0.9,
+   "h": 0.8
+  },
+  "dresser": {
+   "n": "Dresser",
+   "cover": "soft",
+   "w": 1.4,
+   "h": 0.6
+  },
+  "stoneWall": {
+   "n": "Stone wall",
+   "cover": "hard",
+   "w": 4,
+   "h": 0.6,
+   "block": true
+  },
+  "pillar": {
+   "n": "Pillar",
+   "cover": "hard",
+   "w": 1.2,
+   "h": 1.2
+  }
+ },
+ "roomThemes": {
+  "home": {
+   "n": "Home",
+   "density": 0.09,
+   "min": 3,
+   "max": 50,
+   "items": {
+    "bed": 3,
+    "kitchenTable": 2,
+    "toilet": 1,
+    "bathtub": 1,
+    "sink": 2,
+    "stove": 1,
+    "fridge": 1,
+    "couch": 2,
+    "dresser": 2,
+    "bookshelf": 1,
+    "pottedPlant": 1
+   }
+  },
+  "office": {
+   "n": "Office",
+   "density": 0.1,
+   "min": 3,
+   "max": 60,
+   "items": {
+    "lDesk": 3,
+    "desk": 5,
+    "officeChair": 4,
+    "cabinet": 3,
+    "bookshelf": 2,
+    "copier": 1,
+    "cooler": 1,
+    "pottedPlant": 2,
+    "partition": 4,
+    "couch": 1,
+    "officeSafe": 1
+   }
+  },
+  "factory": {
+   "n": "Factory",
+   "density": 0.05,
+   "min": 3,
+   "max": 60,
+   "items": {
+    "conveyor": 3,
+    "pressMachine": 3,
+    "boiler": 1,
+    "workbench": 4,
+    "oilDrum": 3,
+    "pipeRack": 2,
+    "generator": 2,
+    "toolCart": 2,
+    "crate": 2
+   }
+  },
+  "warehouse": {
+   "n": "Warehouse",
+   "density": 0.05,
+   "min": 3,
+   "max": 60,
+   "items": {
+    "shelves": 6,
+    "crate": 4,
+    "crateStack": 3,
+    "pallet": 3,
+    "forklift": 1,
+    "barrels": 2
+   }
+  },
+  "police": {
+   "n": "Police station",
+   "density": 0.08,
+   "min": 3,
+   "max": 60,
+   "items": {
+    "desk": 4,
+    "officeChair": 2,
+    "toilet": 1,
+    "cellBars": 3,
+    "lockers": 3,
+    "sandbags": 2,
+    "bench": 2,
+    "frontCounter": 1,
+    "armoryCage": 1,
+    "cabinet": 2
+   }
+  },
+  "tent": {
+   "n": "Tent",
+   "density": 0.1,
+   "min": 2,
+   "max": 50,
+   "items": {
+    "bedroll": 4,
+    "cot": 3,
+    "footlocker": 3,
+    "campfire": 1,
+    "tarpWall": 2,
+    "tentPole": 2,
+    "crate": 1
+   }
+  },
+  "desert": {
+   "n": "Desert",
+   "density": 0.012,
+   "min": 3,
+   "max": 70,
+   "items": {
+    "smallRock": 5,
+    "rock": 4,
+    "boulder": 2,
+    "dune": 3,
+    "cactus": 3,
+    "deadTree": 1,
+    "wreck": 1,
+    "ruinWall": 1,
+    "stoneWall": 1
+   }
+  },
+  "forested": {
+   "n": "Forested",
+   "density": 0.09,
+   "min": 4,
+   "max": 240,
+   "items": {
+    "bush": 6,
+    "tree": 9,
+    "bigTree": 2,
+    "log": 2,
+    "thicket": 2,
+    "stump": 2,
+    "rock": 1
+   }
+  },
+  "city": {
+   "n": "City streets",
+   "density": 0.012,
+   "min": 3,
+   "max": 70,
+   "blocks": true,
+   "items": {
+    "car": 5,
+    "bus": 1,
+    "dumpster": 3,
+    "mailbox": 2,
+    "hydrant": 2,
+    "lamppost": 3,
+    "barricade": 2,
+    "rubble": 3,
+    "concreteWall": 1
+   }
+  }
+ },
+ "substances": {
+  "Beer": [
+   [
+    "Loose",
+    1
+   ],
+   [
+    "Drunk",
+    1
+   ]
+  ],
+  "Bennessy": [
+   [
+    "Loose",
+    1
+   ],
+   [
+    "Drunk",
+    1
+   ]
+  ],
+  "Moonshine": [
+   [
+    "Loose",
+    2
+   ],
+   [
+    "Drunk",
+    2
+   ]
+  ],
+  "Pre-War Wine": [
+   [
+    "Loose",
+    1
+   ],
+   [
+    "Drunk",
+    1
+   ]
+  ],
+  "Adderall": [
+   [
+    "Stimulated",
+    2
+   ]
+  ],
+  "Adrenaline": [
+   [
+    "Amped",
+    1
+   ]
+  ],
+  "Buffout": [
+   [
+    "Roided",
+    2
+   ]
+  ],
+  "Cateye": [
+   [
+    "Acuity",
+    1
+   ]
+  ],
+  "Cocaine": [
+   [
+    "Stimulated",
+    2
+   ]
+  ],
+  "Combat Stim": [
+   [
+    "Amped",
+    2
+   ]
+  ],
+  "Combat Ultra Stim": [
+   [
+    "Amped",
+    3
+   ]
+  ],
+  "Fent-X": [
+   [
+    "Anaesthetised",
+    5
+   ]
+  ],
+  "Ghost Sight": [
+   [
+    "Acuity",
+    1
+   ]
+  ],
+  "Heroin": [
+   [
+    "Anaesthetised",
+    5
+   ]
+  ],
+  "Jet": [
+   [
+    "Stimulated",
+    1
+   ]
+  ],
+  "Ketamine": [
+   [
+    "Sedated",
+    1
+   ]
+  ],
+  "Lean": [
+   [
+    "Anaesthetised",
+    2
+   ]
+  ],
+  "Med-X": [
+   [
+    "Anaesthetised",
+    5
+   ]
+  ],
+  "Med-X Styrette": [
+   [
+    "Anaesthetised",
+    2
+   ]
+  ],
+  "Methamphetamine": [
+   [
+    "Stimulated",
+    2
+   ]
+  ],
+  "Modafanil": [
+   [
+    "Sociable",
+    1
+   ]
+  ],
+  "Oxycotyin": [
+   [
+    "Anaesthetised",
+    4
+   ]
+  ],
+  "Percocet": [
+   [
+    "Anaesthetised",
+    4
+   ]
+  ],
+  "Psycho": [
+   [
+    "Rage",
+    3
+   ]
+  ],
+  "Sacred Datura": [
+   [
+    "Halucinating",
+    1
+   ]
+  ],
+  "Steroids": [
+   [
+    "Roided",
+    3
+   ]
+  ],
+  "Tranq": [
+   [
+    "Sedated",
+    5
+   ]
+  ],
+  "Fixer": [
+   [
+    "Fixer",
+    1
+   ]
+  ],
+  "Mentats": [
+   [
+    "Bliss",
+    1,
+    "guess"
+   ]
+  ],
+  "Party Time Mentats": [
+   [
+    "Bliss",
+    2,
+    "guess"
+   ]
+  ],
+  "Rebound": [
+   [
+    "Stimulated",
+    1,
+    "guess"
+   ]
+  ],
+  "Rocket": [
+   [
+    "Stimulated",
+    2,
+    "guess"
+   ]
+  ],
+  "Turbo": [
+   [
+    "Stimulated",
+    2,
+    "guess"
+   ]
+  ],
+  "UltraJet": [
+   [
+    "Stimulated",
+    3,
+    "guess"
+   ]
+  ],
+  "Slasher": [
+   [
+    "Rage",
+    1,
+    "guess"
+   ]
+  ],
+  "Molly": [
+   [
+    "Bliss",
+    1,
+    "guess"
+   ]
+  ],
+  "Xanax": [
+   [
+    "Calm",
+    2,
+    "guess"
+   ]
+  ],
+  "Quaalude": [
+   [
+    "Calm",
+    1,
+    "guess"
+   ]
+  ],
+  "Steady": [
+   [
+    "Focused",
+    1,
+    "guess"
+   ]
+  ],
+  "Tramadol": [
+   [
+    "Anaesthetised",
+    2,
+    "guess"
+   ]
+  ],
+  "Cannabis (Mid)": [
+   [
+    "High",
+    1,
+    "guess"
+   ]
+  ],
+  "Cannabis (Loud)": [
+   [
+    "High",
+    2,
+    "guess"
+   ]
+  ],
+  "Black Coffee": [
+   [
+    "Caffenated",
+    1,
+    "guess"
+   ]
+  ],
+  "Black Tea": [
+   [
+    "Caffenated",
+    1,
+    "guess"
+   ]
+  ],
+  "Green Tea": [
+   [
+    "Caffenated",
+    1,
+    "guess"
+   ]
+  ],
+  "Chinese Tea": [
+   [
+    "Caffenated",
+    1,
+    "guess"
+   ]
+  ],
+  "Canned Coffee": [
+   [
+    "Caffenated",
+    1,
+    "guess"
+   ]
+  ],
+  "Stinger (Energy Drink)": [
+   [
+    "Caffenated",
+    2,
+    "guess"
+   ]
+  ],
+  "Mutant Energy Drink": [
+   [
+    "Caffenated",
+    2,
+    "guess"
+   ]
+  ],
+  "Nuka Cola": [
+   [
+    "Caffenated",
+    1,
+    "guess"
+   ]
+  ],
+  "Sunset Sarsaparilla": [
+   [
+    "Hydrated",
+    1,
+    "guess"
+   ]
+  ],
+  "Water (Purified)": [
+   [
+    "Hydrated",
+    2,
+    "guess"
+   ]
+  ],
+  "Water (Dirty)": [
+   [
+    "Hydrated",
+    1,
+    "guess"
+   ]
+  ],
+  "Water (Irradiated)": [
+   [
+    "Hydrated",
+    1,
+    "guess"
+   ],
+   [
+    "Irradiated",
+    1,
+    "guess"
+   ]
+  ],
+  "Bighorner Steak": [
+   [
+    "Well Fed",
+    2,
+    "guess"
+   ]
+  ],
+  "Iguana on a Stick": [
+   [
+    "Well Fed",
+    1,
+    "guess"
+   ]
+  ],
+  "Pork N Beans": [
+   [
+    "Well Fed",
+    1,
+    "guess"
+   ]
+  ]
+ },
+ "archetypes": [
+  {
+   "n": "Veteran Conscript",
+   "d": "Served, got discharged, kept the rifle.",
+   "w": "Single Rifle",
+   "ammo": [
+    "5.56mm NATO - Junk",
+    8
+   ],
+   "wear": [
+    "Field Hand Outfit"
+   ],
+   "items": [
+    [
+     "Bandage",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Butcher",
+   "d": "Knows where every cut goes.",
+   "w": "Cleaver",
+   "wear": [
+    "Settler Outfit"
+   ],
+   "items": [
+    [
+     "Bighorner Steak",
+     2
+    ]
+   ]
+  },
+  {
+   "n": "Technician",
+   "d": "Kept the old machines limping along.",
+   "w": "Ball Peen Hammer",
+   "wear": [
+    "Engineer Jumpsuit"
+   ],
+   "items": [
+    [
+     "Screws",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Raider Deserter",
+   "d": "Walked out on the gang with what was in hand.",
+   "w": "Pipe Pistol",
+   "ammo": [
+    ".32 ACP - Standard",
+    6
+   ],
+   "wear": [
+    "Sack Hood"
+   ],
+   "items": []
+  },
+  {
+   "n": "Caravan Guard",
+   "d": "Paid in meals to ride shotgun.",
+   "w": "Pipe Shotgun",
+   "ammo": [
+    "20 Gauge - Junk",
+    4
+   ],
+   "wear": [
+    "Caravaneer Outfit"
+   ],
+   "items": [
+    [
+     "Water (Dirty)",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Scavenger",
+   "d": "Picks the ruins clean for scraps.",
+   "w": "Pipe Wrench",
+   "wear": [
+    "Settler Outfit"
+   ],
+   "items": [
+    [
+     "Cloth",
+     2
+    ],
+    [
+     "Steel",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Field Medic",
+   "d": "Patched people up with whatever was left.",
+   "w": "Syringe",
+   "wear": [
+    "Settler Outfit"
+   ],
+   "items": [
+    [
+     "Bandage",
+     2
+    ],
+    [
+     "Antiseptic Rub",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Prospector",
+   "d": "Always one more dig from getting rich.",
+   "w": "Knife",
+   "wear": [
+    "Prospector Outfit"
+   ],
+   "items": [
+    [
+     "Water (Dirty)",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Tribal Hunter",
+   "d": "Raised outside the ruins, hunts to eat.",
+   "w": "Makeshift Bow",
+   "ammo": [
+    "Arrow - Junk",
+    6
+   ],
+   "wear": [
+    "Tribal Garb"
+   ],
+   "items": [
+    [
+     "Healing Powder",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Vault Runaway",
+   "d": "Left the vault with the clothes on their back.",
+   "w": "Switchblade",
+   "wear": [
+    "RobCo Jumpsuit"
+   ],
+   "items": [
+    [
+     "Nuka Cola",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Ex-Convict",
+   "d": "Out, by one means or another.",
+   "w": "Prison Shiv",
+   "wear": [
+    "Jailhouse Outfit"
+   ],
+   "items": [
+    [
+     "Tobacco Chew",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Farmhand",
+   "d": "Broke their back for someone else's crop.",
+   "w": "Hatchet",
+   "wear": [
+    "Field Hand Outfit"
+   ],
+   "items": [
+    [
+     "Pork N Beans",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Courier",
+   "d": "Carries other people's mail through bad country.",
+   "w": ".22 Pistol",
+   "ammo": [
+    ".22 LR - Standard",
+    6
+   ],
+   "wear": [
+    "Athletic Clothing"
+   ],
+   "items": [
+    [
+     "Water (Purified)",
+     1
+    ]
+   ],
+   "caps": 5
+  },
+  {
+   "n": "Drifter",
+   "d": "Never stayed anywhere long enough to own much.",
+   "w": "Wood Plank",
+   "wear": [
+    "Settler Outfit"
+   ],
+   "items": [
+    [
+     "Water (Dirty)",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Bar Brawler",
+   "d": "Settles things outside, then comes back in.",
+   "w": "Brass Knuckles",
+   "wear": [
+    "Pre-War Casualwear"
+   ],
+   "items": [
+    [
+     "Moonshine",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Desk Clerk",
+   "d": "Filed paperwork for people who no longer matter.",
+   "w": "Dress Cane",
+   "wear": [
+    "Pre-War Businesswear"
+   ],
+   "items": [
+    [
+     "Pre War Money",
+     5
+    ]
+   ]
+  },
+  {
+   "n": "Town Deputy",
+   "d": "Keeps the peace in a place that can barely pay.",
+   "w": "Police pistol",
+   "ammo": [
+    ".357 Magnum - Junk",
+    4
+   ],
+   "wear": [
+    "Settler Outfit"
+   ],
+   "items": []
+  },
+  {
+   "n": "Chem Runner",
+   "d": "Moved product, kept a little to take the edge off.",
+   "w": "Straight Razor",
+   "wear": [
+    "Pre-War Casualwear"
+   ],
+   "items": [
+    [
+     "Numbing Salve",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Miner",
+   "d": "Spent years underground for scrip.",
+   "w": "Pickaxe",
+   "wear": [
+    "Mining Helmet"
+   ],
+   "items": [
+    [
+     "Water (Dirty)",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Wasteland Cook",
+   "d": "Makes something edible out of anything.",
+   "w": "Frying Pan",
+   "wear": [
+    "Settler Outfit"
+   ],
+   "items": [
+    [
+     "Iguana on a Stick",
+     2
+    ]
+   ]
+  }
+ ],
+ "maps": {
+  "smallRoom": {
+   "n": "Small room",
+   "w": 6,
+   "h": 6,
+   "objs": [
+    [
+     "kitchenTable",
+     1,
+     -1,
+     1.4,
+     1
+    ],
+    [
+     "bed",
+     -1.8,
+     1.8,
+     2,
+     1
+    ]
+   ]
+  },
+  "mediumRoom": {
+   "n": "Medium room",
+   "w": 12,
+   "h": 10,
+   "objs": [
+    [
+     "kitchenTable",
+     1,
+     -2,
+     2,
+     1.2
+    ],
+    [
+     "crateStack",
+     4,
+     3,
+     2,
+     2
+    ],
+    [
+     "couch",
+     -1,
+     3.4,
+     2,
+     0.9
+    ]
+   ]
+  },
+  "bigRoom": {
+   "n": "Big room",
+   "w": 30,
+   "h": 20,
+   "objs": [
+    [
+     "pillar",
+     -8,
+     -6,
+     1.5,
+     1.5
+    ],
+    [
+     "pillar",
+     8,
+     -6,
+     1.5,
+     1.5
+    ],
+    [
+     "pillar",
+     -8,
+     6,
+     1.5,
+     1.5
+    ],
+    [
+     "pillar",
+     8,
+     6,
+     1.5,
+     1.5
+    ],
+    [
+     "frontCounter",
+     0,
+     0,
+     6,
+     1.2
+    ]
+   ]
+  },
+  "hallway": {
+   "n": "Long hallway",
+   "w": 40,
+   "h": 4,
+   "objs": [
+    [
+     "crate",
+     6,
+     -1.2,
+     1.2,
+     1.2
+    ],
+    [
+     "pillar",
+     -4,
+     1.3,
+     1.2,
+     1.2
+    ],
+    [
+     "desk",
+     14,
+     1.2,
+     2,
+     1
+    ]
+   ]
+  },
+  "interior": {
+   "n": "Building, several rooms",
+   "w": 24,
+   "h": 16,
+   "objs": [
+    [
+     "concreteWall",
+     -3,
+     -5,
+     0.4,
+     6
+    ],
+    [
+     "concreteWall",
+     -3,
+     5,
+     0.4,
+     6
+    ],
+    [
+     "concreteWall",
+     5,
+     2,
+     0.4,
+     12
+    ],
+    [
+     "concreteWall",
+     8.5,
+     -2,
+     7,
+     0.4
+    ],
+    [
+     "kitchenTable",
+     -8,
+     3,
+     2,
+     1.2
+    ],
+    [
+     "bench",
+     9,
+     4,
+     2,
+     0.6
+    ],
+    [
+     "toilet",
+     10,
+     -6,
+     0.7,
+     0.9
+    ]
+   ]
+  },
+  "warehouse": {
+   "n": "Warehouse",
+   "w": 50,
+   "h": 30,
+   "objs": [
+    [
+     "shelves",
+     -8,
+     -8,
+     20,
+     2
+    ],
+    [
+     "shelves",
+     -8,
+     0,
+     20,
+     2
+    ],
+    [
+     "shelves",
+     -8,
+     8,
+     20,
+     2
+    ],
+    [
+     "crateStack",
+     14,
+     -6,
+     3,
+     3
+    ],
+    [
+     "forklift",
+     16,
+     7,
+     2.4,
+     1.2
+    ]
+   ]
+  },
+  "streets": {
+   "n": "Urban streets",
+   "w": 90,
+   "h": 70,
+   "objs": [
+    [
+     "building",
+     -26,
+     -22,
+     26,
+     18
+    ],
+    [
+     "building",
+     24,
+     -22,
+     30,
+     18
+    ],
+    [
+     "building",
+     -26,
+     22,
+     26,
+     18
+    ],
+    [
+     "building",
+     24,
+     22,
+     30,
+     18
+    ],
+    [
+     "car",
+     -6,
+     -3,
+     4.5,
+     2
+    ],
+    [
+     "car",
+     9,
+     4,
+     4.5,
+     2
+    ],
+    [
+     "car",
+     3,
+     -20,
+     2,
+     4.5
+    ]
+   ]
+  },
+  "forest": {
+   "n": "Tight forest",
+   "w": 40,
+   "h": 40,
+   "scatter": [
+    [
+     "tree",
+     95,
+     2,
+     3.5
+    ],
+    [
+     "bush",
+     45,
+     1,
+     2
+    ]
+   ]
+  },
+  "woods": {
+   "n": "Open woods",
+   "w": 120,
+   "h": 90,
+   "scatter": [
+    [
+     "tree",
+     110,
+     3,
+     6
+    ],
+    [
+     "bush",
+     60,
+     1.5,
+     3
+    ]
+   ]
+  },
+  "wild": {
+   "n": "Wilderness",
+   "w": 220,
+   "h": 160,
+   "scatter": [
+    [
+     "boulder",
+     16,
+     3,
+     7
+    ],
+    [
+     "bush",
+     40,
+     1.5,
+     3
+    ],
+    [
+     "rock",
+     30,
+     1,
+     2.5
+    ]
+   ]
+  },
+  "canyon": {
+   "n": "Canyon",
+   "w": 200,
+   "h": 30,
+   "scatter": [
+    [
+     "boulder",
+     12,
+     3,
+     6
+    ],
+    [
+     "rock",
+     18,
+     1,
+     2.5
+    ]
+   ]
+  },
+  "custom": {
+   "n": "Custom size",
+   "w": 30,
+   "h": 30
+  }
+ }
+}

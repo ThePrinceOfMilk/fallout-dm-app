@@ -1,0 +1,6266 @@
+[
+ {
+  "n": "Long Barrel",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": []
+ },
+ {
+  "n": "Snub Barrel",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Adhesive",
+    1
+   ],
+   [
+    "Glass",
+    2
+   ],
+   [
+    "Plastic",
+    4
+   ],
+   [
+    "Screws",
+    3
+   ],
+   [
+    "Silver",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Heavy Revolver Match Barrel",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Glass",
+    2
+   ],
+   [
+    "Circuitry",
+    2
+   ],
+   [
+    "Fiberoptics",
+    2
+   ],
+   [
+    "Adhesive",
+    3
+   ]
+  ]
+ },
+ {
+  "n": "Shotgun Long Tube",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    4
+   ],
+   [
+    "Screws",
+    2
+   ],
+   [
+    "Adhesive",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Shredder Barrels",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": []
+ },
+ {
+  "n": "Beam Splitter",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Circuitry",
+    2
+   ],
+   [
+    "Aluminum",
+    1
+   ],
+   [
+    "Fiberoptics",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Focus Optics",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    3
+   ],
+   [
+    "Screws",
+    3
+   ],
+   [
+    "Adhesive",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Plasma Projectile Accelerator",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Aluminum",
+    2
+   ],
+   [
+    "Circuitry",
+    3
+   ],
+   [
+    "Screws",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Plasma Splitter",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Aluminum",
+    2
+   ],
+   [
+    "Circuitry",
+    4
+   ],
+   [
+    "Screws",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Alpha Strike Barrel",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    3
+   ],
+   [
+    "Adhesive",
+    3
+   ],
+   [
+    "Springs",
+    1
+   ],
+   [
+    "Screws",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Grenade Rifle Long Barrel",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": []
+ },
+ {
+  "n": "HD Component",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    1
+   ],
+   [
+    "Screws",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Zeroing",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Fiberoptics",
+    1
+   ],
+   [
+    "Circuitry",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Carbon Fiber Parts",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    2
+   ],
+   [
+    "Steel",
+    2
+   ],
+   [
+    "Adhesive",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Alloy Frame",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Adhesive",
+    1
+   ],
+   [
+    "Fiberglass",
+    3
+   ]
+  ]
+ },
+ {
+  "n": "Weapon Camouflaging (Desert)",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Survival",
+  "mats": [
+   [
+    "Broc Flower",
+    3
+   ],
+   [
+    "Cloth",
+    2
+   ],
+   [
+    "Adhesive",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Weapon Camouflaging (Woodland)",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Survival",
+  "mats": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Cloth",
+    2
+   ],
+   [
+    "Adhesive",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Fist Hi-Cap Valves",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Rubber",
+    1
+   ],
+   [
+    "Screws",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Sword Balanced Grip",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Rubber",
+    3
+   ],
+   [
+    "Adhesive",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "California Compliant Grip",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Steel",
+    3
+   ],
+   [
+    "Adhesive",
+    3
+   ],
+   [
+    "Springs",
+    5
+   ]
+  ]
+ },
+ {
+  "n": "Comfort Grip",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Adhesive",
+    2
+   ],
+   [
+    "Rubber",
+    4
+   ],
+   [
+    "Screws",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Sharpshooter's Grip",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Gold",
+    1
+   ],
+   [
+    "Rubber",
+    3
+   ],
+   [
+    "Adhesive",
+    2
+   ],
+   [
+    "Wood",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Sweetheart Grip Inlay",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Rubber",
+    2
+   ],
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Adhesive",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Taped Grip",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Adhesive",
+    1
+   ],
+   [
+    "Rubber",
+    3
+   ]
+  ]
+ },
+ {
+  "n": "Added Rocket",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": []
+ },
+ {
+  "n": "Blades",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Carbide Teeth",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    3
+   ],
+   [
+    "Aluminum",
+    2
+   ],
+   [
+    "Screws",
+    2
+   ],
+   [
+    "Adhesive",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Concussion Pack",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Steel",
+    2
+   ],
+   [
+    "Circuitry",
+    2
+   ],
+   [
+    "Springs",
+    4
+   ],
+   [
+    "Rubber",
+    4
+   ]
+  ]
+ },
+ {
+  "n": "Electric Coil",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Drained EC",
+    5
+   ],
+   [
+    "Circuitry",
+    2
+   ],
+   [
+    "Steel",
+    1
+   ],
+   [
+    "Adhesive",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Heated Coil",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Drained Flamer Fuel",
+    5
+   ],
+   [
+    "Circuitry",
+    2
+   ],
+   [
+    "Steel",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Nuclear Coil",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Nuclear Material",
+    1
+   ],
+   [
+    "Circuitry",
+    5
+   ],
+   [
+    "Steel",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Ported Chambers",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Serrated Blade",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    3
+   ]
+  ]
+ },
+ {
+  "n": "Spikes",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Sword Authentic Blade",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Drum Magazine",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    5
+   ]
+  ]
+ },
+ {
+  "n": "Extended Magazine",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Drained Flamer Fuel",
+    3
+   ],
+   [
+    "Adhesive",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Optimum Quick Mags",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    3
+   ],
+   [
+    "Springs",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Quick Eject Magazine",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    4
+   ],
+   [
+    "Springs",
+    3
+   ]
+  ]
+ },
+ {
+  "n": "Speed Mags",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    5
+   ],
+   [
+    "Springs",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Expanded Tanks",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    4
+   ],
+   [
+    "Springs",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Launcher Expanded Drum",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    2
+   ],
+   [
+    "Screws",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Revolver Extra Shot",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    2
+   ],
+   [
+    "Adhesive",
+    1
+   ],
+   [
+    "Rubber",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Muzzle Break",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    1
+   ],
+   [
+    "Screws",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Recoil Compensator",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    2
+   ],
+   [
+    "Screws",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Silencer",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    2
+   ],
+   [
+    "Screws",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Shotgun Choke",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    3
+   ],
+   [
+    "Adhesive",
+    3
+   ],
+   [
+    "Rubber",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Automatic Receiver",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Circuitry",
+    3
+   ],
+   [
+    "Fiberoptics",
+    3
+   ]
+  ]
+ },
+ {
+  "n": "Heavy Weapon Dampened Subframe",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    6
+   ],
+   [
+    "Springs",
+    3
+   ],
+   [
+    "Steel",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Advanvced Calibration",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    4
+   ],
+   [
+    "Screws",
+    2
+   ],
+   [
+    "Springs",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "EC Recycler",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    3
+   ],
+   [
+    "Springs",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "ECW Recycler",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    2
+   ],
+   [
+    "Springs",
+    3
+   ],
+   [
+    "Screws",
+    4
+   ]
+  ]
+ },
+ {
+  "n": "Gamma Wave Tuner",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Drained EC",
+    5
+   ],
+   [
+    "Nuclear Material",
+    1
+   ],
+   [
+    "Aluminum",
+    3
+   ]
+  ]
+ },
+ {
+  "n": "Laser Auto Conversion",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Drained ECP",
+    5
+   ],
+   [
+    "Nuclear Material",
+    1
+   ],
+   [
+    "Aluminum",
+    3
+   ]
+  ]
+ },
+ {
+  "n": "MFC Recycler",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Nuclear Material",
+    3
+   ],
+   [
+    "Fiberoptics",
+    2
+   ],
+   [
+    "Circuitry",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Grenade MG High-Speed Kit",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    3
+   ],
+   [
+    "Springs",
+    2
+   ],
+   [
+    "Screws",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Grenade Rifle Upgraded Internals",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    1
+   ],
+   [
+    "Adhesive",
+    2
+   ],
+   [
+    "Aluminum",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Red Glare Auto Launcher",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    1
+   ],
+   [
+    "Rubber",
+    3
+   ],
+   [
+    "Springs",
+    3
+   ],
+   [
+    "Screws",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "AMR Custom Bolt",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Fiberoptics",
+    2
+   ],
+   [
+    "Circuitry",
+    2
+   ],
+   [
+    "Aluminum",
+    1
+   ],
+   [
+    "Screws",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Carbine Light Bolt",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    3
+   ],
+   [
+    "Rubber",
+    3
+   ],
+   [
+    "Springs",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Custom Action",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Drained MFC",
+    2
+   ],
+   [
+    "Circuitry",
+    3
+   ],
+   [
+    "Nuclear Material",
+    1
+   ],
+   [
+    "Aluminum",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "LMG Upgraded Internals",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Oil",
+    4
+   ],
+   [
+    "Adhesive",
+    2
+   ],
+   [
+    "Steel",
+    3
+   ]
+  ]
+ },
+ {
+  "n": "Rapid Fire Receiver",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Steel",
+    5
+   ],
+   [
+    "Springs",
+    4
+   ],
+   [
+    "Circuitry",
+    3
+   ],
+   [
+    "Screws",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Upgraded Springs",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Springs",
+    2
+   ],
+   [
+    "Steel",
+    1
+   ],
+   [
+    "Adhesive",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Glow Sights (Tritium)",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    1
+   ],
+   [
+    "Screws",
+    1
+   ],
+   [
+    "Fiberoptics",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Hybrid Sight",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Glass",
+    4
+   ],
+   [
+    "Aluminum",
+    2
+   ],
+   [
+    "Steel",
+    1
+   ]
+  ]
+ },
+ {
+  "n": "Long Range Scope",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Glass",
+    4
+   ],
+   [
+    "Aluminum",
+    3
+   ],
+   [
+    "Fiberoptics",
+    5
+   ]
+  ]
+ },
+ {
+  "n": "Medium Range Scope",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Glass",
+    3
+   ],
+   [
+    "Aluminum",
+    4
+   ]
+  ]
+ },
+ {
+  "n": "Night Vision Scope",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Fiberoptics",
+    6
+   ],
+   [
+    "Circuitry",
+    4
+   ],
+   [
+    "Screws",
+    3
+   ],
+   [
+    "Adhesive",
+    3
+   ],
+   [
+    "Glass",
+    5
+   ]
+  ]
+ },
+ {
+  "n": "Pipe Screw Scope",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    3
+   ],
+   [
+    "Screws",
+    4
+   ],
+   [
+    "Adhesive",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Recon Scope",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Glass",
+    3
+   ],
+   [
+    "Fiberoptics",
+    6
+   ]
+  ]
+ },
+ {
+  "n": "Red Dot Scope",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Glass",
+    2
+   ],
+   [
+    "Fiberoptics",
+    2
+   ],
+   [
+    "Screws",
+    4
+   ]
+  ]
+ },
+ {
+  "n": "Reflex Sight",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Glass",
+    1
+   ],
+   [
+    "Fiberoptics",
+    3
+   ],
+   [
+    "Screws",
+    4
+   ]
+  ]
+ },
+ {
+  "n": "Short Range Scope",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Glass",
+    3
+   ],
+   [
+    "Fiberoptics",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Thermal Scope",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Fiberoptics",
+    8
+   ],
+   [
+    "Circuitry",
+    6
+   ],
+   [
+    "Glass",
+    5
+   ],
+   [
+    "Rubber",
+    3
+   ],
+   [
+    "Adhesive",
+    4
+   ]
+  ]
+ },
+ {
+  "n": "Variable Range Scope",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    5
+   ],
+   [
+    "Glass",
+    5
+   ],
+   [
+    "Screws",
+    3
+   ],
+   [
+    "Adhesive",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Adjustable Stock",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    null
+   ],
+   [
+    "Rubber",
+    null
+   ],
+   [
+    "Screws",
+    null
+   ],
+   [
+    "Springs",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Marksman's Stock",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Wood",
+    null
+   ],
+   [
+    "Aluminum",
+    null
+   ],
+   [
+    "Adhesive",
+    null
+   ],
+   [
+    "Screws",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Pistol Added Stock",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Springs",
+    null
+   ],
+   [
+    "Screws",
+    null
+   ],
+   [
+    "Aluminum",
+    null
+   ],
+   [
+    "Rubber",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Recoil Compensating Stock",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Wood",
+    null
+   ],
+   [
+    "Adhesive",
+    null
+   ],
+   [
+    "Screws",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Short Stock",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Rubber",
+    null
+   ],
+   [
+    "Aluminum",
+    null
+   ],
+   [
+    "Adhesive",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Hair Trigger",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    null
+   ],
+   [
+    "Springs",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Targeting Computer Guidance System",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    2
+   ],
+   [
+    "Springs",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Double Tap Trigger",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Aluminum",
+    2
+   ],
+   [
+    "Circuitry",
+    5
+   ],
+   [
+    "Fiberoptics",
+    3
+   ],
+   [
+    "Adhesive",
+    6
+   ]
+  ]
+ },
+ {
+  "n": "Bayonet",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    1
+   ],
+   [
+    "Rubber",
+    2
+   ],
+   [
+    "Adhesive",
+    2
+   ]
+  ]
+ },
+ {
+  "n": "Bipod",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Screws",
+    null
+   ],
+   [
+    "Adhesive",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Laser Attachment",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    null
+   ],
+   [
+    "Circuitry",
+    null
+   ],
+   [
+    "Glass",
+    null
+   ],
+   [
+    "Screws",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Strobe Light",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Fiberoptics",
+    null
+   ],
+   [
+    "Circuitry",
+    null
+   ],
+   [
+    "Aluminum",
+    null
+   ],
+   [
+    "Adhesive",
+    null
+   ],
+   [
+    "Screws",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Underbarrel Flamer",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Drained Flamer Fuel",
+    1
+   ],
+   [
+    "Steel",
+    4
+   ],
+   [
+    "Springs",
+    null
+   ],
+   [
+    "Adhesive",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Underbarrel Grenade Launcher (v1)",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Aluminum",
+    3
+   ],
+   [
+    "Rubber",
+    2
+   ],
+   [
+    "Springs",
+    3
+   ]
+  ]
+ },
+ {
+  "n": "Underbarrel Grenade Launcher (v2)",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    4
+   ],
+   [
+    "Rubber",
+    2
+   ],
+   [
+    "Springs",
+    3
+   ]
+  ]
+ },
+ {
+  "n": "Underbarrel Shotgun",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Repair",
+  "mats": [
+   [
+    "Steel",
+    3
+   ],
+   [
+    "Springs",
+    2
+   ],
+   [
+    "Screws",
+    4
+   ],
+   [
+    "Rubber",
+    3
+   ]
+  ]
+ },
+ {
+  "n": "Underbarrel Taser",
+  "type": "Mod",
+  "station": "Weapon Station",
+  "req": "Science",
+  "mats": [
+   [
+    "Aluminum",
+    1
+   ],
+   [
+    "Rubber",
+    3
+   ],
+   [
+    "Circuitry",
+    2
+   ],
+   [
+    "Screws",
+    3
+   ]
+  ]
+ },
+ {
+  "n": ".22 LR - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .22 LR",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".22 LR - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .22 LR",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".22 LR - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .22 LR",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".22 LR - Hand Load",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .22 LR",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".22 LR - Rat Shot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .22 LR",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".22 LR - Explosive",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .22 LR",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".22 LR - DU-HE",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .22 LR",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".32 ACP - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .32 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".32 ACP - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .32 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".32 ACP - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .32 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".32 ACP - Hand Load",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .32 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".32 ACP - VelociMax",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .32 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".32 ACP - Cloud Shot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .32 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Small Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "9mm Parabellum - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 9mm Parabellum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "9mm Parabellum - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 9mm Parabellum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "9mm Parabellum - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 9mm Parabellum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "9mm Parabellum - +P'",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 9mm Parabellum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "9mm Parabellum - Hand Load",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 9mm Parabellum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "9mm Parabellum - R.I.P. Rounds",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 9mm Parabellum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "9mm Parabellum - 7n31",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 9mm Parabellum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "10mm Auto - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 10mm Auto",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "10mm Auto - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 10mm Auto",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "10mm Auto - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 10mm Auto",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "10mm Auto - +P'",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 10mm Auto",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "10mm Auto - Hand Load",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 10mm Auto",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "10mm Auto - HE",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 10mm Auto",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45 ACP - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45 ACP - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45 ACP - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45 ACP - +P'",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45 ACP - Hand Load",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45 ACP - HCI",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45 ACP - Petaled Sabot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45 ACP",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Standard Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".357 Magnum - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .357 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".357 Magnum - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .357 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".357 Magnum - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .357 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".357 Magnum - SWC",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .357 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".357 Magnum - Hand Load",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .357 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".357 Magnum - Snakeshot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .357 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".357 Magnum - Raptor",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .357 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".44 Magnum - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .44 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".44 Magnum - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .44 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".44 Magnum - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .44 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".44 Magnum - SWC",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .44 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".44 Magnum - Hand Load",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .44 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".44 Magnum - Carbide Tipped",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .44 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".44 Magnum - Mysterious",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .44 Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Pistol",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45-70 GOVT - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45-70 GOVT",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45-70 GOVT - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45-70 GOVT",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45-70 GOVT - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45-70 GOVT",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45-70 GOVT - SWC",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45-70 GOVT",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45-70 GOVT - Hand Load",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45-70 GOVT",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".45-70 GOVT - Proof Load",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .45-70 GOVT",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12.7mm HPM - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12.7mm HPM",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12.7mm HPM - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12.7mm HPM",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12.7mm HPM - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12.7mm HPM",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12.7mm HPM - AP",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12.7mm HPM",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12.7mm HPM - Hand Load",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12.7mm HPM",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12.7mm HPM - HE",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12.7mm HPM",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Pistol",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5mm NATO - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5mm NATO - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5mm NATO - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5mm NATO - Armor Piercing",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5mm NATO - Surplus",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5mm NATO - ,+P+",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5mm NATO - Pulse",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5.56mm NATO - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5.56mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5.56mm NATO - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5.56mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5.56mm NATO - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5.56mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5.56mm NATO - AP",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5.56mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5.56mm NATO - Surplus",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5.56mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "5.56mm - API",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 5.56mm NATO",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".308 WIN - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .308 WIN",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".308 WIN - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .308 WIN",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".308 WIN - Surplus",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .308 WIN",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".308 WIN - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .308 WIN",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".308 WIN - AP",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .308 WIN",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".308 WIN - M993",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .308 WIN",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".277 Fury - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .277 Fury",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".277 Fury - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .277 Fury",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".277 Fury - Hollow",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .277 Fury",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".277 Fury - AP",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .277 Fury",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".277 Fury - Match",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .277 Fury",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".277 Fury - SLAP",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .277 Fury",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Standard Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".338 Lapua Magnum - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .338 Lapua Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".338 Lapua Magnum - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .338 Lapua Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".338 Lapua Magnum - HP",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .338 Lapua Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".338 Lapua Magnum - AP",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .338 Lapua Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".338 Lapua Magnum - Match",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .338 Lapua Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".338 Lapua Magnum - DU",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .338 Lapua Magnum",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".50 Ball - Musket Ball",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Lead",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".50 Ball - Minnie Ball",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Lead",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".50 BMG - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .50 BMG",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".50 BMG - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .50 BMG",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".50 BMG - Hollow Point",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .50 BMG",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".50 BMG - AP",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .50 BMG",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".50 BMG - Match",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .50 BMG",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".50 BMG - MK 211",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .50 BMG",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ]
+  ]
+ },
+ {
+  "n": ".50 BMG - HE",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case .50 BMG",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Heavy Rifle",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "2mm EC - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "2mm EC - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "20 Gauge - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 20 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "20 Gauge - Buckshot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 20 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "20 Gauge - 00 Buckshot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 20 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "20 Gauge - Birdshot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 20 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "20 Gauge - Slug",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 20 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "20 Gauge - Dragons Breath",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 20 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "20 Gauge - HE Slug",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 20 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "20 Gauge - BOLO",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 20 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "20 Gauge - Magnum Buck",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 20 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "20 Gauge - 3/0 Magnum",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 20 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Rifle",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12 Gauge - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12 Gauge - Buckshot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12 Gauge - 00 Buckshot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12 Gauge - Magnum Buck",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12 Gauge - Magnum 00 Buck",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12 Gauge - Slug",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12 Gauge - HE Slug",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12 Gauge - Dragon's Breath",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12 Gauge - Pulse",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "12 Gauge - BOLO",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 12 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "4 Gauge - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 4 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "4 Gauge - Buckshot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 4 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "4 Gauge - 00 Buckshot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 4 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "4 Gauge - Slug",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 4 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "4 Gauge - Dragon's Breath",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 4 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "4 Gauge - HE Slug",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Case 4 Gauge",
+    null
+   ],
+   [
+    "Lead",
+    null
+   ],
+   [
+    "Powder, Shotgun",
+    null
+   ],
+   [
+    "Primer, Shotgun",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Missile - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Shell Missile",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Missile - Mil-Spec",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Shell Missile",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Missile - High Velocity",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Shell Missile",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Missile - High Explosive",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Shell Missile",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Missile - Canister Shot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Shell Missile",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Rocket - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Shell Rocket",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Rocket - Firework",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Shell Rocket",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Rocket - Mil-Spec",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Shell Rocket",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Rocket - High Velocity",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Shell Rocket",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Rocket - High Explosive",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Shell Rocket",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Rocket - Canister Shot",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Shell Rocket",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "40mm Shell - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 40mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "40mm Shell - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 40mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "40mm Shell - HEDP",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 40mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "40mm Shell - Pulse",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 40mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "40mm Shell - Thermobaric",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 40mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "40mm Shell - WP",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 40mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "25mm Shell - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 25mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "25mm Shell - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 25mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "25mm Shell - HEDP",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 25mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "25mm Shell - Pulse",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 25mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "25mm Shell - Thermobaric",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 25mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "25mm Shell - WP",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 25mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "25mm Shell - Dragon's Breath",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 25mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "25mm Shell - HE",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Empty 25mm Shell",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Arrow - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Fiberglass",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Arrow - Basic",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Fiberglass",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Arrow - Poison-Tipped",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Fiberglass",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Arrow - Pyrophoric",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Fiberglass",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Arrow - Olympic Quality",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Fiberglass",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Arrow - Explosive",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Fiberglass",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Bolt - Junk",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Bolt - Steel Tipped",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Bolt - Explosive",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Bolt - Tripwire Backed",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Bolt - Pulse",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Bolt - Tranquilizer",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Railway Spike - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Nail - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Harpoon - Standard",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Harpoon - Serrated",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Rebar - Salvaged",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Rebar - Superheated",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Explosive Component",
+  "type": "Junk",
+  "station": "Workbench",
+  "req": "",
+  "mats": [
+   [
+    "Oil",
+    null
+   ],
+   [
+    "Circuitry",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Marksman Rifle",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Gear",
+    null
+   ],
+   [
+    "Springs",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Stealth Pistol",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Gear",
+    null
+   ],
+   [
+    "Springs",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Rifle",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Gear",
+    null
+   ],
+   [
+    "Springs",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade SMG",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Gear",
+    null
+   ],
+   [
+    "Springs",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Bow",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Fiberglass",
+    null
+   ],
+   [
+    "Cloth",
+    null
+   ],
+   [
+    "Leather",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade X-Bow",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Cloth",
+    null
+   ],
+   [
+    "Screws",
+    null
+   ],
+   [
+    "Springs",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Gatling Gun",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Gear",
+    null
+   ],
+   [
+    "Springs",
+    null
+   ],
+   [
+    "Wood",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Double Barrel",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Gear",
+    null
+   ],
+   [
+    "Springs",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade LMG",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Gear",
+    null
+   ],
+   [
+    "Springs",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Sidearm",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Gear",
+    null
+   ],
+   [
+    "Springs",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Skullcrusher",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Gear",
+    null
+   ],
+   [
+    "Springs",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Thunderstorm",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Fiberglass",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Circuitry",
+    null
+   ],
+   [
+    "Aluminum",
+    null
+   ],
+   [
+    "Gold",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Wildfire",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Oil",
+    null
+   ],
+   [
+    "Screws",
+    null
+   ],
+   [
+    "Asbestos",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemeade Kaleidoscope",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Fiberglass",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Fiberoptics",
+    null
+   ],
+   [
+    "Circuitry",
+    null
+   ],
+   [
+    "Silver",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Plasma Shotgun",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Fiberglass",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Circuitry",
+    null
+   ],
+   [
+    "Gold",
+    null
+   ],
+   [
+    "Silver",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Grenade",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Grenade Launcher",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Circuitry",
+    null
+   ],
+   [
+    "Gear",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade IED",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Explosive Component",
+    null
+   ],
+   [
+    "Circuitry",
+    null
+   ],
+   [
+    "Gunpowder",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Sentry Launcher",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Circuitry",
+    null
+   ],
+   [
+    "Plastic",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Firestarter",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Circuitry",
+    null
+   ],
+   [
+    "Rubber",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Bartek Bludgeon",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Wood",
+    null
+   ],
+   [
+    "Acid",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Hook Hands",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Rubber",
+    null
+   ],
+   [
+    "Adhesive",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Spiral Hook",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Rubber",
+    null
+   ],
+   [
+    "Gear",
+    null
+   ],
+   [
+    "Circuitry",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Sabre",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Wood",
+    null
+   ],
+   [
+    "Leather",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Homemade Sword",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "Weaponsmith",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Wood",
+    null
+   ],
+   [
+    "Leather",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Railway Rifle",
+  "type": "Weapon",
+  "station": "Workbench",
+  "req": "",
+  "mats": [
+   [
+    "Steel",
+    null
+   ],
+   [
+    "Gear",
+    null
+   ],
+   [
+    "Weapon Parts",
+    null
+   ],
+   [
+    "Hydraulics",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Electron Charge Pack",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Drained ECP",
+    null
+   ],
+   [
+    "Battery",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Energy Cell",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Drained EC",
+    null
+   ],
+   [
+    "Battery",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Microfusion Cell",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Drained MFC",
+    null
+   ],
+   [
+    "Battery",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Flamer Fuel",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Drained Flamer Fuel",
+    null
+   ],
+   [
+    "Oil",
+    null
+   ]
+  ]
+ },
+ {
+  "n": "Nitrogen",
+  "type": "Ammo",
+  "station": "Reloading Station",
+  "req": "",
+  "mats": [
+   [
+    "Drained Nitrogen Tank",
+    null
+   ],
+   [
+    "Acid",
+    null
+   ]
+  ]
+ }
+]

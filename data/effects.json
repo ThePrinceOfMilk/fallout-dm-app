@@ -1,0 +1,5037 @@
+[
+ {
+  "n": "Aspiring Producer",
+  "cat": "Skill Perk",
+  "noteFrom": "Not automated: Sell 0.1",
+  "parsed": true,
+  "mods": {
+   "sell": 0.1
+  }
+ },
+ {
+  "n": "Proud Consumer",
+  "cat": "Skill Perk",
+  "noteFrom": "Not automated: Buy 0.1",
+  "parsed": true,
+  "mods": {
+   "buy": 0.1
+  }
+ },
+ {
+  "n": "Money Talks",
+  "cat": "Skill Perk",
+  "noteFrom": "Not automated: Buy 0.25",
+  "parsed": true,
+  "mods": {
+   "buy": 0.25
+  }
+ },
+ {
+  "n": "Quantum Physicist",
+  "cat": "Skill Perk",
+  "mods": {
+   "acc": 0.05
+  },
+  "noteFrom": "Meant only for: Hot Laser, Fast Laser, Electric, Magnetic",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Hot Laser",
+    "Fast Laser",
+    "Electric",
+    "Magnetic"
+   ]
+  }
+ },
+ {
+  "n": "Classical Physicist",
+  "cat": "Skill Perk",
+  "mods": {
+   "acc": 0.05
+  },
+  "noteFrom": "Meant only for: Hot Plasma, Fast Plasma, Fueled, Powered",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Hot Plasma",
+    "Fast Plasma",
+    "Fueled",
+    "Powered"
+   ]
+  }
+ },
+ {
+  "n": "Laser Focusing",
+  "cat": "Skill Perk",
+  "mods": {
+   "crit": 0.05
+  },
+  "noteFrom": "Meant only for: Hot Laser, Fast Laser",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Hot Laser",
+    "Fast Laser"
+   ]
+  }
+ },
+ {
+  "n": "Faraday",
+  "cat": "Skill Perk",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Plasmatic Obsession",
+  "cat": "Skill Perk",
+  "mods": {
+   "dam": 0.05
+  },
+  "noteFrom": "Meant only for: Hot Plasma, Fast Plasma",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Hot Plasma",
+    "Fast Plasma"
+   ]
+  }
+ },
+ {
+  "n": "Avatar",
+  "cat": "Skill Perk",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "One Handed",
+  "cat": "Skill Perk",
+  "mods": {
+   "acc": 0.05
+  },
+  "noteFrom": "Meant only for: Revolver, Semi-Auto Pistol, Plinker Pistol, Machine Pistol, SMG, PDW",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Revolver",
+    "Semi-Auto Pistol",
+    "Plinker Pistol",
+    "Machine Pistol",
+    "SMG",
+    "PDW"
+   ]
+  }
+ },
+ {
+  "n": "Two Handed",
+  "cat": "Skill Perk",
+  "mods": {
+   "acc": 0.05
+  },
+  "noteFrom": "Meant only for: Sniper Rifle, DMR, Lever-Action Rifle, Semi-Auto Rifle, Auto Rifle, Carbine",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Sniper Rifle",
+    "DMR",
+    "Lever-Action Rifle",
+    "Semi-Auto Rifle",
+    "Auto Rifle",
+    "Carbine"
+   ]
+  }
+ },
+ {
+  "n": "Pistolero",
+  "cat": "Skill Perk",
+  "mods": {
+   "acc": 0.05,
+   "reload": -1
+  },
+  "noteFrom": "Meant only for: Revolver, Semi-Auto Pistol, Plinker Pistol",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Revolver",
+    "Semi-Auto Pistol",
+    "Plinker Pistol"
+   ]
+  }
+ },
+ {
+  "n": "Mobile Firepower",
+  "cat": "Skill Perk",
+  "mods": {
+   "acc": 0.01,
+   "crit": 0.01
+  },
+  "noteFrom": "(Acc%*(COUNT))&(Crit C%*(COUNT)); Meant only for: Machine Pistol, SMG, PDW",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Machine Pistol",
+    "SMG",
+    "PDW"
+   ],
+   "perCount": true
+  },
+  "sheetMods": {
+   "acc": 0.01,
+   "crit": 0.01
+  }
+ },
+ {
+  "n": "Sharpshooter",
+  "cat": "Skill Perk",
+  "mods": {
+   "r6": 0.02,
+   "r7": 0.04,
+   "r8": 0.06,
+   "r9": 0.08,
+   "r10": 0.1,
+   "critPerRange": 1
+  },
+  "noteFrom": "(Crit Chance * (RANGE)); Not automated: Crit C x(range); Meant only for: Sniper Rifle, DMR, Lever-Action Rifle",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Sniper Rifle",
+    "DMR",
+    "Lever-Action Rifle"
+   ]
+  },
+  "sheetMods": {
+   "r6": 0.02,
+   "r7": 0.04,
+   "r8": 0.06,
+   "r9": 0.08,
+   "r10": 0.1
+  }
+ },
+ {
+  "n": "Rifleman",
+  "cat": "Skill Perk",
+  "mods": {
+   "apCost": -1,
+   "critDam": 0.05
+  },
+  "noteFrom": "Not automated: Crit D 0.05; Meant only for: Semi-Auto Rifle, Auto Rifle, Carbine",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Semi-Auto Rifle",
+    "Auto Rifle",
+    "Carbine"
+   ]
+  }
+ },
+ {
+  "n": "Earp's Disciple",
+  "cat": "Skill Perk",
+  "mods": {
+   "apCost": -100,
+   "headMult": 2
+  },
+  "noteFrom": "only if (MAGAZINE=CAPACITY); Not automated: Head Mult +/- 2.0; Meant only for: Revolver",
+  "parsed": true,
+  "when": {
+   "magFull": true,
+   "types": [
+    "Revolver"
+   ]
+  }
+ },
+ {
+  "n": "Plinkster",
+  "cat": "Skill Perk",
+  "mods": {
+   "pen": 100,
+   "critMult": 2,
+   "superMult": 2,
+   "superIgnoreDT": 1
+  },
+  "noteFrom": "if \"Super\" DT=100; Not automated: Crit Mult +/- 2.0, Super Crit Mult +/- 2.0; Meant only for: Plinker Pistol",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Plinker Pistol"
+   ]
+  },
+  "sheetMods": {
+   "pen": 100,
+   "critMult": 2,
+   "superMult": 2
+  }
+ },
+ {
+  "n": "Trigger Finger",
+  "cat": "Skill Perk",
+  "mods": {
+   "crit": 0.1,
+   "apCostMul": 0.5
+  },
+  "noteFrom": "Not automated: AP Cost / 0.5; Meant only for: Semi-Auto Pistol",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Semi-Auto Pistol"
+   ]
+  }
+ },
+ {
+  "n": "Bullet Hose",
+  "cat": "Skill Perk",
+  "mods": {
+   "apCost": -1,
+   "critNoAmmo": 1
+  },
+  "noteFrom": "if \"Super\", All burst hit; Meant only for: Machine Pistol",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Machine Pistol"
+   ]
+  },
+  "sheetMods": {
+   "apCost": -1
+  }
+ },
+ {
+  "n": "Rearguard",
+  "cat": "Skill Perk",
+  "mods": {
+   "acc": 0.1,
+   "reload": -1
+  },
+  "noteFrom": "Meant only for: PDW",
+  "parsed": true,
+  "when": {
+   "types": [
+    "PDW"
+   ]
+  }
+ },
+ {
+  "n": "Spec Ops",
+  "cat": "Skill Perk",
+  "noteFrom": "if First turn; Not automated: Crit Mult +/- 1; Meant only for: SMG",
+  "parsed": true,
+  "mods": {
+   "critMult": 1
+  },
+  "when": {
+   "firstTurn": true,
+   "types": [
+    "SMG"
+   ]
+  }
+ },
+ {
+  "n": "Precision Sniper",
+  "cat": "Skill Perk",
+  "mods": {
+   "apCost": -2,
+   "superKill": 1
+  },
+  "noteFrom": "if \"Super\" and Range >7, instakill",
+  "parsed": true
+ },
+ {
+  "n": "Man With No Name",
+  "cat": "Skill Perk",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Designated Marksman",
+  "cat": "Skill Perk",
+  "mods": {
+   "r5": 0.15,
+   "r6": 0.15,
+   "r7": 0.15,
+   "r8": 0.15,
+   "r9": 0.15,
+   "critMult": 0.5
+  },
+  "noteFrom": "Not automated: Crit Mult +/- 0.5",
+  "parsed": true
+ },
+ {
+  "n": "Guerilla Fighter",
+  "cat": "Skill Perk",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Carabiner",
+  "cat": "Skill Perk",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Operator",
+  "cat": "Skill Perk",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Combat Medic",
+  "cat": "Skill Perk",
+  "noteFrom": "Not automated: Debuff Ch -0.1",
+  "parsed": true,
+  "mods": {
+   "debuffCh": -0.1
+  }
+ },
+ {
+  "n": "Doctor's Note",
+  "cat": "Skill Perk",
+  "noteFrom": "if medicine; Not automated: Sell 2.0",
+  "parsed": true,
+  "mods": {
+   "sell": 2
+  },
+  "sheetMods": {
+   "sell": 2
+  }
+ },
+ {
+  "n": "Chemmaxxing",
+  "cat": "Skill Perk",
+  "noteFrom": "if chems; Not automated: Chem Eff * 2.0",
+  "parsed": true,
+  "mods": {
+   "chemEff": 1
+  },
+  "sheetMods": {
+   "chemEff": 1
+  }
+ },
+ {
+  "n": "Optimal Dosage",
+  "cat": "Skill Perk",
+  "noteFrom": "if Healing; Not automated: Chem Eff * 2.0",
+  "parsed": true,
+  "mods": {
+   "chemEff": 1,
+   "healOut": 1
+  },
+  "sheetMods": {
+   "chemEff": 1
+  }
+ },
+ {
+  "n": "Spammer",
+  "cat": "Skill Perk",
+  "mods": {
+   "apCost": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Second Option",
+  "cat": "Skill Perk",
+  "mods": {
+   "apCost": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Cutting Edge",
+  "cat": "Skill Perk",
+  "mods": {
+   "dam": 0.15
+  },
+  "noteFrom": "Meant only for: S-P, S-B",
+  "parsed": true,
+  "when": {
+   "types": [
+    "S-P",
+    "S-B"
+   ]
+  }
+ },
+ {
+  "n": "Point of Order",
+  "cat": "Skill Perk",
+  "mods": {
+   "pen": 5
+  },
+  "noteFrom": "Meant only for: P-B, P-S",
+  "parsed": true,
+  "when": {
+   "types": [
+    "P-B",
+    "P-S"
+   ]
+  }
+ },
+ {
+  "n": "Hammertime",
+  "cat": "Skill Perk",
+  "noteFrom": "If \"Crit\", apply Knocked Down; Meant only for: B-P, B-S",
+  "parsed": true,
+  "when": {
+   "types": [
+    "B-P",
+    "B-S"
+   ]
+  },
+  "sheetMods": {},
+  "mods": {
+   "critKnock": 1
+  }
+ },
+ {
+  "n": "Handyman",
+  "cat": "Skill Perk",
+  "noteFrom": "Not automated: Debuff Ch 0.1, Debuff Eff + 0.5; Meant only for: Hand",
+  "parsed": true,
+  "mods": {
+   "debuffCh": 0.1,
+   "debuffEff": 0.5
+  },
+  "when": {
+   "types": [
+    "Hand"
+   ]
+  }
+ },
+ {
+  "n": "Mechanic",
+  "cat": "Skill Perk",
+  "mods": {
+   "REP": 10
+  },
+  "noteFrom": "if OOC",
+  "parsed": true,
+  "sheetMods": {
+   "REP": 10
+  },
+  "when": {
+   "ooc": true
+  }
+ },
+ {
+  "n": "Roboticist",
+  "cat": "Skill Perk",
+  "mods": {
+   "crit": 0.1
+  },
+  "noteFrom": "vs. Robots",
+  "parsed": true,
+  "when": {
+   "vs": [
+    "robot"
+   ]
+  }
+ },
+ {
+  "n": "Computer Whiz",
+  "cat": "Skill Perk",
+  "mods": {
+   "SCI": 10
+  },
+  "note": "Hacking",
+  "noteFrom": "Hacking",
+  "parsed": true
+ },
+ {
+  "n": "Mad Scientist",
+  "cat": "Skill Perk",
+  "mods": {
+   "SCI": 10
+  },
+  "note": "Science Speech",
+  "noteFrom": "Science Speech",
+  "parsed": true
+ },
+ {
+  "n": "IT Support",
+  "cat": "Skill Perk",
+  "mods": {
+   "SCI": 30
+  },
+  "note": "Hacking",
+  "noteFrom": "Hacking",
+  "parsed": true
+ },
+ {
+  "n": "Covert Ops.",
+  "cat": "Skill Perk",
+  "noteFrom": "When Sneak; Not automated: Crit Mult +/- 0.5, Super Crit Mult +/- 0.5",
+  "parsed": true,
+  "mods": {
+   "critMult": 0.5,
+   "superMult": 0.5
+  },
+  "when": {
+   "sneak": true
+  }
+ },
+ {
+  "n": "Ghost",
+  "cat": "Skill Perk",
+  "noteFrom": "In faction armor",
+  "parsed": true,
+  "sheetMods": {},
+  "when": {
+   "armorFaction": true
+  }
+ },
+ {
+  "n": "Assassin",
+  "cat": "Skill Perk",
+  "noteFrom": "When Sneak; Not automated: Crit D 1.5",
+  "parsed": true,
+  "mods": {
+   "critDam": 1.5
+  },
+  "when": {
+   "sneak": true
+  }
+ },
+ {
+  "n": "Sandman",
+  "cat": "Skill Perk",
+  "noteFrom": "When Sneak, kills regen AP; Not automated: Crit D 2.5",
+  "parsed": true,
+  "mods": {
+   "critDam": 2.5,
+   "killAP": 1
+  },
+  "sheetMods": {
+   "critDam": 2.5
+  },
+  "when": {
+   "sneak": true
+  }
+ },
+ {
+  "n": "Glitch",
+  "cat": "Skill Perk",
+  "mods": {
+   "enemyAcc": -0.2
+  },
+  "noteFrom": "If robot",
+  "parsed": true,
+  "when": {
+   "vs": [
+    "robot"
+   ]
+  }
+ },
+ {
+  "n": "Camoflauge",
+  "cat": "Skill Perk",
+  "mods": {
+   "enemyAcc": -0.1
+  },
+  "note": "Roll to disappear",
+  "noteFrom": "Roll to disappear",
+  "parsed": true
+ },
+ {
+  "n": "Smoking Silencer",
+  "cat": "Skill Perk",
+  "mods": {
+   "crit": 0.15,
+   "critMult": 3
+  },
+  "noteFrom": "If silencer; Not automated: Crit Mult +/- 3.0; Meant only for: Revolver, Semi-Auto Pistol, Plinker Pistol, Machine Pistol, SMG, PDW",
+  "parsed": true,
+  "when": {
+   "silenced": true,
+   "types": [
+    "Revolver",
+    "Semi-Auto Pistol",
+    "Plinker Pistol",
+    "Machine Pistol",
+    "SMG",
+    "PDW"
+   ]
+  }
+ },
+ {
+  "n": "Ghillie in the Mist",
+  "cat": "Skill Perk",
+  "mods": {
+   "r7": 0.15,
+   "r8": 0.15,
+   "r9": 0.15,
+   "critDam": 2
+  },
+  "noteFrom": "If silencer; Not automated: Crit D 2.0; Meant only for: Sniper Rifle, DMR, Lever-Action Rifle, Semi-Auto Rifle, Auto Rifle, Carbine",
+  "parsed": true,
+  "when": {
+   "silenced": true,
+   "types": [
+    "Sniper Rifle",
+    "DMR",
+    "Lever-Action Rifle",
+    "Semi-Auto Rifle",
+    "Auto Rifle",
+    "Carbine"
+   ]
+  }
+ },
+ {
+  "n": "Close n Personal",
+  "cat": "Skill Perk",
+  "noteFrom": "If sneak, apply Tier 3 bleed; Not automated: Crit Mult +/- 2.0, Super Crit Mult +/- 2.0",
+  "parsed": true,
+  "mods": {
+   "critMult": 2,
+   "superMult": 2,
+   "hitBleed": 3
+  },
+  "sheetMods": {
+   "critMult": 2,
+   "superMult": 2
+  },
+  "when": {
+   "sneak": true
+  }
+ },
+ {
+  "n": "Backstabber",
+  "cat": "Skill Perk",
+  "mods": {
+   "pen": 0.6,
+   "superKill": 1,
+   "critMult": 1,
+   "superMult": 1
+  },
+  "noteFrom": "If sneak, instakill on \"Super\"; Not automated: Crit Mult +/- 1.0, Super Crit Mult +/- 1.0",
+  "parsed": true,
+  "when": {
+   "sneak": true
+  }
+ },
+ {
+  "n": "Forced Slumber",
+  "cat": "Skill Perk",
+  "noteFrom": "If sneak, T3 concussion and random limb cripple on Crit",
+  "parsed": true,
+  "sheetMods": {},
+  "mods": {
+   "critDisorient": 3,
+   "critLimb": 1
+  },
+  "when": {
+   "sneak": true
+  }
+ },
+ {
+  "n": "Systems Jammer",
+  "cat": "Skill Perk",
+  "mods": {
+   "enemyAcc": -0.33
+  },
+  "noteFrom": "If Robot",
+  "parsed": true,
+  "when": {
+   "vs": [
+    "robot"
+   ]
+  }
+ },
+ {
+  "n": "Encumbered I",
+  "cat": "Effect",
+  "mods": {
+   "apMul": -0.1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Encumbered II",
+  "cat": "Effect",
+  "mods": {
+   "apMul": -0.2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Encumbered III",
+  "cat": "Effect",
+  "mods": {
+   "apMul": -0.3
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Encumbered IV",
+  "cat": "Effect",
+  "mods": {
+   "apMul": -0.4
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Encumbered V",
+  "cat": "Effect",
+  "mods": {
+   "apMul": -0.5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Overencumbered I",
+  "cat": "Effect",
+  "mods": {
+   "apMul": -0.25
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Overencumbered II",
+  "cat": "Effect",
+  "mods": {
+   "apMul": -0.5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Overencumbered III",
+  "cat": "Effect",
+  "mods": {
+   "apMul": -0.75
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Immobilized",
+  "cat": "Effect",
+  "mods": {
+   "apMul": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Alpha Strike Barrel",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": 0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Beam Splitter",
+  "cat": "Weapon Mod",
+  "note": "Multi Beam",
+  "noteFrom": "Multi Beam",
+  "parsed": true
+ },
+ {
+  "n": "Focus Optics",
+  "cat": "Weapon Mod",
+  "mods": {
+   "dam": 0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Grenade Rifle Long Barrel",
+  "cat": "Weapon Mod",
+  "mods": {
+   "r1": -0.1,
+   "r2": -0.1,
+   "r3": -0.1,
+   "r7": 0.05,
+   "r8": 0.05,
+   "r9": 0.05,
+   "r10": 0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "HD Component",
+  "cat": "Weapon Mod",
+  "noteFrom": "Not automated: Fail Ch -0.05",
+  "parsed": true,
+  "mods": {
+   "jam": -0.05
+  }
+ },
+ {
+  "n": "Heavy Revolver Match Barrel",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": 0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Long Barrel",
+  "cat": "Weapon Mod",
+  "mods": {
+   "r1": -0.1,
+   "r2": -0.08,
+   "r3": -0.06,
+   "r4": -0.04,
+   "r5": -0.02,
+   "r7": 0.02,
+   "r8": 0.04,
+   "r9": 0.06,
+   "r10": 0.08
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Plasma Projectile Accelerator",
+  "cat": "Weapon Mod",
+  "mods": {
+   "r1": 0.02,
+   "r2": 0.04,
+   "r3": 0.06,
+   "r4": 0.08,
+   "r5": 0.1,
+   "r6": 0.12,
+   "r7": 0.14,
+   "r8": 0.16,
+   "r9": 0.18,
+   "r10": 0.2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Plasma Splitter",
+  "cat": "Weapon Mod",
+  "note": "Multi Proj",
+  "noteFrom": "Multi Proj",
+  "parsed": true
+ },
+ {
+  "n": "Shotgun Long Tube",
+  "cat": "Weapon Mod",
+  "noteFrom": "Not automated: Capacity + 3.0",
+  "parsed": true,
+  "mods": {
+   "magAdd": 3
+  }
+ },
+ {
+  "n": "Shredder Barrels",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Snub Barrel",
+  "cat": "Weapon Mod",
+  "mods": {
+   "r1": 0.08,
+   "r2": 0.06,
+   "r3": 0.04,
+   "r4": 0.02,
+   "r6": -0.02,
+   "r7": -0.04,
+   "r8": -0.06,
+   "r9": -0.08,
+   "r10": -0.1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Zeroing",
+  "cat": "Weapon Mod",
+  "note": "Variable",
+  "noteFrom": "Variable",
+  "parsed": true
+ },
+ {
+  "n": "Alloy Frame",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Carbon Fiber Parts",
+  "cat": "Weapon Mod",
+  "noteFrom": "Not automated: Weight -0.2",
+  "parsed": true,
+  "sheetMods": {}
+ },
+ {
+  "n": "Weapon Camouflaging (Desert)",
+  "cat": "Weapon Mod",
+  "mods": {
+   "enemyAcc": -0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Weapon Camouflaging (Woodland)",
+  "cat": "Weapon Mod",
+  "mods": {
+   "enemyAcc": -0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "California Compliant Grip",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": 0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Comfort Grip",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": 0.03
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Fist Hi-Cap Valves",
+  "cat": "Weapon Mod",
+  "mods": {
+   "apCost": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sharpshooter's Grip",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": 0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sweetheart Grip Inlay",
+  "cat": "Weapon Mod",
+  "mods": {
+   "crit": 0.01
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sword Balanced Grip",
+  "cat": "Weapon Mod",
+  "mods": {
+   "apCost": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Taped Grip",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": 0.01
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Added Rocket",
+  "cat": "Weapon Mod",
+  "mods": {
+   "dam": 0.2,
+   "apCostMul": 0.15
+  },
+  "noteFrom": "Not automated: AP Cost / 0.15",
+  "parsed": true
+ },
+ {
+  "n": "Blades",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Carbide Teeth",
+  "cat": "Weapon Mod",
+  "mods": {
+   "dam": 0.1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Concussion Pack",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Electric Coil",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Heated Coil",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Nuclear Coil",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Ported Chambers",
+  "cat": "Weapon Mod",
+  "mods": {
+   "apCost": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Serrated Blade",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Spikes",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sword Authentic Blade",
+  "cat": "Weapon Mod",
+  "mods": {
+   "dam": 0.05,
+   "pen": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Drum Magazine",
+  "cat": "Weapon Mod",
+  "noteFrom": "Not automated: Capacity + 30.0",
+  "parsed": true,
+  "mods": {
+   "magAdd": 30
+  }
+ },
+ {
+  "n": "Expanded Tanks",
+  "cat": "Weapon Mod",
+  "noteFrom": "Not automated: Capacity * 0.5",
+  "parsed": true,
+  "mods": {
+   "magPct": 0.5
+  }
+ },
+ {
+  "n": "Extended Magazine",
+  "cat": "Weapon Mod",
+  "noteFrom": "Not automated: Capacity + 10.0",
+  "parsed": true,
+  "mods": {
+   "magAdd": 10
+  }
+ },
+ {
+  "n": "Launcher Expanded Drum",
+  "cat": "Weapon Mod",
+  "noteFrom": "Not automated: Capacity + 2.0",
+  "parsed": true,
+  "mods": {
+   "magAdd": 2
+  }
+ },
+ {
+  "n": "Optimum Quick Mags",
+  "cat": "Weapon Mod",
+  "mods": {
+   "reload": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Quick Eject Magazine",
+  "cat": "Weapon Mod",
+  "mods": {
+   "reload": -1,
+   "magPct": -0.25
+  },
+  "noteFrom": "Not automated: Capacity * -0.25",
+  "parsed": true
+ },
+ {
+  "n": "Revolver Extra Shot",
+  "cat": "Weapon Mod",
+  "noteFrom": "Not automated: Capacity + 1.0",
+  "parsed": true,
+  "mods": {
+   "magAdd": 1
+  }
+ },
+ {
+  "n": "Speed Mags",
+  "cat": "Weapon Mod",
+  "mods": {
+   "reload": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Muzzle Break",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Recoil Compensator",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": 0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Shotgun Choke",
+  "cat": "Weapon Mod",
+  "mods": {
+   "r1": -0.04,
+   "r2": -0.02,
+   "r4": 0.02,
+   "r5": 0.04,
+   "r6": 0.06,
+   "r7": 0.07,
+   "r8": 0.08,
+   "r9": 0.09,
+   "r10": 0.1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Silencer",
+  "cat": "Weapon Mod",
+  "mods": {
+   "SNK": 50
+  },
+  "note": "Before Combat",
+  "noteFrom": "Before Combat",
+  "parsed": true
+ },
+ {
+  "n": "Advanced Calibration",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": 0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "AMR Custom Bolt",
+  "cat": "Weapon Mod",
+  "mods": {
+   "apCost": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Automatic Receiver",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": -0.2,
+   "reload": 5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Carbine Light Bolt",
+  "cat": "Weapon Mod",
+  "mods": {
+   "reload": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Custom Action",
+  "cat": "Weapon Mod",
+  "mods": {
+   "apCost": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "EC Recycler",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "ECW Recycler",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Gamma Wave Tuner",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Grenade MG High-Speed Kit",
+  "cat": "Weapon Mod",
+  "mods": {
+   "reload": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Grenade Rifle Upgraded Internals",
+  "cat": "Weapon Mod",
+  "mods": {
+   "apCost": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Heavy Weapon Dampened Subframe",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": 0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Laser Auto Conversion",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": -0.2,
+   "reload": 5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "LMG Upgraded Internals",
+  "cat": "Weapon Mod",
+  "mods": {
+   "reload": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "MFC Recycler",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Rapid Fire Receiver",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": -0.1,
+   "apCost": -2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Red Glare Auto Launcher",
+  "cat": "Weapon Mod",
+  "mods": {
+   "apCost": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Upgraded Springs",
+  "cat": "Weapon Mod",
+  "mods": {
+   "apCost": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Glow Sights (Tritium)",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": 0.01
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Hybrid Sight",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Long Range Scope",
+  "cat": "Weapon Mod",
+  "mods": {
+   "r1": -0.05,
+   "r2": -0.05,
+   "r3": -0.05,
+   "r4": -0.05,
+   "r5": -0.05,
+   "r6": -0.05,
+   "r7": -0.05,
+   "r8": 0.05,
+   "r9": 0.05,
+   "r10": 0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Medium Range Scope",
+  "cat": "Weapon Mod",
+  "mods": {
+   "r1": -0.05,
+   "r2": -0.05,
+   "r3": 0.05,
+   "r4": 0.05,
+   "r5": 0.05,
+   "r6": 0.05,
+   "r7": 0.05,
+   "r8": -0.05,
+   "r9": -0.05,
+   "r10": -0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Night Vision Scope",
+  "cat": "Weapon Mod",
+  "noteFrom": "Eliminates Night Pen",
+  "parsed": true,
+  "sheetMods": {},
+  "mods": {
+   "nightPen": 0
+  }
+ },
+ {
+  "n": "Pipe Screw Scope",
+  "cat": "Weapon Mod",
+  "mods": {
+   "r4": 0.02,
+   "r5": 0.02,
+   "r6": 0.02,
+   "r7": 0.02,
+   "r8": 0.02
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Recon Scope",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Red Dot Scope",
+  "cat": "Weapon Mod",
+  "mods": {
+   "r1": 0.02,
+   "r2": 0.02,
+   "r3": 0.02,
+   "r4": 0.02,
+   "r5": 0.02
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Reflex Sight",
+  "cat": "Weapon Mod",
+  "mods": {
+   "r1": 0.04,
+   "r2": 0.04,
+   "r3": 0.04,
+   "r4": 0.04,
+   "r5": 0.04
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Short Range Scope",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Thermal Scope",
+  "cat": "Weapon Mod",
+  "mods": {
+   "P": 2,
+   "nightPen": 0
+  },
+  "noteFrom": "Eliminates Night Pen",
+  "parsed": true,
+  "sheetMods": {
+   "P": 2
+  }
+ },
+ {
+  "n": "Variable Range Scope",
+  "cat": "Weapon Mod",
+  "note": "Player Chooses Range in CS (costs 1AP)",
+  "noteFrom": "Player Chooses Range in CS (costs 1AP)",
+  "parsed": true
+ },
+ {
+  "n": "Adjustable Stock",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Marksman's Stock",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Recoil Compensating Stock",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Short Stock",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Pistol Added Stock",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Double Tap Trigger",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": -0.05,
+   "count": 1
+  },
+  "noteFrom": "Not automated: Count 1.0",
+  "parsed": true
+ },
+ {
+  "n": "Hair Trigger",
+  "cat": "Weapon Mod",
+  "mods": {
+   "apCost": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Targeting Computer Guidance System",
+  "cat": "Weapon Mod",
+  "mods": {
+   "r6": 1,
+   "r7": 1,
+   "r8": 1,
+   "r9": 1,
+   "r10": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Bayonet",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Bipod",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": 0.1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Laser Attachment",
+  "cat": "Weapon Mod",
+  "mods": {
+   "acc": 0.03
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Strobe Light",
+  "cat": "Weapon Mod",
+  "mods": {
+   "enemyAcc": -0.15
+  },
+  "noteFrom": "if indoors",
+  "parsed": true,
+  "sheetMods": {
+   "enemyAcc": -0.15
+  },
+  "when": {
+   "indoors": true
+  }
+ },
+ {
+  "n": "Underbarrel Flamer",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Underbarrel Grenade Launcher (v1)",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Underbarrel Grenade Launcher (v2)",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Underbarrel Shotgun",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Underbarrel Taser",
+  "cat": "Weapon Mod",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Eye Patch",
+  "cat": "Accessory",
+  "mods": {
+   "SPE": 10,
+   "r1": -0.02,
+   "r2": -0.04,
+   "r3": -0.06,
+   "r4": -0.08,
+   "r5": -0.1,
+   "r6": -0.12,
+   "r7": -0.14,
+   "r8": -0.16,
+   "r9": -0.18,
+   "r10": -0.2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Eyeglasses",
+  "cat": "Accessory",
+  "note": "Corrects Eyesight",
+  "noteFrom": "Corrects Eyesight",
+  "parsed": true
+ },
+ {
+  "n": "Light Satchel",
+  "cat": "Accessory",
+  "mods": {
+   "carry": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Scarf",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sunglasses",
+  "cat": "Accessory",
+  "mods": {
+   "P": -1,
+   "C": 1
+  },
+  "note": "Indoor (Concept WIP)",
+  "noteFrom": "Indoor (Concept WIP)",
+  "parsed": true
+ },
+ {
+  "n": "Welding Goggles",
+  "cat": "Accessory",
+  "mods": {
+   "P": -2,
+   "resist:Blinded": 1
+  },
+  "noteFrom": "Blind Resist",
+  "parsed": true,
+  "sheetMods": {
+   "P": -2
+  }
+ },
+ {
+  "n": "Black Gloves",
+  "cat": "Accessory",
+  "mods": {
+   "SNK": 10,
+   "reload": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Medical Mask",
+  "cat": "Accessory",
+  "mods": {
+   "MED": 5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Batting Gloves",
+  "cat": "Accessory",
+  "mods": {
+   "MW": 5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Electronic Shades",
+  "cat": "Accessory",
+  "noteFrom": "Night Debuff /2",
+  "parsed": true,
+  "sheetMods": {},
+  "mods": {
+   "nightPen": 0.5
+  }
+ },
+ {
+  "n": "Mojave Express Light Backpack",
+  "cat": "Accessory",
+  "mods": {
+   "carry": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Mojave Express Satchel",
+  "cat": "Accessory",
+  "mods": {
+   "carry": 15
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Police Gas Mask",
+  "cat": "Accessory",
+  "mods": {
+   "P": -1,
+   "A": -1,
+   "resist:Poisoned": 1,
+   "resist:Irradiated": 1
+  },
+  "noteFrom": "Poison + Rad Resist",
+  "parsed": true,
+  "sheetMods": {
+   "P": -1,
+   "A": -1
+  }
+ },
+ {
+  "n": "Tribal Icon",
+  "cat": "Accessory",
+  "mods": {
+   "crit": 0.03
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Tribal Sling",
+  "cat": "Accessory",
+  "mods": {
+   "carry": 15
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Wedding Ring",
+  "cat": "Accessory",
+  "mods": {
+   "L": 1,
+   "SPE": 15
+  },
+  "note": "Romance Speech Nerf",
+  "noteFrom": "Romance Speech Nerf",
+  "parsed": true
+ },
+ {
+  "n": "Active Filter Headset",
+  "cat": "Accessory",
+  "mods": {
+   "P": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Activewear Underlayer",
+  "cat": "Accessory",
+  "mods": {
+   "A": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Ammo Satchel Harness",
+  "cat": "Accessory",
+  "mods": {
+   "reload": -1,
+   "carry": 5
+  },
+  "noteFrom": "CW for Ammo +5, STACKS",
+  "parsed": true,
+  "sheetMods": {
+   "reload": -1
+  }
+ },
+ {
+  "n": "Army Gas Mask",
+  "cat": "Accessory",
+  "mods": {
+   "A": -1,
+   "resist:Poisoned": 1,
+   "resist:Irradiated": 1
+  },
+  "noteFrom": "Poison + Rad Resist",
+  "parsed": true,
+  "sheetMods": {
+   "A": -1
+  }
+ },
+ {
+  "n": "Aviators",
+  "cat": "Accessory",
+  "mods": {
+   "C": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Back Brace",
+  "cat": "Accessory",
+  "mods": {
+   "S": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Bandolier",
+  "cat": "Accessory",
+  "mods": {
+   "BG": 5,
+   "magAdd": 25
+  },
+  "noteFrom": "STACKS; Not automated: Capacity + 25.0",
+  "parsed": true,
+  "sheetMods": {
+   "BG": 5,
+   "magAdd": 25
+  }
+ },
+ {
+  "n": "Basic Night Vision Goggles",
+  "cat": "Accessory",
+  "mods": {
+   "P": -3,
+   "nightPen": 0
+  },
+  "noteFrom": "PER if day, x2 blind",
+  "parsed": true,
+  "sheetMods": {
+   "P": -3
+  }
+ },
+ {
+  "n": "Basic Thermal Visison Goggles",
+  "cat": "Accessory",
+  "mods": {
+   "P": -3,
+   "SNK": 10,
+   "r1": -0.02,
+   "r3": 0.02,
+   "r4": 0.04,
+   "r5": 0.06,
+   "r6": 0.08,
+   "r7": 0.1,
+   "r8": 0.12,
+   "r9": 0.14,
+   "r10": 0.16,
+   "nightPen": 0
+  },
+  "noteFrom": "PER if light source, x2 blind",
+  "parsed": true,
+  "sheetMods": {
+   "P": -3,
+   "SNK": 10,
+   "r1": -0.02,
+   "r3": 0.02,
+   "r4": 0.04,
+   "r5": 0.06,
+   "r6": 0.08,
+   "r7": 0.1,
+   "r8": 0.12,
+   "r9": 0.14,
+   "r10": 0.16
+  }
+ },
+ {
+  "n": "Black Balaclava",
+  "cat": "Accessory",
+  "mods": {
+   "BAR": -10,
+   "SNK": 10,
+   "acc": -0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Brainwave Aligner",
+  "cat": "Accessory",
+  "mods": {
+   "I": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Bromine Lined Undergarments",
+  "cat": "Accessory",
+  "noteFrom": "Burn resist, and move AP flag",
+  "parsed": true,
+  "sheetMods": {},
+  "mods": {
+   "resist:Burned": 1
+  }
+ },
+ {
+  "n": "Camo Baseball Hat",
+  "cat": "Accessory",
+  "mods": {
+   "SG": 10,
+   "MED": -10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Cocoa Butter Hand Balm",
+  "cat": "Accessory",
+  "mods": {
+   "LPK": 10,
+   "REP": -10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Combat Medic Harness",
+  "cat": "Accessory",
+  "mods": {
+   "MED": 5,
+   "itemAP": -1
+  },
+  "noteFrom": "STACKS, ITEM AP -1",
+  "parsed": true,
+  "sheetMods": {
+   "MED": 5
+  }
+ },
+ {
+  "n": "Cut Gloves",
+  "cat": "Accessory",
+  "mods": {
+   "reload": 1,
+   "resist:Bleeding": 1
+  },
+  "noteFrom": "Bleed Resist",
+  "parsed": true,
+  "sheetMods": {
+   "reload": 1
+  }
+ },
+ {
+  "n": "Diamond Stud Earring",
+  "cat": "Accessory",
+  "mods": {
+   "BAR": 10,
+   "SG": -10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Electrolyte Supplements",
+  "cat": "Accessory",
+  "mods": {
+   "E": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Explosive Harness",
+  "cat": "Accessory",
+  "mods": {
+   "EXP": 5,
+   "apCost": -1
+  },
+  "noteFrom": "STACKS, AP cost for Thrown",
+  "parsed": true,
+  "sheetMods": {
+   "EXP": 5,
+   "apCost": -1
+  },
+  "when": {
+   "tabs": [
+    "EX"
+   ]
+  }
+ },
+ {
+  "n": "Explosives Backpack",
+  "cat": "Accessory",
+  "mods": {
+   "A": 1,
+   "EXP": 10,
+   "carry": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Field Sterilization Belt",
+  "cat": "Accessory",
+  "mods": {
+   "MED": 10,
+   "SCI": -10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Gold Tooth",
+  "cat": "Accessory",
+  "mods": {
+   "EW": -10,
+   "SPE": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Grease Covered Towel",
+  "cat": "Accessory",
+  "mods": {
+   "REP": 10,
+   "SPE": -10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Grounding Mechanism",
+  "cat": "Accessory",
+  "noteFrom": "Electrocute Resist",
+  "parsed": true,
+  "sheetMods": {},
+  "mods": {
+   "resist:Electrocuted": 1
+  }
+ },
+ {
+  "n": "Heatproof Gloves",
+  "cat": "Accessory",
+  "mods": {
+   "EXP": 10,
+   "LPK": -10,
+   "apCost": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Hip Rotation Limiter",
+  "cat": "Accessory",
+  "mods": {
+   "BG": 10,
+   "MW": -10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Incense Diffuser",
+  "cat": "Accessory",
+  "mods": {
+   "EXP": -10,
+   "SUR": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Lucky 8 Ball",
+  "cat": "Accessory",
+  "mods": {
+   "L": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Melee Harness",
+  "cat": "Accessory",
+  "mods": {
+   "MW": 5,
+   "swapFreeMelee": 1
+  },
+  "noteFrom": "STACKS, Flag: No Pen to swap to melee",
+  "parsed": true,
+  "sheetMods": {
+   "MW": 5
+  }
+ },
+ {
+  "n": "Money Dispenser Harness",
+  "cat": "Accessory",
+  "mods": {
+   "BAR": 5,
+   "capsNoWeight": 1
+  },
+  "noteFrom": "STACKS, Money no Weight",
+  "parsed": true,
+  "sheetMods": {
+   "BAR": 5
+  }
+ },
+ {
+  "n": "Nuka Cola Backpack",
+  "cat": "Accessory",
+  "mods": {
+   "carry": 25
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Old World Fragrance",
+  "cat": "Accessory",
+  "mods": {
+   "C": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Pistol Harness",
+  "cat": "Accessory",
+  "mods": {
+   "SG": 5,
+   "swapFreePistol": 1
+  },
+  "noteFrom": "STACKS, Flag: No Pen to swap to pistol",
+  "parsed": true,
+  "sheetMods": {
+   "SG": 5
+  }
+ },
+ {
+  "n": "Pocket Protector",
+  "cat": "Accessory",
+  "mods": {
+   "SCI": 10,
+   "SUR": -10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Prospector Backpack",
+  "cat": "Accessory",
+  "mods": {
+   "I": -1,
+   "carry": 30
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Quick Repair Harness",
+  "cat": "Accessory",
+  "mods": {
+   "REP": 5,
+   "clearJamAdd": -1
+  },
+  "noteFrom": "STACKS, Flag: -1 Unjam Cost",
+  "parsed": true,
+  "sheetMods": {
+   "REP": 5
+  }
+ },
+ {
+  "n": "Septum Piercing",
+  "cat": "Accessory",
+  "mods": {
+   "EW": 10,
+   "BG": -10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Steel Toed Boots",
+  "cat": "Accessory",
+  "mods": {
+   "MW": 10,
+   "SNK": -10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sunset Sarsaparilla Backpack",
+  "cat": "Accessory",
+  "mods": {
+   "carry": 25
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Survival Kit",
+  "cat": "Accessory",
+  "mods": {
+   "A": -1,
+   "SUR": 10,
+   "carry": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Survival Toolbelt",
+  "cat": "Accessory",
+  "mods": {
+   "SPE": 5,
+   "counterAP": -1
+  },
+  "noteFrom": "STACKS, Flag: -1 Counter AP cost",
+  "parsed": true,
+  "sheetMods": {
+   "SPE": 5
+  }
+ },
+ {
+  "n": "Tactical Drink Harness",
+  "cat": "Accessory",
+  "noteFrom": "Flag: -1 Drink AP cost",
+  "parsed": true,
+  "sheetMods": {},
+  "mods": {
+   "drinkAP": -1
+  }
+ },
+ {
+  "n": "Tesla Harness",
+  "cat": "Accessory",
+  "mods": {
+   "EW": 5,
+   "reload": -1
+  },
+  "noteFrom": "STACKS",
+  "parsed": true,
+  "sheetMods": {
+   "EW": 5,
+   "reload": -1
+  }
+ },
+ {
+  "n": "Thermal Underwear",
+  "cat": "Accessory",
+  "mods": {
+   "acc": -0.1,
+   "resist:Frozen": 1
+  },
+  "noteFrom": "Cold Resist 5, CHance to hit for Hot ENV",
+  "parsed": true,
+  "sheetMods": {
+   "acc": -0.1
+  }
+ },
+ {
+  "n": "White Gloves",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Red Flannel Shirt (Blunt/Pierce)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Double Helix Bracelet (Fast Laser)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Eclipse Pin (Fast Plasma)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Very Lucky Coin (Pierce/Blunt)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "American Firearms Association Membership Card (PDW)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Baseball Eye Black (Blunt/Slash)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Breathing Mask",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Burgundy Headband (LMG)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Cleats",
+  "cat": "Accessory",
+  "mods": {
+   "C": -1,
+   "A": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Desert Rose Necklace",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Duck Call Lanyard (20 Gauge)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Eagle Scout's Shooting Patch (Vintage Rifle)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Pocket Hologram Icon (Powered Elemental)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Firefighter's Badge (Fueled Elemental)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Gas Station Nametag (12 Gauge)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Give Peace A Chance Pin (Semi-Auto Rifle)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Glowing Loaded Dice",
+  "cat": "Accessory",
+  "mods": {
+   "I": -1,
+   "L": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Green Headband (Missile)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Gunpowder Pouch (40mm)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Heavy Weaponry Back Support",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Hiking Backpack",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Hockey Mask (Slash/Pierce)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Lava Lamp Charm (Hot Laser)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Licenced Firework Technician Lanyard (Rocket)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Lucky Bullet (Heavy)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Marathon Runner's Shoes",
+  "cat": "Accessory",
+  "mods": {
+   "S": -1,
+   "E": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Aviators (Semi-Auto Pistol)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Military Grade Goggles",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Mirrored Glasses",
+  "cat": "Accessory",
+  "mods": {
+   "P": 2,
+   "L": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Nootropic Auto-Injector",
+  "cat": "Accessory",
+  "mods": {
+   "E": -1,
+   "I": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Obsidian Ring (Slash/Blunt)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Operator Watch (SMG)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Ornate Chrome Pendant (Heavy Pistol)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Cuban Link Necklace (Machine Pistol)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Paratrooper's Insignia (Carbine)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Pip-Boy 2000",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Plasma Globe Charm (Hot Plasma)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Poppy Flower (AMR)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Pure Ivory Bracelet (Heavy Rifle)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Red and White Pocket Square (Auto Rifle)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Rudimentary Exoskeleton",
+  "cat": "Accessory",
+  "mods": {
+   "S": 2,
+   "A": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Shamrock Pin (Mines)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sharktooth Necklace (Pierce/Slash)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sherrif's Badge (Revolver)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Shutter Shades",
+  "cat": "Accessory",
+  "mods": {
+   "P": -1,
+   "C": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Spent Energy Cell Necklace (Electric)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Spent Shell Necklace (25mm)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Spider Tack (Thrown)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Spirit of Juba Keffiyeh (DMR)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Strangely Sparkling Necklace (Magnetic)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Tactical Gloves",
+  "cat": "Accessory",
+  "mods": {
+   "reload": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "The Evil Eye Necklace",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Valence Radii-Accentuator",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Voroshilov Sharpshooter's Badge (Sniper Rifle)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Wrist Weights (Hand)",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Adventurer's Backpack",
+  "cat": "Accessory",
+  "mods": {
+   "A": -3,
+   "SUR": 10,
+   "carry": 50
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Assassin Mask",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Atomic-Valence Tri-Radii-Oscillator",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Climbing Claws",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Fancy Timepiece",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Heavy Backpack",
+  "cat": "Accessory",
+  "mods": {
+   "A": -3,
+   "SNK": 10,
+   "carry": 60
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Mad Scientist Goggles",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Military Backpack",
+  "cat": "Accessory",
+  "mods": {
+   "A": -2,
+   "SNK": 10,
+   "carry": 50,
+   "enemyAcc": 0.1,
+   "ammoWeight": -0.25
+  },
+  "noteFrom": "Ammo Lbs*.75",
+  "parsed": true,
+  "sheetMods": {
+   "A": -2,
+   "SNK": 10,
+   "carry": 50,
+   "enemyAcc": 0.1
+  }
+ },
+ {
+  "n": "Pip-Boy 3000",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Rebreather",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Future Proof Vision Goggles",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Pimp-Boy 3 Billion",
+  "cat": "Accessory",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Ghoul",
+  "cat": "Trait",
+  "mods": {
+   "E": 1,
+   "C": -3,
+   "A": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Glowing One",
+  "cat": "Trait",
+  "mods": {
+   "E": 1,
+   "C": -5,
+   "dt": 8
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Nightkin",
+  "cat": "Trait",
+  "mods": {
+   "S": 2,
+   "I": -3,
+   "SNK": 20
+  },
+  "note": "Addicted to Stealth Boys",
+  "noteFrom": "Addicted to Stealth Boys",
+  "parsed": true
+ },
+ {
+  "n": "Ogrish",
+  "cat": "Trait",
+  "mods": {
+   "S": 1,
+   "E": 1,
+   "setC": 1
+  },
+  "noteFrom": "Set CHA to 1",
+  "parsed": true,
+  "sheetMods": {
+   "S": 1,
+   "E": 1
+  }
+ },
+ {
+  "n": "New Gen Synth",
+  "cat": "Trait",
+  "mods": {
+   "S": 1,
+   "I": 1,
+   "dmgTaken": 0.1
+  },
+  "noteFrom": "EW Dam Taken +10%",
+  "parsed": true,
+  "sheetMods": {
+   "S": 1,
+   "I": 1
+  },
+  "when": {
+   "attackerTabs": [
+    "EW"
+   ]
+  }
+ },
+ {
+  "n": "Old Gen Synth",
+  "cat": "Trait",
+  "mods": {
+   "S": 2,
+   "C": -2,
+   "I": 2,
+   "dmgTaken": 0.2
+  },
+  "noteFrom": "EW Dam Taken +20%",
+  "parsed": true,
+  "sheetMods": {
+   "S": 2,
+   "C": -2,
+   "I": 2
+  },
+  "when": {
+   "attackerTabs": [
+    "EW"
+   ]
+  }
+ },
+ {
+  "n": "Super Mutant",
+  "cat": "Trait",
+  "mods": {
+   "S": 3,
+   "I": -3,
+   "BG": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Addict in Recovery",
+  "cat": "Trait",
+  "mods": {
+   "A": 1,
+   "SPE": 10
+  },
+  "noteFrom": "Speech + with Sober",
+  "parsed": true,
+  "sheetMods": {
+   "A": 1,
+   "SPE": 10
+  },
+  "when": {
+   "sober": true
+  }
+ },
+ {
+  "n": "Alcoholic in Recovery",
+  "cat": "Trait",
+  "mods": {
+   "E": 1,
+   "SPE": 10
+  },
+  "noteFrom": "Speech + with Sober",
+  "parsed": true,
+  "sheetMods": {
+   "E": 1,
+   "SPE": 10
+  },
+  "when": {
+   "sober": true
+  }
+ },
+ {
+  "n": "Ascetic",
+  "cat": "Trait",
+  "mods": {
+   "carryMul": -0.5,
+   "pts": 2
+  },
+  "noteFrom": "Carry /2",
+  "parsed": true,
+  "sheetMods": {
+   "carryMul": -0.5,
+   "pts": 2
+  }
+ },
+ {
+  "n": "Asexual",
+  "cat": "Trait",
+  "mods": {
+   "C": -2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Autistic",
+  "cat": "Trait",
+  "noteFrom": "Speech capped at 50, gain 1 Afraid every speech encounter.",
+  "parsed": true,
+  "sheetMods": {},
+  "mods": {
+   "speechCap": 50
+  }
+ },
+ {
+  "n": "Bad Leg",
+  "cat": "Trait",
+  "mods": {
+   "A": -2,
+   "MED": 10,
+   "MW": 10,
+   "SNK": -10,
+   "mvm": -0.1,
+   "acc": -0.1
+  },
+  "noteFrom": "Leg Crippled Perma 1",
+  "parsed": true,
+  "sheetMods": {
+   "A": -2,
+   "MED": 10,
+   "MW": 10,
+   "SNK": -10
+  }
+ },
+ {
+  "n": "Bigoted",
+  "cat": "Trait",
+  "mods": {
+   "dam": 0.1
+  },
+  "noteFrom": "If (ENEMY) = (Mob)",
+  "parsed": true,
+  "sheetMods": {
+   "dam": 0.1
+  },
+  "when": {
+   "vsMob": true
+  }
+ },
+ {
+  "n": "Bipolar (Good Phase)",
+  "cat": "Trait",
+  "mods": {
+   "C": 1,
+   "I": 1,
+   "SPE": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Bipolar (Bad Phase)",
+  "cat": "Trait",
+  "mods": {
+   "C": -1,
+   "I": -1,
+   "SPE": -10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Bloodlust",
+  "cat": "Trait",
+  "mods": {
+   "ap": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Boozer",
+  "cat": "Trait",
+  "mods": {
+   "SPE": 15
+  },
+  "noteFrom": "With Alcoholic",
+  "parsed": true,
+  "sheetMods": {
+   "SPE": 15
+  },
+  "when": {
+   "hasStatus": [
+    "Loose",
+    "Drunk"
+   ]
+  }
+ },
+ {
+  "n": "Ceramic Tiger",
+  "cat": "Trait",
+  "mods": {
+   "hpMul": 0.7,
+   "dam": 0.25,
+   "crit": 0.05,
+   "crippleTaken": 1
+  },
+  "noteFrom": "Cipple Chance *2",
+  "parsed": true,
+  "sheetMods": {
+   "hpMul": 0.7,
+   "dam": 0.25,
+   "crit": 0.05
+  }
+ },
+ {
+  "n": "Chem Resistant",
+  "cat": "Trait",
+  "noteFrom": "Not automated: Addict Ch -0.5, Chem Eff * -0.5",
+  "parsed": true,
+  "mods": {
+   "addict": -0.5,
+   "chemEff": -0.5
+  }
+ },
+ {
+  "n": "Child At Heart",
+  "cat": "Trait",
+  "mods": {
+   "BAR": -10,
+   "xpMul": 0.15
+  },
+  "noteFrom": "15% XP",
+  "parsed": true,
+  "sheetMods": {
+   "BAR": -10
+  }
+ },
+ {
+  "n": "Claustrophobia",
+  "cat": "Trait",
+  "mods": {
+   "S": 1,
+   "P": 1,
+   "E": 1,
+   "C": 1,
+   "I": 1,
+   "A": 1,
+   "L": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Compulsive Liar",
+  "cat": "Trait",
+  "mods": {
+   "SPE": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Congenital Heart Defect",
+  "cat": "Trait",
+  "mods": {
+   "MED": 10,
+   "hp": -25,
+   "chemEff": 0.25
+  },
+  "noteFrom": "Not automated: Chem Eff * 1.25",
+  "parsed": true
+ },
+ {
+  "n": "Country Girl/Boy",
+  "cat": "Trait",
+  "mods": {
+   "C": 1,
+   "I": -2,
+   "BG": 10,
+   "MW": 10
+  },
+  "noteFrom": "Meant only for: Light Shotgun, Heavy Shotgun",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Light Shotgun",
+    "Heavy Shotgun"
+   ]
+  }
+ },
+ {
+  "n": "Coward",
+  "cat": "Trait",
+  "mods": {
+   "hp": 10,
+   "enemyAcc": -0.15
+  },
+  "noteFrom": "During combat",
+  "parsed": true,
+  "sheetMods": {
+   "hp": 10,
+   "enemyAcc": -0.15
+  },
+  "when": {
+   "combat": true
+  }
+ },
+ {
+  "n": "Deaf",
+  "cat": "Trait",
+  "mods": {
+   "P": -1,
+   "C": -1,
+   "I": 1,
+   "EXP": 10,
+   "BG": 15
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Dry Spell",
+  "cat": "Trait",
+  "mods": {
+   "ap": 2
+  },
+  "noteFrom": "When Crit",
+  "parsed": true,
+  "sheetMods": {
+   "ap": 2
+  },
+  "when": {
+   "afterCrit": true
+  }
+ },
+ {
+  "n": "Empath",
+  "cat": "Trait",
+  "mods": {
+   "C": 1,
+   "SPE": 10,
+   "resistMental": -2
+  },
+  "noteFrom": "Afraid Resist -2",
+  "parsed": true,
+  "sheetMods": {
+   "C": 1,
+   "SPE": 10
+  }
+ },
+ {
+  "n": "Erratic Mood Swings (Good)",
+  "cat": "Trait",
+  "mods": {
+   "C": 2,
+   "I": 2,
+   "SPE": 10,
+   "xpMul": 0.05
+  },
+  "noteFrom": "5%+ XP",
+  "parsed": true,
+  "sheetMods": {
+   "C": 2,
+   "I": 2,
+   "SPE": 10
+  }
+ },
+ {
+  "n": "Erratic Mood Swings (Bad)",
+  "cat": "Trait",
+  "mods": {
+   "C": -2,
+   "I": -2,
+   "SPE": -10,
+   "xpMul": -0.05
+  },
+  "noteFrom": "-5% XP",
+  "parsed": true,
+  "sheetMods": {
+   "C": -2,
+   "I": -2,
+   "SPE": -10
+  }
+ },
+ {
+  "n": "Far-Sighted",
+  "cat": "Trait",
+  "mods": {
+   "P": -1,
+   "r1": -0.2,
+   "r2": -0.2,
+   "r3": -0.2,
+   "r4": -0.2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Finesse",
+  "cat": "Trait",
+  "mods": {
+   "dam": -0.25,
+   "crit": 0.1,
+   "critDam": 0.25
+  },
+  "noteFrom": "Not automated: Crit D 0.25",
+  "parsed": true
+ },
+ {
+  "n": "Gambling Addict (Win)",
+  "cat": "Trait",
+  "mods": {
+   "C": 1,
+   "BAR": 10,
+   "addict": -1
+  },
+  "noteFrom": "Not automated: Addict Ch -1.0",
+  "parsed": true
+ },
+ {
+  "n": "Gambling Addict (Loss)",
+  "cat": "Trait",
+  "mods": {
+   "C": -1,
+   "BAR": -20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Gifted",
+  "cat": "Trait",
+  "mods": {
+   "S": 1,
+   "P": 1,
+   "E": 1,
+   "C": 1,
+   "I": 1,
+   "A": 1,
+   "L": 1,
+   "pts": -5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Got Out of Dodge",
+  "cat": "Trait",
+  "mods": {
+   "LPK": 10,
+   "SNK": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Heavy Handed",
+  "cat": "Trait",
+  "mods": {
+   "dam": 0.2,
+   "crit": -0.5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Hoarder",
+  "cat": "Trait",
+  "mods": {
+   "carry": 25
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Honest to a Fault",
+  "cat": "Trait",
+  "mods": {
+   "BAR": -10,
+   "SNK": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Impatient",
+  "cat": "Trait",
+  "mods": {
+   "apMul": 0.25,
+   "crit": -1,
+   "critMult": -2,
+   "superMult": -3
+  },
+  "noteFrom": "Not automated: Crit Mult +/- -2.0, Super Crit Mult +/- -3.0",
+  "parsed": true
+ },
+ {
+  "n": "Improviser",
+  "cat": "Trait",
+  "mods": {
+   "SNK": -10,
+   "apMul": 0.1,
+   "pri": 2,
+   "dam": 0.1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Inhuman Bigot",
+  "cat": "Trait",
+  "mods": {
+   "MW": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Institute Loyalist",
+  "cat": "Trait",
+  "mods": {
+   "EW": 15
+  },
+  "noteFrom": "Meant only for: Hot Laser, Fast Laser",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Hot Laser",
+    "Fast Laser"
+   ]
+  }
+ },
+ {
+  "n": "Jinxed",
+  "cat": "Trait",
+  "noteFrom": "Not automated: Super Fail Roll 5.0, Enemy Fail Roll 5.0",
+  "parsed": true,
+  "mods": {
+   "failRoll": 5,
+   "enemyFail": 5
+  }
+ },
+ {
+  "n": "Late Bloomer",
+  "cat": "Trait",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "NATIONAL LOYALTY",
+  "cat": "Trait",
+  "mods": {
+   "EW": 15,
+   "EXP": 15,
+   "SG": 15,
+   "BG": 15,
+   "MW": 15
+  },
+  "note": "IF Loyalty fulfilled",
+  "noteFrom": "IF Loyalty fulfilled",
+  "parsed": true
+ },
+ {
+  "n": "Masochist",
+  "cat": "Trait",
+  "noteFrom": "2+ AP per hit taken",
+  "parsed": true,
+  "sheetMods": {},
+  "mods": {
+   "apOnHit": 2
+  }
+ },
+ {
+  "n": "Sadist",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Mute",
+  "cat": "Trait",
+  "mods": {
+   "SNK": 15,
+   "SPE": -10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Naïve Optimism",
+  "cat": "Trait",
+  "mods": {
+   "BAR": 10,
+   "EW": -10,
+   "EXP": -10,
+   "SG": -10,
+   "BG": -10,
+   "LPK": 10,
+   "MED": 10,
+   "MW": -10,
+   "REP": 10,
+   "SCI": 10,
+   "SNK": 10,
+   "SPE": 10,
+   "SUR": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Manlet",
+  "cat": "Trait",
+  "mods": {
+   "P": -1,
+   "MW": 10,
+   "crit": 0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Manlet (Universal IN Combat)",
+  "cat": "Trait",
+  "mods": {
+   "I": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Near-Sighted",
+  "cat": "Trait",
+  "mods": {
+   "P": -1,
+   "r5": -0.2,
+   "r6": -0.2,
+   "r7": -0.2,
+   "r8": -0.2,
+   "r9": -0.2,
+   "r10": -0.2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Nearly Blind",
+  "cat": "Trait",
+  "mods": {
+   "P": -3,
+   "SPE": 10,
+   "SUR": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Nearly Paralyzed",
+  "cat": "Trait",
+  "mods": {
+   "carry": 25
+  },
+  "note": "Double durability on legs, crippled chest immobilizes",
+  "noteFrom": "Double durability on legs, crippled chest immobilizes",
+  "parsed": true
+ },
+ {
+  "n": "Obsessive Compulsive",
+  "cat": "Trait",
+  "mods": {
+   "pts": -3
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Old School",
+  "cat": "Trait",
+  "mods": {
+   "SCI": -10,
+   "SUR": 10,
+   "dam": 0.1,
+   "noEW": 1
+  },
+  "noteFrom": "Cannot use EW; Meant only for: Revolver BG, Longbow, X-Bow, Revolver, Lever-Action Rifle",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Revolver BG",
+    "Longbow",
+    "X-Bow",
+    "Revolver",
+    "Lever-Action Rifle"
+   ]
+  },
+  "sheetMods": {
+   "SCI": -10,
+   "SUR": 10,
+   "dam": 0.1
+  }
+ },
+ {
+  "n": "One Eye Lost",
+  "cat": "Trait",
+  "mods": {
+   "P": -2,
+   "acc": -0.1
+  },
+  "noteFrom": "Acc after moving",
+  "parsed": true,
+  "sheetMods": {
+   "P": -2,
+   "acc": -0.1
+  },
+  "when": {
+   "moved": true
+  }
+ },
+ {
+  "n": "One-Handed",
+  "cat": "Trait",
+  "mods": {
+   "S": -1,
+   "A": 1,
+   "apMul": 0.25,
+   "acc": 0.05,
+   "apCost": 2,
+   "reload": 1
+  },
+  "noteFrom": "Meant only for: Pistol BG, Revolver",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Pistol BG",
+    "Revolver"
+   ]
+  }
+ },
+ {
+  "n": "Opportunist",
+  "cat": "Trait",
+  "mods": {
+   "dam": 0.5
+  },
+  "noteFrom": "<25%",
+  "parsed": true,
+  "when": {
+   "hpBelow": 0.25
+  }
+ },
+ {
+  "n": "Opportunist (>50%)",
+  "cat": "Trait",
+  "mods": {
+   "dam": -0.25
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Paranoid",
+  "cat": "Trait",
+  "mods": {
+   "P": 1,
+   "pri": 1,
+   "startAfraid": 3
+  },
+  "noteFrom": "Start at 3 Afraid always 1 Afraid",
+  "parsed": true,
+  "sheetMods": {
+   "P": 1,
+   "pri": 1
+  }
+ },
+ {
+  "n": "Phineas Gage Syndrome",
+  "cat": "Trait",
+  "mods": {
+   "C": -3,
+   "I": -3,
+   "MW": 25,
+   "dam": 0.2
+  },
+  "noteFrom": "Meant only for: Blunt",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Blunt"
+   ]
+  }
+ },
+ {
+  "n": "PTSD",
+  "cat": "Trait",
+  "mods": {
+   "BAR": -10,
+   "SG": 10,
+   "MED": 10,
+   "MW": 10,
+   "SPE": -10,
+   "SUR": 10
+  },
+  "note": "Loud Noise inflict Afraid",
+  "noteFrom": "Loud Noise inflict Afraid",
+  "parsed": true
+ },
+ {
+  "n": "Pyromaniac",
+  "cat": "Trait",
+  "mods": {
+   "ap": 2
+  },
+  "noteFrom": "Meant only for: Fueled",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Fueled"
+   ]
+  }
+ },
+ {
+  "n": "Redpilled",
+  "cat": "Trait",
+  "mods": {
+   "C": -2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Redpilled (Opposite)",
+  "cat": "Trait",
+  "mods": {
+   "C": -2,
+   "dam": 0.1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sartorial Snob",
+  "cat": "Trait",
+  "mods": {
+   "ap": 3
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Schizoprenia",
+  "cat": "Trait",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sensitive Hearing",
+  "cat": "Trait",
+  "mods": {
+   "P": 2,
+   "pri": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sensitive Hearing (Loud Noise)",
+  "cat": "Trait",
+  "mods": {
+   "P": -4,
+   "pri": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Silver Spoon",
+  "cat": "Trait",
+  "mods": {
+   "BAR": 10,
+   "SUR": -25
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Small Frame",
+  "cat": "Trait",
+  "mods": {
+   "A": 1,
+   "carry": -50
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sociopath",
+  "cat": "Trait",
+  "mods": {
+   "C": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Split Personalities",
+  "cat": "Trait",
+  "note": "TWO SPECIALS",
+  "noteFrom": "TWO SPECIALS",
+  "parsed": true
+ },
+ {
+  "n": "Spray N' Pray",
+  "cat": "Trait",
+  "mods": {
+   "acc": -0.1,
+   "apCostMul": 0.7
+  },
+  "noteFrom": "Not automated: AP Cost / 0.7",
+  "parsed": true
+ },
+ {
+  "n": "Stoic",
+  "cat": "Trait",
+  "mods": {
+   "C": -2,
+   "resistMental": 2
+  },
+  "noteFrom": "Afraid Reist +2",
+  "parsed": true,
+  "sheetMods": {
+   "C": -2
+  }
+ },
+ {
+  "n": "Terrifying",
+  "cat": "Trait",
+  "mods": {
+   "enemyAcc": -0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "The Masquerade (Night)",
+  "cat": "Trait",
+  "mods": {
+   "S": 1,
+   "P": 1,
+   "E": 1,
+   "C": 1,
+   "I": 1,
+   "A": 1,
+   "L": 1,
+   "SNK": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "The Masquerade (Day)",
+  "cat": "Trait",
+  "mods": {
+   "S": -2,
+   "P": -2,
+   "E": -2,
+   "C": -2,
+   "I": -2,
+   "A": -2,
+   "L": -2,
+   "SNK": 20,
+   "dt": -5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Thick-Skin",
+  "cat": "Trait",
+  "mods": {
+   "dt": 2,
+   "moveAdd": 1,
+   "noItems": 1
+  },
+  "noteFrom": "Movement in combat costs +1 AP, cannot access inventory in combat",
+  "parsed": true,
+  "sheetMods": {
+   "dt": 2
+  }
+ },
+ {
+  "n": "Traumatic Childhood",
+  "cat": "Trait",
+  "mods": {
+   "P": 1,
+   "E": 1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Underworld Nationalist",
+  "cat": "Trait",
+  "noteFrom": "Crit chance +5% per human killed",
+  "parsed": true,
+  "sheetMods": {},
+  "mods": {
+   "crit": 0.05
+  },
+  "when": {
+   "perKillHuman": true
+  }
+ },
+ {
+  "n": "Urbanite",
+  "cat": "Trait",
+  "mods": {
+   "C": -2,
+   "I": 1,
+   "SG": 10,
+   "MW": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Wembanyama",
+  "cat": "Trait",
+  "mods": {
+   "S": -1,
+   "P": 1,
+   "A": 1,
+   "crippleTaken": 1
+  },
+  "noteFrom": "x2 Limb Cripple Chance",
+  "parsed": true,
+  "sheetMods": {
+   "S": -1,
+   "P": 1,
+   "A": 1
+  }
+ },
+ {
+  "n": "Whore (Laid)",
+  "cat": "Trait",
+  "mods": {
+   "A": 2,
+   "L": 2,
+   "SPE": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Whore (Not Laid)",
+  "cat": "Trait",
+  "mods": {
+   "P": -2,
+   "I": -2,
+   "SPE": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Yin-Yang",
+  "cat": "Trait",
+  "noteFrom": "Not automated: Super Crit Roll 2.0, Super Fail Roll 2.0",
+  "parsed": true,
+  "mods": {
+   "superRoll": 2,
+   "failRoll": 2
+  }
+ },
+ {
+  "n": "Made Peace",
+  "cat": "Trait Evolution",
+  "mods": {
+   "A": 1,
+   "pri": 3
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Vegas Become Human",
+  "cat": "Trait Evolution",
+  "mods": {
+   "SPE": 15
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Terminator",
+  "cat": "Trait Evolution",
+  "mods": {
+   "crit": 0.1
+  },
+  "noteFrom": "vs Humans",
+  "parsed": true,
+  "when": {
+   "vs": [
+    "human"
+   ]
+  }
+ },
+ {
+  "n": "Finally Sober",
+  "cat": "Trait Evolution",
+  "noteFrom": "Not automated: Addict Ch -1.0",
+  "parsed": true,
+  "mods": {
+   "addict": -1
+  }
+ },
+ {
+  "n": "Hermit",
+  "cat": "Trait Evolution",
+  "mods": {
+   "I": 1,
+   "acc": 0.15
+  },
+  "noteFrom": "When Carry Weight /2",
+  "parsed": true,
+  "sheetMods": {
+   "I": 1,
+   "acc": 0.15
+  },
+  "when": {
+   "lightLoad": true
+  }
+ },
+ {
+  "n": "Aromantic",
+  "cat": "Trait Evolution",
+  "mods": {
+   "r1": 0.15,
+   "r2": 0.15
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Subconscious Bias",
+  "cat": "Trait Evolution",
+  "mods": {
+   "A": 1,
+   "SNK": 5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Smooth Supremacist",
+  "cat": "Trait Evolution",
+  "mods": {
+   "dt": 5
+  },
+  "noteFrom": "When power armor",
+  "parsed": true,
+  "when": {
+   "armor": "Power"
+  }
+ },
+ {
+  "n": "Tuned In",
+  "cat": "Trait Evolution",
+  "mods": {
+   "C": 2,
+   "I": 2,
+   "SPE": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Ravenous Murderer",
+  "cat": "Trait Evolution",
+  "mods": {
+   "ap": 3
+  },
+  "noteFrom": "per bleed ef",
+  "parsed": true,
+  "sheetMods": {
+   "ap": 3
+  },
+  "when": {
+   "perBleed": true
+  }
+ },
+ {
+  "n": "Glass Cannon (Light)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "crit": 0.3
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Glass Cannon (Med)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "crit": 0.2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Glass Cannon (Heavy)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "crit": 0.1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Robotripper",
+  "cat": "Trait Evolution",
+  "noteFrom": "when +3 chems; Not automated: Addict Ch -1.0",
+  "parsed": true,
+  "mods": {
+   "addict": -1
+  },
+  "sheetMods": {
+   "addict": -1
+  },
+  "when": {
+   "chemsMin": 3
+  }
+ },
+ {
+  "n": "IDF Soldier (Riot Gear)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "dt": 5,
+   "dam": 0.1
+  },
+  "noteFrom": "with riot gear",
+  "parsed": true,
+  "sheetMods": {
+   "dt": 5,
+   "dam": 0.1
+  },
+  "when": {
+   "armor": "riot"
+  }
+ },
+ {
+  "n": "Live the Lie",
+  "cat": "Trait Evolution",
+  "mods": {
+   "BAR": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Somatic Heart Healing",
+  "cat": "Trait Evolution",
+  "noteFrom": "Chems + Heal Chems; Not automated: Chem Eff * 2.0",
+  "parsed": true,
+  "mods": {
+   "chemEff": 1
+  },
+  "sheetMods": {
+   "chemEff": 1
+  }
+ },
+ {
+  "n": "Thank God I'm a Country Boy/Girl",
+  "cat": "Trait Evolution",
+  "mods": {
+   "SUR": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Conscientious Objector",
+  "cat": "Trait Evolution",
+  "mods": {
+   "EW": -100,
+   "EXP": -100,
+   "SG": -100,
+   "BG": -100,
+   "LPK": 20,
+   "MW": -100,
+   "REP": 20,
+   "SCI": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Truecel",
+  "cat": "Trait Evolution",
+  "mods": {
+   "EW": 20,
+   "SCI": 15
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "High EQ",
+  "cat": "Trait Evolution",
+  "noteFrom": "1+ Afraid Resist",
+  "parsed": true,
+  "sheetMods": {},
+  "mods": {
+   "resistMental": 1
+  }
+ },
+ {
+  "n": "Clairvoyance (top 50% good Roll)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "C": 4,
+   "I": 4,
+   "SPE": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Eagle Eyed",
+  "cat": "Trait Evolution",
+  "mods": {
+   "r8": 0.15,
+   "r9": 0.15,
+   "r10": 0.15,
+   "superRoll": 5
+  },
+  "noteFrom": "5+ Super Far Roll",
+  "parsed": true,
+  "sheetMods": {
+   "r8": 0.15,
+   "r9": 0.15,
+   "r10": 0.15
+  },
+  "when": {
+   "rangeMin": 8
+  }
+ },
+ {
+  "n": "Conflict Gambler",
+  "cat": "Trait Evolution",
+  "noteFrom": "Not automated: Crit D 0.25, Super Crit Roll 1.0",
+  "parsed": true,
+  "mods": {
+   "critDam": 0.25,
+   "superRoll": 1
+  }
+ },
+ {
+  "n": "New Vegas Legend",
+  "cat": "Trait Evolution",
+  "noteFrom": "per 100 chips; Not automated: Crit D 0.01",
+  "parsed": true,
+  "mods": {
+   "critDam": 0.01
+  },
+  "sheetMods": {
+   "critDam": 0.01
+  },
+  "when": {
+   "perCaps100": true
+  }
+ },
+ {
+  "n": "Arrogance (Weaker)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "dam": 0.2
+  },
+  "noteFrom": "when HP>enemy HP",
+  "parsed": true,
+  "sheetMods": {
+   "dam": 0.2
+  },
+  "when": {
+   "hpHigher": true
+  }
+ },
+ {
+  "n": "Fistful of Dollars",
+  "cat": "Trait Evolution",
+  "mods": {
+   "LPK": 20,
+   "SUR": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Pack Rat",
+  "cat": "Trait Evolution",
+  "mods": {
+   "carry": 25,
+   "lightHalf": 1
+  },
+  "noteFrom": "when item <2 lbs 50% wght",
+  "parsed": true,
+  "sheetMods": {
+   "carry": 25
+  }
+ },
+ {
+  "n": "Keep it 100",
+  "cat": "Trait Evolution",
+  "mods": {
+   "SPE": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Twitchy",
+  "cat": "Trait Evolution",
+  "mods": {
+   "pri": 3
+  },
+  "note": "when enemy crit fail start turn",
+  "noteFrom": "when enemy crit fail start turn",
+  "parsed": true
+ },
+ {
+  "n": "Creative Strategist (Partywide)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "ap": 2
+  },
+  "note": "only for movement",
+  "noteFrom": "only for movement",
+  "parsed": true
+ },
+ {
+  "n": "Unity",
+  "cat": "Trait Evolution",
+  "noteFrom": "Meant only for: Fast Laser, Heavy, Missile",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Fast Laser",
+    "Heavy",
+    "Missile"
+   ]
+  }
+ },
+ {
+  "n": "Courser",
+  "cat": "Trait Evolution",
+  "mods": {
+   "SNK": 25
+  },
+  "noteFrom": "when stealthboy",
+  "parsed": true,
+  "sheetMods": {
+   "SNK": 25
+  },
+  "when": {
+   "hasEffect": "Stealth Boy"
+  }
+ },
+ {
+  "n": "Dreamcatcher (ally)",
+  "cat": "Trait Evolution",
+  "noteFrom": "Not automated: Super Fail Roll -1.0",
+  "parsed": true,
+  "mods": {
+   "failRoll": -1
+  }
+ },
+ {
+  "n": "The Red Sun (Weapon Match)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "EW": 10,
+   "EXP": 10,
+   "SG": 10,
+   "BG": 10,
+   "MW": 10,
+   "SNK": 10
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Does it Really Matter?",
+  "cat": "Trait Evolution",
+  "mods": {
+   "SNK": 20,
+   "acc": 0.1
+  },
+  "noteFrom": "when silenced",
+  "parsed": true,
+  "when": {
+   "silenced": true
+  }
+ },
+ {
+  "n": "Blissful Ignorance",
+  "cat": "Trait Evolution",
+  "mods": {
+   "enemyAcc": 0.15
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Napoleon Complex (Party)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "pri": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Napoleon Complex (Untargeted)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "pri": 2,
+   "enemyAcc": 0.15
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Up Close and Personal",
+  "cat": "Trait Evolution",
+  "mods": {
+   "r1": 0.15,
+   "r2": 0.15,
+   "r3": 0.15
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Heightened Senses",
+  "cat": "Trait Evolution",
+  "mods": {
+   "pri": 2,
+   "r6": -2,
+   "r7": -2,
+   "r8": -2,
+   "r9": -2,
+   "r10": -2,
+   "reload": -1
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Reinforced Spine",
+  "cat": "Trait Evolution",
+  "mods": {
+   "carry": 25
+  },
+  "note": "chest cannot cripple",
+  "noteFrom": "chest cannot cripple",
+  "parsed": true
+ },
+ {
+  "n": "Neurotic Devotion",
+  "cat": "Trait Evolution",
+  "mods": {
+   "acc": 0.025
+  },
+  "noteFrom": "per hit",
+  "parsed": true,
+  "sheetMods": {
+   "acc": 0.025
+  },
+  "when": {
+   "perHitTaken": true
+  }
+ },
+ {
+  "n": "From A Better Time (Gear Match)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "dt": 5,
+   "acc": 0.1
+  },
+  "noteFrom": "Meant only for: Longbow, X-Bow, Lever-Action Rifle",
+  "parsed": true,
+  "when": {
+   "types": [
+    "Longbow",
+    "X-Bow",
+    "Lever-Action Rifle"
+   ]
+  }
+ },
+ {
+  "n": "One Armed Bandit",
+  "cat": "Trait Evolution",
+  "mods": {
+   "ap": 2
+  },
+  "noteFrom": "when one handed",
+  "parsed": true,
+  "when": {
+   "oneHanded": true
+  }
+ },
+ {
+  "n": "Ruthless (Below 25% HP)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "crit": 0.25,
+   "critDam": 0.25
+  },
+  "noteFrom": "Not automated: Crit D 0.25",
+  "parsed": true
+ },
+ {
+  "n": "Ruthless (Lower Tier)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "dam": 0.25
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Hypervigilance",
+  "cat": "Trait Evolution",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Party Rocker",
+  "cat": "Trait Evolution",
+  "noteFrom": "Not automated: Chem Eff * 2.0",
+  "parsed": true,
+  "mods": {
+   "chemEff": 1
+  }
+ },
+ {
+  "n": "PVTRIQT",
+  "cat": "Trait Evolution",
+  "mods": {
+   "EXP": 15,
+   "BG": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Muscle Memory",
+  "cat": "Trait Evolution",
+  "mods": {
+   "pri": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Muscle Memory (After Crit)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "ap": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Blackpilled",
+  "cat": "Trait Evolution",
+  "mods": {
+   "pri": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Blackpilled (when below 20% HP)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "ap": 5,
+   "pri": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Menace 2 Society",
+  "cat": "Trait Evolution",
+  "mods": {
+   "dam": 0.05
+  },
+  "noteFrom": "per bleed, cripple, afraid",
+  "parsed": true,
+  "sheetMods": {
+   "dam": 0.05
+  },
+  "when": {
+   "perDebuff": true
+  }
+ },
+ {
+  "n": "Runway Critic (when above light)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "pen": 5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Ascendence",
+  "cat": "Trait Evolution",
+  "mods": {
+   "pri": 2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Cat-Like Reflexes",
+  "cat": "Trait Evolution",
+  "mods": {
+   "P": 1,
+   "pri": 3
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Hard Target",
+  "cat": "Trait Evolution",
+  "mods": {
+   "enemyAcc": -0.2
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Eastwood",
+  "cat": "Trait Evolution",
+  "mods": {
+   "hp": 15
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Globe Emoji (Enemy Match)",
+  "cat": "Trait Evolution",
+  "mods": {
+   "dam": 0.25
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Superficial Charm",
+  "cat": "Trait Evolution",
+  "mods": {
+   "SPE": 15
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Bullet Hose",
+  "cat": "Trait Evolution",
+  "noteFrom": "Criticals do not consume ammo",
+  "parsed": true,
+  "sheetMods": {},
+  "mods": {
+   "critNoAmmo": 1
+  }
+ },
+ {
+  "n": "Nosferatu",
+  "cat": "Trait Evolution",
+  "mods": {
+   "SPE": 20
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Turtle",
+  "cat": "Trait Evolution",
+  "mods": {
+   "dt": 3
+  },
+  "noteFrom": "when not moving, stackable",
+  "parsed": true,
+  "sheetMods": {
+   "dt": 3
+  },
+  "when": {
+   "perStill": true
+  }
+ },
+ {
+  "n": "Hades",
+  "cat": "Trait Evolution",
+  "mods": {
+   "dam": 0.5
+  },
+  "noteFrom": "when radiation weapon",
+  "parsed": true,
+  "sheetMods": {
+   "dam": 0.5
+  },
+  "when": {
+   "weaponStatus": "Irradiated"
+  }
+ },
+ {
+  "n": "Expat",
+  "cat": "Trait Evolution",
+  "mods": {
+   "crit": 0.1
+  },
+  "note": "Weapon Match",
+  "noteFrom": "Weapon Match",
+  "parsed": true
+ },
+ {
+  "n": "Dao of Pow",
+  "cat": "Trait Evolution",
+  "noteFrom": "Not automated: Super Crit Roll 1.0",
+  "parsed": true,
+  "mods": {
+   "superRoll": 1
+  }
+ },
+ {
+  "n": "Now is Not The Time for Fear",
+  "cat": "Trait Evolution",
+  "mods": {
+   "dam": 0.1
+  },
+  "noteFrom": "Per Afraid level",
+  "parsed": true,
+  "sheetMods": {
+   "dam": 0.1
+  },
+  "when": {
+   "perAfraid": true
+  }
+ },
+ {
+  "n": "Hard Cover",
+  "cat": "Situation",
+  "mods": {
+   "enemyAcc": -0.25
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Daytime",
+  "cat": "Situation",
+  "sub": "Time/Light",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Morning",
+  "cat": "Situation",
+  "sub": "Time/Light",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Evening",
+  "cat": "Situation",
+  "sub": "Time/Light",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Dusk",
+  "cat": "Situation",
+  "sub": "Time/Light",
+  "mods": {
+   "P": -3
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Midnight",
+  "cat": "Situation",
+  "sub": "Time/Light",
+  "mods": {
+   "P": -5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Outdoor",
+  "cat": "Situation",
+  "sub": "Time/Light",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Normal Indoor",
+  "cat": "Situation",
+  "sub": "Time/Light",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Low Indoor",
+  "cat": "Situation",
+  "sub": "Time/Light",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Blinding Brightness",
+  "cat": "Situation",
+  "sub": "Time/Light",
+  "mods": {
+   "acc": -0.05
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Pitch Black",
+  "cat": "Situation",
+  "sub": "Time/Light",
+  "mods": {
+   "P": -9
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Faded Lighting",
+  "cat": "Situation",
+  "sub": "Time/Light",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Emergency Lights",
+  "cat": "Situation",
+  "sub": "Time/Light",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Clear",
+  "cat": "Situation",
+  "sub": "Weather",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Light Rain",
+  "cat": "Situation",
+  "sub": "Weather",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Medium Rain",
+  "cat": "Situation",
+  "sub": "Weather",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Heavy Rain",
+  "cat": "Situation",
+  "sub": "Weather",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Downpour",
+  "cat": "Situation",
+  "sub": "Weather",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Fog",
+  "cat": "Situation",
+  "sub": "Weather",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Thunderstorm",
+  "cat": "Situation",
+  "sub": "Weather",
+  "mods": {
+   "SNK": 25
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Snowing",
+  "cat": "Situation",
+  "sub": "Weather",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Blizzard",
+  "cat": "Situation",
+  "sub": "Weather",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sandstorm",
+  "cat": "Situation",
+  "sub": "Weather",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Heatwave",
+  "cat": "Situation",
+  "sub": "Weather",
+  "mods": {
+   "apMul": -0.5
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Freezing",
+  "cat": "Situation",
+  "sub": "Weather",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "The Cloud",
+  "cat": "Situation",
+  "sub": "Weather",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Alarms",
+  "cat": "Situation",
+  "sub": "Weather",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Altitude",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Desert",
+  "cat": "Situation",
+  "sub": "Environment",
+  "mods": {
+   "apMul": -0.25
+  },
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Sparsely Wooded",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Dense Forest (Santa Cruz)",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Arid Shrubland (Hills Outside Irvine)",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Rocky Grassland",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Rolling Hills",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Grassland",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Coastal Banks",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Beach",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Rural Town (Nipton)",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Suburban (Irvine)",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Low Density Urban (Vegas Ruins)",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Medium Density Urban (Freeside)",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "High Density Urban (Strip, DC)",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Highway",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Cave",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ },
+ {
+  "n": "Vault",
+  "cat": "Situation",
+  "sub": "Environment",
+  "noteFrom": "",
+  "parsed": true
+ }
+]

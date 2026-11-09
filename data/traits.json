@@ -1,0 +1,1334 @@
+[
+ {
+  "code": "000",
+  "cat": "Charachter",
+  "n": "Ghoul",
+  "desc": "You are a ghoul, cool",
+  "ben": "Heal from Radiation, +1 END, feral ghouls neutral, can turn into glowing one",
+  "draw": "Ghoul bigotry, -3 CHA, -1 AGI",
+  "evo": "Made Peace",
+  "evoDesc": "You have finally made peace with who you are, gain newfound clarity",
+  "evoBonus": "1+ AGI, +3 Initiative",
+  "evoTrig": "Overcome act of extreme ghoul prejudice",
+  "fail": "Be a self hating ghoul",
+  "rep": "Uncle Ghoul",
+  "repDesc": "You're one of the good ones",
+  "repBonus": "Fear of Radiation, +2 CHA"
+ },
+ {
+  "code": "001",
+  "cat": "Charachter",
+  "n": "Glowing One",
+  "desc": "You are a glowing ghoul, emitting radiation but otherwise sane",
+  "ben": "Heal from Radiation, +8 DT, +1 END, feral ghouls friendly",
+  "draw": "Constantly emit radiation which must be contained for interraction, -5 CHA",
+  "evo": "Venerated Icon",
+  "evoDesc": "You have achieved saint-like status among ghouls",
+  "evoBonus": "You are a revered icon among ghouls",
+  "evoTrig": "Become venerated",
+  "fail": "cure radiation",
+  "rep": "Crypto Glowie"
+ },
+ {
+  "code": "002",
+  "cat": "Charachter",
+  "n": "Nightkin",
+  "desc": "You were doused in FEV and developed an addiction to Stealth Boys",
+  "ben": "Immune to Radiation, +2 STR, +20 Sneak, Mutants neutral",
+  "draw": "ALL Drawbacks to Schizo AND mutants, addicted to Stealth Boys",
+  "evo": "Nightkin Master",
+  "evoDesc": "You have become the ultimate Nightkin",
+  "evoTrig": "Find stealth boy cache or use stealth boy 50 times",
+  "fail": "Overcome addiction to stealth boys"
+ },
+ {
+  "code": "003",
+  "cat": "Charachter",
+  "n": "Ogrish",
+  "desc": "You are fucking disgusting to look at",
+  "ben": "1+ END, 1+STR, also get terrifying benefit",
+  "draw": "Your ugly appearance repulses near all, CHA set to 1",
+  "evo": "Funny Ugly Guy",
+  "evoDesc": "Realistically this is the healthiest scenario for you, be happy",
+  "evoBonus": "You no longer repulse people, you have a funny ugly build, a la Danny Devito",
+  "evoTrig": "Make the DM (really) laugh at a joke by character",
+  "fail": "Cosmetic surgery",
+  "rep": "Never Got Over It",
+  "repDesc": "A beautiful sheen over an ugly inside, like Jonah Hill"
+ },
+ {
+  "code": "004",
+  "cat": "Charachter",
+  "n": "New Gen Synth",
+  "desc": "You were created, but can mask your identity, certain groups may still tell",
+  "ben": "50% reduced survival mechanics, +1 STR, +1 INT",
+  "draw": "Potential bigotry, +10% energy damage taken, Coursers as Encounters",
+  "evo": "Vegas Become Human",
+  "evoDesc": "You finally believe you are human",
+  "evoBonus": "No more coursers, no bigotry, 15+ SPEECH, Railroad side quest",
+  "evoTrig": "Make contact with a railroad-like synth group (<SWITCH>)",
+  "fail": "Find and convince an expert to augment your synthetic abilities",
+  "rep": "Cyborg",
+  "repDesc": "You have embraced your artificial body",
+  "repBonus": "50% reduced fail chance for implants"
+ },
+ {
+  "code": "005",
+  "cat": "Charachter",
+  "n": "Old Gen Synth",
+  "desc": "You were created, and theres no way to mask it",
+  "ben": "No survival mechanics, +2 STR, +2 INT, 50% reduced implant fail chance",
+  "draw": "Must use science to heal, Synth bigotry, +20% energy damage taken, -2 CHA",
+  "evo": "Terminator",
+  "evoDesc": "You have accepted your mechanical nature, fuck humans",
+  "evoBonus": "10%+ increased crit chance vs non-robots, You no longer care about humans",
+  "fail": "develop genuine connection to NPC",
+  "rep": "Replicant",
+  "repDesc": "You dreamt of electric sheep, and embraced your humanity"
+ },
+ {
+  "code": "006",
+  "cat": "Charachter",
+  "n": "Super Mutant",
+  "desc": "You were doused in FEV at an unknown time, unfortunately your brain mutated",
+  "ben": "Immune to Radiation, +3 STR, +10 Big Guns, Mutants neutral",
+  "draw": "- 3 INT, cannot initiate speech or checks, mutant bigotry",
+  "evo": "Super Mutant Master",
+  "evoDesc": "You have become the ultimate mutant",
+  "evoBonus": "Super Mutants friendly and respect your authority,",
+  "fail": "Kill more than 10 Mutants",
+  "rep": "Behemoth",
+  "repDesc": "Your fingers too large for triggers, your face too hideous for discourse, you are a monster and you love it"
+ },
+ {
+  "code": "007",
+  "cat": "Affliction",
+  "n": "Addict in Recovery",
+  "ben": "10+ Speech with Sober charachters, +1 AGI",
+  "draw": "Immediate relapse if encounters drugs (Party Animal) , start in indefinite withdrawal",
+  "evo": "Finally Sober",
+  "evoDesc": "Never make the same mistake again",
+  "evoBonus": "Immune to addiction to every other substance",
+  "fail": "Relapse 5 times",
+  "rep": "Off the Wagon"
+ },
+ {
+  "code": "008",
+  "cat": "Affliction",
+  "n": "Alcoholic in Recovery",
+  "desc": "Just follow the 12 Steps...",
+  "ben": "10+ Speech with Sober charachters, +1 END",
+  "draw": "Immediate relapse if enters bar (Boozer) , start in indefinite withdrawal",
+  "evo": "Finally Sober",
+  "evoDesc": "Never make the same mistake again",
+  "evoBonus": "Immune to addiction to every other substance",
+  "fail": "Relapse 5 times",
+  "rep": "Off the Wagon"
+ },
+ {
+  "code": "009",
+  "cat": "Personality",
+  "n": "Around the Block",
+  "desc": "You've met many people, and they remember you",
+  "ben": "You will always find an old acquaintances in cities, some even able to help you",
+  "draw": "Not all of them remember you fondly, you may have old enemies or rivalries",
+  "evo": "Storied Past",
+  "evoDesc": "Your past has finally caught up to you",
+  "evoBonus": "Starts the Storied Past quest",
+  "fail": "Sneak >60",
+  "rep": "Has Been"
+ },
+ {
+  "code": "010",
+  "cat": "Personality",
+  "n": "Ascetic",
+  "desc": "You have rejected worldly possesions for inner peace",
+  "ben": "2 Skill points per turn, +1 SPECIAL of choice",
+  "draw": "1/2 Carry weight, cannot have Caps",
+  "evo": "Hermit",
+  "evoDesc": "Your have found inner peace through poverty",
+  "evoBonus": "1+ INT, +15% chance to hit when under 1/2 carry weight",
+  "fail": "Become overencumbered",
+  "rep": "Corrupted"
+ },
+ {
+  "code": "011",
+  "cat": "Personality",
+  "n": "Asexual",
+  "desc": "The thought of physical intimacy disgusts you",
+  "ben": "You gain a skill bonus of your choice with no tag",
+  "draw": "-2 CHA, cannot initiate or participate in romantic or sexual encounters",
+  "evo": "Aromantic",
+  "evoDesc": "Your rejection of sexual pursuits has evolved into rejecting any initimacy at all",
+  "evoBonus": "NPCs cannot charm/seduce roll you, +15% chance to hit at R1 and R2",
+  "fail": "Form a deep personal bond",
+  "rep": "Forbidden Fruit"
+ },
+ {
+  "code": "012",
+  "cat": "Affliction",
+  "n": "Autistic",
+  "desc": "You spent a month of your life making a tabletop version of Fallout NV",
+  "ben": "Tag 1 Skill for 3x, can choose two master perks",
+  "draw": "Speech capped at 50, gain 1 Afraid every speech encounter",
+  "evo": "Aspergers",
+  "evoDesc": "Your devotion to your interests has paid off",
+  "evoBonus": "Another Tag Skill *3",
+  "fail": "Do not max out 3 Tagged skills",
+  "rep": "Masking"
+ },
+ {
+  "code": "013",
+  "cat": "Physical",
+  "n": "Bad Leg",
+  "desc": "You would've been glue if you were a horse",
+  "ben": "10+ Melee Weapons, +10 Medicine, Effects removed with Power Armor",
+  "draw": "-2 AGI, -10 Sneak, permanently crippled Leg",
+  "evo": "Subconscious Bias",
+  "evoDesc": "Your bias of your other leg has strengthened it",
+  "evoBonus": "the other leg cannot be crippled, +1 AGL and +5 Sneak",
+  "fail": "FInd a way to fix leg",
+  "rep": "Fresh Legs"
+ },
+ {
+  "code": "014",
+  "cat": "Ideology",
+  "n": "Bigoted",
+  "desc": "You know... Elder Maxson had some good points you know...",
+  "ben": "10% Damage to \"inhuman\" enemies",
+  "draw": "You hate all abominations (including ghouls, synth, mutants)",
+  "evo": "Smooth Supremacist",
+  "evoDesc": "My first order of business, I hereby declare, MARTIAL LAW",
+  "evoBonus": "5+ DT with power armor, can not initiate dialogue with \"non-humans\", Unique checks",
+  "fail": "Join party with non base human",
+  "rep": "Acclimated",
+  "repDesc": "The world has changed, perhaps it's time you change too…"
+ },
+ {
+  "code": "015",
+  "cat": "Affliction",
+  "n": "Bipolar",
+  "desc": "Your mood ebbs and flows on a somewhat predictable pattern",
+  "ben": "Good Phase: +1 CHA, +1 INT, +10 Speech",
+  "draw": "Bad Phase: -1 CHA, -1 INT, -10 Speech",
+  "evo": "Tuned In",
+  "evoDesc": "You finally understand yourself at peak",
+  "evoBonus": "*2 Benefits in a good phase",
+  "fail": "Medicate yourself (?)",
+  "rep": "Numbed",
+  "repBonus": ".5x effect for both negative and positive rolls"
+ },
+ {
+  "code": "016",
+  "cat": "Personality",
+  "n": "Bloodlust",
+  "desc": "You get a rush from seeing blood flowing",
+  "ben": "3+ AP turn after kill",
+  "draw": "-1 AP",
+  "evo": "Ravenous Murderer",
+  "evoDesc": "Pull up on your block and I bleed it",
+  "evoBonus": "3+ AP next turn for every bleed effect you inflict",
+  "fail": "Receive tier 5 bleed"
+ },
+ {
+  "code": "017",
+  "cat": "Ability",
+  "n": "Bloody Mess",
+  "desc": "Bloody Mess",
+  "ben": "Bloody mess roll after critical hits below 25% enemy HP",
+  "draw": "All items on target are lost if exploded",
+  "evo": "Fine Red Mist",
+  "evoDesc": "Your ability to pulverize enemies has evolved into total liquidation",
+  "evoBonus": "When an enemy is one crit from dying, any hit will explode them into red mist",
+  "fail": "Medicine or Science >75",
+  "rep": "Erm…"
+ },
+ {
+  "code": "018",
+  "cat": "Affliction",
+  "n": "Boozer",
+  "desc": "My name is Player Character and I'm and alcoholic",
+  "ben": "15+ Speech with Alcoholic charachters",
+  "draw": "Start addicted to alcohol and in withdrawal, immediately drinks when able",
+  "evo": "Fuctioning Alcoholic",
+  "evoDesc": "Booze has become a lifestyle",
+  "evoBonus": "Halved withdrawal effects, double effect time of alcohol",
+  "fail": "Have a religious experience AND are sober",
+  "rep": "Born Again"
+ },
+ {
+  "code": "019",
+  "cat": "Ideology",
+  "n": "Cannibal",
+  "desc": "You crave human flesh",
+  "ben": "Can eat human flesh for (Benefit) and negative karma",
+  "draw": "Withdrawal if you go too long without succumbing to your craving, eating inflicts Afraid",
+  "evo": "Gourmande",
+  "evoDesc": "Your elevated palate has given you access to some of the most secretive societies",
+  "evoBonus": "5+ AP with Formal Clothing, Special Strange Meat dishes, Special Speech checks",
+  "fail": "Draw the ire of like-minded persons"
+ },
+ {
+  "code": "020",
+  "cat": "Ability",
+  "n": "Ceramic Tiger",
+  "desc": "You hit harder, but you also take hits harder",
+  "ben": "25% damage + 5% crit chance",
+  "draw": "30% health lost + limbs cripple 2x quicker",
+  "evo": "Glass Cannon",
+  "evoDesc": "Sometimes, the best defense is a lethal offense",
+  "evoBonus": "10+% Crit Chance for every level of armor lighter (+30% for light)",
+  "fail": "DT > 20"
+ },
+ {
+  "code": "021",
+  "cat": "Ability",
+  "n": "Chem Resistant",
+  "desc": "You have an unusually weak experience with drugs",
+  "ben": "-50% addiction chance",
+  "draw": "-50% Chem Effectiveness",
+  "evo": "Robotripper",
+  "evoDesc": "Your unusual resistance to drugs has forced you toward drastic measures",
+  "evoBonus": "Immune to addiction when using 3+ chems at once",
+  "fail": "Don't try every chem",
+  "rep": "Load Bearing"
+ },
+ {
+  "code": "022",
+  "cat": "Personality",
+  "n": "Child At Heart",
+  "desc": "You're been told often you have an innocent nature",
+  "ben": "Unique dialogue with children, 15% XP gain",
+  "draw": "-10 Barter, you have trouble understanding intentions",
+  "evo": "Neuroplasticity",
+  "evoDesc": "Your Mind is still developing, and can absorb a great deal of knowledge effortlessly",
+  "evoBonus": "Any skills below 15 points get x2 points (like a tag)",
+  "fail": "Upgrade all skills past 15, \"Grow up\""
+ },
+ {
+  "code": "023",
+  "cat": "Personality",
+  "n": "Child-Killer",
+  "ben": "Can kill children without debuffs",
+  "draw": "-500 Karma, Shunned in certain circles",
+  "evo": "IDF Soldier",
+  "evoDesc": "Your mastery of child killing has earned Netanyahu Respect",
+  "evoBonus": "Instakill unarmed civilians with no debuff, +10%Damage snd 5 DT with Riot gear",
+  "fail": "Assist any indigenous group over empire",
+  "rep": "Kumbaya",
+  "repDesc": "You now detest violence and want everyone to just like get along"
+ },
+ {
+  "code": "024",
+  "cat": "Affliction",
+  "n": "Claustrophobia",
+  "desc": "You fear tight, enclosed spaces",
+  "ben": "1+ SPECIAL outdoors",
+  "draw": "-1 SPECIAL indoors",
+  "evo": "Solar Powered",
+  "evoDesc": "You have accepted your condition and will make changes to help mitigate its effects",
+  "evoBonus": "Can no longer enter buildings by own volition, +5 HP per turn when in sun",
+  "fail": "Spend 3 days inside",
+  "rep": "Caged Animal"
+ },
+ {
+  "code": "025",
+  "cat": "Personality",
+  "n": "Compulsive Liar",
+  "ben": "20+ Speech for skill checks",
+  "draw": "Have a lot more speech checks due to your constant lies",
+  "evo": "Live the Lie",
+  "evoDesc": "You have lied to one person more than any other, yourself",
+  "evoBonus": "Get a Status effect for getting away with lie, +10 Barter",
+  "fail": "Go without lying for more than 3 encounters",
+  "rep": "Divorced from Reality",
+  "repBonus": "20+ speech, must speech roll every time"
+ },
+ {
+  "code": "026",
+  "cat": "Physical",
+  "n": "Congenital Heart Defect",
+  "desc": "Heartaches by the Number",
+  "ben": "10 + Medicine, +25% Healing Effectiveness",
+  "draw": "Certain chems and super stimpacks damage player, -25 HP",
+  "evo": "Somatic Heart Healing",
+  "evoDesc": "You seem to have mitigated your affliction through somatic therapy",
+  "evoBonus": "Chems and strong medical items double effectivness in length and effect (still get damaged but countered)",
+  "fail": "Fix the heart defect",
+  "rep": "Hearty"
+ },
+ {
+  "code": "027",
+  "cat": "Personality",
+  "n": "Country Girl/Boy",
+  "desc": "You say sir and m'am, you speak with a drawl and it's called coke, NOT soda",
+  "ben": "10+ shotguns, 10+ melee and, 1+ CHA, higher chance of success with rural types of NPCs",
+  "draw": "Urban dwellers and the upper class look down upon you, making interaction more difficult, 2- INT",
+  "evo": "Thank God I'm a Country Boy/Girl",
+  "evoDesc": "Life ain't nothin but a funny funny riddle",
+  "evoBonus": "20+ Survival, can take guns to more places, sing folk tunes at camp to reduce party fear",
+  "fail": "Acquire house in \"town\", Barter >80"
+ },
+ {
+  "code": "028",
+  "cat": "Personality",
+  "n": "Coward",
+  "desc": "You are Good-Natured and seek non-violence",
+  "ben": "10+ HP, -15 enemy chance to hit, always pass flee",
+  "draw": "-5 All SPECIAL in combat",
+  "evo": "Conscientious Objector",
+  "evoDesc": "You have put your guns down, but still find yourself to be useful",
+  "evoBonus": "20+ Medicine, 20+ Science, 20+ Repair, Cannot use weapons, +Karma per heal",
+  "fail": "Upgrade and combat skill > 75",
+  "rep": "Free Safety"
+ },
+ {
+  "code": "029",
+  "cat": "Physical",
+  "n": "Deaf",
+  "desc": "You are completely deaf, which can be useful for coping with loud blasts",
+  "ben": "1+ INT, +15 Big Guns, +10 Explosives",
+  "draw": "Cannot initiate speech (unless knows ASL), -1 PER, -1 CHA",
+  "evo": "Lip Reader",
+  "evoDesc": "You've learned how to read lips and mentally sound out sentences",
+  "evoBonus": "Can intiate speech checks and speak with anyone given you have line of sight, can read lips at range",
+  "fail": "Fix being deaf"
+ },
+ {
+  "code": "030",
+  "cat": "Affliction",
+  "n": "Dry Spell",
+  "desc": "You cannot seem to figure out how to get laid",
+  "ben": "Pent up sexual rage (crits add +2 AP to next turn)",
+  "draw": "Every romantic encounter seems to go wrong, Trait disaoppears a after sex",
+  "evo": "Truecel",
+  "evoDesc": "Your commitment to truceldom, has unlocked 'wizard' powers",
+  "evoBonus": "15+ Science, 20+ Energy Weapons, RARE TRUECEL CHECKS",
+  "fail": "have sex",
+  "rep": "Fakecel"
+ },
+ {
+  "code": "031",
+  "cat": "Personality",
+  "n": "Empath",
+  "desc": "You're emotionally attuned to humans, warts and all.",
+  "ben": "CHA +1, Speech +10",
+  "draw": "Afraid Resistance - 2",
+  "evo": "High EQ",
+  "evoDesc": "You've transcended simple empathy, you can now directly embody a person's emotional state",
+  "evoBonus": "Signifcantly more success on emotional speech checks, +1 Afraid resistance",
+  "fail": "ignore the emotions of others",
+  "rep": "Manipulator"
+ },
+ {
+  "code": "032",
+  "cat": "Affliction",
+  "n": "Erratic Mood Swings",
+  "desc": "Your mood spikes and crashes with no predictable rhyme or reason",
+  "ben": "Good Roll: +2 CHA, +2 INT, +10 Speech, +5% XP gain",
+  "draw": "Bad Roll: -2 CHA, -2 INT, -10 Speech, -5% XP gain",
+  "evo": "Clairvoyance",
+  "evoDesc": "Sometimes your mania convalesces into something truly beautiful",
+  "evoBonus": "Top 50% of good Mood Rolls can double effects",
+  "fail": "Talk to any psychiatrist (?)"
+ },
+ {
+  "code": "033",
+  "cat": "Physical",
+  "n": "Far-Sighted",
+  "ben": "1 PER with eyewear and penalty nullified",
+  "draw": "-1 PER without eyewear, -20 chance to hit R1-4",
+  "evo": "Eagle Eyed",
+  "evoDesc": "Just because you can't see close, doesn't mean you can see far",
+  "evoBonus": "15+ Chance to hit at R8-10, +5 \"super far\" roll checks",
+  "fail": "Fix PER in any way, use glasses too much"
+ },
+ {
+  "code": "034",
+  "cat": "Ability",
+  "n": "Finesse",
+  "desc": "You don't hit as hard, but when you do…",
+  "ben": "10%+ Crit Chance",
+  "draw": "-25% Non Crit Damage",
+  "evo": "Conflict Gambler",
+  "evoDesc": "When you get lucky, oh baby…",
+  "evoBonus": "25% crit damage, crits always inflict status effects, +1 Super Crit roll"
+ },
+ {
+  "code": "035",
+  "cat": "Affliction",
+  "n": "Gambling Addict",
+  "desc": "You keep rolling the dice, no matter what",
+  "ben": "Wins incur +1 CHA, +10 Barter, Max Gambler's high, and immunity to addiction until loss",
+  "draw": "Always must gamble, losses incur -1 INT and -20 Barter, withdrawal to gambling",
+  "evo": "New Vegas Legend",
+  "evoDesc": "Your love of the game has made casino chips more valuable than caps",
+  "evoBonus": "1%+ crit damage for every 100 casino chips in inventory, special comps",
+  "fail": "Vilified by any casino",
+  "rep": "New Reno Sleazebag"
+ },
+ {
+  "code": "036",
+  "cat": "Personality",
+  "n": "Gifted",
+  "ben": "All SPECIAL +1",
+  "draw": "-5 Skill Points per turn",
+  "evo": "Arrogance",
+  "evoDesc": "You are just naturally so much better, and you're tired of people not seeing that",
+  "evoBonus": "x2 XP per kill, +20% damage vs weaker enemies",
+  "fail": "Get humbled"
+ },
+ {
+  "code": "037",
+  "cat": "Physical",
+  "n": "God-Gifted",
+  "desc": "You are legendary in the sack, everyone knows",
+  "ben": "Improved rolls from romance/seduction, people who like you LIKE you",
+  "draw": "Chances for meeting scorned lovers, seething dickcels, and puritans",
+  "evo": "Gigafly",
+  "evoDesc": "Why yes I make tabletop renditions of Fallout NV, how could you tell?",
+  "evoBonus": "-50% Afraid roll chance, romance gives opportunity to recruit NPC",
+  "fail": "Have both legs crippled at once (It gets blown off)",
+  "rep": "Cloaca"
+ },
+ {
+  "code": "038",
+  "cat": "Personality",
+  "n": "Got out of Dodge",
+  "desc": "You have found yourself in possession of quite a few caps and even more enemies",
+  "ben": "Start with 2000 Caps, 10+ Sneak, 10+ Lockpick",
+  "draw": "Posse from your past will be constantly on your tail, banned from Banks and large merchant branches",
+  "evo": "Fistful of Dollars",
+  "evoDesc": "Your rambling and swindling have earned you a path to the ultimate prize",
+  "evoBonus": "Lost Lockbox questline, +20 Lockpick, +10 Survival",
+  "fail": "Leave Neutral Karma",
+  "rep": "Never Really Left"
+ },
+ {
+  "code": "039",
+  "cat": "Physical",
+  "n": "Heavy Handed",
+  "ben": "20% Base Melee Damage",
+  "draw": "-50% Crit Chance with Melee",
+  "evo": "Drop the Hammer",
+  "evoDesc": "When you truly hit the spot, your heavy hands hit like a super sledge",
+  "evoBonus": "Critical hits with melee/unarmed can knock down opponent (50%) (6AP recovery)",
+  "fail": "Lockpick >25"
+ },
+ {
+  "code": "040",
+  "cat": "Affliction",
+  "n": "Hoarder",
+  "desc": "You find yourself unusually attached to inanimate objects",
+  "ben": "25+ Carry Weight",
+  "draw": "-1 SPECIAL when carry weight <50%",
+  "evo": "Pack Rat",
+  "evoDesc": "You need to get your grubbly little hands on everything",
+  "evoBonus": "Items weighing less than 2 lbs have 50% weight reduction, +25 Carry Weight",
+  "fail": "Lose your special object",
+  "rep": "Mule",
+  "repBonus": "Items over 20 lbs weigh 10% less"
+ },
+ {
+  "code": "041",
+  "cat": "Personality",
+  "n": "Honest to a Fault",
+  "desc": "You honor your word by any cost",
+  "ben": "Honesty nets more goodwill with NPCs, NPCs trust your word more, +10 Speech",
+  "draw": "Cannot lie or deceive, 10- Barter",
+  "evo": "Keep it 100",
+  "evoDesc": "Sometimes all you need is someone to keep it real with you",
+  "evoBonus": "Speech +20, renowned by NPCs for your honesty",
+  "fail": "Break someone's trust",
+  "rep": "Unreliable"
+ },
+ {
+  "code": "042",
+  "cat": "Personality",
+  "n": "Impatient",
+  "desc": "You are ready to cut to the chase, even if the cuts are shallow",
+  "ben": "25% more ap",
+  "draw": "Cannot Crit",
+  "evo": "Twitchy",
+  "evoDesc": "Your impatience lets you strike quicker than anyone can react",
+  "evoBonus": "3+ initiative, Enemy critical fails against you instantly start your turn",
+  "fail": "Roll dead last in initiative"
+ },
+ {
+  "code": "043",
+  "cat": "Personality",
+  "n": "Improviser",
+  "desc": "If you don't know what you're doing, they don't know what you're doing",
+  "ben": "2+ initiative, 10%+ damage and AP first turn",
+  "draw": "Sneak -10, targeted shot cost +1 AP, chance to hit -10% after first",
+  "evo": "Creative Strategist",
+  "evoDesc": "Your initiative in combat opens up oppotunities for your allies",
+  "evoBonus": "After first turn: Party gets 2 free AP for movement per turn",
+  "fail": "Entire turn without attacking, or moving"
+ },
+ {
+  "code": "044",
+  "cat": "Ideology",
+  "n": "Inhuman Bigot",
+  "desc": "You know...The Master had some good points you know...",
+  "ben": "20+ Melee Weapon Skill, start with vial of FEV",
+  "draw": "Hate all types of human (human, synth)",
+  "evo": "Unity",
+  "evoDesc": "So what shall it be... do you join the unity... of do you die here...",
+  "evoBonus": "15% Damage with Fast Laser, Missile Weapons, and Heavy BG, gain a new calling",
+  "fail": "Accept the futility of your cause",
+  "rep": "Sterile"
+ },
+ {
+  "code": "045",
+  "cat": "Ideology",
+  "n": "Institute Loyalist",
+  "desc": "You know... Father Shaun had some good points...",
+  "ben": "15+ Laser Weapon Skill",
+  "draw": "Hates all types of non institute approved life (ghouls, mutants, uncivilized humans)",
+  "evo": "Courser",
+  "evoDesc": "Father has a special task for you...",
+  "evoBonus": "Gain low level synth summon grenades, Stealth Boys +25 Sneak, Start the Return Home Quest",
+  "fail": "Aid the release of synths",
+  "rep": "Double Agent"
+ },
+ {
+  "code": "046",
+  "cat": "Ability",
+  "n": "Jinxed",
+  "desc": "You are a pariah, an omen of bad fortune",
+  "ben": "Enemy Crit Fail x5",
+  "draw": "Your Crit Fail x5",
+  "evo": "Dreamcatcher",
+  "evoDesc": "You seemingly absorb your allies bad luck",
+  "evoBonus": "Allies can no longer critical fail",
+  "fail": "Roll a super crit twice in one encounter",
+  "repBonus": "Partywide Super Crit +1"
+ },
+ {
+  "code": "047",
+  "cat": "Personality",
+  "n": "Late Bloomer",
+  "desc": "You have always been behind your peers, but soon you'll show them...",
+  "ben": "1 Skill point when Level >15",
+  "draw": "-1 Skill point when Level <16",
+  "evo": "Well Rounded",
+  "evoDesc": "You chose to be a jack of all trades, which helped forge you for your ultimate goals",
+  "evoBonus": "Can pick second mastery in tag skills",
+  "fail": "Reach mastery in any skill",
+  "rep": "Desperate to Prove"
+ },
+ {
+  "code": "048",
+  "cat": "Ideology",
+  "n": "Loyal Party Member",
+  "desc": "You will never stop fighting the Great Satan",
+  "ben": "15+ Weapon Skill of Chinese and Russian weapons",
+  "draw": "You will always oppose institutions seeking to bring back America",
+  "evo": "The Red Sun",
+  "evoDesc": "我们心中的红太阳 照得边疆一片红",
+  "evoBonus": "Starts The Red Sun quest, +10 Sneak, +10 weapon skill with Chinese/Russian weapons",
+  "fail": "Wear the American Flag",
+  "rep": "Revisionist",
+  "rows": [
+   {
+    "fx": {
+     "weaponSkill": 15
+    },
+    "when": {
+     "nameRe": "Chinese|Russian|Soviet"
+    }
+   }
+  ]
+ },
+ {
+  "code": "049",
+  "cat": "Personality",
+  "n": "Masochist",
+  "desc": "You enjoy being hurt",
+  "ben": "2+ AP for each successful enemy hit on you",
+  "draw": "Dialogue nerfs, cannot avoid combat, cannot retreat",
+  "evo": "Pain Pig",
+  "evoDesc": "You have mentally prepared yourself for pain, and relish in it like a high",
+  "evoBonus": "Every enemy hit on you gives a positive only stack of Mania, Can flagelate self (-2 CHA) for +10 Chance to Hit",
+  "fail": "Go a round of combat undamaged",
+  "rep": "Unfilfilled"
+ },
+ {
+  "code": "050",
+  "cat": "Affliction",
+  "n": "Murphy's Son/Daughter/Child",
+  "desc": "You are distantly related to Mama Murphy from Fallout 4",
+  "ben": "Clarivoyance can be activated when consuming a cocktail of chems",
+  "draw": "Often the images do not make sense at the time, you pass out after use",
+  "evo": "Vision Quest",
+  "evoDesc": "Your visions suddenly align into one message: \"find me\"",
+  "evoBonus": "Starts Vision Quest",
+  "fail": "Fail to notice the signs"
+ },
+ {
+  "code": "051",
+  "cat": "Affliction",
+  "n": "Mute",
+  "desc": "You're silent, it's unknown if that is by choice",
+  "ben": "15+ Sneak, Special mute and ASL checks",
+  "draw": "Cannot initiate speech (unless knows ASL), -10 Speech",
+  "evo": "Does it Really Matter?",
+  "evoDesc": "Many have tried to understand your deal, none will ever succeed",
+  "evoBonus": "20+ Sneak, Silenced weapons +10 Chance to hit, Bladed weapons +5 Bleed Chance",
+  "fail": "Speak",
+  "rep": "Fraud"
+ },
+ {
+  "code": "052",
+  "cat": "Personality",
+  "n": "Naïve Optimism",
+  "desc": "You're a lover, not a fighter",
+  "ben": "10+ to non combat skills",
+  "draw": "-10 to combat skills (Cannot Master without aid), cannot incite combat",
+  "evo": "Blissful Ignorance",
+  "evoDesc": "The world seems to acknowledge your soft-hearted nature",
+  "evoBonus": "Animals and Abominations will not attack unprompted, -15 enemy chance to hit",
+  "fail": ">80 in any combat skill",
+  "rep": "Jaded Upbringing"
+ },
+ {
+  "code": "053",
+  "cat": "Personality",
+  "n": "Manlet",
+  "desc": "You may be a military genius, but your can never outmaneuver your small frame",
+  "ben": "Crit Chance +5%, Team INT in combat +1, Melee Weapons +10",
+  "draw": "PER -1, Angry Demeanor in dialogue",
+  "evo": "Napoleon Complex",
+  "evoDesc": "Your shorter stature has done little to hamper your confidence",
+  "evoBonus": "2+ Party initiative, players in party who did not get targeted get +10 chance to hit"
+ },
+ {
+  "code": "054",
+  "cat": "Physical",
+  "n": "Near-Sighted",
+  "ben": "1 PER with eyewear and penalty nullified",
+  "draw": "-1 PER without eyewear, -20 chance to hit R 5-10",
+  "evo": "Up Close and Personal",
+  "evoDesc": "You like it at super close quarters",
+  "evoBonus": "15+ Chance to hit R1-3, No ap costs when moving between R1-3",
+  "fail": "Fix PER in any way, use glasses too much"
+ },
+ {
+  "code": "055",
+  "cat": "Physical",
+  "n": "Nearly Blind",
+  "desc": "You have practically no vision, but have tuned your senses and tongue to survive",
+  "ben": "regular PER with eyewear, +10 Survival, +10 Speech",
+  "draw": "-3 PER without effective eyewear, further debuffs",
+  "evo": "Heightened Senses",
+  "evoDesc": "Your near-blindness has attuned the rest of your senses",
+  "evoBonus": "-1 melee and reload AP cost, +2 initiative, cannot target beyond R5",
+  "fail": "Max out accessory slots (completely covered)"
+ },
+ {
+  "code": "056",
+  "cat": "Physical",
+  "n": "Nearly Paralyzed",
+  "ben": "Double Durability on Legs, +25 Carry weight",
+  "draw": "Fully crippled chest renders user immoble until fully repaired (Medicine >60)",
+  "evo": "Reinforced Spine",
+  "evoDesc": "You're spine has been artificially reinforced",
+  "evoBonus": "10% energy weapons damage taken, +25 LBS, chest can no longer be crippled",
+  "fail": "Science < 50",
+  "rep": "Safe Recovery"
+ },
+ {
+  "code": "057",
+  "cat": "Affliction",
+  "n": "Obsessive Compulsive",
+  "desc": "The fact theres a space before this description irritates you to no end",
+  "ben": "Tag fourth skill",
+  "draw": "-3 Skill Points, Cannot switch enemy targeted until it dies",
+  "evo": "Neurotic Devotion",
+  "evoDesc": "Your unbroken focus has honed your tenacity",
+  "evoBonus": "hits on target increase chance to hit same target +2.5"
+ },
+ {
+  "code": "058",
+  "cat": "Ideology",
+  "n": "Old School",
+  "desc": "You mustve been in a vault since far before the war...",
+  "ben": "10% Damage with lever actions, bows, and revolvers; +10 Survival",
+  "draw": "Cannot use anything made in 21st century or beyond, cannot wear power armor, -10 Science",
+  "evo": "From A Better Time",
+  "evoDesc": "Your old school ways are so real, those trapped in the past accept you",
+  "evoBonus": "5+ DT with Cowboy or Anitque armors, 10% Chance with old weapons, Seen as pre-war",
+  "fail": "Experience a Nuclear Explosion",
+  "rep": "Brave New World"
+ },
+ {
+  "code": "059",
+  "cat": "Physical",
+  "n": "One Eye Lost",
+  "desc": "You have lost an eye, like Snake or Snake",
+  "ben": "Access to eye augments with no penalty, badass eyepatch",
+  "draw": "-2 PER, -10 Chance to hit enemy after moving",
+  "evo": "Eye for Eye",
+  "evoDesc": "In the land of the blind the one eyed man is king...",
+  "evoBonus": "20+ Headshot target roll",
+  "fail": "Fail to attatch a scope to a weapon",
+  "rep": "Tunnel Vision"
+ },
+ {
+  "code": "060",
+  "cat": "Physical",
+  "n": "One-Handed",
+  "desc": "I gotta hand it to you, the fact you've been alive this long is remarkable",
+  "ben": "25%+ AP, +1 AGI, +5 One Handed Chance to hit, non-dominant arm cannot be crippled",
+  "draw": "Cannot Use two armed weapons, -1 STR, +1 reload cost, +2 AP for revolvers",
+  "evo": "One Armed Bandit",
+  "evoDesc": "You have managed remarkably well with just your one hand",
+  "evoBonus": "10+ Targeted shot roll, +2 AP with one handed weapons",
+  "fail": "Cripple your Arm 5 times"
+ },
+ {
+  "code": "061",
+  "cat": "Personality",
+  "n": "Opportunist",
+  "desc": "You prefer to hit em' whole they're down",
+  "ben": "50%+ Damage Vs. Enemies <25% Health",
+  "draw": "-25% Damage Vs. Enemies Above 50% Health",
+  "evo": "Ruthless",
+  "evoDesc": "Some call it bullying, you call it survival",
+  "evoBonus": "25%+ Critical Damage and Chance to enemies below 25% health, 25% Damage to lower tier enemies",
+  "fail": "Get downed from above 75% Health",
+  "rep": "Bigger Fish"
+ },
+ {
+  "code": "062",
+  "cat": "Affliction",
+  "n": "Paranoid",
+  "desc": "I always feel like, somebody's watching meeeee",
+  "ben": "1+ PER, 1+ Initiative",
+  "draw": "Inherently distrustful, Start with 3 Afraid, cannot go below 1 Afraid",
+  "evo": "Hypervigilance",
+  "evoDesc": "You're always on alert, always ready for anything"
+ },
+ {
+  "code": "063",
+  "cat": "Personality",
+  "n": "Party Animal",
+  "desc": "Hi my name is Gucci Mane I'm addicted to everything",
+  "ben": "15+ Speech with Addicted charachters",
+  "draw": "Start addicted to random chem and in withdrawal, die if youre in withdrawal for 3 days",
+  "evo": "Party Rocker",
+  "evoDesc": "Party rockers in the house tonight",
+  "evoBonus": "Chems do double benefits, halves withdrawal effects",
+  "fail": "Cured of addiction"
+ },
+ {
+  "code": "064",
+  "cat": "Ideology",
+  "n": "Patriot",
+  "desc": "You refuse to recognize any government except for the USA",
+  "ben": "15+ Weapon Skill of American weapons",
+  "draw": "Cannot join any non US Government Entity",
+  "evo": "PVTRIQT",
+  "evoDesc": "Activation Phrase: Ronald Mcdonald",
+  "evoBonus": "20+ Big Guns, 15+ Explosives, Q will start sending messages",
+  "fail": "Use any Chinese or Russian items",
+  "rep": "The End of History",
+  "rows": [
+   {
+    "fx": {
+     "weaponSkill": 15
+    },
+    "when": {
+     "nameRe": "American|Service|Liberty|Marine|Colt|\\bUS\\b"
+    }
+   }
+  ]
+ },
+ {
+  "code": "065",
+  "cat": "Physical",
+  "n": "Phineas Gage Syndrome",
+  "desc": "You have suffered a traumatic brain injury but survived intact...mostly",
+  "ben": "25+ melee, 20% Blunt Damage",
+  "draw": "-3 CHA, -3 INT"
+ },
+ {
+  "code": "066",
+  "cat": "Affliction",
+  "n": "PTSD",
+  "desc": "Combat comes as second nature, but it has left a lasting impression on you",
+  "ben": "10+ Survival, +10 Small Guns, +10 Melee Weapons, +10 Medicine",
+  "draw": "Crit fail non-combat gives Shell Shocked (-2 CHA, -2 INT), -10 Speech. -10 Barter, Loud Noises inflict Afraid",
+  "evo": "Muscle Memory",
+  "evoDesc": "You never truly forgot your old ways",
+  "evoBonus": "2+ Initiative, Critical Hits in combat trigger Muscle Memory (+2AP Regen in turn)",
+  "fail": "Talk about your past life",
+  "rep": "Still in Saigon",
+  "repDesc": "Your mind never truly left the battlefield"
+ },
+ {
+  "code": "067",
+  "cat": "Affliction",
+  "n": "Pyromaniac",
+  "desc": "You are unusually obsessed with fire",
+  "ben": "2+ AP, 25% Fire Weapons Damage, -5 enemy DT with fire weapons",
+  "draw": "-1 CHA, -1 Initiative when craving the flame, fire addiction",
+  "evo": "Serial Arsonist",
+  "evoDesc": "You carry the flame",
+  "evoBonus": "Critical hits with fire spread burning to nearby hostiles, immune to burning",
+  "fail": "Extinguish any fire, use cryolator",
+  "rep": "Snuffed"
+ },
+ {
+  "code": "068",
+  "cat": "Ideology",
+  "n": "Redpilled",
+  "desc": "Reject members of the opposite gender",
+  "ben": "10% Damage to opposite sex",
+  "draw": "You reject the opposite sex in all forms, -2 CHA",
+  "evo": "Blackpilled",
+  "evoDesc": "Your nihlism has killed your fear of death",
+  "evoBonus": "2+ Initiative, when below 20% health, gain +5 AP",
+  "fail": "Go outside for one week",
+  "rep": "Clearpilled"
+ },
+ {
+  "code": "069",
+  "cat": "Personality",
+  "n": "Sadist",
+  "desc": "You enjoy hurting people",
+  "ben": "1+ AP for each successful hit",
+  "draw": "Dialogue nerfs, cannot avoid combat, cannot retreat",
+  "evo": "Menace 2 Society",
+  "evoDesc": "You relish in inflicting pain, it hits like crack",
+  "evoBonus": "Successful hits induce Mania, gain +5% damage for every bleed, cripple, or Afraid in combat",
+  "fail": "Avoid inflicting pain",
+  "rep": "Soft Spot"
+ },
+ {
+  "code": "070",
+  "cat": "Personality",
+  "n": "Sartorial Snob",
+  "desc": "You have no desire for armor, the best way to stop a bullet is to avoid it",
+  "ben": "3+ AP",
+  "draw": "Cannot wear anything but light armor, cannot use whole body armors",
+  "evo": "Runway Critic",
+  "evoDesc": "Your sartorial eye has you ruthlessly shutting down the gauche and derivative",
+  "evoBonus": "-5 Enemy DT with Medium, Heavy, or Power Armor",
+  "fail": "Wear \"unfashionable\" clothing (Foral rating -6)",
+  "rep": "Out of Style"
+ },
+ {
+  "code": "071",
+  "cat": "Affliction",
+  "n": "Schizoprenia",
+  "desc": "You hear unwanted voices and see unwanted things",
+  "ben": "Voices may offer insight, +1 INT",
+  "draw": "Psychotic Break on crit fail, Unreliable Narration, More likely to experiance psychosis per level",
+  "evo": "Ascendence",
+  "evoDesc": "You were right all along, the voices sing a wonderful chorus",
+  "evoBonus": "2+ Initiative, voices detect lies and warn of potential traps, RARE ASCENDED SCHIZO CHECKS",
+  "fail": "Treat in any way",
+  "rep": "Screw Loose"
+ },
+ {
+  "code": "072",
+  "cat": "Ideology",
+  "n": "Secret Societies",
+  "desc": "You are the member of a shadowy cabal seeking to corrupt all forms of civilization",
+  "ben": "Every faction has a sleeper member of your organization, start with sleeper phrase and item",
+  "draw": "The goals of your organization spell doom for their hosts, if you're exposed it could spell dire consequences",
+  "evo": "Sleeper Agent",
+  "evoDesc": "You have begun to your organization's grand vision",
+  "evoBonus": "Starts coordinated operation questline and reveals HQ location",
+  "fail": "Do not expose any members",
+  "rep": "Marked for Dead"
+ },
+ {
+  "code": "073",
+  "cat": "Physical",
+  "n": "Sensitive Hearing",
+  "desc": "You have uniquely sensitive hearing, which requires special accommodations",
+  "ben": "2+ PER, +1 Initiative",
+  "draw": "Using loud weapons being close to loud noises induces -4 PER",
+  "evo": "Cat-Like Reflexes",
+  "evoDesc": "Your sensitive hearing is an extremely valuble asset",
+  "evoBonus": "1+ PER, +3 Initiative, encounters start further away",
+  "fail": "Get level 5 concussed",
+  "rep": "Tinnitus"
+ },
+ {
+  "code": "074",
+  "cat": "Personality",
+  "n": "Silver Spoon",
+  "desc": "You were born and raised in wealth, this being your first foray into the wastes",
+  "ben": "Receive a small weekly remittance sent by courier from your father's estate elsewhere, 10+ Barter, camaraderie with the upper crust of the wasteland",
+  "draw": "-25 survival, you cannot help but hold negative feelings towards non-rich characters",
+  "evo": "Daddy's Will",
+  "evoDesc": "Daddy has died... AND LEFT IT ALL TO YOU (if you can claim it)",
+  "evoBonus": "Stipends cease suddenly, Starts Daddy's Will quest",
+  "fail": "Lose all of your money",
+  "rep": "Reality Check"
+ },
+ {
+  "code": "075",
+  "cat": "Physical",
+  "n": "Small Frame",
+  "desc": "Lil ah boy",
+  "ben": "1+ AGI",
+  "draw": "-50 Lbs",
+  "evo": "Hard Target",
+  "evoDesc": "You're just too small to hit",
+  "evoBonus": "-20 Enemy chance to hit, Further -10 Chance to hit limbs",
+  "fail": "Get hit critically at R7+"
+ },
+ {
+  "code": "076",
+  "cat": "Affliction",
+  "n": "Smoker",
+  "desc": "You have been smoking since as long as you can remember",
+  "ben": "Start with 2 Packs of smoke of choice and 2 lighters",
+  "draw": "Start addicted to tobacco",
+  "evo": "Eastwood",
+  "evoDesc": "You're like one of those old French women who smoke their whole life and live longer",
+  "evoBonus": "15+ HP, Smoking during combat takes 1 AP (?), smoking weed counts toward tobacco",
+  "fail": "Lose smoking addiction",
+  "rep": "Jitters"
+ },
+ {
+  "code": "077",
+  "cat": "Ideology",
+  "n": "Sneering Imperialist",
+  "desc": "You tilt your nose towards those beneath you",
+  "ben": "15+ With European weapons",
+  "draw": "Hate all uncivilized humanity, especially those speaking \"non-western\" languages",
+  "evo": "Globe Emoji",
+  "evoDesc": "You are genocidal maniac... to them",
+  "evoBonus": "25%+ Damage to Raiders, Tribals, and \"Terrorists\"",
+  "fail": "Use a tribal or crafted weapon",
+  "rep": "Gone Native",
+  "rows": [
+   {
+    "fx": {
+     "weaponSkill": 15
+    },
+    "when": {
+     "nameRe": "European|German|British|French|Gehwer|Luger|Parabellum"
+    }
+   }
+  ]
+ },
+ {
+  "code": "078",
+  "cat": "Affliction",
+  "n": "Sociopath",
+  "desc": "You lack any care or regard for other human beings",
+  "ben": "CHA +2, Killing humans +5% XP",
+  "draw": "Cannot empathize with NPCs",
+  "evo": "Superficial Charm",
+  "evoDesc": "You wear a charming demeanor like a mask, obfuscating your dark nature beneath",
+  "evoBonus": "15+ Speech, Karma no longer a factor in interractions",
+  "fail": "Have your head crippled by a revolver",
+  "rep": "Mask Off"
+ },
+ {
+  "code": "079",
+  "cat": "Affliction",
+  "n": "Split Personalities",
+  "desc": "Your body is one, your mind is two",
+  "ben": "Roll for a second SPECIAL; Resistant to mental status effects and debuffs",
+  "draw": "All roll checks flip coin for which \"personality\"\", must level up all non-combat skills for each personality",
+  "evo": "Harmonious Coexistance",
+  "evoDesc": "Your personalities have finally reconciled, or have dominated eachother",
+  "evoBonus": "Pick Skills and Special from each personality to keep, automatically gain level",
+  "fail": "Show unique favor towards one",
+  "rep": "Leadership Crisis"
+ },
+ {
+  "code": "080",
+  "cat": "Ability",
+  "n": "Spray N' Pray",
+  "desc": "You know that eventually they'll get hit",
+  "ben": "-30% AP/Shot",
+  "draw": "-10% Chance to hit",
+  "evo": "Bullet Hose",
+  "evoDesc": "Your love for spraying the battlefield has given you a knack for stashing ammo",
+  "evoBonus": "-50% ammo weight, criticals no longer consume ammo",
+  "fail": "Run out of ammo",
+  "rep": "Desperate Measures"
+ },
+ {
+  "code": "081",
+  "cat": "Personality",
+  "n": "Stoic",
+  "desc": "You've trained yourself to handle what life sends you, at a cost.",
+  "ben": "Afraid Resistance + 2",
+  "draw": "CHA - 2",
+  "evo": "Nerves of Steel",
+  "evoDesc": "When the going gets tough, the tough gets going",
+  "evoBonus": "Immunity to Afraid, Party Afraid rolls - 10",
+  "fail": "Hit Max Afraid"
+ },
+ {
+  "code": "082",
+  "cat": "Ideology",
+  "n": "Strict Religious RItes",
+  "desc": "You follow strict religious requirements passed down to you",
+  "ben": "Prayer gives +1 Luck +1 END +5 Chance to hit",
+  "draw": "Must pray (10 AP or whole turn, without getting hit) or, Damned (-1 INT, -1 CHA, -1 LCK, -10 Chance to hit)",
+  "evo": "Devout",
+  "evoDesc": "Your devotion has earned grace from the gods",
+  "evoBonus": "1 Extra VETO ROLL, Secret Pilgrimate",
+  "fail": "Be Damned for 10 turns",
+  "rep": "Jinn"
+ },
+ {
+  "code": "083",
+  "cat": "Personality",
+  "n": "Terrifying",
+  "desc": "The mere sight of you terrified people",
+  "ben": "Terrifying Presence Roll for Speech Checks, -5 Enemy Chance to Hit",
+  "draw": "Terrifying Presense Fail Rolls for Speech, Allies gain +1 Afraid every 3 turns",
+  "evo": "Living Nightmare",
+  "evoDesc": "The mere sight of you sends a cold spell down mens spines",
+  "evoBonus": "Enemies gain +2 Afraid every turn, Terrify check always succeds, Your name is feared far and wide...",
+  "fail": "Show Mercy",
+  "rep": "Not So Bad…"
+ },
+ {
+  "code": "084",
+  "cat": "Ideology",
+  "n": "The Masquerade",
+  "desc": "You crave human blood",
+  "ben": "Can drink human blood for +10 HP and negative karma, +20 Sneak, +1 SPECIAL at night",
+  "draw": "-2 SPECIAL, -5 DT in the sun; Special counters",
+  "evo": "Nosferatu",
+  "evoDesc": "Your dark and mysterious ways have enraptured certain people",
+  "evoBonus": "20+ Speech, Fully heal after \"sleeping\" with person, can recruit loyal NPCs",
+  "fail": "Never get caught feeding",
+  "rep": "Ventrue"
+ },
+ {
+  "code": "085",
+  "cat": "Physical",
+  "n": "Thick-Skin",
+  "desc": "You skin has hardened, making taking damage almost easier than moving",
+  "ben": "2+ DT",
+  "draw": "Movement in combat costs +1 AP, cannot access inventory in combat",
+  "evo": "Turtle",
+  "evoDesc": "Hunker down, batten all the hatches",
+  "evoBonus": "Gain +3 DT for every turn not moving",
+  "fail": "Fail to acquire Heavy Armor",
+  "rep": "Wild Boar"
+ },
+ {
+  "code": "086",
+  "cat": "Affliction",
+  "n": "Traumatic Childhood",
+  "desc": "Maturity and life experience came faster to you, at a cost",
+  "ben": "1+ PER, 1+ END",
+  "draw": "You start with an addiction to a randomized substance, it cannot be removed until you find advanced medical care"
+ },
+ {
+  "code": "087",
+  "cat": "Ideology",
+  "n": "Tribal",
+  "desc": "Grampy Bone speaks through you",
+  "ben": "15+ Weapon Skill with Tribal or Hunting weapons",
+  "draw": "Speak a niche tribal dialect",
+  "rows": [
+   {
+    "fx": {
+     "weaponSkill": 15
+    },
+    "when": {
+     "nameRe": "Tribal|Hunting|Makeshift|Bow|Spear"
+    }
+   }
+  ]
+ },
+ {
+  "code": "088",
+  "cat": "Ideology",
+  "n": "Underworld Nationalist",
+  "desc": "Fuck the smoothskins lmao",
+  "ben": "Gain crit chance +5% per human killed per encounter",
+  "draw": "You hate all non ghouls",
+  "evo": "Hades",
+  "evoDesc": "You're constantly told you're a ghastly, hideous, zombie. Time to start acting like it",
+  "evoBonus": "50% increased damage with radiation weapons, Criticals on ghouls turn them feral, can make ghouls",
+  "fail": "Find acceptance in the \"normal\" world"
+ },
+ {
+  "code": "089",
+  "cat": "Personality",
+  "n": "Urbanite",
+  "desc": "Diverse shop owners, concrete and crime were the backdrop of most your childhood",
+  "ben": "10+ small guns, 10+ Hand, 1+ INT, you and other urban dwellers easily get along",
+  "draw": "Your brash nature earns little grace with the rural folks, 2- CHA"
+ },
+ {
+  "code": "090",
+  "cat": "Personality",
+  "n": "Vengeful",
+  "desc": "You are a evil little chud who's bottled up his rage for the right moment",
+  "ben": "Automatically Crit after receiving critical hit or insulted",
+  "draw": "Cannot Crit otherwise",
+  "rows": [
+   {
+    "fx": {
+     "vengeful": 1
+    }
+   }
+  ]
+ },
+ {
+  "code": "091",
+  "cat": "Ideology",
+  "n": "Weaboo",
+  "desc": "While you were partying I was studying the blade",
+  "ben": "20+ Melee with east asian bladed weapons",
+  "draw": "-15 to all other weapon skill",
+  "evo": "Expat",
+  "evoDesc": "You live the larp fulltime",
+  "evoBonus": "10+% Crit Chance with Asian bladed weapons and Japanese Guns",
+  "fail": "Work for wage at all",
+  "rows": [
+   {
+    "fx": {
+     "weaponSkill": 20
+    },
+    "when": {
+     "nameRe": "Katana|Wakizashi|Tanto|Ninja|Samurai|Machete"
+    }
+   }
+  ]
+ },
+ {
+  "code": "092",
+  "cat": "Physical",
+  "n": "Wembanyama",
+  "desc": "You are tall but skinny",
+  "ben": "1 AGI and PER, Tallness has its perks...",
+  "draw": "x2 Limb Cripple Chance, -1 STR, cannot wear power armor",
+  "evo": "How's the Weather?",
+  "evoDesc": "You've learned to manage your height's drawbacks by tailored clothing and figured out why you hurt easier",
+  "fail": "Both legs crippled",
+  "rep": "Embiid"
+ },
+ {
+  "code": "093",
+  "cat": "Personality",
+  "n": "Whore",
+  "desc": "You are consumed with an insatiable lust...",
+  "ben": "20+ Speech with romance options, +2 LCK and +2 AGI post coitus (x turns)",
+  "draw": "-2 PER and -2 INT 10 after 10 combat encounters without sex, double crit fail on romance rolls, whore reputation",
+  "evo": "Focused Lust",
+  "evoDesc": "Your lusty nature is impossible to reverse, but you've learned how to manage the impulse and reputation",
+  "fail": "Do not have sex for an extended period of time, past the debuff kick in",
+  "rep": "Touch Starved"
+ },
+ {
+  "code": "094",
+  "cat": "Ability",
+  "n": "Yin-Yang",
+  "desc": "Perfectly balanced, as all things should be",
+  "ben": "*2 super crit chance",
+  "draw": "*2 crit fail chance roll",
+  "evo": "Dao of Pow",
+  "evoDesc": "Your love of balance has imparted further clarity",
+  "evoBonus": "1+ Super Crit Roll",
+  "fail": "Reach very good or very bad karma",
+  "repBonus": "Can never crit fail or super Crit"
+ },
+ {
+  "code": "095",
+  "cat": "FINAL 5",
+  "n": "Golden Blood",
+  "desc": "You have an extraordinarily rare blood type, making healing much harder",
+  "ben": "Donating blood x10 Caps, your drawn blood +50% healing on others, normal on u, no blood draw debuffs",
+  "draw": "-75% healing from all other sources, cannot saving throw, only revive with 80+ Medicine or Science",
+  "evo": "Universal Donor",
+  "evoDesc": "Your golden blood has numerous unique healing effects",
+  "evoBonus": "Golden Blood acts as Fixer, can no longer get poisoned",
+  "fail": "Reach bleed level 5"
+ },
+ {
+  "code": "096",
+  "cat": "FINAL 5",
+  "n": "Lethargic",
+  "desc": "You are slow to start and tend to fade into the background",
+  "ben": "2 + AP and 5+ chance to hit every turn after first, Sneak +5, enemy chance to hit -5",
+  "draw": "Always Last in initiative, -4 AP at first round, item use AP +1, cannot be chosen for rolls unless all else fails, lose 5 Speech every time you fail",
+  "evo": "Ultrapatient",
+  "evoDesc": "Lethargy to some is patience to others",
+  "rows": [
+   {
+    "fx": {
+     "ap": 2,
+     "acc": 0.05
+    },
+    "when": {
+     "afterFirst": true
+    }
+   }
+  ]
+ },
+ {
+  "code": "097",
+  "cat": "FINAL 5",
+  "n": "Peacock",
+  "desc": "You are the shining star of the wasteland, and your enemies sure do know it",
+  "ben": "2+ CHA, Always go first for initiative, celebrity status among NPCs, +5 Speech when speech check passsed",
+  "draw": "All enemies target you first, cannot escape combat, egomaniacal demeanor, Sneak permanently at 0",
+  "evo": "Golden God",
+  "rows": [
+   {
+    "fx": {
+     "C": 2,
+     "pri": 100
+    }
+   }
+  ]
+ },
+ {
+  "code": "098",
+  "cat": "FINAL 5",
+  "n": "Petulant Snob",
+  "desc": "You are steeped in the arts and culture, and needn't defrade yourself with labor",
+  "ben": "3+ INT; x2 evade, sneak, and flee; better starting loot with valuable artifacts, +15 Speech",
+  "draw": "Cannot roll for + skill cap at 50 for: Medicine, Repair, Survival, Melee and Big Guns; +1 movement AP cost",
+  "rows": [
+   {
+    "fx": {
+     "I": 3
+    }
+   }
+  ]
+ },
+ {
+  "code": "099",
+  "cat": "FINAL 5",
+  "n": "Fear of Death",
+  "desc": "You have the most primal, deep fear of them all.",
+  "ben": "2+ CHA and INT, and +20 chance to hit, when above 90% health, +15 Medicine",
+  "draw": "HP lost from full is reduced from chance to hit, seeing ally downed Level 5 Afraid, auto use healing item at turn start",
+  "evo": "Now is Not The Time for Fear",
+  "evoDesc": "Fear is the mind killer",
+  "evoBonus": "No longer have chance to hit debuff, every level of Afraid increases damage by 10%",
+  "fail": "Fail a saving throw",
+  "rows": [
+   {
+    "fx": {
+     "C": 2,
+     "I": 2,
+     "acc": 0.2
+    },
+    "when": {
+     "hpAbove": 0.5
+    }
+   }
+  ]
+ }
+]

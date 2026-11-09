@@ -1,0 +1,286 @@
+kind,n,level,group,effect,req,fxFrom,fx,when,rows,rank,need
+Level,Reactive Instinct,2.0,General,Improves AP by 1 when health is below 20%,,Improves AP by 1 when health is below 20%,"{""ap"":1}","{""hpBelow"":0.2}","[{""fx"":{""ap"":1},""when"":{""hpBelow"":0.2}}]",,
+Level,Emergency Means,2.0,General,Improves DT by 1 when health is below 20%,,Improves DT by 1 when health is below 20%,"{""dt"":1}","{""hpBelow"":0.2}","[{""fx"":{""dt"":1},""when"":{""hpBelow"":0.2}}]",,
+Level,Deep Pockets,2.0,General,Improves active inventory by 5%,,Improves active inventory by 5%,"{""carryMul"":0.05}",,"[{""fx"":{""carryMul"":0.05}}]",,
+Level,Saved by the Bell,2.0,General,Improves Saving throw by 1 roll,,Improves Saving throw by 1 roll,"{""save"":1}",,"[{""fx"":{""save"":1}}]",,
+Level,Better Targets,2.0,General,Improves PEN by 1,,Improves PEN by 1,"{""pen"":1}",,"[{""fx"":{""pen"":1}}]",,
+Level,Durability,4.0,General,Permanently Gain 1 DT,,Permanently Gain 1 DT,"{""dt"":1}",,"[{""fx"":{""dt"":1}}]",,
+Level,Hardbody,4.0,General,Increases physical status eff. resistance by 1,,Increases physical status eff. resistance by 1,"{""resistPhysical"":1}",,"[{""fx"":{""resistPhysical"":1}}]",,
+Level,Acclimation,4.0,General,Increases phychological status eff. resistance by 1,,Increases phychological status eff. resistance by 1,"{""resistMental"":1}",,"[{""fx"":{""resistMental"":1}}]",,
+Level,Heritable,4.0,General,Increased all effects (positive/negative) of every trait by 25%,,Increased all effects (positive/negative) of every trait by 25%,"{""traitScale"":0.25}",,"[{""fx"":{""traitScale"":0.25}}]",,
+Level,Bookworm,4.0,General,"Increases Skill Gained from books by 1, magazines by 5",,"Increases Skill Gained from books by 1, magazines by 5",,,,,
+Level,Bargin Bin Hunter,4.0,Skill Dependent,Improves buy prices by 5%,10 Barter,Improves buy prices by 5%,"{""buy"":-0.05}",,"[{""fx"":{""buy"":-0.05}}]",,
+Level,Elementary,4.0,Skill Dependent,Improves elemental chance rolls for Energy Weapons by 1,10 Energy Weapons,Improves elemental chance rolls for Energy Weapons by 1,"{""debuffAdd"":1}","{""tabs"":[""EW""]}","[{""fx"":{""debuffAdd"":1},""when"":{""tabs"":[""EW""]}}]",,
+Level,Shrapnel,4.0,Skill Dependent,Critical Hits can induce bleeding,10 Explosives,Critical Hits can induce bleeding,"{""critBleed"":1}",,"[{""fx"":{""critBleed"":1}}]",,
+Level,Quickdraw,4.0,Skill Dependent,Improves SG chance to hit at R1 by 20 on the first turn,10 Small Guns,Improves SG chance to hit at R1 by 20 on the first turn,"{""acc"":0.2}","{""tabs"":[""SG""],""rangeMax"":1,""firstTurn"":true}","[{""fx"":{""acc"":0.2},""when"":{""tabs"":[""SG""],""rangeMax"":1,""firstTurn"":true}}]",,
+Level,Hunker Down,4.0,Skill Dependent,Increases accuracy with Big Guns by 5 when in cover,10 Big Guns,Increases accuracy with Big Guns by 5 when in cover,"{""acc"":0.05}","{""tabs"":[""BG""],""inCover"":true}","[{""fx"":{""acc"":0.05},""when"":{""tabs"":[""BG""],""inCover"":true}}]",,
+Level,Sticky Fingers,4.0,Skill Dependent,Can roll to steal objects in world,10 Lockpick,Can roll to steal objects in world,,,,,
+Level,Safe Treatment,4.0,Skill Dependent,Increases effectiveness of Antiseptic Rub by +10%,10 Medicine,Increases effectiveness of Antiseptic Rub by +10%,"{""healOut"":0.1}","{""items"":[""Antiseptic Rub""]}","[{""fx"":{""healOut"":0.1},""when"":{""items"":[""Antiseptic Rub""]}}]",,
+Level,Backup Plan,4.0,Skill Dependent,Increases secondary attack damage by 1,10 Melee Weapons,Increases secondary attack damage by 1,"{""damFlat"":1}","{""secondary"":true}","[{""fx"":{""damFlat"":1},""when"":{""secondary"":true}}]",,
+Level,Pipe Weaponsmith,4.0,Skill Dependent,Can craft pipe weapons,10 Repair,Can craft pipe weapons,,,,,
+Level,Field Remedy,4.0,Skill Dependent,Can craft a Numbing Salve,10 Science,Can craft a Numbing Salve,,,,,
+Level,Forgettable Face,4.0,Skill Dependent,NPCs will treat you neutrally more often,10 Sneak,NPCs will treat you neutrally more often,,,,,
+Level,Trustworthy,4.0,Skill Dependent,Critical success on speech checks yield the entire party (XP of check) x 2 and auto pass on their next Speech check with NPC,10 Speech,Critical success on speech checks yield the entire party (XP of check) x 2 and auto pass on their next Speech check with NPC,,,,,
+Level,One Man's Trash...,4.0,Skill Dependent,Improves odds of looting Crafting Materials +5%,10 Survival,Improves odds of looting Crafting Materials +5%,,,,,
+Level,Mysterious Stranger,6.0,General,"DM rolls secret d20, in that amount of turns mysterious stranger appears and super crits with .44. Then rolls again to reset timer. Stranger targets top initiative enemy",,"DM rolls secret d20, in that amount of turns mysterious stranger appears and super crits with .44. Then rolls again to reset timer. Stranger targets top initiative enemy",,,,,
+Level,Intense Training,6.0,General,Gain 1 SPECIAL of Choice,,Gain 1 SPECIAL of Choice,,,,,
+Level,Ready Up,6.0,General,Improves PRI by 1,,Improves PRI by 1,"{""pri"":1}",,"[{""fx"":{""pri"":1}}]",,
+Level,Opportune Strike,6.0,General,Improves Crit Chance by 2% every turn after first,,Improves Crit Chance by 2% every turn after first,"{""crit"":0.02}","{""perRound"":true}","[{""fx"":{""crit"":0.02},""when"":{""perRound"":true}}]",,
+Level,Life Giver,6.0,General,5+ HP,,5+ HP,"{""hp"":5}",,"[{""fx"":{""hp"":5}}]",,
+Level,Caphound,6.0,Skill Dependent,Doubles odds of finding money on looted enemies,20 Barter,Doubles odds of finding money on looted enemies,"{""capsMul"":1}",,"[{""fx"":{""capsMul"":1}}]",,
+Level,The Future is Now,6.0,Skill Dependent,Energy damage against human enemies +10%,20 Energy Weapons,Energy damage against human enemies +10%,"{""dam"":0.1}","{""tabs"":[""EW""],""vs"":[""human""]}","[{""fx"":{""dam"":0.1},""when"":{""tabs"":[""EW""],""vs"":[""human""]}}]",,
+Level,Crowhop,6.0,Skill Dependent,Increases STR by 1 when using Thrown weapons,20 Explosives,Increases STR by 1 when using Thrown weapons,"{""S"":1}","{""tabs"":[""EX""]}","[{""fx"":{""S"":1},""when"":{""tabs"":[""EX""]}}]",,
+Level,War of Attrition,6.0,Skill Dependent,Increases PEN by 1 every turn after 1,20 Small Guns,Increases PEN by 1 every turn after 1,"{""pen"":1}","{""perRound"":true}","[{""fx"":{""pen"":1},""when"":{""perRound"":true}}]",,
+Level,Continued Fire,6.0,Skill Dependent,Increases Burst Count by 1 every 2 turns (auto only),20 Big Guns,Increases Burst Count by 1 every 2 turns (auto only),"{""count"":1}","{""auto"":true,""per2Rounds"":true}","[{""fx"":{""count"":1},""when"":{""auto"":true,""per2Rounds"":true}}]",,
+Level,New World Methods,6.0,Skill Dependent,Increases effectiveness of Healing Powder and Healing Potulice by 25%,20 Medicine,Increases effectiveness of Healing Powder and Healing Potulice by 25%,"{""healOut"":0.25}","{""items"":[""Healing Powder"",""Healing Poultice""]}","[{""fx"":{""healOut"":0.25},""when"":{""items"":[""Healing Powder"",""Healing Poultice""]}}]",,
+Level,Lunge,6.0,Skill Dependent,Can hit r2 at half accuracy for double AP cost,20 Melee Weapons,Can hit r2 at half accuracy for double AP cost,"{""accMul"":-0.5,""apCostMul"":2,""lunge"":1}","{""melee"":true,""rangeMin"":2,""rangeMax"":2}","[{""fx"":{""accMul"":-0.5,""apCostMul"":2,""lunge"":1},""when"":{""melee"":true,""rangeMin"":2,""rangeMax"":2}}]",,
+Level,Breakdown,6.0,Skill Dependent,Can break down looted weapons into useful parts,20 Repair,Can break down looted weapons into useful parts,,,,,
+Level,Old World Blues,6.0,Skill Dependent,Can craft the Rudimentary Third Arm Accessory,20 Science,Can craft the Rudimentary Third Arm Accessory,,,,,
+Level,Double or Nothing,6.0,Skill Dependent,Can reroll a failed speech check at half odds,20 Speech,Can reroll a failed speech check at half odds,,,,,
+Level,Scrounger,6.0,Skill Dependent,Increases odds (Not Count) of finding ammo in buildings by 50%,20 Survival,Increases odds (Not Count) of finding ammo in buildings by 50%,,,,,
+Level,Last Stand,8.0,General,"If downed by non-critical hit, lose all initiative, but gain one turn to fire weapon before out",,"If downed by non-critical hit, lose all initiative, but gain one turn to fire weapon before out","{""saveMul"":1}",,"[{""fx"":{""saveMul"":1}}]",,
+Level,Rapid Reload,8.0,Skill Dependent,"-25% AP cost for reload, rounded down (Min 4)",30 Small Guns,"-25% AP cost for reload, rounded down (Min 4)","{""reloadMul"":-0.25}",,"[{""fx"":{""reloadMul"":-0.25}}]",,
+Level,Friend of the Night,8.0,Skill Dependent,Reduced Chance to Hit penalty in nighttime conditions,30 Sneak,Reduced Chance to Hit penalty in nighttime conditions,"{""nightPen"":0.5}",,"[{""fx"":{""nightPen"":0.5}}]",,
+Level,...and Carry a Long Stick,8.0,Skill Dependent,Intimidation Checks use greatest weapon skill,30 Speech,Intimidation Checks use greatest weapon skill,,,,,
+Level,Hunter,8.0,Skill Dependent,Criticals improve to Super Crit against Animals,30 Survival,Criticals improve to Super Crit against Animals,"{""critToSuper"":1}","{""vs"":[""animal""]}","[{""fx"":{""critToSuper"":1},""when"":{""vs"":[""animal""]}}]",,
+Level,Unstoppable Force,10.0,9 Special Perks,"Can Strength Roll Locks, Gates, and Light Walls. Can destroy concealment for 3 AP",9+ STR,"Can Strength Roll Locks, Gates, and Light Walls. Can destroy concealment for 3 AP","{""dam"":0.25}","{""targetMelee"":true}","[{""fx"":{""dam"":0.25},""when"":{""targetMelee"":true}}]",,
+Level,Seen It Coming,10.0,9 Special Perks,3+ initiative and no cost for targeted body or headshot on first turn,9+ PER,3+ initiative and no cost for targeted body or headshot on first turn,"{""pri"":3}",,"[{""fx"":{""pri"":3}},{""fx"":{""targetFree"":1},""when"":{""firstTurn"":true}}]",,
+Level,Bounceback,10.0,9 Special Perks,Regain 20% HP at end of combat,9+ END,Regain 20% HP at end of combat,"{""endHeal"":0.2}",,"[{""fx"":{""endHeal"":0.2}}]",,
+Level,Fame,10.0,9 Special Perks,You have become famous in civilized society,9+ CHA,You have become famous in civilized society,,,,,
+Level,Nerd Rage,10.0,9 Special Perks,"When below 20% Health gain +5 AP, +5 DT, and +20% Damage",9+ INT,"When below 20% Health gain +5 AP, +5 DT, and +20% Damage","{""ap"":5,""dt"":5,""dam"":0.2}","{""hpBelow"":0.2}","[{""fx"":{""ap"":5,""dt"":5,""dam"":0.2},""when"":{""hpBelow"":0.2}}]",,
+Level,First to Draw,10.0,9 Special Perks,"3+ initiative and no AP cost for switching weapons, using chems first turn",9+ AGL,"3+ initiative and no AP cost for switching weapons, using chems first turn","{""pri"":3}",,"[{""fx"":{""pri"":3}},{""fx"":{""swapFree"":1,""itemFree"":1},""when"":{""firstTurn"":true}}]",,
+Level,Lucky Number,10.0,9 Special Perks,Always Critical Hit on Hit combat Rolls ending with a chosen number (0-9),9+ LCK,Always Critical Hit on Hit combat Rolls ending with a chosen number (0-9),"{""lucky"":1}",,"[{""fx"":{""lucky"":1}}]",,
+Level,One Punch Man,10.0,General,SuperCrits on unarmed insta kill,"10+ STR, 10+ END, Unarmed 75",SuperCrits on unarmed insta kill,"{""superKill"":1}","{""types"":[""Hand""]}","[{""fx"":{""superKill"":1},""when"":{""types"":[""Hand""]}}]",,
+Level,Junk Rounds,10.0,Skill Dependent,"Craft Junk ammunition from Scrap Metal, Tin Cans and the appropriate casing",40 Repair,"Craft Junk ammunition from Scrap Metal, Tin Cans and the appropriate casing",,,,,
+Level,Entymologist,10.0,Skill Dependent,50%+ Damage against Mutated Insects,40 Survival,50%+ Damage against Mutated Insects,"{""dam"":0.5}","{""vs"":[""insect""]}","[{""fx"":{""dam"":0.5},""when"":{""vs"":[""insect""]}}]",,
+Level,Iron Grip,12.0,7+7 SPECIAL,"Big Guns +10 chance to hit above R7, plus +20 at R10",7+ STR 7+ PER,"Big Guns +10 chance to hit above R7, plus +20 at R10","{""acc"":0.1}","{""tabs"":[""BG""],""rangeMin"":8}","[{""fx"":{""acc"":0.1},""when"":{""tabs"":[""BG""],""rangeMin"":8}},{""fx"":{""acc"":0.2},""when"":{""tabs"":[""BG""],""rangeMin"":10}}]",,
+Level,Sicilia Con Furore,12.0,7+7 SPECIAL,Can roll (Melee/100) to block hand attacks,7+ STR 7+ END,Can roll (Melee/100) to block hand attacks,,,,,
+Level,Looksmaxxing,12.0,7+7 SPECIAL,Can Mog roll (STR+CHA out of 20) certain speech checks,7+ STR 7+ CHA,Can Mog roll (STR+CHA out of 20) certain speech checks,,,,,
+Level,Percussive Maintinence,12.0,7+7 SPECIAL,Can Strength roll locks and terminals,7+ STR 7+ INT,Can Strength roll locks and terminals,,,,,
+Level,Counterattack,12.0,7+7 SPECIAL,"Upon crit by enemy melee/unarmed, you may immediately roll a counter attack during their turn (melee/unarmed)",7+ STR 7+ AGL,"Upon crit by enemy melee/unarmed, you may immediately roll a counter attack during their turn (melee/unarmed)",,,,,
+Level,Opportunity Knocks,12.0,7+7 SPECIAL,Gain +10% Crit Damage vs Melee Enemies at Range 1,7+ STR 7+ LCK,Gain +10% Crit Damage vs Melee Enemies at Range 1,"{""critDam"":0.1}","{""targetMelee"":true,""rangeMax"":1}","[{""fx"":{""critDam"":0.1},""when"":{""targetMelee"":true,""rangeMax"":1}}]",,
+Level,Turnaround,12.0,7+7 SPECIAL,"Can counter roll a physical status effect inflicted at same odds, if passed no effect inflicted on you",7+ PER 7+ END,"Can counter roll a physical status effect inflicted at same odds, if passed no effect inflicted on you",,,,,
+Level,The Look,12.0,7+7 SPECIAL,Will be prompted whenever a Romance roll is possible for any party member,7+ PER 7+ CHA,Will be prompted whenever a Romance roll is possible for any party member,,,,,
+Level,Lead Your Shots,12.0,7+7 SPECIAL,"If an enemy you have targeted moves, roll the next turn from the higher range",7+ PER 7+ INT,"If an enemy you have targeted moves, roll the next turn from the higher range",,,,,
+Level,Dual Reflex,12.0,7+7 SPECIAL,4+ base Intiative,7+ PER 7+ AGL,4+ base Intiative,"{""pri"":4}",,"[{""fx"":{""pri"":4}}]",,
+Level,Instinct,12.0,7+7 SPECIAL,"-2 Initiative for enemies, random encounters start at longer ranges",7+ PER 7+ LCK,"-2 Initiative for enemies, random encounters start at longer ranges","{""enemyInit"":-2}",,"[{""fx"":{""enemyInit"":-2}}]",,
+Level,Master Lover,12.0,7+7 SPECIAL,Sleeping with charachtewrs may yeild for favorable results,7+ END 7+ CHA,Sleeping with charachtewrs may yeild for favorable results,,,,,
+Level,Biological Optimization,12.0,7+7 SPECIAL,Boost Healling from Mecidal devices (pre war healing and chems),7+ END 7+ INT,Boost Healling from Mecidal devices (pre war healing and chems),"{""healOut"":0.25}","{""cats"":[""Healing""]}","[{""fx"":{""healOut"":0.25},""when"":{""cats"":[""Healing""]}}]",,
+Level,Neo,12.0,7+7 SPECIAL,Automatic attacks against you have a -15 Chance to Hit,7+ END 7+ AGL,Automatic attacks against you have a -15 Chance to Hit,"{""enemyAcc"":-0.15}","{""attackerAuto"":true}","[{""fx"":{""enemyAcc"":-0.15},""when"":{""attackerAuto"":true}}]",,
+Level,Last Stand,12.0,7+7 SPECIAL,"Gain a turn to fight before Saving Throw, *2 odds on Saving Throw",7+ END 7+ LCK,"Gain a turn to fight before Saving Throw, *2 odds on Saving Throw","{""saveMul"":1}",,"[{""fx"":{""saveMul"":1}}]",,
+Level,Leader of Men,12.0,7+7 SPECIAL,"Spend 2 AP to ""inspire"" party, boosting party chance by +10 to hit for next turn",7+ CHA 7+ INT,"Spend 2 AP to ""inspire"" party, boosting party chance by +10 to hit for next turn","{""inspire"":1}",,"[{""fx"":{""inspire"":1}}]",,
+Level,Pack Animals,12.0,7+7 SPECIAL,Party gains -10 Enemy Chance to Hit when within 1 range of you,7+ CHA 7+ AGL,Party gains -10 Enemy Chance to Hit when within 1 range of you,"{""auraEnemyAcc"":-0.1}",,"[{""fx"":{""auraEnemyAcc"":-0.1}}]",,
+Level,Sowwy,12.0,7+7 SPECIAL,"Can roll (CHA+LCK/20) to ""undo"" Speech failures",7+ CHA 7+ LCK,"Can roll (CHA+LCK/20) to ""undo"" Speech failures",,,,,
+Level,CQB,12.0,7+7 SPECIAL,No chance to hit penalties and +2 initiative in urban/indoor environmenr,7+ INT 7+ AGL,No chance to hit penalties and +2 initiative in urban/indoor environmenr,"{""pri"":2}",,"[{""fx"":{""pri"":2}}]",,
+Level,Opportune Strike,12.0,7+7 SPECIAL,"Can Bank a Critical Hit Roll, can convert a hit to crit, or crit to super crit",7+ INT 7+ LCK,"Can Bank a Critical Hit Roll, can convert a hit to crit, or crit to super crit","{""crit"":0.02}","{""perRound"":true}","[{""fx"":{""crit"":0.02},""when"":{""perRound"":true}}]",,
+Level,Fat Roll,12.0,7+7 SPECIAL,Can roll (AGI+LCK/20) to fat roll away from an explosive,7+ AGL 7+ LCK,Can roll (AGI+LCK/20) to fat roll away from an explosive,,,,,
+Level,Super Slam,12.0,Skill Dependent,15% chance to knockdown a target while using an Unarmed or one-handed Melee Weapon; 30% chance while using a two-handed Melee Weapon,50 Energy Weapons,15% chance to knockdown a target while using an Unarmed or one-handed Melee Weapon; 30% chance while using a two-handed Melee Weapon,"{""knockChance"":0.15}","{""oneHanded"":true}","[{""fx"":{""knockChance"":0.15},""when"":{""oneHanded"":true}}]",,
+Level,Light Touch,12.0,Skill Dependent,5% Critical Chance and enemies suffer -25% Critical Chance while you wear Light armor,50 Repair,5% Critical Chance and enemies suffer -25% Critical Chance while you wear Light armor,"{""crit"":0.05}","{""armor"":""Light""}","[{""fx"":{""crit"":0.05},""when"":{""armor"":""Light""}}]",,
+Level,Robotics Expert,12.0,Skill Dependent,25%+ damage to robots,50 Science,25%+ damage to robots,"{""dam"":0.25}","{""vs"":[""robot""]}","[{""fx"":{""dam"":0.25},""when"":{""vs"":[""robot""]}}]",,
+Level,Devil in a New Dress,12.0,Skill Dependent,Much higher likelihood to pass with faction armor,50 Sneak,Much higher likelihood to pass with faction armor,,,,,
+Level,Old World Gourmet,12.0,Skill Dependent,25% addiction resistance,50 Survival,25% addiction resistance,"{""addict"":-0.25}",,"[{""fx"":{""addict"":-0.25}}]",,
+Level,Concentrated Fire,14.0,Skill Dependent,5% increased hit chance for subsequent hits,60 Energy Weapons,5% increased hit chance for subsequent hits,"{""acc"":0.05}","{""sameTarget"":true}","[{""fx"":{""acc"":0.05},""when"":{""sameTarget"":true}}]",,
+Level,Concentrated Gunfire,14.0,Skill Dependent,5% increased hit chance for subsequent hits,60 Small Guns,5% increased hit chance for subsequent hits,"{""acc"":0.05}","{""perStreak"":true}","[{""fx"":{""acc"":0.05},""when"":{""perStreak"":true}}]",,
+Level,Concentrated Heavy Fire,14.0,Skill Dependent,5% increased hit chance for subsequent hits,60 Big Guns,5% increased hit chance for subsequent hits,"{""acc"":0.05}","{""perStreak"":true,""tabs"":[""BG""]}","[{""fx"":{""acc"":0.05},""when"":{""perStreak"":true,""tabs"":[""BG""]}}]",,
+Level,Chemist,14.0,Skill Dependent,100% increased duration for chem effects,60 Medicine,100% increased duration for chem effects,"{""chemDur"":1}",,"[{""fx"":{""chemDur"":1}}]",,
+Level,In Shining Armor,14.0,Skill Dependent,"5+ DT against Energy Weapons while wearing reflective armor, 2+ DT against Energy Weapons while wearing reflective eyewear, Enemy Crit fails reflect back",60 Science,"5+ DT against Energy Weapons while wearing reflective armor, 2+ DT against Energy Weapons while wearing reflective eyewear, Enemy Crit fails reflect back","{""dt"":5}","{""attackerTabs"":[""EW""],""armor"":""reflect""}","[{""fx"":{""dt"":5},""when"":{""attackerTabs"":[""EW""],""armor"":""reflect""}},{""fx"":{""dt"":2},""when"":{""attackerTabs"":[""EW""]}}]",,
+Level,Mr. Sandman,14.0,Skill Dependent,Silently kill any sleeping person,60 Sneak,Silently kill any sleeping person,,,,,
+Level,Them's Good Eatin',14.0,Skill Dependent,Living creatures have a 50% chance of having Thin Red Paste or Blood Sausage when killed,60 Survival,Living creatures have a 50% chance of having Thin Red Paste or Blood Sausage when killed,,,,,
+Level,Grim Reaper's Sprint,16.0,General,Gain 25% AP back after each kill,,Gain 25% AP back after each kill,"{""killAP"":0.25}",,"[{""fx"":{""killAP"":0.25}}]",,
+Level,Pack Rat,16.0,Skill Dependent,Items with a weight of two or less weigh half as much,70 Barter,Items with a weight of two or less weigh half as much,"{""lightHalf"":1}",,"[{""fx"":{""lightHalf"":1}}]",,
+Level,Meltdown,16.0,Skill Dependent,"Enemies Killed have a chance to Explode into a corona, which can chain to other enemies",70 Energy Weapons,"Enemies Killed have a chance to Explode into a corona, which can chain to other enemies",,,,,
+Level,Hit The Deck,16.0,Skill Dependent,12+ DT against Explosives,70 Explosives,12+ DT against Explosives,"{""dt"":12}","{""attackerTabs"":[""EX""]}","[{""fx"":{""dt"":12},""when"":{""attackerTabs"":[""EX""]}}]",,
+Level,Infiltrator,16.0,Skill Dependent,Gives you a second attempt at a lock that you previously broke while trying to force it.,70 Lockpick,Gives you a second attempt at a lock that you previously broke while trying to force it.,,,,,
+Level,Living Anatomy,16.0,Skill Dependent,5%+ Damage against Humans and Ghouls,70 Medicine,5%+ Damage against Humans and Ghouls,"{""dam"":0.05}","{""vs"":[""human"",""ghoul""]}","[{""fx"":{""dam"":0.05},""when"":{""vs"":[""human"",""ghoul""]}}]",,
+Level,Hand Loader,16.0,Skill Dependent,Twice as likely to recover ammunition cases,70 Repair,Twice as likely to recover ammunition cases,,,,,
+Level,Computer Whiz,16.0,Skill Dependent,Another attempt to hack any locked computer,70 Science,Another attempt to hack any locked computer,,,,,
+Level,The Professional,16.0,Skill Dependent,20%+ Sneak Attack Critical damage with all pistols and all SMGs,70 Sneak,20%+ Sneak Attack Critical damage with all pistols and all SMGs,"{""critDam"":0.2}","{""sneak"":true,""types"":[""Revolver"",""Semi-Auto Pistol"",""Plinker Pistol"",""Machine Pistol"",""Pistol"",""SMG""]}","[{""fx"":{""critDam"":0.2},""when"":{""sneak"":true,""types"":[""Revolver"",""Semi-Auto Pistol"",""Plinker Pistol"",""Machine Pistol"",""Pistol"",""SMG""]}}]",,
+Level,Tribal Wisdom,16.0,Skill Dependent,"-50% Limb Damage from Animals, Mutated Animals, and Mutated Insects, +25% Poison Resistance",70 Survival,"-50% Limb Damage from Animals, Mutated Animals, and Mutated Insects, +25% Poison Resistance","{""limbMult"":-0.5}","{""attackerMob"":true}","[{""fx"":{""limbMult"":-0.5},""when"":{""attackerMob"":true}}]",,
+Level,Kurkulator,20.0,Skill Dependent,-1AP penalty for targeted headshot at R4+ with scoped weapons,90 Small Guns,-1AP penalty for targeted headshot at R4+ with scoped weapons,"{""targetFree"":1}","{""part"":""Head"",""rangeMin"":4}","[{""fx"":{""targetFree"":1},""when"":{""part"":""Head"",""rangeMin"":4}}]",,
+Level,Unstoppable Force,20.0,Skill Dependent,25%+ Damage against enemy melee attackers,90 Melee Weapons,25%+ Damage against enemy melee attackers,"{""dam"":0.25}","{""targetMelee"":true}","[{""fx"":{""dam"":0.25},""when"":{""targetMelee"":true}}]",,
+Level,Nuka Chemist,20.0,Skill Dependent,Unlock special Nuka-Cola recipes at the workbench,90 Science,Unlock special Nuka-Cola recipes at the workbench,,,,,
+Level,Hot Potato,22.0,Skill Dependent,When using explosives at R1 instantly jump two hexes out of the way,100 Explosives,When using explosives at R1 instantly jump two hexes out of the way,,,,,
+Level,Center Mass,22.0,Skill Dependent,15%+ damage when targeting the torso,100 Small Guns,15%+ damage when targeting the torso,"{""dam"":0.15}","{""part"":""Body""}","[{""fx"":{""dam"":0.15},""when"":{""part"":""Body""}}]",,
+Level,Roughin It,22.0,Skill Dependent,Can sleep anywhere with no debuffs,100 Survival,Can sleep anywhere with no debuffs,,,,,
+Skill,Aspiring Producer,,Barter,Sell price increased by 10%,,,,,,Proficiency,60
+Skill,Fixer,,Barter,Can sell stolen goods with no discount,,,,,,Expertise,80
+Skill,Hazard Pay,,Barter,Access to smuggling networks and investment in illegal businesses which pay out items relevant,,,,,,Mastery,100
+Skill,Wet Worker,,Barter,Receive unique mercenary/contractor jobs and higher payouts for criminal jobs,,,,,,Mastery,100
+Skill,Entrepaneur,,Barter,Can start businesses in towns. Specialize in spedific skill. Can set up courier networks givng profits (roll for profits.),,,,,,Expertise,80
+Skill,Capitalist,,Barter,"Always pass pro-owner speech checks, can buy businesses, your couriers pay you more sell",,,,,,Mastery,100
+Skill,Free Trade,,Barter,Stolen/looted goods no longer have a discount sell,,,,,,Mastery,100
+Skill,Proud Consumer,,Barter,Buy price reduced by 10%,,,,,,Proficiency,60
+Skill,Trader,,Barter,Access to requisition forms with certain shops: can order bulk and surplus items and ammo in large supply from certain vendors,,,,,,Expertise,80
+Skill,Arms Trader,,Barter,"Boosts access to high tier weapons and discounts for typical weaponry, can order high tier ammunition and armor to be delivered buy",,,,,,Mastery,100
+Skill,Mutual Aid,,Barter,"Party can order from couriers to deliver supplies (ammo, items, etc.) on a weekly basis. Expansion improves quality of items, not caps. Buy",,,,,,Mastery,100
+Skill,Haggler,,Barter,"Can ""haggle"" for unequal exchange with context-dependent barter roll",,,,,,Expertise,80
+Skill,Bazaar master,,Barter,Can trade items 1:1 with a roll,,,,,,Mastery,100
+Skill,Money Talks,,Barter,"If you have a mastery in another category, you can 25% discount on buy power for the category",,,,,,Mastery,100
+Skill,Quantum Physicist,,Energy Weapons,Improves chance to hit with Laser and Electromagnetic Energy Weapons,,,,,,Proficiency,60
+Skill,Laser Focusing,,Energy Weapons,"Improved crit chance, inflict laser burn",,,,,,Expertise,80
+Skill,Dazzler,,Energy Weapons,super crits blind and laser burn crit lasts permaenenty for combat,,,,,,Mastery,100
+Skill,Hit-Scan,,Energy Weapons,"incresed accuracy across all ranges, -1 AP to fire,",,,,,,Mastery,100
+Skill,Faraday,,Energy Weapons,Electromagnetic attacks have a chance to pierce/chain at 75% if enemies are at sequential range at -15 chance to hit per chance.,,,,,,Expertise,80
+Skill,Boltzman,,Energy Weapons,Chain Lightning effect for 100% damage and no chance to hit modifier. +10 chance to hit. Critical Fails hit YOU,,,,,,Mastery,100
+Skill,Kevin Gaussman,,Energy Weapons,"Gauss Critical Hits shatter Armor (DT halved), all hits apply stack of Afraid",,,,,,Mastery,100
+Skill,Classical Physicist,,Energy Weapons,Improves chance to hit with Plasma and Elemental Weapons,,,,,,Proficiency,60
+Skill,Plasmatic Obsession,,Energy Weapons,Explosive Meltdown on kills. Improved Damage.,,,,,,Expertise,80
+Skill,The Fourth State,,Energy Weapons,,,,,,,Mastery,100
+Skill,Metal Melter,,Energy Weapons,,,,,,,Mastery,100
+Skill,Avatar,,Energy Weapons,(Elemental),,,,,,Expertise,80
+Skill,High Octane,,Energy Weapons,,,,,,,Mastery,100
+Skill,Big Empty Tester,,Energy Weapons,,,,,,,Mastery,100
+Skill,Minelayer,,Explosives,,,,,,,Proficiency,60
+Skill,Precise Demolition,,Explosives,(Grenades),,,,,,Expertise,80
+Skill,Sapper,,Explosives,(grenades as primary),,,,,,Mastery,100
+Skill,Demolition Expert,,Explosives,(grenades as secondary),,,,,,Mastery,100
+Skill,Booby-Trapper,,Explosives,(Mines),,,,,,Expertise,80
+Skill,Catch and Kill,,Explosives,(mines as primary),,,,,,Mastery,100
+Skill,Guerilla Technican,,Explosives,(mines as secondary),,,,,,Mastery,100
+Skill,Launcher,,Explosives,,,,,,,Proficiency,60
+Skill,Propelled Power,,Explosives,Increases range and chance to hit with rockets.,,,,,,Expertise,80
+Skill,Missile Man,,Explosives,(missile),,,,,,Mastery,100
+Skill,Rocketeer,,Explosives,(rocket),,,,,,Mastery,100
+Skill,Nukem,,Explosives,(troll fat man build),,,,,,Mastery,100
+Skill,Thumper,,Explosives,Improves range and explosion radius of grenades. Reduces Blowback.,,,,,,Expertise,80
+Skill,25 and its Live,,Explosives,(25 mm),,,,,,Mastery,100
+Skill,40 Oh Lordy,,Explosives,(40 mm),,,,,,Mastery,100
+Skill,One Handed,,Small Guns,Improves chance to hit with One Handed Guns (+5),,,,,,Proficiency,60
+Skill,Pistolero,,Small Guns,"Critical hits reload AP, Improves chance to hit, lower reload AP cost, Dual Wield Any Pistol",,,,,,Expertise,80
+Skill,Earp's Disciple,,Small Guns,0 AP cost for next reload after kill and additional 2x for headshot mult,,,,,,Mastery,100
+Skill,Plinkster,,Small Guns,(.32 and .22LR) Small Pistol calibers boosted in crit mult to 4x and supercrit can bypass armor altogether,,,,,,Mastery,100
+Skill,Trigger Finger,,Small Guns,halved AP cost for semi auto pistols and higher crit chance,,,,,,Mastery,100
+Skill,Mobile Firepower,,Small Guns,"Improved Chance per hit by Count, crit chance increased",,,,,,Expertise,80
+Skill,Bullet Hose,,Small Guns,Super crit gurantees full burst hit and - 1AP to fire,,,,,,Mastery,100
+Skill,Rearguard,,Small Guns,Flat increase at range and reduced reload cost,,,,,,Mastery,100
+Skill,Spec Ops,,Small Guns,SMG crit mult increased by x1 and reduce cost to snapshoot by 2 AP on first turn,,,,,,Mastery,100
+Skill,Two Handed,,Small Guns,Improves chance to hit with Two Handed Guns (+5),,,,,,Proficiency,60
+Skill,Sharpshooter,,Small Guns,"Higher accuracy at range, higher crit chance based on range",,,,,,Expertise,80
+Skill,Precision Sniper,,Small Guns,Snipers receive lower AP cost and super-cries insta kill enemies past R8,,,,,,Mastery,100
+Skill,Man With No Name,,Small Guns,(Vintage Rifles),,,,,,Mastery,100
+Skill,Designated Marksman,,Small Guns,"DMRs receive a +15 in accuracy from R5 to R9, crit mult boosted by 0.5x",,,,,,Mastery,100
+Skill,Rifleman,,Small Guns,"Improved Critical Damage, lower AP cost",,,,,,Expertise,80
+Skill,Guerilla Fighter,,Small Guns,(Auto),,,,,,Mastery,100
+Skill,Carabiner,,Small Guns,(Carbine),,,,,,Mastery,100
+Skill,Operator,,Small Guns,(Semi Auto),,,,,,Mastery,100
+Skill,Heavy Gunner,,Big Guns,,,,,,,Proficiency,60
+Skill,Breacher,,Big Guns,"Criticals knock down target, lowers DT of target",,,,,,Expertise,80
+Skill,Trench Raider,,Big Guns,Lowers DT of target by 10,,,,,,Mastery,100
+Skill,Buckshot Roulette,,Big Guns,(20 g),,,,,,Mastery,100
+Skill,Suppressing Fire,,Big Guns,(something about suppression),,,,,,Expertise,80
+Skill,Bipod God,,Big Guns,(LMG),,,,,,Mastery,100
+Skill,Lead Storm,,Big Guns,(Heavy),,,,,,Mastery,100
+Skill,Specialized Equipment,,Big Guns,,,,,,,Proficiency,60
+Skill,Trailblazer,,Big Guns,(Pistol Style),,,,,,Expertise,80
+Skill,Screaming Eagle,,Big Guns,(Pistol),,,,,,Mastery,100
+Skill,Geneva is Gone,,Big Guns,(Creation),,,,,,Mastery,100
+Skill,Ranged Support,,Big Guns,(Rifle Style),,,,,,Expertise,80
+Skill,Anti-Materialist,,Big Guns,(AMR),,,,,,Mastery,100
+Skill,Artemis' Arrow,,Big Guns,(Rifle),,,,,,Mastery,100
+Skill,Infiltrator,,Lockpick,"Can force any lock (10% success chance, failure prevents future lockpicking attempts",,,,,,Proficiency,60
+Skill,Unstoppable,,Lockpick,Lockpick success chance +10% for boxes,,,,,,Expertise,80
+Skill,Watchmaker,,Lockpick,25% to lock opened boxes (inaccessible for NPCs),,,,,,Mastery,100
+Skill,Tumbler Cracker,,Lockpick,25% chance to lockpick boxes that otherwise can't be picked,,,,,,Mastery,100
+Skill,Contortionist,,Lockpick,Lockpick success chance +10% for entryways,,,,,,Expertise,80
+Skill,Locksmith,,Lockpick,25% to lock opened entryways (inaccessible for NPCs),,,,,,Mastery,100
+Skill,Oiled Hinges,,Lockpick,25% chance to lockpick entryways that otherwise can't be picked,,,,,,Mastery,100
+Skill,Sleight of Hand,,Lockpick,10% chance for NPCs to not turn hostile when discovered pickpocketing,,,,,,Proficiency,60
+Skill,Silent Entry,,Lockpick,Can place items in an NPCs inventory with a pickpocket roll,,,,,,Expertise,80
+Skill,Anesthetcian,,Lockpick,Ability to inject NPC with item,,,,,,Mastery,100
+Skill,Hot Potato,,Lockpick,Can place live grenades in an NPCs inventory,,,,,,Mastery,100
+Skill,Sticky Fingers,,Lockpick,Can pickpocket an NPC multiple times per successful pickpocket roll,,,,,,Expertise,80
+Skill,Disarming Personality,,Lockpick,Can pickpocket an NPCs equipped item (additional roll),,,,,,Mastery,100
+Skill,Red Thumb,,Lockpick,Ability to cripple an NPCs limb with successful pickpocket (100% detection),,,,,,Mastery,100
+Skill,Combat Medic,,Medicine,10% resist chance to debuffs,,,,,,Proficiency,60
+Skill,Surgeon,,Medicine,5% chance to heal one party member by +25% after combat,,,,,,Expertise,80
+Skill,Trauma Surgeon,,Medicine,Can mend crippled limbs in combat without an item for 2 AP,,,,,,Mastery,100
+Skill,Field Medicine,,Medicine,Can reduce any party member's afflicted debuff by 1 tier at the cost of 5 AP,,,,,,Mastery,100
+Skill,Physician,,Medicine,Spend an OoC turn to heal a party member or NPC by +50%,,,,,,Expertise,80
+Skill,Doctor's Note,,Medicine,NPCs will pay 200% for treatment and medical items,,,,,,Mastery,100
+Skill,Routine Checkups,,Medicine,NPCs who you treat have a chance to be recruited,,,,,,Mastery,100
+Skill,Chemist,,Medicine,Can craft chems,,,,,,Proficiency,60
+Skill,Heisenberg,,Medicine,25% chance to create better chems per craft,,,,,,Expertise,80
+Skill,Myron's Apprentice,,Medicine,Chem crafting recipes only require half the ingredients,,,,,,Mastery,100
+Skill,Chemmaxxing,,Medicine,All chem effects are boosted by +50%/+2 S.P.E.C.I.A.L,,,,,,Mastery,100
+Skill,Pharmacist,,Medicine,Significantly increases amount of healing items found in the wasteland,,,,,,Expertise,80
+Skill,Optimal Dosage,,Medicine,All healing from items is now doubled,,,,,,Mastery,100
+Skill,Pharma Exec,,Medicine,"Can craft stimpacks, super stimpacks and ultra stimpaks",,,,,,Mastery,100
+Skill,Spammer,,Melee Weapons,Lowers AP cost of weapon's primary attack by 1,,,,,,Proficiency,60
+Skill,Cutting Edge,,Melee Weapons,"Improves slash damage by 15%, can inflict higher degrees of bleed",,,,,,Expertise,80
+Skill,Death by a Thousand Cuts,,Melee Weapons,(S-P) Slash bleed effects stack,,,,,,Mastery,100
+Skill,Breaker Blade,,Melee Weapons,(S-B),,,,,,Mastery,100
+Skill,Point of Order,,Melee Weapons,Increased DT pen by 5,,,,,,Expertise,80
+Skill,Second Option,,Melee Weapons,Lowers AP cost of weapon's secondary attack by 1,,,,,,Proficiency,60
+Skill,Hammertime,,Melee Weapons,Blunt critical hits knock opponents down,,,,,,Expertise,80
+Skill,Blunt Force Trauma,,Melee Weapons,(B-P) (improves DT pen?),,,,,,Mastery,100
+Skill,Internal Bleeding,,Melee Weapons,(B-S) (adds bleed bamage?),,,,,,Mastery,100
+Skill,Handyman,,Melee Weapons,"50%+ Effectiveness of Hand effect, +10 status effect chance",,,,,,Expertise,80
+Skill,Paralyzing Palm,,Melee Weapons,30% chance to paralyze an opponent,,,,,,Mastery,100
+Skill,Mechanic,,Repair,Improves Repair in dialogue and in OOC rolls by +10,,,,,,Proficiency,60
+Skill,Jumpsuit Johnny,,Repair,,,,,,,Expertise,80
+Skill,Engine Maintenance,,Repair,"Allows you to fix and use vehicles found, depending on state of condition, for vehicles, skill checks reduced and parts availability raised",,,,,,Mastery,100
+Skill,Seabee,,Repair,"Can alter battlefield conditions and situations, i.e. cutting power, enviromental traps",,,,,,Mastery,100
+Skill,Torbjorn,,Repair,"Can roll for repair improvisation for minor changes in combat (Create cover, etc.)",,,,,,Expertise,80
+Skill,Quartermaster,,Repair,"Can construct battlefield emplacements and use heavy fixed weapons (Artillery, Anti-Air)",,,,,,Mastery,100
+Skill,Combat Engineer,,Repair,Can construct battlefield fortifications and defenses,,,,,,Mastery,100
+Skill,Technician,,Repair,Unlocks hand load ammo and Proficiency-Tier weapon mods,,,,,,Proficiency,60
+Skill,Weaponsmith,,Repair,Can craft Expert tier weapon mods and Homemade weapons,,,,,,Expertise,80
+Skill,Engraver,,Repair,(Mastery level weapon mods - boosts by a solid tier) tech,,,,,,Mastery,100
+Skill,Precise Pouring,,Repair,"Can craft Master level ammo at bench, and all basic ammo in field with (Master Travel Toolkit) tech",,,,,,Mastery,100
+Skill,Jury Rigging,,Repair,(can repair weapons with somewhat similar weapons),,,,,,Mastery,100
+Skill,Zero Tolerances,,Repair,"Can craft dart pistol, syringer, Brain scrambler",,,,,,Mastery,100
+Skill,Practical,,Science,Can Request enemy DT and health,,,,,,Proficiency,60
+Skill,Roboticist,,Science,10+ Critical Chance vs. Robots,,,,,,Expertise,80
+Skill,Scrapper,,Science,"crit kills pulse-explode robots, more ammo and scrap produced",,,,,,Mastery,100
+Skill,Master-Slave,,Science,Can hack and make robots friendly,,,,,,Mastery,100
+Skill,Computer Whiz,,Science,-10 chance to get locked out of hacking,,,,,,Expertise,80
+Skill,NEET,,Science,Can remove certain mental status effects from using computer,,,,,,Mastery,100
+Skill,IT Support,,Science,30+ to computer checks and never get locked out,,,,,,Mastery,100
+Skill,Theory,,Science,Much higher chance for fission batteries and scrap electronics,,,,,,Proficiency,60
+Skill,Mad Scientist,,Science,10+ Science speech checks,,,,,,Expertise,80
+Skill,Outside The Box,,Science,Can roll to ruminate and come up with outrageous solutions to problems,,,,,,Mastery,100
+Skill,Sink Technician,,Science,Boosted checks for scientific checks,,,,,,Mastery,100
+Skill,Master Inventor,,Science,Access to Expert level crafting recipes,,,,,,Expertise,80
+Skill,Professor Gadget,,Science,Build robotic companion,,,,,,Mastery,100
+Skill,Novel Methods,,Science,Can sythnesize new combined items and substancesi i.e. Med-Out (MedX and Buffout combined),,,,,,Mastery,100
+Skill,Covert Ops.,,Sneak,Increased Sneak Crit Bonus,,,,,,Proficiency,60
+Skill,Assassin,,Sneak,Increased Sneak Crit Bonus with firearms,,,,,,Expertise,80
+Skill,Smoking Silencer,,Sneak,One-Handed with a silencer receive a 3x additional crit mult and 15% higher crit chance,,,,,,Mastery,100
+Skill,Ghillie in the Mist,,Sneak,Rifles with silencers receive a 2x crit mult and +15% accuracy at R7-9,,,,,,Mastery,100
+Skill,Spontaneous Combustion,,Sneak,"Energy weapons are silent if sneak crit occurs, inflict AoE relevant status on crit",,,,,,Mastery,100
+Skill,Sandman,,Sneak,"Greatly increased Sneak Crit Bonus with Melee, kills regen AP",,,,,,Expertise,80
+Skill,Close n Personal,,Sneak,"sneak crits now inflict Tier 3 bleeding, 3x mult for sneak, Reduce AP cost for next action if 1S1K",,,,,,Mastery,100
+Skill,Backstabber,,Sneak,"Sneak attack reduces target DT by 60%, suoercrit will instakill in stealth, 2x sneak mult",,,,,,Mastery,100
+Skill,Forced Slumber,,Sneak,"apply Tier 3 of concussion, random limb crippled per crit regardless of placement",,,,,,Mastery,100
+Skill,Ghost,,Sneak,"Improved effectiveness of wearing hostile faction armor, lowers NPC detection",,,,,,Proficiency,60
+Skill,Glitch,,Sneak,Lowered hit chance from robots,,,,,,Expertise,80
+Skill,Systems Jammer,,Sneak,Significantly lowered hit chance from robots,,,,,,Mastery,100
+Skill,Blip on the Radar,,Sneak,Become undetectable by robots unless interacted with,,,,,,Mastery,100
+Skill,Concealed Carry,,Sneak,Can smuggle improved holdout weapons into secured locations,,,,,,Expertise,80
+Skill,Ocean's 100,,Sneak,Can smuggle master level concealed weapons into secured locations,,,,,,Mastery,100
+Skill,Stuck it up Your Ass,,Sneak,Can smuggle holdout weapons into ultra-secure locations,,,,,,Mastery,100
+Skill,Camoflauge,,Sneak,"Lowers enemy chance to hit, can roll to disappear",,,,,,Expertise,80
+Skill,Plain Sight,,Sneak,Lowered chance of detection in general sneaking,,,,,,Mastery,100
+Skill,Deep Cover,,Sneak,Low chance to be detected in disguise,,,,,,Mastery,100
+Skill,Manipulation,,Speech,Speech checks towards manipulation are +5% easier,,,,,,Proficiency,60
+Skill,Deception,,Speech,Speech checks towards lies are +10% easier,,,,,,Expertise,80
+Skill,Silver Tongue,,Speech,Even the most outlandish lies have a chance to work on even the smartest NPCs,,,,,,Mastery,100
+Skill,Pants On Fire!,,Speech,NPCs no longer react negatively if caught in a lie,,,,,,Mastery,100
+Skill,Suave,,Speech,Speech checks towards NPCs attracted to you are +10% easier,,,,,,Expertise,80
+Skill,Bisexual Legend,,Speech,Can make sentient NPCs of any gender attracted to you regardless of gender or sexuality,,,,,,Mastery,100
+Skill,Charmer,,Speech,Greatly improve chance to seduce NPCs attracted to you,,,,,,Mastery,100
+Skill,Mediation,,Speech,Speech checks towards peaceful resolutions are +5% easier,,,,,,Proficiency,60
+Skill,Leadership,,Speech,Spend 5 AP in combat to give a rousing speech (one chosen S.P.E.C.I.A.L for all party members +1 until end of combat or downed),,,,,,Expertise,80
+Skill,Vanguard,,Speech,50% chance to revive a downed party member once per member per combat (full turn),,,,,,Mastery,100
+Skill,Lead by Example,,Speech,Party members may tag an additional skill from your tagged skills,,,,,,Mastery,100
+Skill,Body Language Reader,,Speech,Immediately tell if any NPC means you harm,,,,,,Expertise,80
+Skill,Noir Detective,,Speech,50% to discover if any given piece of dialogue is the whole truth or not,,,,,,Mastery,100
+Skill,Diplomat,,Speech,A peaceful solution can be reached to almost any encounter with sentient NPCs,,,,,,Mastery,100
+Skill,Lived Experience,,Survival,Better looting,,,,,,Proficiency,60
+Skill,Practical Skills,,Survival,Better counters and items,,,,,,Proficiency,60
+Skill,Items,,Survival,(improves items),,,,,,Expertise,80
+Skill,Safe Use,,Survival,Reduced addiction chance,,,,,,Mastery,100
+Skill,Sinner,,Survival,Boost tobacco alcohol and caffeine,,,,,,Mastery,100
+Skill,Counters,,Survival,(improves counters_,,,,,,Expertise,80
+Skill,Built Different,,Survival,Counter and deflect physical status effects,,,,,,Mastery,100
+Skill,Strong Constitution,,Survival,Counter and detect mental status effects,,,,,,Mastery,100
