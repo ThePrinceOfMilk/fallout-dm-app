@@ -972,6 +972,19 @@ async function launch() {
     assert.match(asked, /save a copy to your device/i);
     await ctx2.close();
   });
+  await ok("UI size: six steps from the right column, remembered, and the layout keeps fitting", async () => {
+    const ctx2 = await browser.newContext({ viewport: { width: 1440, height: 900 } }); const p2 = await ctx2.newPage(); await p2.goto(APP);
+    await p2.locator('[data-a="railGo"][data-v="uiScale"]').click();
+    assert.deepStrictEqual(await p2.locator('[data-a="setScale"]').allTextContents(), ["200%", "150%", "100%", "75%", "50%", "25%"]);
+    await p2.locator('[data-a="setScale"][data-v="2"]').click(); await p2.waitForTimeout(50);
+    assert.strictEqual(await p2.evaluate(() => getComputedStyle(document.documentElement).zoom), "2");
+    assert.ok(await p2.evaluate(() => document.documentElement.classList.contains("lt1000")), "200% on a 1440 screen gets the stacked layout");
+    assert.strictEqual(await p2.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, "no sideways scroll");
+    await p2.reload(); assert.strictEqual(await p2.evaluate(() => prefs.uiScale), 2, "remembered after a reload");
+    await p2.evaluate(() => ACT.setScale(0.5)); assert.ok(await p2.evaluate(() => !document.documentElement.classList.contains("lt1000")));
+    const d = await p2.evaluate(() => document.querySelector(".dash").getBoundingClientRect().height); assert.ok(Math.abs(d - 900) < 4, "50% still fills the screen: " + d);
+    await ctx2.close();
+  });
   await ok("The hosted copy starts a fresh campaign on the wizard", async () => {
     const ctx2 = await browser.newContext({ viewport: { width: 1440, height: 900 } }); const p2 = await ctx2.newPage();
     await p2.goto("file:///" + path.resolve(__dirname, "../../index.html").replace(/\\/g, "/"));

@@ -642,7 +642,7 @@ label.btn { cursor: pointer; }
 
 /* ---------- phones (compact width): the icon rail becomes a bottom tab bar, like a native app */
 @media (max-width: 599px) {
-  :root { --tabbar: 58px; }
+  body { --tabbar: 58px; }
   .board, .board.calm, .board.setup, .board.fight { grid-template-columns: minmax(0, 1fr) !important; }
   .rail { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; flex-direction: row; overflow-x: auto; gap: 2px; padding: 4px max(4px, env(safe-area-inset-left)) calc(env(safe-area-inset-bottom) + 4px) max(4px, env(safe-area-inset-right)); background: #020a04; border-top: 1px solid var(--line2); grid-column: auto; grid-row: auto; scrollbar-width: none; }
   .rail .railb { flex: 0 0 auto; min-width: 58px; min-height: 48px; }
@@ -694,3 +694,17 @@ label.btn { cursor: pointer; }
   .g-room label.f { flex: none; }
   .egrow { grid-template-columns: 1.35fr 1.2fr .95fr; }
 }
+
+/* UI size: the root is zoomed, so heights tied to the screen are divided back out */
+.dash { height: calc(100vh / var(--z, 1)); }
+@media (max-width: 1000px) { .dash { height: auto; min-height: calc(100dvh / var(--z, 1)); } }
+.scrim { height: calc(100vh / var(--z, 1)); width: calc(100vw / var(--z, 1)); }
+.scalegrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.scalegrid .btn { padding: 6px 0; font-size: calc(var(--fs) * 1.1); }
+
+/* when zoomed, the zoomed page is the width; never scroll sideways */
+html, body { max-width: 100%; overflow-x: hidden; }
+@media (max-width: 599px) { .rail { width: calc(100vw / var(--z, 1)); } }
+html.lt600 .rail { width: calc(100vw / var(--z, 1)); }
+@media (max-width: 1000px) { .win > .wt { flex-wrap: wrap; row-gap: 4px; padding-top: 2px; padding-bottom: 2px; } }
+html.lt1000 .win > .wt { flex-wrap: wrap; row-gap: 4px; }

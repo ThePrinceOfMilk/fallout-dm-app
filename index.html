@@ -648,7 +648,7 @@ label.btn { cursor: pointer; }
 
 /* ---------- phones (compact width): the icon rail becomes a bottom tab bar, like a native app */
 @media (max-width: 599px) {
-  :root { --tabbar: 58px; }
+  body { --tabbar: 58px; }
   .board, .board.calm, .board.setup, .board.fight { grid-template-columns: minmax(0, 1fr) !important; }
   .rail { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; flex-direction: row; overflow-x: auto; gap: 2px; padding: 4px max(4px, env(safe-area-inset-left)) calc(env(safe-area-inset-bottom) + 4px) max(4px, env(safe-area-inset-right)); background: #020a04; border-top: 1px solid var(--line2); grid-column: auto; grid-row: auto; scrollbar-width: none; }
   .rail .railb { flex: 0 0 auto; min-width: 58px; min-height: 48px; }
@@ -700,6 +700,20 @@ label.btn { cursor: pointer; }
   .g-room label.f { flex: none; }
   .egrow { grid-template-columns: 1.35fr 1.2fr .95fr; }
 }
+
+/* UI size: the root is zoomed, so heights tied to the screen are divided back out */
+.dash { height: calc(100vh / var(--z, 1)); }
+@media (max-width: 1000px) { .dash { height: auto; min-height: calc(100dvh / var(--z, 1)); } }
+.scrim { height: calc(100vh / var(--z, 1)); width: calc(100vw / var(--z, 1)); }
+.scalegrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.scalegrid .btn { padding: 6px 0; font-size: calc(var(--fs) * 1.1); }
+
+/* when zoomed, the zoomed page is the width; never scroll sideways */
+html, body { max-width: 100%; overflow-x: hidden; }
+@media (max-width: 599px) { .rail { width: calc(100vw / var(--z, 1)); } }
+html.lt600 .rail { width: calc(100vw / var(--z, 1)); }
+@media (max-width: 1000px) { .win > .wt { flex-wrap: wrap; row-gap: 4px; padding-top: 2px; padding-bottom: 2px; } }
+html.lt1000 .win > .wt { flex-wrap: wrap; row-gap: 4px; }
 </style>
 </head>
 <body>
@@ -1897,7 +1911,7 @@ const kbd = (k) => (k ? `<kbd>${h(k)}</kbd>` : "");
 const SHOWN_KEYS = new Set(["A", "R", "M", "I", "N", "B", "Enter", "Esc", "/", "?"]);  // only the keys for what happens all the time
 const btn = (a, v, label, key = "", cls = "", title = "") => `<button class="btn ${cls}" data-a="${a}" data-v="${h(v)}"${title ? ` title="${h(title)}"` : ""}>${SHOWN_KEYS.has(key) ? kbd(key) : ""}${label}</button>`;
 const primary = (a, v, label, key = "") => `<button class="btn primary" data-primary="1" data-a="${a}" data-v="${h(v)}">${kbd(key)}${label}</button>`;
-const small = () => matchMedia("(max-width: 1000px)").matches;
+const small = () => matchMedia("(max-width: 1000px)").matches || document.documentElement.classList.contains("lt1000");
 const win = (cls, title, key, body, opt = {}) => `<section class="win ${cls} ${opt.act ? "act" : ""} ${(prefs.fold || {})[cls] ? "folded" : ""}"><header class="wt" data-fold="${cls}"><button type="button" class="foldbtn" data-a="fold" data-v="${cls}" aria-label="${(prefs.fold || {})[cls] ? "Open" : "Fold"} ${h(String(title).replace(/<[^>]*>/g, ""))}" aria-expanded="${!(prefs.fold || {})[cls]}">${(prefs.fold || {})[cls] ? "+" : "-"}</button>${kbd(key)}<span>${title}</span><span class="spacer"></span>${opt.tools || ""}</header><div class="wb" data-scroll="${cls}">${body}</div></section>`;
 function fold(k, title, body, opt = {}) {
   const open = ui.open[k] != null ? ui.open[k] : !!opt.open;
@@ -2951,12 +2965,42 @@ function settingsBody() {
   const disp = fold("rule:display", "Display", `<label class="rr"><span>Font</span><select id="pFont" data-pref="face">${options([["term", "Terminal (readable)"], ["pixel", "Pixel (VT323)"], ["code", "Code (Consolas)"]], prefs.face)}</select></label><label class="rr"><span>CRT shimmer and scanlines</span><input type="checkbox" id="pScan" data-pref="scan"${prefs.scan ? " checked" : ""}></label>`);
   return `${groups}${jam}${move}${diff}${disp}<div class="row wrap" style="margin-top:4px">${btn("resetRules", "", "Reset rules", "", "tiny")}</div><div class="s dim" style="margin-top:3px"><span class="warn">*</span> placeholder picked for the draft. Data: ${h(DATA.builtFrom)}, ${h(DATA.builtAt)}.</div>`;
 }
-const RAIL = [["newc", "New", "dot"], ["settings", "Set", "gear"], ["saveNow", "Save", "floppy"], ["loadWin", "Load", "folder"], ["autoWin", "Auto", "clock"], ["wiki", "Wiki", "book"], ["log", "Log", "log"], ["items", "Item", "box"], ["notes", "Note", "pencil"], ["guide", "Help", "star"]];
+const RAIL = [["newc", "New", "dot"], ["settings", "Set", "gear"], ["saveNow", "Save", "floppy"], ["loadWin", "Load", "folder"], ["uiScale", "Size", "sliders"], ["autoWin", "Auto", "clock"], ["wiki", "Wiki", "book"], ["log", "Log", "log"], ["items", "Item", "box"], ["notes", "Note", "pencil"], ["guide", "Help", "star"]];
 function rail() {
   return `<nav class="rail ${ui.railMore ? "more" : ""}">${RAIL.map(([id, n, ic]) => `<button class="railb ${RAIL_MAIN.includes(id) ? "" : "sec"} ${id === "saveNow" && dirty ? "dirty" : ""} ${id === "autoWin" && !prefs.autosave ? "off" : ""} ${(ui.modal && ui.modal.type === id) || (id === "log" && ui.logOpen) ? "on" : ""}" ${id === "saveNow" ? 'id="railSave"' : ""} data-a="railGo" data-v="${id}" title="${h(RAIL_TITLE[id])}">${pix(ic)}<span>${id === "autoWin" ? (prefs.autosave ? "ON" : "OFF") : n}</span></button>`).join("")}<button class="railb railmore ${ui.railMore ? "on" : ""}" data-a="railMore" data-v="" aria-expanded="${!!ui.railMore}" title="More">${pix("dot")}<span>${ui.railMore ? "Less" : "More"}</span></button></nav>`;
 }
 const RAIL_MAIN = ["saveNow", "loadWin", "log", "notes", "items"];  // the phone tab bar's five; the rest sit behind More
-const RAIL_TITLE = { newc: "New campaign", guide: "How to use this: tutorial", settings: "Settings: game rules", saveNow: "Save", loadWin: "Load save", autoWin: "Autosave", wiki: "Wiki: the game bible", log: "Log", items: "Item browser", notes: "Old notes" };
+const RAIL_TITLE = { uiScale: "UI size: make everything bigger or smaller", newc: "New campaign", guide: "How to use this: tutorial", settings: "Settings: game rules", saveNow: "Save", loadWin: "Load save", autoWin: "Autosave", wiki: "Wiki: the game bible", log: "Log", items: "Item browser", notes: "Old notes" };
+const UI_SCALES = [2, 1.5, 1, 0.75, 0.5, 0.25];
+// Zooming in makes the page narrower in CSS pixels, but breakpoints only see the real screen.
+// So the narrow-screen rules are copied under html.lt1000 / html.lt600 and switched on from the zoomed width.
+function mirrorNarrowRules() {
+  if (document.getElementById("narrowRules")) return;
+  let css = "";
+  for (const sh of document.styleSheets) {
+    let rules; try { rules = sh.cssRules; } catch (e) { continue; }
+    for (const r of rules) {
+      const q = r.media ? r.media.mediaText : "";
+      const cls = /max-width:\s*1000px/.test(q) ? "lt1000" : /max-width:\s*599px/.test(q) ? "lt600" : null;
+      if (cls && !/pointer|prefers/.test(q)) css += `html.${cls} { ${[...r.cssRules].map((x) => x.cssText).join("\n")} }\n`;
+    }
+  }
+  const st = document.createElement("style"); st.id = "narrowRules"; st.textContent = css; document.head.appendChild(st);
+}
+function applyScale() {
+  const z = prefs.uiScale || 1; const root = document.documentElement;
+  root.style.zoom = z === 1 ? "" : z;
+  root.style.setProperty("--z", z);
+  if (z > 1) mirrorNarrowRules();
+  const w = innerWidth / z;  // the width the layout actually gets
+  root.classList.toggle("lt1000", z > 1 && w <= 1000);
+  root.classList.toggle("lt600", z > 1 && w < 600);
+}
+addEventListener("resize", () => { if ((prefs.uiScale || 1) !== 1) { applyScale(); render(); } });
+function scaleBody() {
+  const cur = prefs.uiScale || 1;
+  return `<div class="s dim" style="margin-bottom:6px">Everything gets bigger or smaller together. This browser remembers it.</div><div class="scalegrid">${UI_SCALES.map((z) => `<button class="btn ${z === cur ? "on" : ""}" data-a="setScale" data-v="${z}" aria-pressed="${z === cur}">${z * 100}%</button>`).join("")}</div>`;
+}
 function autoBody() {
   const iv = prefs.interval;
   const presets = [[0, "Every change"], [15, "15 sec"], [30, "30 sec"], [60, "1 min"], [120, "2 min"], [300, "5 min"], [600, "10 min"]];
@@ -3177,12 +3221,12 @@ function renderModal() {
   const m = ui.modal; const ce = ent(m.id);
   const defs = {
     move: [`Move: ${h((ent(m.att) || {}).name)}`, moveModal], item: [`Use item: ${h((ent(m.who) || {}).name)}`, itemModal], status: [`Status: ${h((ce || {}).name)}`, statusModal], edit: [`Edit: ${h((ce || {}).name)}`, editModal], level: [`${h((ce || {}).name)}: now level ${(ce || {}).level}`, levelModal], help: ["Keys", helpModal], search: ["Search", searchModal], detail: [m.hit ? `${h(m.hit[1].n)} [${h(m.hit[0])}]` : "", detailModal], dev: [m.cat ? h((DEV.find(([id]) => id === m.cat) || [])[1]) : "", devWin],
-    settings: ["Settings: game rules", settingsBody], items: ["Item browser", itemsBody], loadWin: ["Load save", loadBody], autoWin: ["Autosave", autoBody], notes: ["Old notes", notesBody], check: ["Skill check", checkBody], sheet: [`${h((ce || {}).name)}: Character`, sheetBody], health: [`${h((ce || {}).name)}: Health`, healthBody], guide: ["How to use this", guideBody], wizard: ["New character", wizardBody], newc: ["New campaign", newcBody], pwide: [m.side === "enemies" ? "All enemies" : "Party-wide", pwBody],
+    settings: ["Settings: game rules", settingsBody], items: ["Item browser", itemsBody], loadWin: ["Load save", loadBody], autoWin: ["Autosave", autoBody], uiScale: ["UI size", scaleBody], notes: ["Old notes", notesBody], check: ["Skill check", checkBody], sheet: [`${h((ce || {}).name)}: Character`, sheetBody], health: [`${h((ce || {}).name)}: Health`, healthBody], guide: ["How to use this", guideBody], wizard: ["New character", wizardBody], newc: ["New campaign", newcBody], pwide: [m.side === "enemies" ? "All enemies" : "Party-wide", pwBody],
     char: [`${h((ce || {}).name)}: Inventory`, () => (ce ? invSect(ce, der(ce)) : "")],
   };
   const [title, body] = defs[m.type];
   const key = m.type === "dev" ? "dev" : m.type;
-  const size = m.type === "dev" ? "full" : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard"].includes(m.type) ? "big" : ["autoWin", "move"].includes(m.type) ? "tiny" : "";
+  const size = m.type === "dev" ? "full" : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard"].includes(m.type) ? "big" : ["autoWin", "move", "uiScale"].includes(m.type) ? "tiny" : "";
   return `<div class="scrim" data-a="closeModal"><div class="dialog float ${size}" data-a="noop" data-dlg="${key}" style="${dlgStyle(key)}" role="dialog" aria-modal="true"><header class="wt"><span>${title}</span><span class="spacer"></span><button class="btn tiny" data-a="closeModal" data-v="">${kbd("Esc")}Close</button></header><div class="wb" data-scroll="modal-${key}">${body()}</div></div></div>`;
 }
 function moveSpot(att, tgt, r) {
@@ -3400,6 +3444,7 @@ const ACT = {
   refresh() { applyData(); render(); toast("Lists refreshed"); },
   devToggle() { ui.devOpen = !ui.devOpen; render(); },
   railMore() { ui.railMore = !ui.railMore; render(); },
+  setScale(v) { prefs.uiScale = Number(v) || 1; savePrefs(); applyScale(); render(); toast(`UI size ${Math.round(prefs.uiScale * 100)}%`); },
   fold(v) { prefs.fold = { ...(prefs.fold || {}), [v]: !(prefs.fold || {})[v] }; savePrefs(); render(); },
   setNamePool(v, el) { const k = el.dataset.k, next = v.split(/[,\n]/).map((x) => x.trim()).filter(Boolean).join(","); if (next === S.rules.namePools[k]) return; act(`Edit ${k} names`, () => { S.rules.namePools[k] = next; }); },
   tableExport(v) {
@@ -4153,6 +4198,7 @@ function fillLists() {
   document.getElementById("lists").innerHTML = dl("dl-all", [...DATA.items, ...DATA.materials, ...DATA.ammo, ...DATA.armor, ...DATA.weapons, ...DATA.mods].map((o) => o.n)) + dl("dl-weapons", DATA.weapons.filter((w) => w.tier).map((o) => o.n)) + dl("dl-armor", DATA.armor.map((o) => o.n)) + dl("dl-perks", [...new Set([...DATA.levelPerks, ...DATA.skillPerks].map((o) => o.n))]) + dl("dl-status", DATA.statuses.map((o) => o.n)) + dl("dl-traits", DATA.traits.map((t) => `${t.code} ${t.n}`));
 }
 applyData();
+applyScale();
 // The hosted copy (index.html) opens on a brand new campaign. The build switches this on for that file only.
 const FRESH_START = true;
 if (FRESH_START && !readJson(SAVE_KEY)) { S = fresh(); S.chars = []; ui.sel = null; ui.wiz = newWiz(); ui.modal = { type: "wizard" }; ui.focus = "#wizName"; applyData(); }
