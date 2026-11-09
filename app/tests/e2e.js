@@ -352,6 +352,14 @@ async function launch() {
       await click("objRotate", "15"); await click("objRotate", "15");
       assert.strictEqual((await state()).scene.objects.slice(-1)[0].angle, 30, "the buttons turn it");
       assert.match(await page.locator(`[data-obj="${o.id}"] .gly`).first().getAttribute("transform"), /rotate\(30\)/, "the drawing turns");
+      await blur(); await page.keyboard.press("e"); await page.keyboard.press("e"); await page.keyboard.press("q");
+      assert.strictEqual((await state()).scene.objects.slice(-1)[0].angle, 45, "E turns clockwise, Q counter-clockwise");
+      { const c0 = await page.locator(`[data-obj="${o.id}"] .gly`).first().boundingBox(); const sx = c0.x + c0.width / 2, sy = c0.y + c0.height / 2;
+        await page.mouse.move(sx, sy); await page.mouse.down(); await page.mouse.move(sx + 25, sy + 5, { steps: 4 });
+        await page.keyboard.press("e"); await page.keyboard.press("e"); await page.mouse.move(sx + 40, sy + 8, { steps: 3 }); await page.mouse.up(); await page.waitForTimeout(30);
+        const moved = (await state()).scene.objects.find((x) => x.id === o.id);
+        assert.strictEqual(moved.angle, 75, "E while holding it turns it, and the drop keeps the turn"); assert.ok(Math.abs(moved.x - o.x) > 0.5, "and it moved"); }
+      await page.evaluate((p) => { const ob = S.scene.objects.find((z) => z.id === p.id); ob.x = p.x; ob.y = p.y; ob.angle = 30; ui.mapSel = p.id; render(); }, { id: o.id, x: o.x, y: o.y }); await page.waitForTimeout(30);
       await page.mouse.move(q.x, q.y); await page.keyboard.down("Shift"); await page.mouse.wheel(0, 100); await page.keyboard.up("Shift"); await page.waitForTimeout(40);
       assert.strictEqual((await state()).scene.objects.slice(-1)[0].angle, 45, "Shift+scroll turns it");
       await page.fill("#objAngle", "0"); await press("Tab"); await page.waitForTimeout(30); assert.strictEqual((await state()).scene.objects.slice(-1)[0].angle, 0); await blur(); }
@@ -374,7 +382,7 @@ async function launch() {
   });
   await ok("Stealth: attack from hiding, then get caught", async () => {
     await press("a"); await page.fill("#roll", ""); await page.focus("#roll"); await type("50"); await press("Enter");
-    assert.ok((await state()).log.some((l) => /Character 1 → /.test(l.x)));
+    assert.ok((await state()).log.some((l) => /Character 1 → /.test([l.x, ...(l.more || [])].join(" "))));
     await page.fill("#stealthRoll", "20"); await page.focus("#stealthRoll"); await press("Enter");
     assert.strictEqual((await state()).combat.cbs.find((x) => x.id === "c1").caught, true);
   });
@@ -434,17 +442,21 @@ async function launch() {
     const ap = (await state()).chars[3].ap; const mag = (await state()).chars[3].weapons[0].mag;
     await type("99"); await press("Enter");
     const s = await state();
-    assert.ok(s.log.slice(-3).some((l) => /Character 4 → .*rolled 99: SUPER CRIT/.test(l.x)), "logged the shot");  // a kill logs a line after it
+    assert.ok(s.log.slice(-3).some((l) => /Character 4 → .*rolled 99: SUPER CRIT/.test((l.more || []).join(" "))), "the numbers sit behind the story line");
+    assert.ok(/story o-super/.test(s.log.slice(-1)[0].k) && !/rolled/.test(s.log.slice(-1)[0].x), "the log line itself is just the story");  // a kill logs a line after it
     assert.ok(s.chars[3].ap < ap, "AP was spent");
     assert.strictEqual(s.chars[3].weapons[0].mag, mag - 1, "ammo was spent");
-    await has("SUPER CRIT");
+    assert.match(await page.locator(".result .story").innerText(), /DMG/, "the result shows the story with DMG");
+    assert.ok(!(await page.locator(".result .facts").isVisible()), "the numbers start folded away");
+    await page.locator(".result .shotmore > summary").click(); await has("SUPER CRIT", ".result");
+    await page.locator(".result .shotmore > summary").click();
   });
   await ok("Target remembered, jam blocks then clears for AP", async () => {
     await press("Escape"); await press("a");
     assert.ok((await state()).combat.last.c4.tgt, "last target stored");
     await type("00"); await press("Enter");
     let s = await state();
-    assert.match(s.log.filter((l) => !/story/.test(l.k)).slice(-1)[0].x, /JAM/); assert.match(s.log.slice(-1)[0].k, /story o-jam/, "a story line follows");
+    assert.match(s.log.slice(-1)[0].more.join(" "), /JAM/); assert.match(s.log.slice(-1)[0].k, /story o-jam/, "one story line, numbers inside");
     assert.strictEqual(s.chars[3].weapons[0].jammed, true);
     await type("50"); await press("Enter"); await has("Jammed");
     const before = (await state()).chars[3].ap;
@@ -490,7 +502,7 @@ async function launch() {
     let t = await page.evaluate((i) => JSON.parse(JSON.stringify(ent(i))), tid);
     const st = t.statuses.find((x) => x.n.startsWith("Injured Limb"));
     assert.ok(st, "Injured Limb applied"); assert.strictEqual(st.tier, 2, "super crit is tier 2"); assert.deepStrictEqual(st.parts, ["LLeg"]);
-    await has("Applied:", ".result");
+    await page.evaluate(() => { ui.open.atkres = true; render(); }); await has("Applied:", ".result"); await page.evaluate(() => { ui.open.atkres = false; render(); });
     assert.strictEqual(await page.locator(".bp-LLeg.hurt").count(), 1, "the body shows it");
     assert.ok(await page.evaluate((i) => moveMult(ent(i)) > 1, tid), "a hurt leg makes walking dearer");
     await page.evaluate(() => undo());
@@ -544,7 +556,7 @@ async function launch() {
     await blur(); await page.evaluate(() => { startTurn(S.combat.npcs[0].id); render(); });  // initiative is random, so this enemy may have acted already
     const s0 = await state(); const npc = s0.combat.turnId;
     await press("a"); await type("80"); await press("Enter");
-    const s = await state(); const nm = s.combat.npcs.find((n) => n.id === npc).name; assert.ok(s.log.slice(-3).some((l) => l.x.startsWith(nm)), "logged the attack");
+    const s = await state(); const nm = s.combat.npcs.find((n) => n.id === npc).name; assert.ok(s.log.slice(-3).some((l) => (l.more || [l.x]).some((x) => x.startsWith(nm))), "logged the attack");
     await press("Escape");
   });
   await ok("A player goes DBNO and stays in initiative", async () => {

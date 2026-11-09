@@ -461,6 +461,7 @@ function fire() {
     if (jammed) slot.jammed = true;
     else if (v.usesAmmo && !(p.dA.m.critNoAmmo && (res.outcome === "crit" || res.outcome === "super"))) { slot.mag = (slot.mag || 0) - Math.min(slot.mag || 0, v.count * (v.perShot || 1)); ammoText = `${slot.mag}/${v.cap} left`; }
     if (v.thrown) { const l = (A.inv || []).find((x) => E.low(x.n) === E.low(v.n)); if (l) { l.q--; if (l.q <= 0) A.inv = A.inv.filter((x) => x !== l); } }
+    const logStart = S.log.length;
     const wasUp = T.hp > 0; const cbT = cbOf(T.id) || {}; const cbAtk = cbOf(A.id) || {}; const k2 = K();
     // Keep the counts rules read: hits in a row on one target, hits taken, crits, kills.
     k2.streak = k2.streak || {}; k2.streak[A.id] = res.total ? { tgt: T.id, n: k2.streak[A.id] && k2.streak[A.id].tgt === T.id ? k2.streak[A.id].n + 1 : 1 } : null;
@@ -475,7 +476,7 @@ function fire() {
     const NAME = { jam: "JAM", miss: "MISS", hit: "HIT", crit: "CRIT", super: "SUPER CRIT" }[res.outcome];
     const head = `${A.name} → ${T.name} · ${v.n}${v.modeName ? " " + v.modeName : ""} · R${p.range} ${PARTS[a.part][0]}${p.cov.tier !== "open" ? ` · ${p.cov.n}` : ""} · ${fmt(E.pct(p.hit))}% · rolled ${E.two(roll)}`;
     const line = `${head}: ${NAME}` + (res.total ? ` · ${res.math} · ${T.name} ${T.hp}/${dT.hp}` : jammed ? ` · clear costs ${v.clearJam} AP` : "") + (ammoText ? ` · ${ammoText}` : "");
-    log(`${res.total ? "hit" : jammed ? "jam" : "miss"} o-${res.outcome}`, line); const at = S.log.length;
+    log(`${res.total ? "hit" : jammed ? "jam" : "miss"} o-${res.outcome}`, line);
     const fx = hitStatuses(res, T, v, a.part, p.dA.m);
     let story = "";
     if (S.rules.storyLog) {
@@ -483,7 +484,9 @@ function fire() {
       const nm = (e) => (e.kind !== "pc" && / - /.test(e.name) ? e.name.split(" - ").slice(1).join(" - ") : e.name);
       story = E.story({ a: nm(A), t: nm(T), w: v, ammo: slot.ammo || "", d: fmt(res.total), n: res.hits || res.bullets || 1, part: a.part, outcome: res.outcome, kind: T.kind === "pc" ? "flesh" : ty === "robot" ? "robot" : ty === "insect" ? "insect" : "flesh",
         statuses: fx.auto.map((x) => x.replace(/\s+\d.*$/, "")), killed: wasUp && T.hp <= 0 && T.kind !== "pc", downed: wasUp && T.hp <= 0 && T.kind === "pc" }, COMBAT_TEXT);
-      S.log.splice(at, 0, { k: `story o-${res.outcome}`, x: story, r: K().round });  // right under the numbers
+      // one line in the log: the story, with the numbers, kill and statuses one click away
+      const more = S.log.splice(logStart).map((l) => l.x);
+      S.log.push({ k: `story o-${res.outcome}`, x: story, r: K().round, id: S.seq++, more });
     }
     K().last[A.id] = { tgt: T.id, mode: a.mode, part: a.part };
     if (K().phase === "stealth" && A.kind === "pc") { K().stealthDue = A.id; ui.focus = "#stealthRoll"; }
@@ -617,7 +620,10 @@ function view() {
   return `<div class="dash">${devBar()}<div class="board ${mode}"><div class="stage">${top}<div class="gut h" data-gut="bottom" title="Drag to resize"></div>${bottom}</div>${rail()}</div><footer class="foot">${hints().map(([a, b]) => `<span>${kbd(a)}${h(b)}</span>`).join("")}</footer>${ui.logOpen ? logFloat() : ""}${ui.modal ? renderModal() : ""}</div>`;
 }
 const setupOpen = () => (ui.setup != null ? ui.setup : S.scene.npcs.length > 0);
-const logLines = (list, n) => list.slice(-n).reverse().map((l) => `<div class="log-${h(l.k)}">${h(l.x)}</div>`).join("") || `<div class="dim">Nothing yet.</div>`;
+const logRow = (l) => (l.more && l.more.length
+  ? `<details class="logrow log-${h(l.k)}" data-k="log${l.id}"${ui.open["log" + l.id] ? " open" : ""}><summary>${h(l.x)}</summary><div class="logmore">${l.more.map((x) => `<div>${h(x)}</div>`).join("")}</div></details>`
+  : `<div class="log-${h(l.k)}">${h(l.x)}</div>`);
+const logLines = (list, n) => list.slice(-n).reverse().map(logRow).join("") || `<div class="dim">Nothing yet.</div>`;
 const combatLogWin = () => win("w-clog", "Combat log", "", `<div class="loglist">${logLines(S.log.filter((l) => l.r > 0), 40)}</div>`);
 const skillWin = () => win("w-check", "Skill check", "", checkBody(), { tools: btn("chkGen", "", "Random", "", "tiny", "Generate a random skill and difficulty") });
 function recentWin() { return win("w-recent", "Recent events", "", `<div class="loglist">${logLines(S.log.filter((l) => !l.r), 30)}</div>`); }
@@ -638,7 +644,7 @@ function hints() {
   return [["B", "Encounter"], ["I", "Inventory"], ["←→", "Pick character"], ["/", "Search"], ["Ctrl+Z", "Undo"], ["?", "Keys"]];
 }
 function logFloat() {
-  const rows = S.log.slice(-300).reverse().map((l) => `<div class="log-${h(l.k)}">${h(l.x)}</div>`).join("") || `<div class="dim">Nothing yet.</div>`;
+  const rows = S.log.slice(-300).reverse().map(logRow).join("") || `<div class="dim">Nothing yet.</div>`;
   return `<section class="win float floatlog" data-dlg="log" style="${dlgStyle("log")}"><header class="wt">${pix("log")}<span>Log</span><span class="spacer"></span><button class="btn tiny" data-a="toggleLog" data-v="">${kbd("F4")}Close</button></header><div class="wb loglist" data-scroll="floatlog">${rows}</div></section>`;
 }
 
@@ -849,7 +855,7 @@ function mapExtras() {
   const pm = ui.pendingMove && ent(ui.pendingMove.id);
   if (pm) { const m = ui.pendingMove; const left = (pm.ap || 0) - m.cost; const tgt = ui.atk && ui.atk.tgt && ui.atk.att === m.id && ent(ui.atk.tgt); const newR = tgt ? bandFor(dist(m, posOf(tgt.id))) : null; return `<div class="moveconfirm"><span class="bright">Move ${h(pm.name)}?</span><span><b>${fmt(m.cost)}</b> AP</span><span><b>${fmt(left)}</b> left</span>${tgt ? `<span>${h(tgt.name)}: <b>R${rangeOf(m.id, tgt.id)} to R${newR}</b></span>` : ""}<span class="spacer"></span><button class="btn primary tiny" data-primary="1" data-a="moveConfirm" data-v="">${kbd("Enter")}Confirm</button><button class="btn tiny" data-a="moveCancel" data-v="">${kbd("Esc")}Cancel</button></div>`; }
   const sel = ui.mapSel && S.scene.objects.find((o) => o.id === ui.mapSel);
-  return `${sel ? `<div class="maptools"><span class="s dim">${h(((S.rules.mapItems[sel.item] || {}).n || MAP_OBJ[sel.kind][0]).toUpperCase())}</span><span class="rotbar"><button class="btn tiny" data-a="objRotate" data-v="-15" title="Turn left 15 degrees (or Shift+scroll)">&#8634;</button><span style="width:30px">${numBox(`id="objAngle" data-c="setObjAngle" title="Angle in degrees"`, sel.angle || 0, "cell")}</span><button class="btn tiny" data-a="objRotate" data-v="15" title="Turn right 15 degrees (or Shift+scroll)">&#8635;</button><button class="btn tiny" data-a="objRotate" data-v="90" title="Turn a quarter">90</button></span><select id="objCover" data-c="setObjCover" title="Cover tier">${options(Object.entries(S.rules.cover).map(([id, t]) => [id, t.n]), E.coverTier(sel, S.rules))}</select><label class="chk s"><input type="checkbox" data-a="objBlock" data-v="${sel.id}"${sel.block ? " checked" : ""}>Blocks walking</label><input id="objLabel" autocomplete="off" class="grow" placeholder="Label" data-c="setObjLabel" value="${h(sel.label || "")}">${btn("objDel", sel.id, "Remove", "", "tiny")}</div>` : ""}${!sel && !ui.place ? `<div class="maptools s dim maphint">Click an object to select it, then drag its round handle to turn it.</div>` : ""}${ui.place ? `<div class="maptools warn s">Click the map to place ${h(MAP_OBJ[ui.place][0].toLowerCase())}. Esc to stop.</div>` : ""}`;
+  return `${sel ? `<div class="maptools"><span class="s dim">${h(((S.rules.mapItems[sel.item] || {}).n || MAP_OBJ[sel.kind][0]).toUpperCase())}</span><span class="rotbar"><button class="btn tiny" data-a="objRotate" data-v="-15" title="Turn left 15 degrees (Q, or Shift+scroll)">&#8634;</button><span style="width:30px">${numBox(`id="objAngle" data-c="setObjAngle" title="Angle in degrees"`, sel.angle || 0, "cell")}</span><button class="btn tiny" data-a="objRotate" data-v="15" title="Turn right 15 degrees (E, or Shift+scroll)">&#8635;</button><button class="btn tiny" data-a="objRotate" data-v="90" title="Turn a quarter">90</button></span><select id="objCover" data-c="setObjCover" title="Cover tier">${options(Object.entries(S.rules.cover).map(([id, t]) => [id, t.n]), E.coverTier(sel, S.rules))}</select><label class="chk s"><input type="checkbox" data-a="objBlock" data-v="${sel.id}"${sel.block ? " checked" : ""}>Blocks walking</label><input id="objLabel" autocomplete="off" class="grow" placeholder="Label" data-c="setObjLabel" value="${h(sel.label || "")}">${btn("objDel", sel.id, "Remove", "", "tiny")}</div>` : ""}${!sel && !ui.place ? `<div class="maptools s dim maphint">Select an object, then drag its handle or press Q/E to turn it.</div>` : ""}${ui.place ? `<div class="maptools warn s">Click the map to place ${h(MAP_OBJ[ui.place][0].toLowerCase())}. Esc to stop.</div>` : ""}`;
 }
 const SITES = (sub) => db.situations.filter((r) => r.sub === sub).map((r) => [r.n, r.n === "Grassland" ? "Grassland (Plains)" : r.n]);
 function enemyTab() {
@@ -975,7 +981,7 @@ function mapSvg() {
     // Drawn at real size in meters, so a tree is tiny on a 220m map and full size when you zoom in. Harder cover looks more solid.
     const turn = o.angle ? `rotate(${o.angle}) ` : "";
     const draw = turn + (o.rot ? `rotate(90) scale(${ht} ${w})` : `scale(${w} ${ht})`);
-    const showName = o.label || v.w <= 30;
+    const showName = o.label || (v.w <= 30 && o.item !== "concreteWall");  /* walls are obvious; their names were clutter */
     // Trees: a faint circle for the trunk, which is what stops shots, under a fainter picture of the leaves.
     const trunk = E.trunkOf(o, S.rules);
     const art = trunk ? `<g class="gly trunk" style="opacity:${S.rules.trunkOpacity}" transform="scale(${w * trunk} ${ht * trunk})"><ellipse rx=".5" ry=".5"/></g><g class="gly canopy" style="opacity:${S.rules.canopyOpacity}" transform="${draw}">${gl}</g>` : `<g class="gly" style="opacity:${cv.opacity != null ? cv.opacity : 1}" transform="${draw}">${gl}</g>`;
@@ -1079,7 +1085,8 @@ function attackPanel() {
   const rolling = `<div class="bands">${bars}</div><div class="bright bandtext">${h(E.bandText(p.b))}</div>
    <div class="rollrow"><input class="rollbox" id="roll" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="00" value="${h(a.roll)}" data-u="atk.roll" data-enter="fire" aria-label="Two-dice roll, 00 to 99">${btn("fire", "", "Resolve", "Enter", `primary ${p.cost > (A.ap || 0) && !a.ov.free ? "na" : ""}`)}<span class="spacer"></span><button class="btn tiny ${ui.atkOv ? "on" : ""}" data-a="atkOvToggle" data-v="" title="Overrides">OVR</button>${K().phase === "stealth" ? btn("closeAtk", "", "Close", "Esc", "tiny") : ""}</div>${ovr}
    ${a.err ? `<div class="errline">${h(a.err)}</div>` : ""}${warn.map((x) => `<div class="warnline">${h(x)}</div>`).join("")}
-   ${r ? `<div class="result ${r.outcome}">${r.story ? `<div class="story">${h(r.story)}</div>` : ""}${r.name}: ${h(r.head)}${r.math ? `<br>${h(r.math)}<br>${h(r.tName)} ${r.hp}/${r.max} HP${r.hp <= 0 ? " DOWN" : ""}` : ""}${r.ammoText ? ` · ${h(r.ammoText)}` : ""}${r.outcome === "jam" ? `<br>Weapon jammed. Press J to clear.` : ""}${(r.auto || []).length ? `<br><span class="warn">Applied: ${h(r.auto.join(", "))}</span>` : ""}${r.status ? `<br>${btn("applyHitStatus", r.status, `Apply ${h(r.status)} to ${h(r.tName)}`, "", "tiny")}` : ""}${r.radius ? `<br><span class="warn">Blast radius ${r.radius}: apply damage to anyone else in it by typing their HP.</span>` : ""}</div>` : ""}`;
+   ${r ? `<div class="result ${r.outcome}">${(() => { const facts = `${r.name}: ${h(r.head)}${r.math ? `<br>${h(r.math)}<br>${h(r.tName)} ${r.hp}/${r.max} HP${r.hp <= 0 ? " DOWN" : ""}` : ""}${r.ammoText ? ` · ${h(r.ammoText)}` : ""}${(r.auto || []).length ? `<br>Applied: ${h(r.auto.join(", "))}` : ""}`;
+     return r.story ? `<details class="shotmore" data-k="atkres"${ui.open.atkres ? " open" : ""}><summary><span class="story">${h(r.story)}</span><span class="moretag">${ui.open.atkres ? "less" : "details"}</span></summary><div class="facts">${facts}</div></details>` : facts; })()}${r.outcome === "jam" ? `<br>Press J to clear the jam.` : ""}${r.status ? `<br>${btn("applyHitStatus", r.status, `Apply ${h(r.status)} to ${h(r.tName)}`, "", "tiny")}` : ""}${r.radius ? `<br><span class="warn">Blast radius ${r.radius}: apply damage to anyone else in it by typing their HP.</span>` : ""}</div>` : ""}`;
   return `${seg("Loadout", loadout, "full")}${seg("Target", targeting, "full")}${seg("Roll", rolling, "full hot")}`;
 }
 function roundEndStage() {
@@ -2241,6 +2248,20 @@ const KEYS = {
 document.addEventListener("keydown", (e) => {
   const t = e.target; const k = e.key.toLowerCase();
   const typing = t.matches && t.matches("input,select,textarea");
+  // Q and E turn the object you're holding or have selected: Q counter-clockwise, E clockwise, 15 degrees a press
+  if ((k === "q" || k === "e") && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    const step = (k === "e" ? 1 : -1) * (e.shiftKey ? 5 : 15);
+    if (drag && drag.kind === "map" && drag.obj) {
+      const o = S.scene.objects.find((x) => x.id === drag.obj);
+      if (o) {
+        e.preventDefault(); drag.angle = (((drag.angle != null ? drag.angle : o.angle || 0) + step) % 360 + 360) % 360;
+        const gly = drag.g.querySelector(".gly:not(.trunk)"); if (gly && drag.base == null) drag.base = (gly.getAttribute("transform") || "").replace(/^rotate\([^)]*\)\s*/, "");
+        if (gly) gly.setAttribute("transform", `rotate(${drag.angle}) ${drag.base}`);
+        return;
+      }
+    }
+    if (ui.mapSel && !ui.modal) { e.preventDefault(); ACT.objRotate(step); return; }
+  }
   if (ui.modal && ui.modal.type === "move" && t.tagName === "SELECT" && /^[0-9]$/.test(k)) { e.preventDefault(); return ACT.moveTo(k === "0" ? 10 : Number(k)); }
   if (e.ctrlKey || e.metaKey) {
     if (k === "s") { e.preventDefault(); ACT.saveNow(); return; }
@@ -2377,11 +2398,12 @@ document.addEventListener("pointerup", (ev) => {
   }
   if (d.kind === "map") {
     if (!d.moved) {
+      if (d.obj && d.angle != null) { ui.mapSel = d.obj; return act("Rotate", () => { const o = S.scene.objects.find((q) => q.id === d.obj); if (o) o.angle = d.angle; }); }
       if (d.tok) ACT.pick(d.tok); else { ui.mapSel = d.obj; render(); }
       return;
     }
     const x = E.fix(d.p.x), y = E.fix(d.p.y);
-    if (d.obj) return act("Move on map", () => { const o = S.scene.objects.find((q) => q.id === d.obj); if (o) { o.x = x; o.y = y; } });
+    if (d.obj) return act("Move on map", () => { const o = S.scene.objects.find((q) => q.id === d.obj); if (o) { o.x = x; o.y = y; if (d.angle != null) o.angle = d.angle; } });
     const k = K();
     if (!k) return act("Move token", () => { S.scene.pos[d.tok] = { x, y }; });
     const c = cbOf(d.tok); const e = ent(d.tok); const free = ev.shiftKey || !fightPhase();

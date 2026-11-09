@@ -721,3 +721,14 @@ html.lt1000 .win > .wt { flex-wrap: wrap; row-gap: 4px; }
 .result.miss { border-color: var(--o-miss); color: var(--o-miss); } .result.hit { border-color: var(--o-hit); color: var(--o-hit); }
 .result.crit { border-color: var(--o-crit); color: var(--o-crit); } .result.super { border-color: var(--o-super); color: var(--o-super); }
 .result .story { color: inherit; font-size: calc(var(--fs) * 1.05); }
+
+/* story lines open to show the numbers behind the shot */
+.logrow > summary { list-style: none; cursor: pointer; }
+.logrow > summary::-webkit-details-marker { display: none; }
+.logrow > summary::after { content: " +"; color: var(--faint); }
+.logrow[open] > summary::after { content: " -"; }
+.logmore { color: var(--dim); font-size: var(--fs-s); padding: 2px 0 3px 8px; text-shadow: none; }
+.shotmore > summary { list-style: none; cursor: pointer; display: flex; gap: 8px; align-items: baseline; }
+.shotmore > summary::-webkit-details-marker { display: none; }
+.shotmore .moretag { margin-left: auto; font-size: var(--fs-s); color: var(--dim); border: 1px solid var(--line); padding: 0 5px; white-space: nowrap; }
+.shotmore .facts { color: var(--dim); font-size: var(--fs-s); margin-top: 3px; }

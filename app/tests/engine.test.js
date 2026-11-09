@@ -325,8 +325,8 @@ test("combat stories: every token filled, players only go down, robots never ble
   for (const w of weapons) for (const part of parts) for (const outcome of outs) for (const kind of ["flesh", "robot", "insect"]) for (const end of ["", "killed", "downed"]) {
     const s = E.story({ a: "Albert", t: "Raider 1", w, ammo: w.ammo ? w.ammo + " - Hollow Point" : "", d: 23, n: 3, part, outcome, kind, statuses: ["Bleeding", "Poisoned", "Burned"], killed: end === "killed", downed: end === "downed" }, COMBAT_TEXT, rng);
     assert.ok(s.length > 5 && !/[{}]/.test(s), "unfilled: " + s);
-    if (outcome !== "miss" && outcome !== "jam") assert.ok(s.includes("23"), "damage shown: " + s);
-    if (kind === "robot" && end !== "killed") assert.ok(!/blood|lung|skin|bone|venom|femur/i.test(s.split(w.n).join("")), "robot read as flesh: " + s);
+    if (outcome !== "miss" && outcome !== "jam") assert.ok(s.includes("23 DMG"), "damage shown as DMG: " + s);
+    if (kind === "robot" && end !== "killed") assert.ok(!/b(blood|lungs?|skin|bones?|venom|femur)b/i.test(s.split(w.n).join("")), "robot read as flesh: " + s);
   }
   const W = data.weapons.find((w) => /Sniper/.test(w.type));
   const once = () => E.story({ a: "Albert", t: "Raider 1", w: W, ammo: ".50 BMG - Standard", d: 40, n: 1, part: "LArm", outcome: "crit", kind: "flesh", statuses: [], killed: true }, COMBAT_TEXT);
@@ -351,7 +351,7 @@ test("room generator: every theme fills a room, stays in bounds, no overlaps, ci
     const map = { w: 40, h: 30 }; const room = E.generateRoom(map, id, DEFAULT_RULES, Math.random, [{ x: -18, y: 0 }]);
     assert.ok(room.length >= 2, id);
     for (const o of room) { assert.ok(Math.abs(o.x) <= map.w / 2 + 0.01 && Math.abs(o.y) <= map.h / 2 + 0.01, `${id} ${o.item} out of bounds`); assert.ok(DEFAULT_RULES.cover[o.cover], o.item); }
-    room.forEach((p, i) => room.forEach((q, j) => { if (i < j) assert.ok(Math.abs(p.x - q.x) >= (p.w + q.w) / 2 || Math.abs(p.y - q.y) >= (p.h + q.h) / 2, `${id}: ${p.item} overlaps ${q.item}`); }));
+    room.forEach((p, i) => room.forEach((q, j) => { if (i < j && !(p.item === "concreteWall" && q.item === "concreteWall")) assert.ok(Math.abs(p.x - q.x) >= (p.w + q.w) / 2 - 0.05 || Math.abs(p.y - q.y) >= (p.h + q.h) / 2 - 0.05, `${id}: ${p.item} overlaps ${q.item}`); }));  // wall pieces meet at corners
   }
   const city = E.generateRoom({ w: 90, h: 70 }, "city", DEFAULT_RULES, Math.random);
   assert.ok(city.filter((o) => o.item === "building" && o.block && o.cover === "impenetrable").length >= 2, "concrete blocks");
@@ -494,3 +494,82 @@ test("new enemies follow the workbook's pattern for skills, SPECIAL and XP", () 
   }
 });
 
+
+// ---------- room layouts: every map with every setting, then the rules that make a room make sense
+const LAYOUT_RULES = DEFAULT_RULES;
+const seeded = (seed) => { let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; };
+const room = (id, theme, seed, w, h) => { const m = { id, w: w || LAYOUT_RULES.maps[id].w, h: h || LAYOUT_RULES.maps[id].h }; return { m, objs: E.generateRoom(m, theme, LAYOUT_RULES, seeded(seed), [{ x: -m.w / 2 + 2, y: 0 }]) }; };
+const touching = (a, b, g = 0.15) => Math.abs(a.x - b.x) <= (a.w + b.w) / 2 + g && Math.abs(a.y - b.y) <= (a.h + b.h) / 2 + g;
+const wallish = (o) => o.item === "concreteWall" || o.item === "building";
+
+test("layouts: every map with every setting fits, nothing overlaps, and everything can be walked up to", () => {
+  for (const id of Object.keys(LAYOUT_RULES.maps)) for (const theme of Object.keys(LAYOUT_RULES.roomThemes)) for (const seed of [11, 4242, 90001]) {
+    const { m, objs } = room(id, theme, seed); const tag = `${id}/${theme}/${seed}`;
+    for (const o of objs) assert.ok(o.x - o.w / 2 >= -m.w / 2 - 0.01 && o.x + o.w / 2 <= m.w / 2 + 0.01 && o.y - o.h / 2 >= -m.h / 2 - 0.01 && o.y + o.h / 2 <= m.h / 2 + 0.01, `${tag}: ${o.item} is off the map`);
+    for (let i = 0; i < objs.length; i++) for (let j = i + 1; j < objs.length; j++) { const a = objs[i], b = objs[j]; if (wallish(a) && wallish(b)) continue; assert.ok(!(Math.abs(a.x - b.x) < (a.w + b.w) / 2 - 0.05 && Math.abs(a.y - b.y) < (a.h + b.h) / 2 - 0.05), `${tag}: ${a.item} on top of ${b.item}`); }
+    const R = E.layoutReach(objs, m); assert.ok(R.share >= 0.85, `${tag}: the floor is cut into pieces`); assert.ok(R.inMain({ x: -m.w / 2 + 2, y: 0 }), `${tag}: the party is walled in`);
+    const stuff = objs.filter((o) => !wallish(o));
+    for (const o of stuff) assert.ok(R.reachable(o) || stuff.some((p) => p !== o && touching(o, p) && R.reachable(p)), `${tag}: nobody can get to the ${o.item}`);
+    const n = {}; for (const o of objs) n[o.item] = (n[o.item] || 0) + 1;
+    const perBuilding = id === "streets" && E.LAYOUT.indoorThemes.includes(theme);  // in a city the limits are per building
+    for (const [k, v] of Object.entries(n)) if (E.LAYOUT.caps[k] && !perBuilding) assert.ok(v <= E.LAYOUT.caps[k], `${tag}: ${v} ${k}`);
+    if (["home"].includes(theme) && !perBuilding) assert.ok((n.stove || 0) <= 1, `${tag}: one kitchen per home`);
+  }
+});
+
+test("layouts: warehouses have parallel shelf rows with walkable aisles, factories have production lines", () => {
+  for (const seed of [3, 77, 501, 9001]) {
+    const { objs } = room("warehouse", "warehouse", seed);
+    const shelves = objs.filter((o) => o.item === "shelves"); assert.ok(shelves.length >= 8, "a warehouse has shelves");
+    assert.ok(shelves.every((s) => !!s.rot === !!shelves[0].rot), "all shelf rows run the same way");
+    const across = shelves[0].rot ? "x" : "y"; const rows = [...new Set(shelves.map((s) => s[across].toFixed(2)))].map(Number).sort((a, b) => a - b);
+    for (let i = 1; i < rows.length; i++) assert.ok(rows[i] - rows[i - 1] - 1 >= 2.2, `aisle between shelf rows is ${(rows[i] - rows[i - 1] - 1).toFixed(2)}m`);
+    const f = room("warehouse", "factory", seed).objs;
+    const belts = f.filter((o) => o.item === "conveyor"); assert.ok(belts.length >= 4, "a factory has conveyor lines");
+    for (const b of belts) assert.ok(belts.some((c) => c !== b && touching(b, c, 0.1)), "every conveyor joins the line");
+    assert.ok(belts.every((b) => !!b.rot === !!belts[0].rot), "lines run straight");
+    for (const p of f.filter((o) => o.item === "pressMachine")) assert.ok(belts.some((b) => touching(p, b, 0.3)), "press machines sit on the line");
+    const drums = f.filter((o) => o.item === "oilDrum"); for (const d of drums) assert.ok(drums.some((e) => e !== d && touching(d, e, 0.15)), "oil drums stand in rows");
+    assert.ok(f.some((o) => o.item === "boiler") && f.some((o) => o.item === "generator"), "a utility corner");
+  }
+});
+
+test("layouts: offices, homes, police stations and camps are furnished the way people use them", () => {
+  for (const seed of [5, 61, 777]) {
+    const o = room("bigRoom", "office", seed).objs; const chairs = o.filter((x) => x.item === "officeChair");
+    for (const d of o.filter((x) => x.item === "desk")) assert.ok(chairs.some((c) => Math.hypot(c.x - d.x, c.y - d.y) < 1.6), "every desk has a chair");
+    for (const p of o.filter((x) => x.item === "partition")) assert.ok(o.filter((x) => x.item === "desk" && touching(x, p, 0.1)).length >= 2, "partitions divide desk pods");
+    const h = room("interior", "home", seed).objs;
+    const strip = ["fridge", "stove", "sink"].map((k) => h.find((x) => x.item === k)).filter(Boolean);
+    if (strip.length === 3) assert.ok(touching(strip[0], strip[1], 0.1) && touching(strip[1], strip[2], 0.1), "the kitchen is one strip: fridge, stove, sink");
+    assert.ok(h.some((x) => x.item === "bed") && h.some((x) => x.item === "toilet"), "a home has a bedroom and a bathroom");
+    assert.ok(h.filter((x) => x.item === "concreteWall").length >= 3, "a home is split into rooms");
+    const p = room("warehouse", "police", seed).objs;
+    assert.ok(p.some((x) => x.item === "frontCounter") && p.filter((x) => x.item === "cellBars").length >= 2, "a counter and a row of cells");
+    const c = room("wild", "tent", seed).objs; const fire = c.find((x) => x.item === "campfire");
+    for (const b of c.filter((x) => x.item === "cot" || x.item === "bedroll")) assert.ok(c.filter((x) => x.item === "campfire").some((f) => Math.hypot(b.x - f.x, b.y - f.y) < 4.5), "beds are around the fire");
+    assert.ok(fire, "a camp has a fire");
+  }
+});
+
+test("layouts: a building setting on open ground is a building in the middle, and on city streets every block is one", () => {
+  for (const seed of [2, 31, 404]) {
+    const { m, objs } = room("wild", "factory", seed);
+    const walls = objs.filter((o) => o.item === "concreteWall"); assert.ok(walls.length >= 4, "the factory has walls");
+    const box = { x0: Math.min(...walls.map((w) => w.x - w.w / 2)), x1: Math.max(...walls.map((w) => w.x + w.w / 2)), y0: Math.min(...walls.map((w) => w.y - w.h / 2)), y1: Math.max(...walls.map((w) => w.y + w.h / 2)) };
+    const inBox = (o) => o.x > box.x0 && o.x < box.x1 && o.y > box.y0 && o.y < box.y1;
+    for (const o of objs.filter((x) => ["conveyor", "pressMachine", "workbench", "boiler"].includes(x.item))) assert.ok(inBox(o), `the ${o.item} is inside the factory`);
+    for (const o of objs.filter((x) => ["boulder", "cactus", "dune", "deadTree"].includes(x.item))) assert.ok(!inBox(o), `no ${o.item} inside the factory`);
+    assert.ok(objs.some((o) => o.item === "oilDrum" && !inBox(o)), "junk outside: drums along the walls");
+    assert.ok(objs.filter((o) => ["boulder", "rock", "cactus"].includes(o.item)).length >= 10, "the rest is wilderness");
+    assert.ok(Math.abs((box.x0 + box.x1) / 2) < 2 && Math.abs((box.y0 + box.y1) / 2) < 2 && box.x1 - box.x0 < m.w * 0.7, "in the middle, not filling the map");
+    // city blocks of factories: every machine has walls on all four sides
+    const city = room("streets", "factory", seed).objs; const cw = city.filter((o) => o.item === "concreteWall");
+    // three parallel sight lines each way, 2m apart: a doorway can let one or two through, never all three
+    const hits = (o, dx, dy, off) => cw.some((w) => (dx ? Math.abs(w.y - (o.y + off)) <= w.h / 2 && Math.sign(w.x - o.x) === dx && Math.abs(w.x - o.x) < 25 : Math.abs(w.x - (o.x + off)) <= w.w / 2 && Math.sign(w.y - o.y) === dy && Math.abs(w.y - o.y) < 25));
+    const walled = (o) => [[1, 0], [-1, 0], [0, 1], [0, -1]].every(([dx, dy]) => [-2, 0, 2].some((off) => hits(o, dx, dy, off)));
+    const machines = city.filter((o) => ["conveyor", "pressMachine", "workbench"].includes(o.item)); assert.ok(machines.length >= 6, "the blocks are factories");
+    for (const o of machines) assert.ok(walled(o), `the ${o.item} is inside a building, not in the street`);
+    assert.ok(city.some((o) => o.item === "car") && city.some((o) => o.item === "lamppost"), "streets keep their cars and lamp posts");
+  }
+});

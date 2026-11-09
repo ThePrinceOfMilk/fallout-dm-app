@@ -570,14 +570,14 @@ const E = (() => {
     const group = o.part === "Head" ? "Head" : o.part === "Body" ? "Body" : "Limb";
     const limb = /Leg/.test(o.part || "") ? "leg" : /Arm/.test(o.part || "") ? "arm" : "body";
     const side = /^L/.test(o.part || "") ? "left " : /^R/.test(o.part || "") ? "right " : "";
-    const partName = group === "Limb" ? side + limb : group.toLowerCase();
+    const partName = group === "Limb" ? side + limb : group === "Body" ? "chest" : "head";
     const cal = String(o.ammo || "").split(" - ")[0].trim();
     const withT = rng() < 0.45 ? (cal && !/^n\/a$/i.test(cal) ? ` with ${/^[aeiou8]|^\.(11|18)/i.test(cal) ? "an" : "a"} ${cal}` : o.w && o.w.n ? ` with the ${o.w.n}` : "") : "";
     const verb = storyPick(`verb:${fam}`, F.verbs, rng);
-    const fill = (s) => s.replace(/\{a\}/g, o.a).replace(/\{t\}/g, o.t).replace(/\{d\}/g, o.d).replace(/\{n\}/g, o.n || 1).replace(/\{w\}/g, (o.w && o.w.n) || "weapon")
+    const fill = (s) => s.replace(/\{a\}/g, o.a).replace(/\{t\}/g, o.t).replace(/\{d\}/g, `${o.d} DMG`).replace(/\{n\}/g, o.n || 1).replace(/\{w\}/g, (o.w && o.w.n) || "weapon")
       .replace(/\{with\}/g, withT).replace(/\{verb\}/g, verb).replace(/\{proj\}/g, F.proj).replace(/\{part\}/g, partName).replace(/\{limb\}/g, limb);
     const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-    if (o.outcome === "miss") return fill(storyPick("miss", text.miss, rng));
+    if (o.outcome === "miss") { const k = ["blunt", "blade", "pierce", "unarmed"].includes(fam) ? "missMelee" : fam === "explosive" ? "missBlast" : "missRanged"; return fill(storyPick(k, text[k], rng)); }
     if (o.outcome === "jam") return fill(storyPick("jam", text.jam, rng));
     const crit = o.outcome === "crit" || o.outcome === "super", sup = o.outcome === "super";
     const out = [];
@@ -591,8 +591,8 @@ const E = (() => {
       out.push(fill(storyPick(`kill:${key}`, K[key] || K.plain, rng)));
       return out.join(" ");
     }
-    const generic = crit ? ["{a} {verb} {t} in the {part} for {d}{with}.", "{a} {verb} {t}'s {part} for {d}.", "Critical: {a} {verb} {t} right in the {part}, {d} damage.", "{a} finds the gap and {verb} {t} in the {part} for {d}."]
-      : ["{a} {verb} {t} for {d}{with}.", "{a} {verb} {t} in the {part} for {d}.", "{t} takes {d} as {a} {verb} them{with}.", "{a}'s {proj} catches {t} for {d}."];
+    const generic = crit ? ["{a} {verb} {t} in the {part} for {d}{with}.", "Critical hit: {a} {verb} {t} in the {part} for {d}.", "{a} finds a gap and {verb} {t} in the {part} for {d}."]
+      : ["{a} {verb} {t} for {d}{with}.", "{a} {verb} {t} in the {part} for {d}."];
     let main;
     if ((o.n || 1) > 1 && F.multi && F.multi.length && rng() < 0.75) main = storyPick(`multi:${fam}`, F.multi, rng);
     else if (crit || rng() < 0.4) main = storyPick(`gen:${crit}`, generic, rng);
@@ -675,29 +675,385 @@ const E = (() => {
   const pathBlocked = (a, b, objects) => (objects || []).some((o) => o.block && crosses(a, b, o));
 
   /** Random furniture for a location. Count = area x density x 0.8 to 1.2, kept between the theme's min and max. */
+  // ---------- room layouts
+  // A layout is built from the setting (theme) and the location (map), with rules instead of dice:
+  // indoor maps are furnished wall to wall; a building setting on open ground becomes a walled building in the middle
+  // with its junk around it and wilderness beyond; city blocks become buildings of the setting. Rows stay parallel,
+  // conveyors chain into lines, drums stand in rows, and aisles and doorways stay clear so you can walk everywhere.
+  const LAYOUT = {
+    indoorThemes: ["home", "office", "factory", "warehouse", "police"],
+    footprint: { home: [16, 12], office: [24, 16], factory: [34, 22], warehouse: [38, 24], police: [26, 18] },
+    // the most of each item one layout may hold
+    caps: { conveyor: 14, pressMachine: 8, boiler: 2, generator: 3, oilDrum: 24, workbench: 10, toolCart: 6, pipeRack: 4, crate: 14, shelves: 40, crateStack: 8, pallet: 14, forklift: 2, barrels: 8, desk: 24, officeChair: 26, cabinet: 10, bookshelf: 8, copier: 2, cooler: 2, pottedPlant: 6, partition: 14, couch: 4, officeSafe: 1, lDesk: 2, bed: 4, kitchenTable: 2, toilet: 3, bathtub: 2, sink: 4, stove: 2, fridge: 2, dresser: 4, cellBars: 6, lockers: 6, sandbags: 8, bench: 8, frontCounter: 2, armoryCage: 1, bedroll: 10, cot: 8, footlocker: 10, campfire: 2, tarpWall: 6, tentPole: 8, car: 24, bus: 2, dumpster: 10, mailbox: 8, hydrant: 10, lamppost: 30, barricade: 10, rubble: 10, wreck: 6, ruinWall: 10, stoneWall: 8, deadTree: 12, cactus: 30, dune: 16, boulder: 24, rock: 50, smallRock: 60, tree: 260, bigTree: 30, bush: 140, log: 30, thicket: 20, stump: 30 },
+  };
   function generateRoom(map, themeId, r, rng, keepClear = [], newId = (i) => "o" + i) {
-    const th = r.roomThemes[themeId]; const out = []; let n = 0;
-    const item = (key, x, y, w, h, rot) => { const c = r.mapItems[key]; const o = { id: newId(n++), item: key, kind: c.round ? "tree" : "cover", x: fix(x), y: fix(y), w: fix(w), h: fix(h), cover: c.cover, label: "" }; if (c.block) o.block = true; if (c.round) o.round = true; if (rot) o.rot = 90; return o; };
-    const clear = (x, y, w, h) => keepClear.every((p) => Math.abs(p.x - x) > w / 2 + 1 || Math.abs(p.y - y) > h / 2 + 1) && out.every((o) => Math.abs(o.x - x) > (o.w + w) / 2 + 0.5 || Math.abs(o.y - y) > (o.h + h) / 2 + 0.5);
-    // City streets: on a big enough map, lay out a grid of concrete blocks with streets between them.
-    if (th.blocks && Math.min(map.w, map.h) >= 30) {
-      const cell = 28, street = 9;
-      for (let cx = -map.w / 2 + cell / 2; cx + cell / 2 <= map.w / 2 + 1; cx += cell) for (let cy = -map.h / 2 + cell / 2; cy + cell / 2 <= map.h / 2 + 1; cy += cell) {
-        const w = cell - street - rng() * 5, h = cell - street - rng() * 5;
-        if (clear(cx, cy, w, h)) out.push(item("building", cx, cy, w, h));
+    const out = [], reserved = []; let n = 0; const count = {}; const walls = new Set();
+    const B = { x0: -map.w / 2, y0: -map.h / 2, x1: map.w / 2, y1: map.h / 2 };
+    const rand = (a, b) => a + rng() * (b - a); const ri = (a, b) => Math.floor(rand(a, b + 1)); const any = (l) => l[Math.floor(rng() * l.length)];
+    const over = (a, b, pad) => Math.abs(a.x - b.x) < (a.w + b.w) / 2 + pad && Math.abs(a.y - b.y) < (a.h + b.h) / 2 + pad;
+    const inside = (x, y, w, h, R = B, m = 0.1) => x - w / 2 >= R.x0 + m - 1e-6 && x + w / 2 <= R.x1 - m + 1e-6 && y - h / 2 >= R.y0 + m - 1e-6 && y + h / 2 <= R.y1 - m + 1e-6;
+    // Can something of this size go here? Inside the map, off the tokens, out of aisles, and not on top of anything.
+    const fits = (x, y, w, h, pad, o = {}) => {
+      if (!inside(x, y, w, h, o.within || B, o.within ? 0.02 : 0.1)) return false;
+      if (keepClear.some((p) => Math.abs(p.x - x) < w / 2 + 1.2 && Math.abs(p.y - y) < h / 2 + 1.2)) return false;
+      const me = { x, y, w, h };
+      if (!o.inAisle && reserved.some((q) => over(me, q, 0))) return false;
+      return out.every((b) => (o.touch && o.touch.includes(b)) || !over(me, b, walls.has(b) ? 0.05 : pad));
+    };
+    const add = (key, x, y, o = {}) => {
+      const c = r.mapItems[key]; if (!c) return null;
+      if ((count[key] || 0) >= (LAYOUT.caps[key] || 999)) return null;
+      let w = o.w != null ? o.w : c.w, h = o.h != null ? o.h : c.h; if (o.rot && !c.round) [w, h] = [h, w];
+      if (!o.force && !fits(x, y, w, h, o.pad != null ? o.pad : 0.3, o)) return null;
+      const ob = { id: newId(n++), item: key, kind: c.round ? "tree" : "cover", x: fix(x), y: fix(y), w: fix(w), h: fix(h), cover: c.cover, label: "" };
+      if (c.block) ob.block = true; if (c.round) ob.round = true; if (o.rot && !c.round) ob.rot = 90;
+      out.push(ob); count[key] = (count[key] || 0) + 1; return ob;
+    };
+    // A frame turns "along the room / across the room" (u, v) into map x, y, so each layout is written once for any orientation.
+    const frame = (R, door) => {
+      const side = door || (R.x1 - R.x0 >= R.y1 - R.y0 ? "W" : "N");
+      const horiz = side === "W" || side === "E", Lu = horiz ? R.x1 - R.x0 : R.y1 - R.y0, Lv = horiz ? R.y1 - R.y0 : R.x1 - R.x0;
+      const at = (u, v) => (side === "W" ? [R.x0 + u, R.y0 + v] : side === "E" ? [R.x1 - u, R.y0 + v] : side === "N" ? [R.x0 + v, R.y0 + u] : [R.x0 + v, R.y1 - u]);
+      // a wall inside the room between two (u, v) points, with doorways given as [position along the line, width]
+      const line = (ua, va, ub, vb, gaps = [], thick = 0.2) => {
+        const [ax, ay] = at(ua, va), [bx, by] = at(ub, vb); const alongU = Math.abs(va - vb) < 1e-6;
+        const g = gaps.map(([t, w]) => { const [gx, gy] = alongU ? at(t, va) : at(ua, t); return [Math.abs(ay - by) < 1e-6 ? gx : gy, w]; });
+        wallLine(Math.min(ax, bx), Math.min(ay, by), Math.max(ax, bx), Math.max(ay, by), g, thick);
+      };
+      // along: the item's long side runs along u
+      const put = (key, u, v, along = true, o = {}) => { const [x, y] = at(u, v); return add(key, x, y, { ...o, rot: along ? !horiz : horiz, within: o.within || R }); };
+      const size = (key, along = true) => { const c = r.mapItems[key]; return along ? [c.w, c.h] : [c.h, c.w]; };  // [u size, v size]
+      // the first of several spots that works
+      const first = (key, spots, o = {}) => { for (const [u, v, along] of spots) { const p = put(key, u, v, along, o); if (p) return p; } return null; };
+      return { R, horiz, Lu, Lv, at, put, size, line, first };
+    };
+    const reserve = (x0, y0, x1, y1) => reserved.push({ x: (x0 + x1) / 2, y: (y0 + y1) / 2, w: Math.abs(x1 - x0), h: Math.abs(y1 - y0) });
+    // Wall pieces along a line, with gaps for doors and for anyone standing on the line.
+    const T = 0.4;
+    const wallLine = (x0, y0, x1, y1, gaps = [], thick = T) => {
+      const horiz = Math.abs(y1 - y0) < 1e-6; const a0 = horiz ? Math.min(x0, x1) : Math.min(y0, y1), a1 = horiz ? Math.max(x0, x1) : Math.max(y0, y1);
+      const fixed = horiz ? y0 : x0;
+      const g = [...gaps];
+      for (const p of keepClear) { const along = horiz ? p.x : p.y, off = horiz ? p.y : p.x; if (Math.abs(off - fixed) < 1 && along > a0 && along < a1) g.push([along, 1.6]); }
+      g.sort((p, q) => p[0] - q[0]);
+      let s = a0;
+      const piece = (p0, p1) => { if (p1 - p0 < 0.3) return; const mid = (p0 + p1) / 2, len = p1 - p0; const o = horiz ? add("concreteWall", mid, fixed, { w: len, h: thick, force: true }) : add("concreteWall", fixed, mid, { w: thick, h: len, force: true }); if (o) walls.add(o); };
+      for (const [c, wd] of g) { piece(s, Math.max(s, c - wd / 2)); s = Math.max(s, c + wd / 2); }
+      piece(s, a1);
+    };
+    // A walled shell on rectangle R with doors; returns the floor inside the walls and where the doors are.
+    const shell = (R, doorSides, doorW = 2.4) => {
+      const doors = [];
+      const gapOn = (side) => { const len = side === "N" || side === "S" ? R.x1 - R.x0 : R.y1 - R.y0; const c = (side === "N" || side === "S" ? R.x0 : R.y0) + len * (0.3 + rng() * 0.4); return c; };
+      const g = { N: [], S: [], W: [], E: [] };
+      for (const side of doorSides) { const c = gapOn(side); g[side].push([c, doorW]); doors.push(side === "N" ? { x: c, y: R.y0, side } : side === "S" ? { x: c, y: R.y1, side } : side === "W" ? { x: R.x0, y: c, side } : { x: R.x1, y: c, side }); }
+      wallLine(R.x0 - T / 2, R.y0, R.x1 + T / 2, R.y0, g.N); wallLine(R.x0 - T / 2, R.y1, R.x1 + T / 2, R.y1, g.S);
+      wallLine(R.x0, R.y0 + T / 2, R.x0, R.y1 - T / 2, g.W); wallLine(R.x1, R.y0 + T / 2, R.x1, R.y1 - T / 2, g.E);
+      const In = { x0: R.x0 + T / 2, y0: R.y0 + T / 2, x1: R.x1 - T / 2, y1: R.y1 - T / 2 };
+      for (const d of doors) clearDoor(d, In, doorW);
+      return { In, doors };
+    };
+    // Keep the ground in front of a door free, inside and out.
+    const clearDoor = (d, In, wd = 2.4, depth = 3) => {
+      if (d.side === "N") reserve(d.x - wd / 2, In.y0 - depth, d.x + wd / 2, In.y0 + depth);
+      if (d.side === "S") reserve(d.x - wd / 2, In.y1 - depth, d.x + wd / 2, In.y1 + depth);
+      if (d.side === "W") reserve(In.x0 - depth, d.y - wd / 2, In.x0 + depth, d.y + wd / 2);
+      if (d.side === "E") reserve(In.x1 - depth, d.y - wd / 2, In.x1 + depth, d.y + wd / 2);
+    };
+    // Items in a row against one wall of R, long side along the wall, from one end toward the other.
+    const alongWall = (F, key, side, u0, u1, gap, max, o = {}) => {
+      const [su, sv] = F.size(key, true); const v = side === "near" ? sv / 2 + 0.05 : F.Lv - sv / 2 - 0.05; const placed = [];
+      for (let u = u0 + su / 2; u + su / 2 <= u1 && placed.length < max; u += su + gap) { const p = F.put(key, u, v, true, { pad: gap > 0.15 ? 0.1 : 0.02, touch: placed, ...o }); if (p) placed.push(p); }
+      return placed;
+    };
+    // ---- interiors, written along the room (u) and across it (v); the door end is u = 0
+    const ROOM = {
+      warehouse(F) {
+        const dock = Math.min(7, F.Lu * 0.25);
+        // shelves: parallel rows along the room, aisles between, a cross aisle at the far end and in the middle of long runs
+        const pitch = 1 + 2.6; const u0 = dock + 1, u1 = F.Lu - 2.6; const runs = u1 - u0 > 24 ? [[u0, (u0 + u1) / 2 - 1.3], [(u0 + u1) / 2 + 1.3, u1]] : [[u0, u1]];
+        for (let v = 0.55; v + 0.5 <= F.Lv - 0.55; v += pitch) for (const [a, b] of runs) { const row = []; for (let u = a + 3; u + 3 <= b; u += 6) { const s = F.put("shelves", u, v, true, { pad: 0.02, touch: row }); if (s) row.push(s); } }
+        // the dock: pallets in rows, a forklift parked beside them, crate stacks in the corner, barrels on the wall
+        const pal = []; for (let i = 0; i < 4; i++) for (let j = 0; j < 2; j++) { const p = F.put("pallet", 1 + i * 1.35, 0.9 + j * 1.35, true, { pad: 0.05, touch: pal }); if (p) pal.push(p); }
+        F.put("forklift", Math.min(dock - 1.4, 4.5), Math.min(F.Lv - 1, 4.4), true, { pad: 0.3 });
+        const cs = []; for (let i = 0; i < 3; i++) { const p = F.put("crateStack", 1.1 + i * 2.05, F.Lv - 1.1, true, { pad: 0.02, touch: cs }); if (p) cs.push(p); }
+        alongWall(F, "barrels", "far", 0.3, dock, 0.1, 3);
+      },
+      factory(F) {
+        // production lines: conveyors end to end down the middle, press machines beside them, alternating sides
+        const lines = F.Lv >= 17 ? [F.Lv * 0.36, F.Lv * 0.68] : [F.Lv * 0.5];
+        for (const v of lines) {
+          const belt = []; let u = 4.5;
+          while (u + 5 <= F.Lu - 6 && belt.length < 6) { const s = F.put("conveyor", u + 2.5, v, true, { pad: 0.02, touch: belt }); if (!s) break; belt.push(s); u += 5; }
+          belt.forEach((s, i) => { if (i % 2) return; const side = (i / 2) % 2 ? -1 : 1; F.put("pressMachine", 4.5 + i * 5 + 2.5, v + side * (0.5 + 1 + 0.15), true, { pad: 0.1, touch: belt }); });
+          reserve(...F.at(2, v - 0.6), ...F.at(4.4, v + 0.6));  // a walkway at the head of each line
+        }
+        // workbenches on the near wall with tool carts between, a utility corner (boiler, generators, pipes) at the far end
+        const benches = alongWall(F, "workbench", "near", 3, F.Lu - 7, 1.4, 6);
+        benches.forEach((b, i) => { if (i % 2 === 0) { const pt = F.horiz ? [b.x + b.w / 2 + 0.7, b.y] : [b.x, b.y + b.h / 2 + 0.7]; add("toolCart", pt[0], pt[1], { rot: !F.horiz, pad: 0.05, touch: [b], within: F.R }); } });
+        F.put("boiler", F.Lu - 1.5, F.Lv - 1.5, true, { pad: 0.2 });
+        const gens = []; for (let i = 0; i < 2; i++) { const g = F.put("generator", F.Lu - 1.1, F.Lv - 4.2 - i * 2.3, false, { pad: 0.1, touch: gens }); if (g) gens.push(g); }
+        alongWall(F, "pipeRack", "near", F.Lu - 6.5, F.Lu - 0.2, 0.3, 2);
+        // oil drums in rows along the far wall by the machinery
+        for (let row = 0; row < 2; row++) { const drums = []; for (let i = 0; i < 6; i++) { const d = F.put("oilDrum", F.Lu - 4.2 - i * 0.85, F.Lv - 0.45 - row * 0.85, true, { pad: 0.02, touch: drums }); if (d) drums.push(d); } }
+        // crates stacked near the door
+        const cr = []; for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) { const c = F.put("crate", 1 + i * 1.05, F.Lv - 0.6 - j * 1.05, true, { pad: 0.02, touch: cr }); if (c) cr.push(c); }
+      },
+      office(F) {
+        let openU1 = F.Lu;
+        if (F.Lu >= 14 && F.Lv >= 9) {  // the manager's office in the far corner, walled off with a door
+          const mw = 5.5, mh = 4.6; const [ax, ay] = F.at(F.Lu - mw, 0), [bx, by] = F.at(F.Lu, mh);
+          const R = { x0: Math.min(ax, bx), y0: Math.min(ay, by), x1: Math.max(ax, bx), y1: Math.max(ay, by) };
+          F.line(F.Lu - mw, 0, F.Lu - mw, mh, [[mh * 0.55, 1.6]]); F.line(F.Lu - mw, mh, F.Lu, mh);
+          reserve(...F.at(F.Lu - mw - 1.4, mh * 0.55 - 0.8), ...F.at(F.Lu - mw + 1.4, mh * 0.55 + 0.8));
+          const M = frame({ x0: R.x0 + 0.15, y0: R.y0 + 0.15, x1: R.x1 - 0.15, y1: R.y1 - 0.15 });
+          M.put("lDesk", M.Lu - 1.2, M.Lv - 1.2, true, { pad: 0.1 }); M.put("officeChair", M.Lu - 2.7, M.Lv - 1.4, true, { pad: 0.1 });
+          M.put("officeSafe", M.Lu - 0.6, 0.6, true, { pad: 0.05 }); alongWall(M, "bookshelf", "near", 0.3, M.Lu - 1.5, 0.2, 1); M.put("pottedPlant", 0.6, M.Lv - 0.6, true, { pad: 0.05 });
+          openU1 = F.Lu - mw - 0.4;
+        }
+        // desk pods: two desks face to face with a partition, chairs on the outside, aisles around each pod
+        const podU = 3.4, podV = 3.4;
+        for (let u = 3.4; u + podU <= openU1 - 0.6; u += podU + 2.2) for (let v = 1.6; v + podV <= F.Lv - 1.4; v += podV + 2) {
+          const cu = u + podU / 2, cv = v + podV / 2; const pod = [];
+          const before = out.length;
+          const part = F.put("partition", cu, cv, true, { pad: 0.02, w: 3.2 }); if (!part) continue; pod.push(part);
+          for (const s of [-1, 1]) for (const k of [-0.8, 0.8]) { const d = F.put("desk", cu + k, cv + s * 0.55, true, { pad: 0.01, touch: pod, w: 1.55 }); if (d) { pod.push(d); const ch = F.put("officeChair", cu + k, cv + s * 1.35, true, { pad: 0.02, touch: pod }); if (ch) pod.push(ch); } }
+          if (pod.filter((o) => o.item === "desk").length < 4) for (const o of out.splice(before)) count[o.item]--;  // a pod is all four desks or nothing
+        }
+        // the lobby by the door: a couch on the wall, cooler, copier and a plant; filing cabinets in a row on the far wall
+        F.put("couch", 1.5, 0.5, true, { pad: 0.1 }); F.put("cooler", 0.4, F.Lv - 0.4, true, { pad: 0.05 }); F.put("copier", 1.6, F.Lv - 0.5, true, { pad: 0.1 }); F.put("pottedPlant", 0.45, 0.45 + 1.2, true, { pad: 0.05 });
+        alongWall(F, "cabinet", "far", F.Lu * 0.45, Math.min(openU1, F.Lu * 0.45 + 3), 0.02, 4);
+        alongWall(F, "bookshelf", "near", 3.6, Math.min(openU1, 3.6 + 4.6), 0.4, 2);
+      },
+      police(F) {
+        // lobby: a counter across the room with a way through, benches on the lobby wall, sandbags by the door
+        const lob = Math.min(5, F.Lu * 0.25);
+        const cl = Math.min(4, F.Lv - 3); F.put("frontCounter", lob, 0.3 + cl / 2, false, { pad: 0.1, w: cl });
+        alongWall(F, "bench", "far", 1, lob - 0.4, 0.3, 2);
+        // cells along the far end: bars in front, walls between, a bunk inside each
+        const depth = 2.8, cw = 3; const nCells = Math.min(4, Math.floor((F.Lv - 0.4) / cw));
+        const cu = F.Lu - depth; const v0 = (F.Lv - nCells * cw) / 2;
+        for (let i = 0; i < nCells; i++) {
+          const v = v0 + i * cw;
+          if (i > 0) F.line(cu, v, F.Lu, v);
+          F.put("cellBars", cu, v + 0.15 + (cw - 1.45) / 2, false, { pad: 0.02, w: cw - 1.45, force: true });  // the gap is the open cell door
+          F.put("bench", F.Lu - 0.3, v + cw / 2, false, { pad: 0.05 });
+        }
+        if (nCells) { if (v0 > 0.3) F.line(cu, v0, F.Lu, v0); if (v0 + nCells * cw < F.Lv - 0.3) F.line(cu, v0 + nCells * cw, F.Lu, v0 + nCells * cw); }
+        reserve(...F.at(cu - 2.2, 0), ...F.at(cu - 0.2, F.Lv));  // the walk in front of the cells
+        // the bullpen: rows of desks with chairs, lockers on the wall, the armory cage in a corner
+        for (let u = lob + 2.6; u + 1.6 <= cu - 2.6; u += 3.2) for (let v = 1.8; v + 0.8 <= F.Lv - 1.6; v += 2.8) { if (F.put("desk", u, v, true, { pad: 0.3 })) F.put("officeChair", u, v + 0.9, true, { pad: 0.05 }); }
+        alongWall(F, "lockers", "near", lob + 0.5, cu - 3, 0.05, 3);
+        F.put("armoryCage", cu - 3.8, F.Lv - 1.1, true, { pad: 0.2 });
+        alongWall(F, "cabinet", "far", lob + 0.5, lob + 3, 0.02, 3);
+      },
+      // a home is split into rooms first; these furnish one room each
+      living(F) { alongWall(F, "couch", "far", F.Lu * 0.3, F.Lu * 0.3 + 2.1, 0, 1); alongWall(F, "bookshelf", "near", 0.6, 3, 0, 1); F.put("pottedPlant", F.Lu - 0.5, 0.5, true, { pad: 0.05 }); F.put("kitchenTable", F.Lu * 0.55, F.Lv * 0.5, true, { pad: 0.6 }); },
+      kitchen(F) {
+        // fridge, stove and sink side by side on one wall: tried in each corner until all three fit
+        corners: for (const far of [false, true]) for (const fromEnd of [false, true]) {
+          const strip = []; let u = fromEnd ? F.Lu - 0.4 : 0.4;
+          for (const k of ["fridge", "stove", "sink"]) { const [su, sv] = F.size(k, true); const c = fromEnd ? u - su / 2 : u + su / 2; const o = F.put(k, c, far ? F.Lv - sv / 2 - 0.05 : sv / 2 + 0.05, true, { pad: 0.02, touch: strip }); if (!o) break; strip.push(o); u = fromEnd ? u - su : u + su; }
+          if (strip.length === 3) break corners;  // one kitchen
+          for (const o of strip) { out.splice(out.indexOf(o), 1); count[o.item]--; }
+        }
+        F.first("kitchenTable", [[F.Lu * 0.6, F.Lv * 0.62, true], [F.Lu * 0.4, F.Lv * 0.4, true], [F.Lu * 0.5, F.Lv * 0.5, false]], { pad: 0.5 });
+      },
+      bedroom(F) { const bed = F.first("bed", [[1.1, F.Lv / 2, false], [1.1, 1.05, false], [1.1, F.Lv - 1.05, false], [F.Lu / 2, 0.75, true], [1.05, 0.75, true], [F.Lu - 1.05, 0.75, true]], { pad: 0.05 }); if (bed) { const ds = [[bed.w / 2 + 0.85, 0, false], [-(bed.w / 2 + 0.85), 0, false], [0, bed.h / 2 + 0.45, false], [0, -(bed.h / 2 + 0.45), false], [bed.w / 2 + 0.45, 0, true], [-(bed.w / 2 + 0.45), 0, true]]; for (const [dx, dy, rot] of ds) if (add("dresser", bed.x + dx, bed.y + dy, { rot, pad: 0.05, within: F.R })) break; } /* beside the bed, wherever it ended up */ alongWall(F, "bookshelf", "far", F.Lu * 0.5, F.Lu - 0.2, 0, 1); },
+      livingKitchen(F) { ROOM.kitchen(F); alongWall(F, "couch", "far", F.Lu * 0.45, F.Lu * 0.45 + 2.1, 0, 1); F.put("pottedPlant", F.Lu - 0.5, 0.5, true, { pad: 0.05 }); },
+      bedBath(F) { ROOM.bedroom(F); F.first("toilet", [[F.Lu - 0.45, F.Lv - 0.55, true], [F.Lu - 0.45, 0.5, true], [F.Lu * 0.6, F.Lv - 0.55, true]], { pad: 0.05 }); F.put("sink", F.Lu - 1.5, F.Lv - 0.35, true, { pad: 0.05 }); },
+      bathroom(F) { F.first("toilet", [[0.5, 0.5, true], [0.5, F.Lv - 0.55, true], [F.Lu * 0.5, 0.5, true]], { pad: 0.05 }); alongWall(F, "bathtub", "far", 0.1, 2, 0, 1); F.put("sink", F.Lu - 0.5, 0.35, true, { pad: 0.05 }); },
+    };
+    // A room tries each wall as its "back" and keeps the first layout where the things it's for actually fit.
+    const NEED = { living: ["couch"], kitchen: ["stove"], bedroom: ["bed"], bathroom: ["toilet"], livingKitchen: ["stove"], bedBath: ["bed", "toilet"] };
+    const furnish = (job, A) => {
+      const sides = ["W", "E", "N", "S"].sort(() => rng() - 0.5);
+      for (let k = 0; k < sides.length; k++) {
+        const before = out.length; ROOM[job](frame(A, sides[k]));
+        const got = out.slice(before).map((o) => o.item);
+        if ((NEED[job] || []).every((n) => got.includes(n)) || k === sides.length - 1) return;
+        for (const o of out.splice(before)) count[o.item]--;
       }
-    }
-    const weights = Object.entries(th.items); const total = weights.reduce((t, [, v]) => t + v, 0);
-    const pick = () => { let x = rng() * total; for (const [k, v] of weights) { x -= v; if (x <= 0) return k; } return weights[0][0]; };
-    const count = Math.max(th.min, Math.min(th.max, Math.round(map.w * map.h * th.density * (0.8 + rng() * 0.4))));
-    for (let i = 0; i < count; i++) {
-      const key = pick(); const c = r.mapItems[key]; const flip = rng() < 0.5; const w = flip ? c.h : c.w, h = flip ? c.w : c.h;
-      for (let tries = 0; tries < 12; tries++) {
-        const x = (rng() - 0.5) * Math.max(0, map.w - w), y = (rng() - 0.5) * Math.max(0, map.h - h);
-        if (clear(x, y, w, h)) { out.push(item(key, x, y, w, h, flip)); break; }
+    };
+    // Split a home into rooms with inner walls and doorways, then give each room a job by size.
+    const homeRooms = (R, outer = []) => {
+      const doorways = outer.map((d) => ({ x: d.x, y: d.y }));  // points in the walls that must stay open, the front door first
+      const split = (A, depth) => {
+        const W = A.x1 - A.x0, H = A.y1 - A.y0; if (depth > 2 || W * H < 44 || (W < 7 && H < 7)) return [A];  // rooms stay at least ~20 square meters
+        let vert = W >= H, at = null;
+        for (const v of [vert, !vert]) {  // the other way round if a doorway is in the way
+          const len = v ? W : H; if (len < 7) continue;
+          for (let k = 0; k < 12 && at == null; k++) { const t = v ? A.x0 + W * (0.36 + rng() * 0.28) : A.y0 + H * (0.36 + rng() * 0.28); if (doorways.every((d) => Math.abs((v ? d.x : d.y) - t) > 1.6)) at = t; }
+          if (at != null) { vert = v; break; }
+        }
+        if (at == null) return [A];
+        const len = vert ? H : W; const door = (vert ? A.y0 : A.x0) + len * (0.25 + rng() * 0.5);
+        doorways.push(vert ? { x: at, y: door } : { x: door, y: at });
+        if (vert) wallLine(at, A.y0, at, A.y1, [[door, 1.6]], 0.2); else wallLine(A.x0, at, A.x1, at, [[door, 1.6]], 0.2);
+        if (vert) reserve(at - 1.4, door - 0.8, at + 1.4, door + 0.8); else reserve(door - 0.8, at - 1.4, door + 0.8, at + 1.4);
+        const a = vert ? { ...A, x1: at - 0.1 } : { ...A, y1: at - 0.1 }, b = vert ? { ...A, x0: at + 0.1 } : { ...A, y0: at + 0.1 };
+        return [...split(a, depth + 1), ...split(b, depth + 1)];
+      };
+      const list = split(R, 0).sort((p, q) => (q.x1 - q.x0) * (q.y1 - q.y0) - (p.x1 - p.x0) * (p.y1 - p.y0));
+      // every home gets somewhere to cook, sleep and wash, however many rooms it has
+      const jobs = list.length === 2 ? ["livingKitchen", "bedBath"] : list.length === 3 ? ["livingKitchen", "bedroom", "bathroom"] : ["living", "kitchen", "bedroom", "bathroom", "bedroom", "bedroom", "bedroom", "bedroom"];
+      if (list.length === 1) { ROOM.studio(frame(list[0])); return; }  // one room: bed and bath on one side, kitchen on the other
+      list.forEach((A, i) => furnish(jobs[i], A));
+      // last resort: a home without a bed, toilet or stove looks along every wall for room for it
+      const order = [...list].sort((p, q) => (p.x1 - p.x0) * (p.y1 - p.y0) - (q.x1 - q.x0) * (q.y1 - q.y0));
+      for (const key of ["toilet", "bed", "stove"]) {
+        if (out.some((o) => o.item === key)) continue;
+        search: for (const A of key === "toilet" ? order : [...order].reverse()) for (const side of ["W", "E", "N", "S"]) { const F = frame(A, side); const [, sv] = F.size(key, true); for (let u = 0.6; u < F.Lu - 0.6; u += 0.4) if (F.put(key, u, sv / 2 + 0.05, true, { pad: 0.05 })) break search; }
       }
+    };
+    ROOM.home = (F) => homeRooms(F.R, F.doors || []);
+    ROOM.studio = (F) => { const R = F.R, wide = R.x1 - R.x0 >= R.y1 - R.y0; const half = wide ? R.x0 + (R.x1 - R.x0) * 0.5 : R.y0 + (R.y1 - R.y0) * 0.5; furnish("bedBath", wide ? { ...R, x1: half } : { ...R, y1: half }); furnish("kitchen", wide ? { ...R, x0: half } : { ...R, y0: half }); };
+    // a narrow hall: things only on one wall, so there's always a way through
+    const hallway = (R, theme) => {
+      const F = frame(R); const keys = { home: ["dresser", "bookshelf", "pottedPlant"], office: ["cabinet", "bookshelf", "cooler", "pottedPlant"], factory: ["oilDrum", "toolCart", "crate"], warehouse: ["crate", "barrels", "pallet"], police: ["bench", "lockers", "cabinet"] }[theme] || ["crate"];
+      for (let u = 2; u < F.Lu - 2; u += rand(3, 6)) { const k = any(keys); const [su, sv] = F.size(k, true); F.put(k, u, sv / 2 + 0.05, true, { pad: 1 }); }
+    };
+    // a camp: sleeping spots around a fire, footlockers at their feet, a windbreak with poles on one side
+    const camp = (cx, cy) => {
+      add("campfire", cx, cy, { pad: 0.3 }); const nSpots = ri(5, 8); const rot0 = rng() * Math.PI * 2;
+      for (let i = 0; i < nSpots; i++) {
+        const a = rot0 + (i / nSpots) * Math.PI * 2, ca = Math.cos(a), sa = Math.sin(a); const radial = Math.abs(ca) >= Math.abs(sa);
+        const key = rng() < 0.5 ? "cot" : "bedroll"; const sp = add(key, cx + ca * 3.4, cy + sa * 3.4, { rot: !radial, pad: 0.2 });
+        if (sp && rng() < 0.6) add("footlocker", cx + ca * 4.9, cy + sa * 4.9, { rot: radial, pad: 0.1, touch: [sp] });
+      }
+      const side = any([[0, -1], [0, 1], [-1, 0], [1, 0]]); const along = side[0] === 0; const wallN = ri(2, 3);
+      for (let i = 0; i < wallN; i++) { const off = (i - (wallN - 1) / 2) * 3.05; const x = cx + side[0] * 7 + (along ? off : 0), y = cy + side[1] * 7 + (along ? 0 : off); const tw = add("tarpWall", x, y, { rot: !along, pad: 0.02 }); if (tw) { for (const e of [-1, 1]) add("tentPole", x + (along ? e * 1.7 : 0), y + (along ? 0 : e * 1.7), { pad: 0.02 }); } }
+      for (let i = 0; i < 2; i++) add("crate", cx + side[0] * 5.5 + (i - 0.5) * 1.1 * (along ? 1 : 0), cy + side[1] * 5.5 + (i - 0.5) * 1.1 * (along ? 0 : 1), { pad: 0.02 });
+    };
+    // ---- outdoors: clusters, not confetti
+    const nature = (kind, R, avoid = [], density = 1) => {
+      const area = Math.max(0, (R.x1 - R.x0) * (R.y1 - R.y0)); const pt = () => ({ x: rand(R.x0 + 2, R.x1 - 2), y: rand(R.y0 + 2, R.y1 - 2) });
+      const clear = (p, m) => avoid.every((A) => p.x < A.x0 - m || p.x > A.x1 + m || p.y < A.y0 - m || p.y > A.y1 + m) && keepClear.every((q) => Math.hypot(q.x - p.x, q.y - p.y) > m + 3);
+      const near = (p, rad) => { const a = rng() * Math.PI * 2, d = rad * Math.sqrt(rng()); return { x: p.x + Math.cos(a) * d, y: p.y + Math.sin(a) * d }; };
+      const put = (key, p, size, o = {}) => (clear(p, size / 2 + 0.5) ? add(key, p.x, p.y, { w: size, h: r.mapItems[key].round ? size : undefined, pad: 0.35, ...o }) : null);
+      if (kind === "forested") {
+        const groves = Math.max(1, Math.min(14, Math.round((area / 700) * density)));
+        for (let g = 0; g < groves * 3 && g < 40; g++) { const c = pt(); if (!clear(c, 2)) continue; const rad = rand(5, 10);
+          for (let i = 0; i < ri(6, 14); i++) put(rng() < 0.12 ? "bigTree" : "tree", near(c, rad), rand(3, 4.5));
+          for (let i = 0; i < ri(3, 7); i++) put(rng() < 0.2 ? "thicket" : "bush", near(c, rad + 3), rand(1.2, 2.4));
+          if (rng() < 0.6) { const p = near(c, rad); put("log", p, 3, { rot: rng() < 0.5 }); } if (rng() < 0.6) put("stump", near(c, rad), 0.8); }
+        for (let i = 0; i < Math.round((area / 400) * density); i++) put("bush", pt(), rand(1, 2));
+        for (let i = 0; i < Math.round((area / 260) * density); i++) put("tree", pt(), rand(3, 4.2));  /* single trees between the groves */
+      } else {
+        const forms = Math.max(1, Math.min(14, Math.round((area / 900) * density)));
+        for (let f = 0; f < forms; f++) { const c = pt(); if (!clear(c, 5)) continue; const b = put("boulder", c, rand(3, 5)); if (b) for (let i = 0; i < ri(2, 4); i++) put(rng() < 0.5 ? "rock" : "smallRock", near(c, 4), rand(1, 2.2)); }
+        const dunes = Math.min(4, Math.round((area / 2500) * density)); for (let d = 0; d < dunes; d++) { const c = pt(); const along = rng() < 0.5; for (let i = 0; i < ri(2, 4); i++) put("dune", { x: c.x + (along ? i * 6.5 : 0), y: c.y + (along ? 0 : i * 3.5) }, 6, { w: 6, h: 3, pad: 0.4 }); }
+        for (let i = 0; i < Math.round((area / 500) * density); i++) { const c = pt(); if (put("cactus", c, 1) && rng() < 0.3) put("cactus", near(c, 2.5), 1); }
+        for (let i = 0; i < Math.round((area / 1800) * density); i++) put("deadTree", pt(), 2.5);
+        if (area > 1500 && rng() < 0.8) { const c = pt(); if (clear(c, 3)) { const l1 = add("ruinWall", c.x, c.y, { pad: 0.02 }); const l2 = l1 && add("ruinWall", c.x + 1.25, c.y + 1.75, { rot: true, pad: 0.02, touch: [l1] }); if (l1) add("wreck", c.x + 4, c.y - 2.5, { pad: 0.4 }); } }
+      }
+    };
+    // the map's own idea of how wild it is: a tight forest stays tight. Top up to its counts on whatever ground is left open.
+    const topUp = (kind, avoid, density) => {
+      const spec = ((r.maps[map.id] || {}).scatter || []).filter(([k]) => (kind === "forested" ? ["tree", "bush", "bigTree", "thicket"] : ["boulder", "rock", "bush", "smallRock", "cactus"]).includes(k));
+      if (!spec.length) return;
+      const area = map.w * map.h; const blocked = avoid.reduce((t, A) => t + Math.max(0, Math.min(A.x1, B.x1) - Math.max(A.x0, B.x0)) * Math.max(0, Math.min(A.y1, B.y1) - Math.max(A.y0, B.y0)), 0);
+      const share = Math.max(0, (area - blocked) / area);
+      for (const [key, n, lo, hi] of spec) {
+        const want = Math.round(n * share * density); let have = out.filter((o) => o.item === key).length;
+        for (let t = 0; t < want * 4 && have < want; t++) {
+          const p = { x: rand(B.x0 + 1, B.x1 - 1), y: rand(B.y0 + 1, B.y1 - 1) }; const size = rand(lo, hi);
+          if (!avoid.every((A) => p.x < A.x0 - size / 2 || p.x > A.x1 + size / 2 || p.y < A.y0 - size / 2 || p.y > A.y1 + size / 2)) continue;
+          if (!keepClear.every((q) => Math.hypot(q.x - p.x, q.y - p.y) > size / 2 + 3)) continue;
+          if (add(key, p.x, p.y, { w: size, h: size, pad: 0.4 })) have++;
+        }
+      }
+    };
+    // junk around a building, by what it is
+    const yard = (S, theme) => {
+      const W = S.x1 - S.x0, H = S.y1 - S.y0;
+      const row = (key, x, y, n, dx, dy, o = {}) => { const got = []; for (let i = 0; i < n; i++) { const p = add(key, x + i * dx, y + i * dy, { pad: 0.02, touch: got, ...o }); if (p) got.push(p); } return got; };
+      if (theme === "factory") { row("oilDrum", S.x0 + 2, S.y0 - 0.9, 6, 0.85, 0); row("oilDrum", S.x1 - 6, S.y1 + 0.9, 5, 0.85, 0); row("crate", S.x1 + 1, S.y0 + 2, 3, 0, 1.05); add("wreck", S.x0 - 5, S.y1 + 4, { pad: 0.5 }); add("pipeRack", S.x0 - 1.2, S.y0 + H / 2, { rot: true, pad: 0.1 }); add("generator", S.x1 + 1.6, S.y1 - 2, { pad: 0.2 }); }
+      if (theme === "warehouse") { row("pallet", S.x0 + 3, S.y1 + 1.2, 5, 1.35, 0); row("crateStack", S.x1 + 1.5, S.y0 + 2, 3, 0, 2.05); add("forklift", S.x0 + 6, S.y1 + 4, { pad: 0.4 }); row("barrels", S.x0 - 1.2, S.y0 + 2, 2, 0, 1.7, { rot: true }); }
+      if (theme === "home") { add("car", S.x0 + W * 0.3, S.y1 + 3.5, { pad: 0.5 }); add("mailbox", S.x0 + W * 0.6, S.y1 + 2.5, { pad: 0.3 }); add("dumpster", S.x1 + 1.3, S.y0 + 2, { rot: true, pad: 0.2 }); }
+      if (theme === "office") { row("car", S.x0 + 3, S.y1 + 4, Math.max(2, Math.floor(W / 6)), 6, 0, { pad: 0.6 }); row("lamppost", S.x0 + 1, S.y1 + 1.2, Math.max(2, Math.floor(W / 10)), 10, 0); }
+      if (theme === "police") { row("car", S.x0 + 3, S.y1 + 4, 3, 6, 0, { pad: 0.6 }); row("sandbags", S.x0 + W / 2 - 4, S.y1 + 2.6, 2, 2.2, 0); row("barricade", S.x0 + W / 2 + 3, S.y1 + 2.6, 2, 3.2, 0); }
+    };
+    // ---- city blocks with streets between: buildings of the setting, or plain concrete; cars park along the curbs
+    const city = (theme) => {
+      const cell = 28, street = 9; const cols = Math.max(1, Math.floor((map.w + 2) / cell)), rows = Math.max(1, Math.floor((map.h + 2) / cell));
+      const ox = -(cols * cell) / 2, oy = -(rows * cell) / 2; const lots = [];
+      for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
+        const cx = ox + (i + 0.5) * cell, cy = oy + (j + 0.5) * cell; const w = cell - street - rand(0, 2), h = cell - street - rand(0, 2);
+        lots.push({ x0: cx - w / 2, y0: cy - h / 2, x1: cx + w / 2, y1: cy + h / 2 });
+      }
+      for (const L of lots) {
+        if (!inside((L.x0 + L.x1) / 2, (L.y0 + L.y1) / 2, L.x1 - L.x0, L.y1 - L.y0)) continue;
+        if (LAYOUT.indoorThemes.includes(theme)) {
+          const toward = Math.abs((L.x0 + L.x1) / 2) > Math.abs((L.y0 + L.y1) / 2) ? ((L.x0 + L.x1) / 2 > 0 ? "W" : "E") : (L.y0 + L.y1) / 2 > 0 ? "N" : "S";
+          const before = { ...count }; const { In, doors } = shell(L, [toward]); ROOM[theme]({ ...frame(In, toward), doors });
+          for (const k of Object.keys(count)) count[k] = before[k] || 0;  /* limits count per building in a city */
+        } else { const b = add("building", (L.x0 + L.x1) / 2, (L.y0 + L.y1) / 2, { w: L.x1 - L.x0, h: L.y1 - L.y0, pad: 0 }); if (b) walls.add(b); }
+      }
+      // the street furniture: lamp posts at even spacing on the sidewalks, cars parked nose to tail, hydrants at corners,
+      // dumpsters against the walls, a barricade across one street now and then. One lane always stays clear.
+      for (const L of lots) {
+        if (!inside((L.x0 + L.x1) / 2, (L.y0 + L.y1) / 2, L.x1 - L.x0, L.y1 - L.y0)) continue;
+        const roomS = B.y1 - L.y1 > 5, roomN = L.y0 - B.y0 > 5;
+        for (let x = L.x0 + 2; x < L.x1 - 1; x += 10) { if (roomS) add("lamppost", x, L.y1 + 1.2, { pad: 0.2 }); if (roomN) add("lamppost", x, L.y0 - 1.2, { pad: 0.2 }); }
+        add("hydrant", L.x1 + 1.2, L.y1 + 1.2, { pad: 0.7 });
+        if (rng() < 0.7) add("dumpster", L.x0 - 0.7, L.y0 + rand(2, L.y1 - L.y0 - 2), { rot: true, pad: 0.1 });
+        if (roomS && rng() < 0.5) add("mailbox", L.x0 + rand(2, L.x1 - L.x0 - 2), L.y1 + 0.35, { pad: 1 });
+        let x = L.x0 + rand(1, 4); while (roomS && x + 4.5 < L.x1) { if (rng() < 0.55) add(rng() < 0.06 ? "bus" : "car", x + 2.25, L.y1 + 3.9, { pad: 0.3 }); x += rand(5, 9); }
+        if (theme === "city" && rng() < 0.3) add("rubble", L.x1 + 2, L.y0 + rand(2, 8), { pad: 0.9 });
+      }
+      if (theme === "city") { const L = any(lots); const row = []; for (let i = 0; i < 2; i++) { const b = add("barricade", L.x1 + 1.5 + i * 3.1, L.y0 - 4.5, { pad: 0.9, touch: row }); if (b) row.push(b); } }
+      return lots;
+    };
+    // ---- choose the plan
+    const indoorMap = (r.indoorMaps || []).includes(map.id) || (map.id === "custom" && map.w * map.h <= 1600);
+    const outdoorKind = ["forest", "woods"].includes(map.id) ? "forested" : "desert";
+    const building = LAYOUT.indoorThemes.includes(themeId);
+    if (themeId === "city" && indoorMap) {
+      const F = frame({ x0: B.x0 + 0.05, y0: B.y0 + 0.05, x1: B.x1 - 0.05, y1: B.y1 - 0.05 });
+      const bar = []; for (let v = 0.5; v + 3 <= F.Lv - 2; v += 3.1) { const b = F.put("barricade", F.Lu * 0.55, v + 1.5, false, { pad: 0.02, touch: bar }); if (b) bar.push(b); }
+      F.put("car", F.Lu * 0.3, F.Lv - 1.3, true, { pad: 0.4 }); F.put("dumpster", F.Lu - 1.2, 0.6, true, { pad: 0.2 }); F.put("rubble", F.Lu * 0.75, F.Lv * 0.6, true, { pad: 0.4 }); F.put("lamppost", 0.5, 0.5, true, { pad: 0.1 });
+    } else if (map.id === "streets" || themeId === "city") {
+      const lots = city(themeId);
+      if (["forested", "desert"].includes(themeId)) nature(themeId, B, lots.map((L) => ({ x0: L.x0 - 3, y0: L.y0 - 3, x1: L.x1 + 3, y1: L.y1 + 3 })), 0.4);
+    } else if (building && indoorMap) {
+      const R = { x0: B.x0 + 0.05, y0: B.y0 + 0.05, x1: B.x1 - 0.05, y1: B.y1 - 0.05 };
+      // the way in is at the ends of the room; keep both clear
+      const horiz = map.w >= map.h; const ends = horiz ? [{ x: R.x0, y: 0, side: "W" }, { x: R.x1, y: 0, side: "E" }] : [{ x: 0, y: R.y0, side: "N" }, { x: 0, y: R.y1, side: "S" }];
+      for (const d of map.w * map.h < 80 ? ends.slice(0, 1) : ends) clearDoor(d, R, map.w * map.h < 80 ? 1.6 : 2, map.w * map.h < 80 ? 1.6 : 2.5);
+      if (Math.min(map.w, map.h) < 5) hallway(R, themeId); else if (themeId === "home" && map.w * map.h < 60) ROOM.studio(frame(R)); else ROOM[themeId](frame(R));
+    } else if (building) {
+      // a building in the middle of the open: walls, doors, the setting inside, its junk around it, wilderness beyond
+      const [fw, fh] = LAYOUT.footprint[themeId]; const w = Math.min(fw, map.w * 0.6), h = Math.min(fh, map.h * 0.6);
+      const S = { x0: -w / 2, y0: -h / 2, x1: w / 2, y1: h / 2 };
+      const { In, doors } = shell(S, ["S", any(["W", "E", "N"])]); ROOM[themeId]({ ...frame(In, "S"), doors }); yard(S, themeId);
+      const yardM = Math.max(2.5, Math.min(9, Math.min(map.w - w, map.h - h) / 4));  /* a small map keeps a narrower yard so the wild still shows */
+      const yardBox = [{ x0: S.x0 - yardM, y0: S.y0 - yardM, x1: S.x1 + yardM, y1: S.y1 + yardM }];
+      nature(outdoorKind, B, yardBox, 0.8); topUp(outdoorKind, yardBox, 0.8);
+    } else if (indoorMap && Math.min(map.w, map.h) < 9 && ["tent", "desert", "forested"].includes(themeId)) {
+      const F = frame({ x0: B.x0 + 0.05, y0: B.y0 + 0.05, x1: B.x1 - 0.05, y1: B.y1 - 0.05 });
+      if (themeId === "tent") { for (let u = 2.5; u + 1 < F.Lu - 2.5; u += 2.4) { const cot = F.put(rng() < 0.5 ? "cot" : "bedroll", u, 0.95, false, { pad: 0.1 }); if (cot) F.put("footlocker", u, 2.05, true, { pad: 0.02, touch: [cot] }); } }
+      else { const keys = themeId === "desert" ? ["smallRock", "cactus", "smallRock"] : ["bush", "stump", "bush"]; for (let u = 2; u < F.Lu - 2; u += rand(2.5, 5)) { const k = any(keys); const side = rng() < 0.5 ? "near" : "far"; const sv = r.mapItems[k].h; F.put(k, u, side === "near" ? sv / 2 + 0.05 : F.Lv - sv / 2 - 0.05, true, { pad: 1.3 }); } }
+    } else if (themeId === "tent") {
+      if (indoorMap) camp(0, 0); else { camp(0, 0); if (map.w * map.h > 15000) camp(any([-1, 1]) * map.w * 0.25, any([-1, 1]) * map.h * 0.25); nature(outdoorKind, B, [{ x0: -10, y0: -10, x1: 10, y1: 10 }], 0.7); topUp(outdoorKind, [{ x0: -10, y0: -10, x1: 10, y1: 10 }], 0.7); }
+    } else {
+      const kind = themeId === "forested" ? "forested" : "desert";
+      nature(kind, B, indoorMap ? [{ x0: -1.5, y0: -1.5, x1: 1.5, y1: 1.5 }] : [], indoorMap ? 1.6 : 1); if (!indoorMap && kind === outdoorKind) topUp(kind, [], 1);
     }
     return out;
+  }
+  /** Walking check for a layout: free ground on a grid, the largest connected area, and what touches it. Used by the tests and the DM's report. */
+  function layoutReach(objs, map, step = 0.5, open = ["bedroll", "pallet"]) {
+    const nx = Math.ceil(map.w / step), ny = Math.ceil(map.h / step); const blocked = new Uint8Array(nx * ny);
+    // a cell is blocked when its center is within 0.2m (half a shoulder) of something
+    const body = 0.2;
+    for (const o of objs) { if (open.includes(o.item)) continue; const x0 = Math.max(0, Math.ceil((o.x - o.w / 2 - body + map.w / 2) / step - 0.5)), x1 = Math.min(nx - 1, Math.floor((o.x + o.w / 2 + body + map.w / 2) / step - 0.5)), y0 = Math.max(0, Math.ceil((o.y - o.h / 2 - body + map.h / 2) / step - 0.5)), y1 = Math.min(ny - 1, Math.floor((o.y + o.h / 2 + body + map.h / 2) / step - 0.5)); for (let i = x0; i <= x1; i++) for (let j = y0; j <= y1; j++) blocked[j * nx + i] = 1; }
+    const comp = new Int32Array(nx * ny).fill(-1); let best = -1, bestN = 0, k = 0, free = 0;
+    for (let s = 0; s < nx * ny; s++) { if (blocked[s] || comp[s] >= 0) continue; let size = 0; const q = [s]; comp[s] = k; while (q.length) { const c = q.pop(); size++; const i = c % nx, j = (c / nx) | 0; for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const a = i + di, b = j + dj; if (a < 0 || b < 0 || a >= nx || b >= ny) continue; const t = b * nx + a; if (!blocked[t] && comp[t] < 0) { comp[t] = k; q.push(t); } } } free += size; if (size > bestN) { bestN = size; best = k; } k++; }
+    const cellOf = (x, y) => { const i = Math.floor((x + map.w / 2) / step), j = Math.floor((y + map.h / 2) / step); return i >= 0 && j >= 0 && i < nx && j < ny ? j * nx + i : -1; };
+    // can someone stand within reach (1.2m) of it? every grid cell in that ring is checked
+    const reachable = (o, m = 1.2) => { const i0 = Math.floor((o.x - o.w / 2 - m + map.w / 2) / step), i1 = Math.floor((o.x + o.w / 2 + m + map.w / 2) / step), j0 = Math.floor((o.y - o.h / 2 - m + map.h / 2) / step), j1 = Math.floor((o.y + o.h / 2 + m + map.h / 2) / step); for (let i = Math.max(0, i0); i <= Math.min(nx - 1, i1); i++) for (let j = Math.max(0, j0); j <= Math.min(ny - 1, j1); j++) if (comp[j * nx + i] === best) return true; return false; };
+    return { share: free ? bestN / free : 1, reachable, inMain: (p) => { const c = cellOf(p.x, p.y); return c >= 0 && comp[c] === best; } };
   }
 
   // ---- rules with conditions: "vs robots", "first turn", "only with pistols".
@@ -950,6 +1306,6 @@ const E = (() => {
     return skipped;
   }
 
-  return { story, weaponFamily, npcSkills, tierReq, npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
+  return { layoutReach, LAYOUT, story, weaponFamily, npcSkills, tierReq, npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
 })();
 if (typeof module !== "undefined") module.exports = E;
