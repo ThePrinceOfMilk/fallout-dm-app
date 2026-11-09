@@ -274,6 +274,18 @@ async function launch() {
     const leg = await page.evaluate(() => { const e = addEnemy("Legion Soldier"); const n = e.name; S.scene.npcs = S.scene.npcs.filter((x) => x !== e); delete S.scene.pos[e.id]; return n; });
     assert.match(leg, /^Legion Soldier - [A-Z][a-z]+$/, "not Legion Soldier 1"); assert.strictEqual(r[0][1], "Jackals"); assert.ok(r[0][2].includes(".357 Magnum revolver"), "their weapon"); assert.ok(r[1], "creatures are Unaligned"); assert.ok(r[2]);
   });
+  await ok("The enemy picker shows every enemy and sorts by faction, tier or name", async () => {
+    const total = await page.evaluate(() => allTemplates().length);
+    const shown = await page.evaluate(() => { ui.enemyQ = ""; ui.enemyTier = ""; ui.enemySort = "faction"; ui.setup = true; const keep = S.scene.npcs; S.scene.npcs = []; const c = S.combat; S.combat = null; render(); const r = [document.querySelectorAll('[data-a="addPick"]').length, [...document.querySelectorAll(".grouphead")].map((x) => x.textContent)]; S.scene.npcs = keep; S.combat = c; return r; });
+    assert.strictEqual(shown[0], total, "no cap on the list");
+    assert.ok(shown[1].includes("NCR") && shown[1].includes("Fiends") && shown[1].includes("Jackals"), "faction headings");
+    const order = (sort) => page.evaluate((s) => { ui.enemySort = s; const keep = S.scene.npcs; S.scene.npcs = []; const c = S.combat; S.combat = null; render(); const r = [...document.querySelectorAll('[data-a="addPick"]')].map((b) => [b.dataset.v, Number(b.querySelector(".tag").textContent.slice(1))]); S.scene.npcs = keep; S.combat = c; ui.enemySort = "faction"; render(); return r; }, sort);
+    const az = await order("az"); assert.deepStrictEqual(az.map((x) => x[0]), [...az.map((x) => x[0])].sort((a, b) => a.localeCompare(b, undefined, { numeric: true })));
+    const tier = await order("tier"); assert.ok(tier.every((x, i) => i === 0 || tier[i - 1][1] <= x[1]), "tier order");
+    const rowsShown = await page.evaluate(() => { ui.modal = { type: "dev", cat: "enemies" }; render(); const n = document.querySelectorAll(".dialog table.t tr").length - 1; ui.modal = null; render(); return n; });
+    assert.strictEqual(rowsShown, await page.evaluate(() => DATA.enemies.length), "the Enemies table shows every row");
+    await page.evaluate(() => { ui.setup = null; render(); });
+  });
   await ok("Enemy names live in the enemy table, and Refresh loads edits", async () => {
     await page.evaluate(() => { ui.modal = { type: "dev", cat: "enemies" }; render(); });
     await has("Enemy names"); assert.ok(await page.locator("#np-raider").count());

@@ -300,7 +300,8 @@ table.t td input.cell { min-width: 28px; }
 .needs { font-size: 26px; line-height: 1; color: var(--bright); }
 .verdict { padding: 2px 5px; margin: 3px 0; border: 1px solid var(--line2); color: var(--bright); }
 .verdict.fail { border-color: var(--warn); color: var(--warn); }
-.results { max-height: 150px; overflow: auto; }
+.results { max-height: 340px; overflow: auto; }
+.grouphead { position: sticky; top: 0; z-index: 1; padding: 1px 3px; background: var(--win); color: var(--line2); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid currentColor; }
 .itab table.t { table-layout: fixed; }
 .itab table.t td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .itab table.t td.open { white-space: normal; overflow: visible; }
@@ -2470,11 +2471,18 @@ const SITES = (sub) => db.situations.filter((r) => r.sub === sub).map((r) => [r.
 function enemyTab() {
   const k = K(); const list = foes();
   const showList = ui.enemyQ || (!k && !list.length && setupOpen());
-  const found = showList ? rankByName(allTemplates(), ui.enemyQ).filter((t) => !ui.enemyTier || String(t.tier) === String(ui.enemyTier)).slice(0, 30) : [];
-  const rows = found.map((t) => `<button class="rowbtn" data-a="addPick" data-v="${h(t.n)}" title="${h(t.faction || "Unaligned")} · ${t.mob ? `HP ${t.hp ?? "?"} DT ${t.dt ?? 0}` : "Human"} · XP ${t.xp || 0}"><span class="tag">T${t.tier}</span><span class="grow">${h(t.n)}${t.named ? ` <span class="tag hi">NAMED</span>` : ""}</span></button>`).join("");
+  const sort = ui.enemySort || "faction";
+  const fac = (t) => (t.named ? " Named" : t.faction || "Unaligned");  // the space puts saved NPCs first
+  const byName = (a, b) => a.n.localeCompare(b.n, undefined, { numeric: true });
+  const cmp = { faction: (a, b) => fac(a).localeCompare(fac(b)) || (a.tier || 0) - (b.tier || 0) || byName(a, b), tier: (a, b) => (a.tier || 0) - (b.tier || 0) || byName(a, b), az: byName }[sort];
+  // typing ranks by the name, so the closest match stays on top; with no text the sort decides
+  const found = showList ? (ui.enemyQ ? rankByName(allTemplates(), ui.enemyQ) : allTemplates().sort(cmp)).filter((t) => !ui.enemyTier || String(t.tier) === String(ui.enemyTier)) : [];
+  const head = (t, i) => (sort === "faction" && !ui.enemyQ && (i === 0 || fac(found[i - 1]) !== fac(t)) ? `<div class="grouphead">${h(fac(t).trim())}</div>` : "");
+  const rows = found.map((t, i) => `${head(t, i)}<button class="rowbtn" data-a="addPick" data-v="${h(t.n)}" title="${h(t.faction || "Unaligned")} · ${t.mob ? `HP ${t.hp ?? "?"} DT ${t.dt ?? 0}` : "Human"} · XP ${t.xp || 0}"><span class="tag">T${t.tier}</span><span class="grow">${h(t.n)}${t.named ? ` <span class="tag hi">NAMED</span>` : ""}</span>${sort !== "faction" || ui.enemyQ ? `<span class="s dim">${h(fac(t).trim())}</span>` : ""}</button>`).join("");
   const counts = new Map(); for (const n of list) counts.set(n.tmpl, (counts.get(n.tmpl) || 0) + 1);
   const groups = k ? "" : [...counts.entries()].map(([t, c]) => `<div class="line"><button class="btn tiny" data-a="pickQty" data-v="${h(t)}|-1" title="One fewer">-</button><span class="bright" style="width:16px;text-align:center">${c}</span><button class="btn tiny" data-a="pickQty" data-v="${h(t)}|1" title="One more">+</button><span class="grow nm">${h(t)}</span></div>`).join("");
-  return `<div class="row" style="margin-bottom:3px"><input class="grow" id="enemyQ" autocomplete="off" style="min-width:0" placeholder="Add: type, Enter" data-u="enemyQ" data-enter="addFirstEnemy" value="${h(ui.enemyQ)}"><select data-u="enemyTier" title="Tier" id="enemyTier" style="width:50px">${options([["", "All"], ...[1, 2, 3, 4, 5, 6].map((t) => [t, "T" + t])], ui.enemyTier)}</select></div>
+  return `<div class="row" style="margin-bottom:3px"><input class="grow" id="enemyQ" autocomplete="off" style="min-width:0" placeholder="Add: type, Enter" data-u="enemyQ" data-enter="addFirstEnemy" value="${h(ui.enemyQ)}"><select data-u="enemyTier" title="Tier" id="enemyTier" style="width:50px">${options([["", "All"], ...[1, 2, 3, 4, 5, 6].map((t) => [t, "T" + t])], ui.enemyTier)}</select><select data-u="enemySort" title="Sort the list" id="enemySort" style="width:84px">${options([["faction", "Faction"], ["tier", "Tier"], ["az", "A-Z"]], sort)}</select></div>
+    ${showList ? `<div class="s dim">${found.length} enemies</div>` : ""}
     ${found.length ? `<div class="results" data-scroll="enemyres">${rows}</div>` : ""}${groups ? `<div style="margin-bottom:3px">${groups}</div>` : ""}<div class="cards one">${(k ? order().map((c) => ent(c.id)).filter((e) => e && e.kind === "npc") : list).map(enemyCard).join("")}</div>`;
 }
 function enemyCard(e) {
@@ -2989,7 +2997,7 @@ function devTable() {
   const q = E.low(m.q);
   let rows = def.rows.map((o) => { const key = def.key(o); const v = { ...(def.view ? def.view(o) : o), ...(S.overrides[key] || {}) }; return { o, key, v }; }).filter((r) => !q || E.low(r.v.n).includes(q) || JSON.stringify(r.v).toLowerCase().includes(q));
   if (m.sort) { const dir = m.dir || 1; rows = [...rows].sort((a, b) => { const x = m.sort === "n" ? a.v.n : getPath(a.v, m.sort), y = m.sort === "n" ? b.v.n : getPath(b.v, m.sort); return (typeof x === "number" && typeof y === "number" ? x - y : String(x ?? "").localeCompare(String(y ?? ""), undefined, { numeric: true })) * dir; }); }
-  const size = 60; const pages = Math.max(1, Math.ceil(rows.length / size)); const page = clamp(m.page || 0, 0, pages - 1);
+  const size = m.cat === "enemies" ? Math.max(1, rows.length) : 60; /* every enemy on one page */ const pages = Math.max(1, Math.ceil(rows.length / size)); const page = clamp(m.page || 0, 0, pages - 1);
   const shown = rows.slice(page * size, page * size + size);
   const head = def.cols.map(([k, l]) => `<th data-a="devSort" data-v="${h(k)}">${h(l)}${m.sort === k ? (m.dir > 0 ? " ^" : " v") : ""}</th>`).join("");
   const body = shown.map((r, ri) => `<tr class="${r.v.ok === undefined && r.o.tab ? "gap" : ""}"><td class="stick" title="${h(r.v.n)}">${h(r.v.n)}</td>${def.cols.map(([k, , kind, w], ci) => { const val = getPath(r.v, k); const edited = S.overrides[r.key] && getPath(S.overrides[r.key], k) !== undefined; if (kind === "bool") return `<td><input type="checkbox" data-ov="${h(r.key)}|${k}|bool" id="dc-${ri}-${ci}"${val ? " checked" : ""}></td>`; const text = kind === "pct" ? (val == null ? "" : E.pct(val)) : val == null ? "" : val; return `<td style="min-width:${w || (kind === "text" ? 92 : 34)}px"><input type="text" autocomplete="off" class="cell left ${edited ? "ovr" : ""}" style="width:100%" title="${h(text)}" data-ov="${h(r.key)}|${k}|${kind || "num"}" id="dc-${ri}-${ci}" value="${h(text)}"></td>`; }).join("")}<td>${S.overrides[r.key] ? btn("ovReset", r.key, "Reset", "", "tiny") : ""}</td></tr>`).join("");

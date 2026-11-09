@@ -294,7 +294,8 @@ table.t td input.cell { min-width: 28px; }
 .needs { font-size: 26px; line-height: 1; color: var(--bright); }
 .verdict { padding: 2px 5px; margin: 3px 0; border: 1px solid var(--line2); color: var(--bright); }
 .verdict.fail { border-color: var(--warn); color: var(--warn); }
-.results { max-height: 150px; overflow: auto; }
+.results { max-height: 340px; overflow: auto; }
+.grouphead { position: sticky; top: 0; z-index: 1; padding: 1px 3px; background: var(--win); color: var(--line2); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid currentColor; }
 .itab table.t { table-layout: fixed; }
 .itab table.t td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .itab table.t td.open { white-space: normal; overflow: visible; }
