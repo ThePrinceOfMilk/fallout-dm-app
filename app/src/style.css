@@ -602,3 +602,95 @@ label.btn { cursor: pointer; }
 @media (pointer: coarse) { .foot { display: none; } }
 .foldbtn { display: none; }
 @media (max-width: 1000px) { .win .wt .foldbtn { display: inline-flex; } }
+
+/* ---------- Encounter setup: labelled groups, one action bar */
+.encwb { padding: 0 !important; display: flex; flex-direction: column; }
+.encactions { display: flex; align-items: center; gap: 6px; padding: 4px 6px; border-bottom: 1px solid var(--line); background: var(--win3); flex: none; }
+.btn.big { padding: 3px 14px; font-size: calc(var(--fs) * 1.1); }
+.enctop { gap: 6px; padding: 6px; }
+.egrp { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.eglabel { font-size: var(--fs-s); color: var(--line2); letter-spacing: .08em; text-transform: uppercase; border-bottom: 1px dotted var(--line); }
+.egbody { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: flex-end; }
+.g-scene .egbody { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; }
+.g-scene .egbody:has(.sz) { grid-template-columns: 1.6fr .5fr .5fr 1fr 1fr 1fr; }
+.egrow { display: grid; grid-template-columns: 1.1fr 1.3fr .9fr; gap: 10px; }
+.egbtns { display: flex; flex-wrap: wrap; gap: 4px; }
+.g-room label.f { flex: 1 1 120px; }
+.fxadd { display: grid; grid-template-columns: minmax(0, 1fr) auto 64px auto auto; gap: 4px; margin-top: 3px; }
+.w-enc .fold { border-top: 1px solid var(--line); padding-top: 2px; }
+@media (max-width: 1000px) {
+  .g-scene .egbody, .g-scene .egbody:has(.sz) { grid-template-columns: 1fr 1fr; }
+  .g-scene .loc { grid-column: 1 / -1; }
+  .egrow { grid-template-columns: 1fr; gap: 6px; }
+  .fxadd { grid-template-columns: 1fr 1fr; }
+  .fxadd #fxLabel { grid-column: 1 / -1; }
+  /* the main action stays in thumb reach while you set the scene */
+  .w-enc .encactions { order: 9; position: sticky; bottom: calc(env(safe-area-inset-bottom) + var(--tabbar, 0px) + 6px); z-index: 30; border: 1px solid var(--line2); margin: 6px; box-shadow: 0 -4px 14px rgba(0, 0, 0, .7); }
+  .w-enc .encwb { display: flex; }
+  .w-enc .enctop { order: 1; } .w-enc .mapwrap, .w-enc .maptools, .w-enc .moveconfirm { order: 2; }
+}
+
+/* ---------- touch screens: 44px targets with room between them */
+@media (pointer: coarse) {
+  .btn, .opt, select, input, .railb, .rowbtn { min-height: 44px; }
+  .btn, .opt { min-width: 44px; padding: 4px 10px; }
+  .btn.tiny { min-height: 40px; padding: 3px 8px; }
+  .egbtns, .acts, .row { gap: 8px; }
+  input, select, textarea { font-size: max(16px, var(--fs)); } /* iOS zooms into anything smaller */
+  .foldbtn { min-width: 44px; min-height: 44px; }
+}
+
+/* ---------- phones (compact width): the icon rail becomes a bottom tab bar, like a native app */
+@media (max-width: 599px) {
+  :root { --tabbar: 58px; }
+  .board, .board.calm, .board.setup, .board.fight { grid-template-columns: minmax(0, 1fr) !important; }
+  .rail { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; flex-direction: row; overflow-x: auto; gap: 2px; padding: 4px max(4px, env(safe-area-inset-left)) calc(env(safe-area-inset-bottom) + 4px) max(4px, env(safe-area-inset-right)); background: #020a04; border-top: 1px solid var(--line2); grid-column: auto; grid-row: auto; scrollbar-width: none; }
+  .rail .railb { flex: 0 0 auto; min-width: 58px; min-height: 48px; }
+  body { padding-bottom: calc(env(safe-area-inset-bottom) + var(--tabbar) + 40px) !important; }
+  #toast { bottom: calc(env(safe-area-inset-bottom) + var(--tabbar) + 16px) !important; }
+  .scrim { padding-bottom: calc(env(safe-area-inset-bottom) + var(--tabbar) + 10px) !important; }
+}
+
+.railmore { display: none; }
+@media (max-width: 1000px) {
+  /* sticky needs the page to be the scroller, not the panel */
+  .w-enc, .w-enc > .wb, .top, .stage, .board { overflow: visible !important; }
+}
+@media (pointer: coarse) { .keysbtn { display: none; } }
+@media (max-width: 599px) {
+  .rail { flex-wrap: wrap; overflow: visible; justify-content: space-between; }
+  .rail .railb { flex: 1 1 0; min-width: 0; }
+  .rail .railb.sec { display: none; }
+  .rail .railmore { display: flex; }
+  .rail.more .railb.sec { display: flex; flex: 1 1 18%; order: -1; }
+}
+/* desktop: keep the setup controls short so the map keeps its room */
+@media (min-width: 1001px) {
+  .w-enc .enctop { gap: 3px; padding: 3px 6px; }
+  .g-place .s { display: none; }
+  .g-room .egbody { flex-wrap: nowrap; }
+  .g-room label.f { flex: 1 1 90px; min-width: 0; }
+  .w-enc .egbtns .btn { padding: 0 6px; }
+  .w-enc .encactions { padding: 2px 6px; }
+}
+@media (max-width: 599px) {
+  .rail.more .railb.sec { flex: 0 0 calc(20% - 2px); }
+  .rail.more .railb:not(.sec) { flex: 0 0 calc(16.66% - 2px); }
+}
+@media (min-width: 1001px) {
+  /* the action bar rides in the panel's title row, like a toolbar */
+  .w-enc { position: relative; }
+  .w-enc .encactions { position: absolute; top: 0; right: 4px; height: 1.6em; padding: 0; border: 0; background: none; gap: 4px; }
+  .w-enc .encactions .spacer { display: none; }
+  .w-enc .encactions .btn { padding: 0 8px; line-height: 1.25; }
+  .w-enc .wt { min-height: 1.6em; }
+  .g-scene { flex-direction: row; align-items: flex-end; gap: 8px; }
+  .g-scene .eglabel { border: 0; padding-bottom: 3px; }
+  .g-scene .egbody { flex: 1; }
+}
+@media (min-width: 1001px) {
+  .g-room .egbody { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 5px; align-items: start; }
+  .g-room .egbtns { flex-direction: column; gap: 3px; }
+  .g-room label.f { flex: none; }
+  .egrow { grid-template-columns: 1.35fr 1.2fr .95fr; }
+}

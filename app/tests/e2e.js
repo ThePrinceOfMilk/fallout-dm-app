@@ -254,7 +254,7 @@ async function launch() {
     await page.locator('[data-a="pickQty"][data-v="Gecko|1"]').click();
     let s = await state();
     assert.deepStrictEqual(s.scene.npcs.map((n) => n.name), ["Gecko 1", "Gecko 2"]);
-    await page.locator('[data-a="fxDark"]').click();
+    await page.evaluate(() => { ui.open.encfx = true; render(); }); await page.locator('[data-a="fxDark"]').click();
     assert.strictEqual((await state()).scene.effects[0].hit, -0.1);
     await page.focus("#enemyQ"); await type("raider"); await press("Enter"); await press("Escape"); await page.waitForTimeout(30);
     const raider = (await state()).scene.npcs.find((n) => n.tmpl === "Raider");

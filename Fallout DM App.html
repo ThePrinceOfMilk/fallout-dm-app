@@ -608,6 +608,98 @@ label.btn { cursor: pointer; }
 @media (pointer: coarse) { .foot { display: none; } }
 .foldbtn { display: none; }
 @media (max-width: 1000px) { .win .wt .foldbtn { display: inline-flex; } }
+
+/* ---------- Encounter setup: labelled groups, one action bar */
+.encwb { padding: 0 !important; display: flex; flex-direction: column; }
+.encactions { display: flex; align-items: center; gap: 6px; padding: 4px 6px; border-bottom: 1px solid var(--line); background: var(--win3); flex: none; }
+.btn.big { padding: 3px 14px; font-size: calc(var(--fs) * 1.1); }
+.enctop { gap: 6px; padding: 6px; }
+.egrp { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.eglabel { font-size: var(--fs-s); color: var(--line2); letter-spacing: .08em; text-transform: uppercase; border-bottom: 1px dotted var(--line); }
+.egbody { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: flex-end; }
+.g-scene .egbody { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; }
+.g-scene .egbody:has(.sz) { grid-template-columns: 1.6fr .5fr .5fr 1fr 1fr 1fr; }
+.egrow { display: grid; grid-template-columns: 1.1fr 1.3fr .9fr; gap: 10px; }
+.egbtns { display: flex; flex-wrap: wrap; gap: 4px; }
+.g-room label.f { flex: 1 1 120px; }
+.fxadd { display: grid; grid-template-columns: minmax(0, 1fr) auto 64px auto auto; gap: 4px; margin-top: 3px; }
+.w-enc .fold { border-top: 1px solid var(--line); padding-top: 2px; }
+@media (max-width: 1000px) {
+  .g-scene .egbody, .g-scene .egbody:has(.sz) { grid-template-columns: 1fr 1fr; }
+  .g-scene .loc { grid-column: 1 / -1; }
+  .egrow { grid-template-columns: 1fr; gap: 6px; }
+  .fxadd { grid-template-columns: 1fr 1fr; }
+  .fxadd #fxLabel { grid-column: 1 / -1; }
+  /* the main action stays in thumb reach while you set the scene */
+  .w-enc .encactions { order: 9; position: sticky; bottom: calc(env(safe-area-inset-bottom) + var(--tabbar, 0px) + 6px); z-index: 30; border: 1px solid var(--line2); margin: 6px; box-shadow: 0 -4px 14px rgba(0, 0, 0, .7); }
+  .w-enc .encwb { display: flex; }
+  .w-enc .enctop { order: 1; } .w-enc .mapwrap, .w-enc .maptools, .w-enc .moveconfirm { order: 2; }
+}
+
+/* ---------- touch screens: 44px targets with room between them */
+@media (pointer: coarse) {
+  .btn, .opt, select, input, .railb, .rowbtn { min-height: 44px; }
+  .btn, .opt { min-width: 44px; padding: 4px 10px; }
+  .btn.tiny { min-height: 40px; padding: 3px 8px; }
+  .egbtns, .acts, .row { gap: 8px; }
+  input, select, textarea { font-size: max(16px, var(--fs)); } /* iOS zooms into anything smaller */
+  .foldbtn { min-width: 44px; min-height: 44px; }
+}
+
+/* ---------- phones (compact width): the icon rail becomes a bottom tab bar, like a native app */
+@media (max-width: 599px) {
+  :root { --tabbar: 58px; }
+  .board, .board.calm, .board.setup, .board.fight { grid-template-columns: minmax(0, 1fr) !important; }
+  .rail { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; flex-direction: row; overflow-x: auto; gap: 2px; padding: 4px max(4px, env(safe-area-inset-left)) calc(env(safe-area-inset-bottom) + 4px) max(4px, env(safe-area-inset-right)); background: #020a04; border-top: 1px solid var(--line2); grid-column: auto; grid-row: auto; scrollbar-width: none; }
+  .rail .railb { flex: 0 0 auto; min-width: 58px; min-height: 48px; }
+  body { padding-bottom: calc(env(safe-area-inset-bottom) + var(--tabbar) + 40px) !important; }
+  #toast { bottom: calc(env(safe-area-inset-bottom) + var(--tabbar) + 16px) !important; }
+  .scrim { padding-bottom: calc(env(safe-area-inset-bottom) + var(--tabbar) + 10px) !important; }
+}
+
+.railmore { display: none; }
+@media (max-width: 1000px) {
+  /* sticky needs the page to be the scroller, not the panel */
+  .w-enc, .w-enc > .wb, .top, .stage, .board { overflow: visible !important; }
+}
+@media (pointer: coarse) { .keysbtn { display: none; } }
+@media (max-width: 599px) {
+  .rail { flex-wrap: wrap; overflow: visible; justify-content: space-between; }
+  .rail .railb { flex: 1 1 0; min-width: 0; }
+  .rail .railb.sec { display: none; }
+  .rail .railmore { display: flex; }
+  .rail.more .railb.sec { display: flex; flex: 1 1 18%; order: -1; }
+}
+/* desktop: keep the setup controls short so the map keeps its room */
+@media (min-width: 1001px) {
+  .w-enc .enctop { gap: 3px; padding: 3px 6px; }
+  .g-place .s { display: none; }
+  .g-room .egbody { flex-wrap: nowrap; }
+  .g-room label.f { flex: 1 1 90px; min-width: 0; }
+  .w-enc .egbtns .btn { padding: 0 6px; }
+  .w-enc .encactions { padding: 2px 6px; }
+}
+@media (max-width: 599px) {
+  .rail.more .railb.sec { flex: 0 0 calc(20% - 2px); }
+  .rail.more .railb:not(.sec) { flex: 0 0 calc(16.66% - 2px); }
+}
+@media (min-width: 1001px) {
+  /* the action bar rides in the panel's title row, like a toolbar */
+  .w-enc { position: relative; }
+  .w-enc .encactions { position: absolute; top: 0; right: 4px; height: 1.6em; padding: 0; border: 0; background: none; gap: 4px; }
+  .w-enc .encactions .spacer { display: none; }
+  .w-enc .encactions .btn { padding: 0 8px; line-height: 1.25; }
+  .w-enc .wt { min-height: 1.6em; }
+  .g-scene { flex-direction: row; align-items: flex-end; gap: 8px; }
+  .g-scene .eglabel { border: 0; padding-bottom: 3px; }
+  .g-scene .egbody { flex: 1; }
+}
+@media (min-width: 1001px) {
+  .g-room .egbody { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 5px; align-items: start; }
+  .g-room .egbtns { flex-direction: column; gap: 3px; }
+  .g-room label.f { flex: none; }
+  .egrow { grid-template-columns: 1.35fr 1.2fr .95fr; }
+}
 </style>
 </head>
 <body>
@@ -2303,7 +2395,7 @@ function notesWin() {
 }
 const DEV = [["loot", "Loot tables"], ["items", "Items"], ["weapons", "Weapons"], ["armor", "Armor"], ["ammo", "Ammo"], ["mods", "Mods"], ["materials", "Materials"], ["recipes", "Recipes"], ["enemies", "Enemies"], ["traits", "Traits"], ["perks", "Perks"], ["statuses", "Statuses"], ["variables", "Variables"], ["report", "Data report"], ["state", "Raw state"]];
 function devBar() {
-  return `<header class="devbar"><span class="brand">Fallout DM</span><button class="btn tiny devtoggle ${ui.devOpen ? "on" : ""}" data-a="devToggle" data-v="">Dev ${ui.devOpen ? "-" : "+"}</button><span class="devlabel">Dev:</span><span class="devlist ${ui.devOpen ? "open" : ""}">${DEV.map(([id, n]) => btn("dev", id, n, "", "tiny")).join("")}</span><span class="spacer"></span>${btn("refresh", "", "Refresh", "", "tiny", "Reload every list and table into the menus after you edit them")}${btn("undo", "", "Undo", "U", "tiny", undoStack.length ? "Undo: " + undoStack[undoStack.length - 1].label : "Nothing to undo")}${btn("redo", "", "Redo", "Y", "tiny")}${btn("search", "", "Search", "/", "tiny")}${btn("help", "", "Keys", "?", "tiny")}</header>`;
+  return `<header class="devbar"><span class="brand">Fallout DM</span><button class="btn tiny devtoggle ${ui.devOpen ? "on" : ""}" data-a="devToggle" data-v="">Dev ${ui.devOpen ? "-" : "+"}</button><span class="devlabel">Dev:</span><span class="devlist ${ui.devOpen ? "open" : ""}">${DEV.map(([id, n]) => btn("dev", id, n, "", "tiny")).join("")}</span><span class="spacer"></span>${btn("refresh", "", "Refresh", "", "tiny", "Reload every list and table into the menus after you edit them")}${btn("undo", "", "Undo", "U", "tiny", undoStack.length ? "Undo: " + undoStack[undoStack.length - 1].label : "Nothing to undo")}${btn("redo", "", "Redo", "Y", "tiny")}${btn("search", "", "Search", "/", "tiny")}${btn("help", "", "Keys", "?", "tiny keysbtn")}</header>`;
 }
 function hints() {
   if (ui.modal) return [["Esc", "Close"], ["Enter", "Confirm"]];
@@ -2503,11 +2595,17 @@ function encounterWin(open) {
   if (!open) return `<section class="win w-enc closed"><header class="wt"><span>Encounter</span></header><div class="wb"><div class="row"><span class="s dim grow">No fight running.</span><button class="btn primary" data-primary="1" data-a="setupOpen" data-v="1">${kbd("B")}Set up encounter</button></div></div></section>`;
   const sc = S.scene; const M = mapOf();
   const fx = sc.effects.map((f, i) => `<span class="chip neu">${h(f.label)}${f.hit ? ` ${f.who === "enemies" ? "enemy" : f.who === "party" ? "party" : "all"} ${E.pct(f.hit) > 0 ? "+" : ""}${E.pct(f.hit)}%` : ""}<button class="xb" data-a="delEffectScene" data-v="${i}" title="Remove">x</button></span>`).join("");
-  const tools = `${btn("beginC", "1", "Sneak", "H", "tiny")}<button class="btn primary tiny" data-a="beginC" data-v="">${kbd("B")}Begin</button>${btn("setupOpen", "", "Close", "", "tiny", "Hide the map. Enemies you added stay in the list.")}`;
-  return `<section class="win w-enc"><header class="wt"><span>Encounter setup</span><span class="spacer"></span>${tools}</header><div class="wb" style="padding:0"><div class="enctop">
-    <div class="row"><label class="f" style="flex:1.7 1 0">Location<select id="mapId" data-c="setMapId">${options(mapOptions(), M.id)}</select></label>${M.id === "custom" ? `<label class="f" style="width:44px">W m${numBox(`id="mapW" data-c="setMapSize" data-k="w"`, M.w)}</label><label class="f" style="width:44px">H m${numBox(`id="mapH" data-c="setMapSize" data-k="h"`, M.h)}</label>` : ""}<label class="f">Time<select data-scene="time" id="scT">${options(SITES("Time/Light"), sc.time)}</select></label><label class="f">Weather<select data-scene="weather" id="scW">${options(SITES("Weather"), sc.weather)}</select></label><label class="f">Terrain<select data-scene="env" id="scE">${options(SITES("Environment"), sc.env)}</select></label></div>
-    <div class="row wrap">${fx}<input class="grow" id="fxLabel" autocomplete="off" placeholder="Effect from a check" data-u="fxLabel" value="${h(ui.fxLabel)}" data-enter="addFx"><select data-u="fxWho" id="fxWho" title="Whose attacks change">${options([["enemies", "Enemy hit"], ["party", "Party hit"], ["all", "All hit"]], ui.fxWho)}</select><input type="text" inputmode="decimal" id="fxHit" style="width:34px" placeholder="%" data-u="fxHit" value="${h(ui.fxHit)}" data-enter="addFx">${btn("addFx", "", "Add", "", "tiny")}${btn("fxDark", "", "Dark -10", "", "tiny", "Darkness: enemies -10 to hit")}</div>
-    <div class="row wrap"><label class="s dim">Setting <select id="themeId" data-c="setTheme">${options(Object.entries(S.rules.roomThemes).map(([id, t]) => [id, t.n]), sc.theme)}</select></label><button class="btn tiny primary" data-a="randomRoom" data-v="" title="New furniture for this location and setting">Randomize room</button>${btn("clearRoom", "", "Clear", "", "tiny", "Remove all objects")}<span class="spacer"></span>${btn("scatter", "", "Random", "", "tiny", "Random spots for every enemy")}${btn("surround", "", "Surround", "", "tiny", "Space enemies evenly around the party")}<span class="spacer"></span>${mapTools()}</div></div>${mapExtras()}${mapSvg()}</div></section>`;
+  const nFx = sc.effects.length;
+  // One panel, labelled groups. Desktop puts the action bar on top; phones pin it to the bottom of the screen, in thumb reach.
+  const group = (cls, label, body) => `<div class="egrp ${cls}"><div class="eglabel">${label}</div><div class="egbody">${body}</div></div>`;
+  const actions = `<div class="encactions">${btn("setupOpen", "", "Close", "", "", "Hide the map. Enemies you added stay in the list.")}<span class="spacer"></span>${btn("beginC", "1", "Sneak in", "H", "", "Start with a stealth phase")}<button class="btn primary big" data-a="beginC" data-v="">${kbd("B")}Begin combat</button></div>`;
+  const scene = group("g-scene", "Scene", `<label class="f loc">Location<select id="mapId" data-c="setMapId">${options(mapOptions(), M.id)}</select></label>${M.id === "custom" ? `<label class="f sz">W (m)${numBox(`id="mapW" data-c="setMapSize" data-k="w"`, M.w)}</label><label class="f sz">H (m)${numBox(`id="mapH" data-c="setMapSize" data-k="h"`, M.h)}</label>` : ""}<label class="f">Time<select data-scene="time" id="scT">${options(SITES("Time/Light"), sc.time)}</select></label><label class="f">Weather<select data-scene="weather" id="scW">${options(SITES("Weather"), sc.weather)}</select></label><label class="f">Terrain<select data-scene="env" id="scE">${options(SITES("Environment"), sc.env)}</select></label>`);
+  const room = group("g-room", "Room", `<label class="f">Style<select id="themeId" data-c="setTheme">${options(Object.entries(S.rules.roomThemes).map(([id, t]) => [id, t.n]), sc.theme)}</select></label><div class="egbtns"><button class="btn primary" data-a="randomRoom" data-v="" title="New furniture for this location and style">Randomize room</button>${btn("clearRoom", "", "Clear room", "", "", "Remove all objects")}</div>`);
+  const place = group("g-place", "Place on map", `<div class="egbtns">${mapTools()}</div><div class="s dim">Pick one, then tap the map.</div>`);
+  const foesG = group("g-foes", "Enemy positions", `<div class="egbtns">${btn("scatter", "", "Random spots", "", "", "Random spots for every enemy")}${btn("surround", "", "Surround party", "", "", "Space enemies evenly around the party")}</div>`);
+  const mods = fold("encfx", "Scene modifiers", `<div class="row wrap">${fx || `<span class="s dim">None yet. Results of checks before the fight go here.</span>`}</div><div class="fxadd"><input id="fxLabel" autocomplete="off" placeholder="What happened (e.g. Distraction)" data-u="fxLabel" value="${h(ui.fxLabel)}" data-enter="addFx"><select data-u="fxWho" id="fxWho" title="Whose attacks change">${options([["enemies", "Enemy hit"], ["party", "Party hit"], ["all", "Everyone's hit"]], ui.fxWho)}</select><input type="text" inputmode="decimal" id="fxHit" placeholder="+/- %" data-u="fxHit" value="${h(ui.fxHit)}" data-enter="addFx">${btn("addFx", "", "Add", "", "")}${btn("fxDark", "", "Darkness -10", "", "", "Darkness: enemies -10 to hit")}</div>`, { open: false, badge: nFx ? `${nFx} active` : "" });
+  const folded = (prefs.fold || {})["w-enc"];
+  return `<section class="win w-enc ${folded ? "folded" : ""}"><header class="wt" data-fold="w-enc"><button type="button" class="foldbtn" data-a="fold" data-v="w-enc" aria-label="${folded ? "Open" : "Fold"} Encounter setup" aria-expanded="${!folded}">${folded ? "+" : "-"}</button><span>Encounter setup</span></header><div class="wb encwb">${actions}<div class="enctop">${scene}<div class="egrow">${room}${place}${foesG}</div>${mods}</div>${mapExtras()}${mapSvg()}</div></section>`;
 }
 function fightMap() {
   const k = K(); const M = mapOf();
@@ -2855,8 +2953,9 @@ function settingsBody() {
 }
 const RAIL = [["newc", "New", "dot"], ["settings", "Set", "gear"], ["saveNow", "Save", "floppy"], ["loadWin", "Load", "folder"], ["autoWin", "Auto", "clock"], ["wiki", "Wiki", "book"], ["log", "Log", "log"], ["items", "Item", "box"], ["notes", "Note", "pencil"], ["guide", "Help", "star"]];
 function rail() {
-  return `<nav class="rail">${RAIL.map(([id, n, ic]) => `<button class="railb ${id === "saveNow" && dirty ? "dirty" : ""} ${id === "autoWin" && !prefs.autosave ? "off" : ""} ${(ui.modal && ui.modal.type === id) || (id === "log" && ui.logOpen) ? "on" : ""}" ${id === "saveNow" ? 'id="railSave"' : ""} data-a="railGo" data-v="${id}" title="${h(RAIL_TITLE[id])}">${pix(ic)}<span>${id === "autoWin" ? (prefs.autosave ? "ON" : "OFF") : n}</span></button>`).join("")}</nav>`;
+  return `<nav class="rail ${ui.railMore ? "more" : ""}">${RAIL.map(([id, n, ic]) => `<button class="railb ${RAIL_MAIN.includes(id) ? "" : "sec"} ${id === "saveNow" && dirty ? "dirty" : ""} ${id === "autoWin" && !prefs.autosave ? "off" : ""} ${(ui.modal && ui.modal.type === id) || (id === "log" && ui.logOpen) ? "on" : ""}" ${id === "saveNow" ? 'id="railSave"' : ""} data-a="railGo" data-v="${id}" title="${h(RAIL_TITLE[id])}">${pix(ic)}<span>${id === "autoWin" ? (prefs.autosave ? "ON" : "OFF") : n}</span></button>`).join("")}<button class="railb railmore ${ui.railMore ? "on" : ""}" data-a="railMore" data-v="" aria-expanded="${!!ui.railMore}" title="More">${pix("dot")}<span>${ui.railMore ? "Less" : "More"}</span></button></nav>`;
 }
+const RAIL_MAIN = ["saveNow", "loadWin", "log", "notes", "items"];  // the phone tab bar's five; the rest sit behind More
 const RAIL_TITLE = { newc: "New campaign", guide: "How to use this: tutorial", settings: "Settings: game rules", saveNow: "Save", loadWin: "Load save", autoWin: "Autosave", wiki: "Wiki: the game bible", log: "Log", items: "Item browser", notes: "Old notes" };
 function autoBody() {
   const iv = prefs.interval;
@@ -3300,6 +3399,7 @@ const ACT = {
   noteNew() { ui.noteId = null; ui.focus = ui.modal ? "#noteText" : "#qnText"; render(); },
   refresh() { applyData(); render(); toast("Lists refreshed"); },
   devToggle() { ui.devOpen = !ui.devOpen; render(); },
+  railMore() { ui.railMore = !ui.railMore; render(); },
   fold(v) { prefs.fold = { ...(prefs.fold || {}), [v]: !(prefs.fold || {})[v] }; savePrefs(); render(); },
   setNamePool(v, el) { const k = el.dataset.k, next = v.split(/[,\n]/).map((x) => x.trim()).filter(Boolean).join(","); if (next === S.rules.namePools[k]) return; act(`Edit ${k} names`, () => { S.rules.namePools[k] = next; }); },
   tableExport(v) {
@@ -3383,6 +3483,7 @@ const ACT = {
   noteOpen(v) { ui.noteId = v; ui.focus = "#noteText"; render(); },
   noteDel(v) { act("Delete note", () => { S.notesList = S.notesList.filter((n) => n.id !== v); ui.noteId = null; }); },
   railGo(v) {
+    ui.railMore = false;
     if (v === "wiki") return ACT.wiki();
     if (v === "saveNow") return ACT.saveNow();
     if (v === "log") return ACT.toggleLog();
