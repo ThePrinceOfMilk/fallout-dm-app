@@ -6,8 +6,8 @@ This is a fan project and isn't affiliated with Bethesda or Obsidian.
 
 ## Use it
 
-- **In your browser:** open [index.html](index.html) from the project's GitHub Pages site. It starts a fresh campaign with the character creator.
-- **Offline:** download [index.html](index.html), or [Fallout DM App.html](Fallout%20DM%20App.html) to start with the workbook's sample party, then double-click it.
+- **In your browser:** open the [live app](https://theprinceofmilk.github.io/fallout-dm-app/). It starts a fresh campaign with the character creator.
+- **Offline:** [download everything as a zip](https://github.com/ThePrinceOfMilk/fallout-dm-app/archive/refs/heads/main.zip), unzip it and double-click `index.html`, or `Fallout DM App.html` to start with the sample party.
 
 Your campaign autosaves in that browser. To keep a copy or move it, use **Load > Save pack**, which makes a `.zip`.
 
