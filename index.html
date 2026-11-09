@@ -575,6 +575,10 @@ label.btn { cursor: pointer; }
   #map { flex: none; height: 80vw; }
   .keys { columns: 1; }
 }
+
+.namegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 6px; margin-top: 4px; }
+.namegrid label { display: flex; flex-direction: column; gap: 2px; }
+.namegrid textarea { width: 100%; resize: vertical; font: inherit; }
 </style>
 </head>
 <body>
@@ -2244,7 +2248,7 @@ function notesWin() {
 }
 const DEV = [["loot", "Loot tables"], ["items", "Items"], ["weapons", "Weapons"], ["armor", "Armor"], ["ammo", "Ammo"], ["mods", "Mods"], ["materials", "Materials"], ["recipes", "Recipes"], ["enemies", "Enemies"], ["traits", "Traits"], ["perks", "Perks"], ["statuses", "Statuses"], ["variables", "Variables"], ["report", "Data report"], ["state", "Raw state"]];
 function devBar() {
-  return `<header class="devbar"><span class="brand">Fallout DM</span><span class="devlabel">Dev:</span>${DEV.map(([id, n]) => btn("dev", id, n, "", "tiny")).join("")}<span class="spacer"></span>${btn("undo", "", "Undo", "U", "tiny", undoStack.length ? "Undo: " + undoStack[undoStack.length - 1].label : "Nothing to undo")}${btn("redo", "", "Redo", "Y", "tiny")}${btn("search", "", "Search", "/", "tiny")}${btn("help", "", "Keys", "?", "tiny")}</header>`;
+  return `<header class="devbar"><span class="brand">Fallout DM</span><span class="devlabel">Dev:</span>${DEV.map(([id, n]) => btn("dev", id, n, "", "tiny")).join("")}<span class="spacer"></span>${btn("refresh", "", "Refresh", "", "tiny", "Reload every list and table into the menus after you edit them")}${btn("undo", "", "Undo", "U", "tiny", undoStack.length ? "Undo: " + undoStack[undoStack.length - 1].label : "Nothing to undo")}${btn("redo", "", "Redo", "Y", "tiny")}${btn("search", "", "Search", "/", "tiny")}${btn("help", "", "Keys", "?", "tiny")}</header>`;
 }
 function hints() {
   if (ui.modal) return [["Esc", "Close"], ["Enter", "Confirm"]];
@@ -2954,6 +2958,10 @@ async function loadPack(buf) {
   return edited;
 }
 function importTable(id, rows) {
+  if (id === "enemies" && rows && !Array.isArray(rows) && Array.isArray(rows.enemies)) {
+    const { namePools, nameStyles } = rows; rows = rows.enemies;
+    if (namePools || nameStyles) act("Import enemy names", () => { if (namePools) S.rules.namePools = namePools; if (nameStyles) S.rules.nameStyles = nameStyles; });
+  }
   if (!Array.isArray(rows) || !rows.length) return "That file has no rows.";
   const known = new Set(tableRows(id).flatMap((r) => Object.keys(r))); for (const k of ["fx", "use", "when", "rows", "useFrom", "fxFrom", "noteFrom", "parsed", "mods", "note", "sheetMods", "faction", "caps", "vanity", "head", "armor"]) known.add(k);
   const extra = [...new Set(rows.flatMap((r) => Object.keys(r)))].filter((k) => !known.has(k));
@@ -2970,7 +2978,8 @@ function importTable(id, rows) {
   return "";
 }
 const tableTools = (id) => (TABLE_IO[id] ? `<span class="iobar">${btn("tableExport", `${id}|csv`, "Export CSV", "", "tiny")}${btn("tableExport", `${id}|json`, "Export JSON", "", "tiny")}<label class="btn tiny">Import<input type="file" id="tableFile" data-table="${id}" accept=".csv,.json" style="display:none"></label>${(S.tables && (S.tables[TABLE_IO[id]] || (id === "perks" && S.tables.levelPerks))) ? btn("tableReset", id, "Back to workbook", "", "tiny danger") : ""}</span>` : "");
-function devWin() {
+function devWin() { return devTable() + (ui.modal.cat === "enemies" ? nameLists() : ""); }
+function devTable() {
   const m = ui.modal;
   if (m.cat === "variables") return `${tableTools("effects")}<div class="s dim" style="margin:3px 0">Every effect the rules apply by themselves. Items, statuses, perks, traits and armor store these names in their fx column. Export a table to edit them in a spreadsheet.</div><table class="t"><tr><th>Variable</th><th>What it changes</th></tr>${Object.entries(E.VARS).map(([k, v]) => `<tr><td class="bright">${h(k)}</td><td>${h(v)}</td></tr>`).join("")}</table><h3>Not converted (${SKIPPED.length})</h3><table class="t"><tr><th>Type</th><th>Name</th><th>Why</th></tr>${SKIPPED.slice(0, 400).map(([t, n, w]) => `<tr><td class="dim">${h(t)}</td><td>${h(n)}</td><td class="s">${h(w)}</td></tr>`).join("")}</table>`;
   if (m.cat === "loot") return `${tableTools("loot")}${lootTables()}`;
@@ -2985,6 +2994,12 @@ function devWin() {
   const head = def.cols.map(([k, l]) => `<th data-a="devSort" data-v="${h(k)}">${h(l)}${m.sort === k ? (m.dir > 0 ? " ^" : " v") : ""}</th>`).join("");
   const body = shown.map((r, ri) => `<tr class="${r.v.ok === undefined && r.o.tab ? "gap" : ""}"><td class="stick" title="${h(r.v.n)}">${h(r.v.n)}</td>${def.cols.map(([k, , kind, w], ci) => { const val = getPath(r.v, k); const edited = S.overrides[r.key] && getPath(S.overrides[r.key], k) !== undefined; if (kind === "bool") return `<td><input type="checkbox" data-ov="${h(r.key)}|${k}|bool" id="dc-${ri}-${ci}"${val ? " checked" : ""}></td>`; const text = kind === "pct" ? (val == null ? "" : E.pct(val)) : val == null ? "" : val; return `<td style="min-width:${w || (kind === "text" ? 92 : 34)}px"><input type="text" autocomplete="off" class="cell left ${edited ? "ovr" : ""}" style="width:100%" title="${h(text)}" data-ov="${h(r.key)}|${k}|${kind || "num"}" id="dc-${ri}-${ci}" value="${h(text)}"></td>`; }).join("")}<td>${S.overrides[r.key] ? btn("ovReset", r.key, "Reset", "", "tiny") : ""}</td></tr>`).join("");
   return `<div class="row wrap" style="margin-bottom:3px">${tableTools(m.cat)}${def.classes ? Object.entries(def.classes).map(([c, n]) => `<button class="opt ${m.cls === c ? "on" : ""}" data-a="devClass" data-v="${c}">${n}</button>`).join("") : ""}<input id="devQ" autocomplete="off" placeholder="Filter" data-u="modal.q" value="${h(m.q)}" style="width:180px"><span class="s dim">${rows.length} rows. Every box is editable. Yellow means edited by you. Click a heading to sort.</span><span class="spacer"></span>${pages > 1 ? `${btn("devPage", "-1", "Prev", "", "tiny")}<span class="s">${page + 1}/${pages}</span>${btn("devPage", "1", "Next", "", "tiny")}` : ""}</div><table class="t"><tr><th class="stick" data-a="devSort" data-v="n">Name</th>${head}<th></th></tr>${body}</table>`;
+}
+function nameLists() {
+  const pools = S.rules.namePools || {};
+  const used = (k) => Object.entries(S.rules.nameStyles || {}).filter(([, st]) => [st.first, st.last, st.nick].includes(k)).map(([f]) => f).join(", ") || "no faction yet";
+  return `<h3 style="margin-top:8px">Enemy names</h3><div class="s dim">Generic enemies pick from these when they join: "Legion Soldier - Vulpa". Separate names with commas. Export JSON above saves these with the enemies; Refresh at the top loads edits into the menus.</div>
+  <div class="namegrid">${Object.keys(pools).map((k) => `<label><span>${h(k)} <span class="dim">(${String(pools[k]).split(",").filter(Boolean).length}, used by ${h(used(k))})</span></span><textarea id="np-${h(k)}" rows="4" data-c="setNamePool" data-k="${h(k)}">${h(String(pools[k]).split(",").join(", "))}</textarea></label>`).join("")}</div>`;
 }
 function lootTables() {
   const t = S.rules.lootTable;
@@ -3214,9 +3229,13 @@ const ACT = {
   setMapId(val) { act("Change location", () => applyMap(val)); },
   setMapSize(val, el) { const t = num(val); if (t == null || t <= 0) return render(); const M = mapOf(); act("Map size", () => { applyMap("custom", el.dataset.k === "w" ? t : M.w, el.dataset.k === "h" ? t : M.h); }); },
   noteNew() { ui.noteId = null; ui.focus = ui.modal ? "#noteText" : "#qnText"; render(); },
+  refresh() { applyData(); render(); toast("Lists refreshed"); },
+  setNamePool(v, el) { const k = el.dataset.k, next = v.split(/[,\n]/).map((x) => x.trim()).filter(Boolean).join(","); if (next === S.rules.namePools[k]) return; act(`Edit ${k} names`, () => { S.rules.namePools[k] = next; }); },
   tableExport(v) {
     const [id, kind] = splitV(v); const rows = tableRows(id);
-    const blob = new Blob([kind === "csv" ? toCsv(rows) : JSON.stringify(rows, null, 1)], { type: kind === "csv" ? "text/csv" : "application/json" });
+    // the enemies JSON carries the name lists too, so one file holds everything about enemies
+    const json = id === "enemies" ? { enemies: rows, namePools: S.rules.namePools, nameStyles: S.rules.nameStyles } : rows;
+    const blob = new Blob([kind === "csv" ? toCsv(rows) : JSON.stringify(json, null, 1)], { type: kind === "csv" ? "text/csv" : "application/json" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `fallout-${id}.${kind}`;
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
     toast(`Exported ${rows.length} rows`);

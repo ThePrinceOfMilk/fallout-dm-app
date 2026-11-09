@@ -274,6 +274,19 @@ async function launch() {
     const leg = await page.evaluate(() => { const e = addEnemy("Legion Soldier"); const n = e.name; S.scene.npcs = S.scene.npcs.filter((x) => x !== e); delete S.scene.pos[e.id]; return n; });
     assert.match(leg, /^Legion Soldier - [A-Z][a-z]+$/, "not Legion Soldier 1"); assert.strictEqual(r[0][1], "Jackals"); assert.ok(r[0][2].includes(".357 Magnum revolver"), "their weapon"); assert.ok(r[1], "creatures are Unaligned"); assert.ok(r[2]);
   });
+  await ok("Enemy names live in the enemy table, and Refresh loads edits", async () => {
+    await page.evaluate(() => { ui.modal = { type: "dev", cat: "enemies" }; render(); });
+    await has("Enemy names"); assert.ok(await page.locator("#np-raider").count());
+    await page.fill("#np-raider", "Zed"); await page.locator("#np-raider").dispatchEvent("change"); await page.waitForTimeout(30);
+    await page.evaluate(() => { ui.modal = null; render(); }); await page.locator(".devbar [data-a=refresh]").click(); assert.strictEqual(await page.locator("#toast").textContent(), "Lists refreshed");
+    let n = await page.evaluate(() => { const e = addEnemy("Fiend"); S.scene.npcs = S.scene.npcs.filter((x) => x !== e); delete S.scene.pos[e.id]; return e.name; });
+    assert.strictEqual(n, "Fiend - Zed");
+    const err = await page.evaluate(() => importTable("enemies", { enemies: DATA.enemies, namePools: { ...S.rules.namePools, raider: "Yorick" }, nameStyles: S.rules.nameStyles }));
+    assert.strictEqual(err, ""); n = await page.evaluate(() => { const e = addEnemy("Fiend"); S.scene.npcs = S.scene.npcs.filter((x) => x !== e); delete S.scene.pos[e.id]; return e.name; });
+    assert.strictEqual(n, "Fiend - Yorick", "an enemies JSON brings its names");
+    await click("undo"); await click("undo"); await click("undo"); await page.evaluate(() => { ui.modal = null; render(); });
+    assert.match(await page.evaluate(() => S.rules.namePools.raider), /Razor/, "undo puts the names back: " + await page.evaluate(() => S.rules.namePools.raider.slice(0, 30) + " | " + undoStack.slice(-5).map((u) => u.label || u[0] || typeof u).join(";")));
+  });
   await ok("Rooms: 2m grid everywhere, settings, randomize, city blocks stop walking", async () => {
     const sizes = await page.evaluate(() => Object.keys(S.rules.maps).length); assert.ok(sizes > 8);
     assert.match(await page.locator(".zoombar .scale").textContent(), /2m grid/);

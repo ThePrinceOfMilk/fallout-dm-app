@@ -569,3 +569,7 @@ label.btn { cursor: pointer; }
   #map { flex: none; height: 80vw; }
   .keys { columns: 1; }
 }
+
+.namegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 6px; margin-top: 4px; }
+.namegrid label { display: flex; flex-direction: column; gap: 2px; }
+.namegrid textarea { width: 100%; resize: vertical; font: inherit; }

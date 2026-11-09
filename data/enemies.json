@@ -1,4430 +1,4506 @@
-[
- {
-  "n": "(NO ENEMY)",
-  "tier": 1,
-  "test": true,
-  "special": [
-   0,
-   0,
-   0,
-   0,
-   0,
-   0,
-   0
-  ],
-  "skills": {
-   "BAR": 0,
-   "EW": 0,
-   "EXP": 0,
-   "SG": 0,
-   "BG": 0,
-   "LPK": 0,
-   "MED": 0,
-   "MW": 0,
-   "REP": 0,
-   "SCI": 0,
-   "SNK": 0,
-   "SPE": 0,
-   "SUR": 0
-  },
-  "w1": "Commonwealth Assault Rifle",
-  "w2": "Chinese Carbine (C96 Carbine)"
- },
- {
-  "n": "(middle opp.)",
-  "tier": 1,
-  "test": true,
-  "special": [
-   5,
-   5,
-   5,
-   5,
-   5,
-   5,
-   5
-  ],
-  "skills": {
-   "BAR": 50,
-   "EW": 50,
-   "EXP": 50,
-   "SG": 50,
-   "BG": 50,
-   "LPK": 50,
-   "MED": 50,
-   "MW": 50,
-   "REP": 50,
-   "SCI": 50,
-   "SNK": 50,
-   "SPE": 50,
-   "SUR": 50
-  },
-  "w1": "World War Carbine (M1)",
-  "w2": "Combat Knife"
- },
- {
-  "n": "(min opp.)",
-  "tier": 1,
-  "test": true,
-  "special": [
-   1,
-   1,
-   1,
-   1,
-   1,
-   1,
-   1
-  ],
-  "skills": {
-   "BAR": 10,
-   "EW": 10,
-   "EXP": 10,
-   "SG": 10,
-   "BG": 10,
-   "LPK": 10,
-   "MED": 10,
-   "MW": 10,
-   "REP": 10,
-   "SCI": 10,
-   "SNK": 10,
-   "SPE": 10,
-   "SUR": 10
-  },
-  "w1": "SMG 08/18",
-  "w2": "Recharger Pistol"
- },
- {
-  "n": "(max opp.)",
-  "tier": 1,
-  "test": true,
-  "special": [
-   10,
-   10,
-   10,
-   10,
-   10,
-   10,
-   10
-  ],
-  "skills": {
-   "BAR": 100,
-   "EW": 100,
-   "EXP": 100,
-   "SG": 100,
-   "BG": 100,
-   "LPK": 100,
-   "MED": 100,
-   "MW": 100,
-   "REP": 100,
-   "SCI": 100,
-   "SNK": 100,
-   "SPE": 100,
-   "SUR": 100
-  },
-  "w1": "Police pistol",
-  "w2": "Lewis Gun"
- },
- {
-  "n": "EVIL TEST",
-  "tier": 1,
-  "test": true,
-  "special": [
-   5,
-   5,
-   5,
-   5,
-   5,
-   5,
-   5
-  ],
-  "skills": {
-   "BAR": 10,
-   "EW": 15,
-   "EXP": 20,
-   "SG": 25,
-   "BG": 30,
-   "LPK": 35,
-   "MED": 40,
-   "MW": 45,
-   "REP": 50,
-   "SCI": 55,
-   "SNK": 60,
-   "SPE": 65,
-   "SUR": 70
-  },
-  "head": "Football Helmet",
-  "vanity": "Powder Gang Plain Outfit",
-  "w1": "Pipe Auto Pistol",
-  "w2": "Pickaxe"
- },
- {
-  "n": "Agamemnon",
-  "tier": 6,
-  "test": true,
-  "special": [
-   9,
-   4,
-   7,
-   4,
-   7,
-   5,
-   1
-  ],
-  "skills": {
-   "BAR": 50,
-   "EW": 50,
-   "EXP": 50,
-   "SG": 50,
-   "BG": 50,
-   "LPK": 50,
-   "MED": 50,
-   "MW": 100,
-   "REP": 50,
-   "SCI": 50,
-   "SNK": 50,
-   "SPE": 50,
-   "SUR": 50
-  },
-  "head": "T-45 Power Armor Helmet",
-  "armor": "T-45 Power Armor",
-  "w1": "Hailberd",
-  "w2": "Counting (Kirk)"
- },
- {
-  "n": "Testy Tessie",
-  "tier": 4,
-  "test": true,
-  "special": [
-   3,
-   7,
-   5,
-   4,
-   1,
-   8,
-   7
-  ],
-  "skills": {
-   "BAR": 54,
-   "EW": 65,
-   "EXP": 48,
-   "SG": 20,
-   "BG": 64,
-   "LPK": 44,
-   "MED": 48,
-   "MW": 55,
-   "REP": 48,
-   "SCI": 18,
-   "SNK": 87,
-   "SPE": 15,
-   "SUR": 84
-  },
-  "head": "Cowboy Hat",
-  "armor": "Prison Body Armor",
-  "vanity": "Caravaneer Outfit",
-  "w1": "Vance's 9mm SMG",
-  "w2": "Marine Rifle (FAL)"
- },
- {
-  "n": "Powder Ganger 1",
-  "tier": 1,
-  "faction": "Powder Gangers",
-  "special": [
-   2,
-   4,
-   3,
-   4,
-   2,
-   4,
-   5
-  ],
-  "skills": {
-   "SG": 15,
-   "MW": 25
-  },
-  "vanity": "Powder Gang Plain Outfit",
-  "w1": "Police pistol",
-  "w2": "Basic Fighting"
- },
- {
-  "n": "Powder Ganger 2",
-  "tier": 1,
-  "faction": "Powder Gangers",
-  "special": [
-   3,
-   5,
-   2,
-   1,
-   2,
-   3,
-   3
-  ],
-  "skills": {
-   "EXP": 10,
-   "SG": 25
-  },
-  "vanity": "Powder Gang Plain Outfit",
-  "w1": "Pipe Pistol",
-  "w2": "Dynamite"
- },
- {
-  "n": "Powder Ganger Ringleader",
-  "tier": 1,
-  "faction": "Powder Gangers",
-  "special": [
-   3,
-   4,
-   3,
-   5,
-   5,
-   4,
-   5
-  ],
-  "skills": {
-   "SG": 15,
-   "BG": 25
-  },
-  "head": "Cowboy Hat",
-  "armor": "Raider Scavanged Armor",
-  "vanity": "Powder Gang Soldier Outfit",
-  "w1": "Police pistol",
-  "w2": "Single Shotgun"
- },
- {
-  "n": "Powder Ganger Sharpshooter",
-  "tier": 1,
-  "faction": "Powder Gangers",
-  "special": [
-   2,
-   6,
-   3,
-   4,
-   2,
-   4,
-   5
-  ],
-  "skills": {
-   "SG": 30,
-   "MW": 10
-  },
-  "head": "Sunglasses",
-  "vanity": "Powder Gang Simple Outfit",
-  "w1": "Pipe Bolt Action Rifle",
-  "w2": "Hatchet"
- },
- {
-  "n": "Sunny Smiles",
-  "tier": 1,
-  "faction": "Goodsprings",
-  "special": [
-   6,
-   5,
-   4,
-   4,
-   4,
-   5,
-   4
-  ],
-  "skills": {},
-  "armor": "Leather Jacket",
-  "w1": "Varmint rifle",
-  "w2": "Basic Fighting"
- },
- {
-  "n": "Displaced Resident",
-  "tier": 1,
-  "special": [
-   null,
-   null,
-   null,
-   null,
-   null,
-   null,
-   null
-  ],
-  "skills": {},
-  "faction": "Goodsprings"
- },
- {
-  "n": "Farmer",
-  "tier": 1,
-  "xp": 5,
-  "caps": "0-5",
-  "special": [
-   4,
-   5,
-   1,
-   4,
-   3,
-   2,
-   5
-  ],
-  "skills": {
-   "EW": 5,
-   "SG": 10,
-   "BG": 0,
-   "MW": 15
-  },
-  "faction": "Unaligned"
- },
- {
-  "n": "Strong Farmer",
-  "tier": 1,
-  "xp": 7,
-  "caps": "0-5",
-  "special": [
-   4,
-   5,
-   1,
-   4,
-   3,
-   2,
-   5
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 15,
-   "BG": 5,
-   "MW": 20
-  },
-  "faction": "Unaligned"
- },
- {
-  "n": "Scavenger",
-  "tier": 1,
-  "xp": 7,
-  "caps": "5-15",
-  "special": [
-   5,
-   8,
-   4,
-   3,
-   6,
-   3,
-   4
-  ],
-  "skills": {
-   "EW": 15,
-   "SG": 20,
-   "BG": 10,
-   "MW": 20
-  },
-  "faction": "Unaligned"
- },
- {
-  "n": "Strong Scavenger",
-  "tier": 1,
-  "xp": 10,
-  "caps": "5-15",
-  "special": [
-   5,
-   8,
-   4,
-   3,
-   6,
-   3,
-   4
-  ],
-  "skills": {
-   "EW": 20,
-   "SG": 25,
-   "BG": 15,
-   "MW": 25
-  },
-  "faction": "Unaligned"
- },
- {
-  "n": "Raider",
-  "tier": 2,
-  "xp": 10,
-  "caps": "10-20",
-  "special": [
-   5,
-   5,
-   3,
-   2,
-   3,
-   7,
-   3
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 20,
-   "BG": 15,
-   "MW": 25
-  },
-  "faction": "Raiders"
- },
- {
-  "n": "Strong Raider",
-  "tier": 2,
-  "xp": 15,
-  "caps": "10-20",
-  "special": [
-   5,
-   5,
-   3,
-   2,
-   3,
-   7,
-   3
-  ],
-  "skills": {
-   "EW": 15,
-   "SG": 25,
-   "BG": 20,
-   "MW": 30
-  },
-  "faction": "Raiders"
- },
- {
-  "n": "Fiend",
-  "tier": 3,
-  "xp": 20,
-  "caps": "20-50",
-  "special": [
-   5,
-   3,
-   7,
-   2,
-   2,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 25,
-   "SG": 45,
-   "BG": 30,
-   "MW": 35
-  },
-  "faction": "Fiends"
- },
- {
-  "n": "Strong Fiend",
-  "tier": 3,
-  "xp": 25,
-  "caps": "20-50",
-  "special": [
-   5,
-   3,
-   7,
-   2,
-   2,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 30,
-   "SG": 50,
-   "BG": 35,
-   "MW": 45
-  },
-  "faction": "Fiends"
- },
- {
-  "n": "Tribal",
-  "tier": 2,
-  "xp": 10,
-  "caps": "0-10",
-  "special": [
-   7,
-   5,
-   5,
-   3,
-   4,
-   5,
-   2
-  ],
-  "skills": {
-   "EW": 0,
-   "SG": 5,
-   "BG": 0,
-   "MW": 40
-  },
-  "faction": "Tribals"
- },
- {
-  "n": "Strong Tribal",
-  "tier": 2,
-  "xp": 15,
-  "caps": "0-10",
-  "special": [
-   7,
-   5,
-   5,
-   3,
-   4,
-   5,
-   2
-  ],
-  "skills": {
-   "EW": 5,
-   "SG": 10,
-   "BG": 5,
-   "MW": 50
-  },
-  "faction": "Tribals"
- },
- {
-  "n": "Mercenary",
-  "tier": 3,
-  "xp": 20,
-  "caps": "20-50",
-  "special": [
-   6,
-   5,
-   6,
-   4,
-   4,
-   6,
-   3
-  ],
-  "skills": {
-   "EW": 40,
-   "SG": 50,
-   "BG": 40,
-   "MW": 40
-  },
-  "faction": "Unaligned"
- },
- {
-  "n": "Strong Mercenary",
-  "tier": 3,
-  "xp": 25,
-  "caps": "20-50",
-  "special": [
-   6,
-   5,
-   6,
-   4,
-   4,
-   6,
-   3
-  ],
-  "skills": {
-   "EW": 45,
-   "SG": 60,
-   "BG": 45,
-   "MW": 45
-  },
-  "faction": "Unaligned"
- },
- {
-  "n": "Recruit",
-  "tier": 2,
-  "xp": 10,
-  "caps": "15-30",
-  "special": [
-   5,
-   4,
-   5,
-   4,
-   5,
-   5,
-   6
-  ],
-  "skills": {
-   "EW": 20,
-   "SG": 30,
-   "BG": 15,
-   "MW": 20
-  },
-  "faction": "NCR"
- },
- {
-  "n": "Strong Recruit",
-  "tier": 2,
-  "xp": 15,
-  "caps": "15-30",
-  "special": [
-   5,
-   4,
-   5,
-   4,
-   5,
-   5,
-   6
-  ],
-  "skills": {
-   "EW": 25,
-   "SG": 35,
-   "BG": 20,
-   "MW": 25
-  },
-  "faction": "NCR"
- },
- {
-  "n": "Soldier",
-  "tier": 3,
-  "xp": 20,
-  "caps": "25-40",
-  "special": [
-   6,
-   4,
-   6,
-   3,
-   4,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 30,
-   "SG": 50,
-   "BG": 30,
-   "MW": 35
-  },
-  "faction": "NCR"
- },
- {
-  "n": "Strong Soldier",
-  "tier": 3,
-  "xp": 25,
-  "caps": "25-40",
-  "special": [
-   6,
-   4,
-   6,
-   3,
-   4,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 35,
-   "SG": 55,
-   "BG": 35,
-   "MW": 40
-  },
-  "faction": "NCR"
- },
- {
-  "n": "Veteran",
-  "tier": 4,
-  "xp": 30,
-  "caps": "30-55",
-  "special": [
-   7,
-   4,
-   7,
-   2,
-   3,
-   7,
-   5
-  ],
-  "skills": {
-   "EW": 50,
-   "SG": 70,
-   "BG": 50,
-   "MW": 60
-  },
-  "faction": "NCR"
- },
- {
-  "n": "Strong Veteran",
-  "tier": 4,
-  "xp": 35,
-  "caps": "30-55",
-  "special": [
-   7,
-   4,
-   7,
-   2,
-   3,
-   7,
-   5
-  ],
-  "skills": {
-   "EW": 55,
-   "SG": 75,
-   "BG": 55,
-   "MW": 65
-  },
-  "faction": "NCR"
- },
- {
-  "n": "Ranger",
-  "tier": 5,
-  "xp": 40,
-  "caps": "50-100",
-  "special": [
-   6,
-   6,
-   6,
-   4,
-   5,
-   7,
-   6
-  ],
-  "skills": {
-   "EW": 70,
-   "SG": 90,
-   "BG": 60,
-   "MW": 70
-  },
-  "faction": "NCR"
- },
- {
-  "n": "Strong Ranger",
-  "tier": 5,
-  "xp": 45,
-  "caps": "50-100",
-  "special": [
-   6,
-   6,
-   6,
-   4,
-   5,
-   7,
-   6
-  ],
-  "skills": {
-   "EW": 75,
-   "SG": 95,
-   "BG": 65,
-   "MW": 75
-  },
-  "faction": "NCR"
- },
- {
-  "n": "Legion Recruit",
-  "tier": 2,
-  "xp": 10,
-  "caps": "15-30",
-  "special": [
-   6,
-   4,
-   6,
-   3,
-   4,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 0,
-   "SG": 5,
-   "BG": 0,
-   "MW": 20
-  },
-  "faction": "Caesar's Legion"
- },
- {
-  "n": "Strong Legion Recruit",
-  "tier": 2,
-  "xp": 15,
-  "caps": "50-100",
-  "special": [
-   6,
-   4,
-   6,
-   3,
-   4,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 5,
-   "SG": 10,
-   "BG": 5,
-   "MW": 30
-  },
-  "faction": "Caesar's Legion"
- },
- {
-  "n": "Legion Soldier",
-  "tier": 3,
-  "xp": 20,
-  "caps": "25-40",
-  "special": [
-   7,
-   4,
-   7,
-   2,
-   3,
-   7,
-   5
-  ],
-  "skills": {
-   "EW": 5,
-   "SG": 15,
-   "BG": 5,
-   "MW": 50
-  },
-  "faction": "Caesar's Legion"
- },
- {
-  "n": "Strong Legion Soldier",
-  "tier": 3,
-  "xp": 25,
-  "caps": "25-40",
-  "special": [
-   7,
-   4,
-   7,
-   2,
-   3,
-   7,
-   5
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 20,
-   "BG": 10,
-   "MW": 60
-  },
-  "faction": "Caesar's Legion"
- },
- {
-  "n": "Legion Veteran",
-  "tier": 4,
-  "xp": 30,
-  "caps": "30-55",
-  "special": [
-   8,
-   4,
-   8,
-   1,
-   2,
-   8,
-   3
-  ],
-  "skills": {
-   "EW": 30,
-   "SG": 50,
-   "BG": 40,
-   "MW": 80
-  },
-  "faction": "Caesar's Legion"
- },
- {
-  "n": "Strong Legion Veteran",
-  "tier": 4,
-  "xp": 35,
-  "caps": "30-55",
-  "special": [
-   8,
-   4,
-   8,
-   1,
-   2,
-   8,
-   3
-  ],
-  "skills": {
-   "EW": 35,
-   "SG": 60,
-   "BG": 45,
-   "MW": 90
-  },
-  "faction": "Caesar's Legion"
- },
- {
-  "n": "Legion Frumentarus",
-  "tier": 5,
-  "xp": 40,
-  "caps": "50-100",
-  "special": [
-   5,
-   8,
-   5,
-   7,
-   6,
-   5,
-   2
-  ],
-  "skills": {
-   "EW": 70,
-   "SG": 80,
-   "BG": 35,
-   "MW": 65
-  },
-  "faction": "Caesar's Legion"
- },
- {
-  "n": "Strong Legion Frumentarus",
-  "tier": 5,
-  "xp": 45,
-  "caps": "50-100",
-  "special": [
-   5,
-   8,
-   5,
-   7,
-   6,
-   5,
-   2
-  ],
-  "skills": {
-   "EW": 75,
-   "SG": 85,
-   "BG": 40,
-   "MW": 70
-  },
-  "faction": "Caesar's Legion"
- },
- {
-  "n": "PA Initiate",
-  "tier": 3,
-  "xp": 30,
-  "caps": "25-40",
-  "special": [
-   7,
-   5,
-   6,
-   4,
-   6,
-   4,
-   3
-  ],
-  "skills": {
-   "EW": 40,
-   "SG": 30,
-   "BG": 35,
-   "MW": 35
-  },
-  "faction": "Brotherhood of Steel"
- },
- {
-  "n": "Strong PA Recruit",
-  "tier": 3,
-  "xp": 35,
-  "caps": "25-40",
-  "special": [
-   7,
-   5,
-   6,
-   4,
-   6,
-   4,
-   3
-  ],
-  "skills": {
-   "EW": 50,
-   "SG": 40,
-   "BG": 45,
-   "MW": 40
-  },
-  "faction": "Brotherhood of Steel"
- },
- {
-  "n": "PA Knight",
-  "tier": 4,
-  "xp": 40,
-  "caps": "30-55",
-  "special": [
-   8,
-   5,
-   7,
-   3,
-   6,
-   3,
-   3
-  ],
-  "skills": {
-   "EW": 60,
-   "SG": 50,
-   "BG": 55,
-   "MW": 50
-  },
-  "faction": "Brotherhood of Steel"
- },
- {
-  "n": "Strong PA Knight",
-  "tier": 4,
-  "xp": 45,
-  "caps": "30-55",
-  "special": [
-   8,
-   5,
-   7,
-   3,
-   6,
-   3,
-   3
-  ],
-  "skills": {
-   "EW": 75,
-   "SG": 65,
-   "BG": 70,
-   "MW": 55
-  },
-  "faction": "Brotherhood of Steel"
- },
- {
-  "n": "PA Paladin",
-  "tier": 5,
-  "xp": 50,
-  "caps": "50-100",
-  "special": [
-   9,
-   5,
-   8,
-   2,
-   7,
-   3,
-   1
-  ],
-  "skills": {
-   "EW": 85,
-   "SG": 75,
-   "BG": 80,
-   "MW": 75
-  },
-  "faction": "Brotherhood of Steel"
- },
- {
-  "n": "Strong PA Paladin",
-  "tier": 5,
-  "xp": 55,
-  "caps": "50-100",
-  "special": [
-   9,
-   5,
-   8,
-   2,
-   7,
-   3,
-   1
-  ],
-  "skills": {
-   "EW": 90,
-   "SG": 80,
-   "BG": 85,
-   "MW": 80
-  },
-  "faction": "Brotherhood of Steel"
- },
- {
-  "n": "Gangster",
-  "tier": 2,
-  "xp": 10,
-  "caps": "15-30",
-  "special": [
-   6,
-   4,
-   5,
-   4,
-   2,
-   5,
-   5
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 40,
-   "BG": 25,
-   "MW": 35
-  },
-  "faction": "Crime Families"
- },
- {
-  "n": "Strong Gangster",
-  "tier": 2,
-  "xp": 15,
-  "caps": "15-30",
-  "special": [
-   6,
-   4,
-   5,
-   4,
-   2,
-   5,
-   5
-  ],
-  "skills": {
-   "EW": 15,
-   "SG": 50,
-   "BG": 30,
-   "MW": 40
-  },
-  "faction": "Crime Families"
- },
- {
-  "n": "Mobster",
-  "tier": 3,
-  "xp": 20,
-  "caps": "25-40",
-  "special": [
-   5,
-   4,
-   5,
-   7,
-   2,
-   6,
-   6
-  ],
-  "skills": {
-   "EW": 30,
-   "SG": 60,
-   "BG": 55,
-   "MW": 40
-  },
-  "faction": "Crime Families"
- },
- {
-  "n": "Strong Mobster",
-  "tier": 3,
-  "xp": 25,
-  "caps": "25-40",
-  "special": [
-   5,
-   4,
-   5,
-   7,
-   2,
-   6,
-   6
-  ],
-  "skills": {
-   "EW": 40,
-   "SG": 70,
-   "BG": 65,
-   "MW": 45
-  },
-  "faction": "Crime Families"
- },
- {
-  "n": "Supermutant",
-  "tier": 4,
-  "xp": 40,
-  "caps": "50-100",
-  "special": [
-   10,
-   3,
-   9,
-   1,
-   2,
-   4,
-   2
-  ],
-  "skills": {
-   "EW": 40,
-   "SG": 50,
-   "BG": 70,
-   "MW": 70
-  },
-  "faction": "Super Mutants"
- },
- {
-  "n": "Strong Supermutant",
-  "tier": 4,
-  "xp": 45,
-  "caps": "50-100",
-  "special": [
-   10,
-   3,
-   9,
-   1,
-   2,
-   4,
-   2
-  ],
-  "skills": {
-   "EW": 45,
-   "SG": 55,
-   "BG": 80,
-   "MW": 80
-  },
-  "faction": "Super Mutants"
- },
- {
-  "n": "Supermutant Lieutenant",
-  "tier": 5,
-  "xp": 50,
-  "caps": "75-200",
-  "special": [
-   10,
-   5,
-   10,
-   1,
-   2,
-   6,
-   2
-  ],
-  "skills": {
-   "EW": 50,
-   "SG": 70,
-   "BG": 85,
-   "MW": 85
-  },
-  "faction": "Super Mutants"
- },
- {
-  "n": "Strong Supermutant Lieutenant",
-  "tier": 5,
-  "xp": 55,
-  "caps": "75-200",
-  "special": [
-   10,
-   5,
-   10,
-   1,
-   2,
-   6,
-   2
-  ],
-  "skills": {
-   "EW": 60,
-   "SG": 75,
-   "BG": 95,
-   "MW": 95
-  },
-  "faction": "Super Mutants"
- },
- {
-  "n": "Ant",
-  "tier": 1,
-  "mob": true,
-  "xp": 3,
-  "special": [
-   null,
-   2,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Ant",
-  "w2": "Ant",
-  "hp": 12,
-  "ap": 3,
-  "faction": "Unaligned"
- },
- {
-  "n": "Assaultron",
-  "tier": 3,
-  "mob": true,
-  "special": [
-   null,
-   null,
-   null,
-   null,
-   null,
-   null,
-   null
-  ],
-  "skills": {
-   "EW": 1
-  },
-  "w1": "Assaultron Arm",
-  "w2": "Assaultron Head",
-  "faction": "Unaligned"
- },
- {
-  "n": "Fire Ant Soldier",
-  "tier": 2,
-  "mob": true,
-  "xp": 5,
-  "special": [
-   null,
-   4,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Fire Ant Soldier",
-  "w2": "Fire Ant Soldier",
-  "hp": 20,
-  "ap": 7,
-  "pri": 6,
-  "faction": "Unaligned"
- },
- {
-  "n": "Fire Ant Worker",
-  "tier": 2,
-  "mob": true,
-  "xp": 5,
-  "special": [
-   null,
-   2,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Fire Ant Worker",
-  "w2": "Fire Ant Worker",
-  "hp": 15,
-  "ap": 3,
-  "faction": "Unaligned"
- },
- {
-  "n": "Giant Ant Queen",
-  "tier": 6,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   5,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Giant Ant Queen",
-  "w2": "Giant Ant Queen",
-  "hp": 75,
-  "dt": 4,
-  "ap": 10,
-  "pri": 10,
-  "faction": "Unaligned"
- },
- {
-  "n": "Giant Soldier Ant",
-  "tier": 3,
-  "mob": true,
-  "xp": 10,
-  "special": [
-   null,
-   3,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Giant Soldier Ant",
-  "w2": "Giant Soldier Ant",
-  "hp": 40,
-  "dt": 3,
-  "ap": 7,
-  "pri": 5,
-  "faction": "Unaligned"
- },
- {
-  "n": "Giant Worker Ant",
-  "tier": 3,
-  "mob": true,
-  "xp": 10,
-  "special": [
-   null,
-   3,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Giant Worker Ant",
-  "w2": "Giant Worker Ant",
-  "hp": 30,
-  "dt": 3,
-  "ap": 3,
-  "pri": 1,
-  "faction": "Unaligned"
- },
- {
-  "n": "Bark Scorpion",
-  "tier": 1,
-  "mob": true,
-  "xp": 2,
-  "special": [
-   null,
-   3,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Bark Scorpion",
-  "w2": "Bark Scorpion",
-  "hp": 10,
-  "dt": 4,
-  "ap": 5,
-  "pri": 3,
-  "faction": "Unaligned"
- },
- {
-  "n": "Bark Scorpion Hunter",
-  "tier": 2,
-  "mob": true,
-  "xp": 5,
-  "special": [
-   null,
-   3,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Bark Scorpion Hunter",
-  "w2": "Bark Scorpion Hunter",
-  "hp": 20,
-  "dt": 2,
-  "ap": 8,
-  "pri": 6,
-  "faction": "Unaligned"
- },
- {
-  "n": "Bighorner",
-  "tier": 1,
-  "mob": true,
-  "xp": 2,
-  "special": [
-   null,
-   2,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Bighorner",
-  "w2": "Bighorner",
-  "hp": 40,
-  "ap": 4,
-  "pri": 1,
-  "faction": "Unaligned"
- },
- {
-  "n": "Bighorner Bull",
-  "tier": 1,
-  "mob": true,
-  "xp": 2,
-  "special": [
-   null,
-   4,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Bighorner Bull",
-  "w2": "Bighorner Bull",
-  "hp": 60,
-  "ap": 6,
-  "pri": 5,
-  "faction": "Unaligned"
- },
- {
-  "n": "Bighorner Calf",
-  "tier": 1,
-  "mob": true,
-  "xp": 1,
-  "special": [
-   null,
-   2,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Bighorner Calf",
-  "w2": "Bighorner Calf",
-  "hp": 15,
-  "ap": 2,
-  "pri": -1,
-  "faction": "Unaligned"
- },
- {
-  "n": "Bloatfly",
-  "tier": 1,
-  "mob": true,
-  "xp": 1,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Bloatfly",
-  "w2": "Bloatfly",
-  "hp": 6,
-  "ap": 2,
-  "pri": 3,
-  "faction": "Unaligned"
- },
- {
-  "n": "Legendary Bloatfly",
-  "tier": 6,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   9,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Legendary Bloatfly",
-  "w2": "Legendary Bloatfly",
-  "hp": 200,
-  "dt": 20,
-  "ap": 12,
-  "pri": 16,
-  "faction": "Unaligned"
- },
- {
-  "n": "Brahmin",
-  "tier": 1,
-  "mob": true,
-  "xp": 2,
-  "special": [
-   null,
-   3,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Brahmin",
-  "w2": "Brahmin",
-  "hp": 40,
-  "ap": 5,
-  "pri": 3,
-  "faction": "Unaligned"
- },
- {
-  "n": "Cazador",
-  "tier": 3,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   9,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Cazador",
-  "w2": "Cazador",
-  "hp": 25,
-  "ap": 8,
-  "pri": 12,
-  "faction": "Unaligned"
- },
- {
-  "n": "Giant Cazador",
-  "tier": 5,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   9,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Giant Cazador",
-  "w2": "Giant Cazador",
-  "hp": 35,
-  "dt": 5,
-  "ap": 10,
-  "pri": 14,
-  "faction": "Unaligned"
- },
- {
-  "n": "Legendary Cazador",
-  "tier": 6,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   10,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Legendary Cazador",
-  "w2": "Legendary Cazador",
-  "hp": 75,
-  "dt": 11,
-  "ap": 12,
-  "pri": 17,
-  "faction": "Unaligned"
- },
- {
-  "n": "Centaur",
-  "tier": 3,
-  "mob": true,
-  "xp": 10,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Centaur",
-  "w2": "Centaur",
-  "hp": 25,
-  "dt": 9,
-  "ap": 3,
-  "pri": 4,
-  "faction": "Unaligned"
- },
- {
-  "n": "Evolved Centaur",
-  "tier": 4,
-  "mob": true,
-  "xp": 20,
-  "special": [
-   null,
-   7,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Evolved Centaur",
-  "w2": "Evolved Centaur",
-  "hp": 35,
-  "dt": 11,
-  "ap": 6,
-  "pri": 8,
-  "faction": "Unaligned"
- },
- {
-  "n": "Giant Evolved Centaur",
-  "tier": 5,
-  "mob": true,
-  "xp": 25,
-  "special": [
-   null,
-   8,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Giant Evolved Centaur",
-  "w2": "Giant Evolved Centaur",
-  "hp": 45,
-  "dt": 13,
-  "ap": 8,
-  "pri": 11,
-  "faction": "Unaligned"
- },
- {
-  "n": "Coyote Den Mother",
-  "tier": 2,
-  "mob": true,
-  "xp": 5,
-  "special": [
-   null,
-   8,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Coyote Den Mother",
-  "w2": "Coyote Den Mother",
-  "hp": 20,
-  "dt": 5,
-  "ap": 7,
-  "pri": 10,
-  "faction": "Unaligned"
- },
- {
-  "n": "Coyote Pack Alpha",
-  "tier": 3,
-  "mob": true,
-  "xp": 10,
-  "special": [
-   null,
-   8,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Coyote Pack Alpha",
-  "w2": "Coyote Pack Alpha",
-  "hp": 25,
-  "dt": 2,
-  "ap": 9,
-  "pri": 12,
-  "faction": "Unaligned"
- },
- {
-  "n": "Coyote Pup",
-  "tier": 1,
-  "mob": true,
-  "xp": 1,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Coyote Pup",
-  "w2": "Coyote Pup",
-  "hp": 5,
-  "ap": 10,
-  "pri": 11,
-  "faction": "Unaligned"
- },
- {
-  "n": "Deathclaw",
-  "tier": 5,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   7,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Deathclaw",
-  "w2": "Deathclaw",
-  "hp": 90,
-  "dt": 20,
-  "ap": 10,
-  "pri": 12,
-  "faction": "Unaligned"
- },
- {
-  "n": "Deathclaw Alpha Male",
-  "tier": 6,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   10,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Deathclaw Alpha Male",
-  "w2": "Deathclaw Alpha Male",
-  "hp": 150,
-  "dt": 25,
-  "ap": 12,
-  "pri": 17,
-  "faction": "Unaligned"
- },
- {
-  "n": "Deathclaw Baby",
-  "tier": 3,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Deathclaw Baby",
-  "w2": "Deathclaw Baby",
-  "hp": 50,
-  "dt": 12,
-  "ap": 4,
-  "pri": 5,
-  "faction": "Unaligned"
- },
- {
-  "n": "Legendary Deathclaw",
-  "tier": 6,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   10,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Legendary Deathclaw",
-  "w2": "Legendary Deathclaw",
-  "hp": 300,
-  "dt": 40,
-  "ap": 14,
-  "pri": 19,
-  "faction": "Unaligned"
- },
- {
-  "n": "Mother Deathclaw",
-  "tier": 6,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   8,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Mother Deathclaw",
-  "w2": "Mother Deathclaw",
-  "hp": 250,
-  "dt": 30,
-  "ap": 13,
-  "pri": 16,
-  "faction": "Unaligned"
- },
- {
-  "n": "Young Deathclaw",
-  "tier": 4,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Young Deathclaw",
-  "w2": "Young Deathclaw",
-  "hp": 80,
-  "dt": 10,
-  "ap": 5,
-  "pri": 6,
-  "faction": "Unaligned"
- },
- {
-  "n": "Coyote",
-  "tier": 1,
-  "mob": true,
-  "xp": 3,
-  "special": [
-   null,
-   8,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Coyote",
-  "w2": "Coyote",
-  "hp": 10,
-  "ap": 5,
-  "pri": 8,
-  "faction": "Unaligned"
- },
- {
-  "n": "Dog",
-  "tier": 1,
-  "mob": true,
-  "xp": 3,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Dog",
-  "w2": "Dog",
-  "hp": 12,
-  "ap": 5,
-  "pri": 6,
-  "faction": "Unaligned"
- },
- {
-  "n": "Cyberdog",
-  "tier": 3,
-  "mob": true,
-  "xp": 10,
-  "special": [
-   null,
-   5,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Cyberdog",
-  "w2": "Cyberdog",
-  "hp": 20,
-  "dt": 8,
-  "ap": 6,
-  "pri": 6,
-  "faction": "Unaligned"
- },
- {
-  "n": "Police Cyberdog",
-  "tier": 4,
-  "mob": true,
-  "xp": 15,
-  "special": [
-   null,
-   10,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Police Cyberdog",
-  "w2": "Police Cyberdog",
-  "hp": 30,
-  "dt": 15,
-  "ap": 7,
-  "pri": 12,
-  "faction": "Unaligned"
- },
- {
-  "n": "Large Dog",
-  "tier": 2,
-  "mob": true,
-  "xp": 5,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Large Dog",
-  "w2": "Large Dog",
-  "hp": 18,
-  "ap": 8,
-  "pri": 9,
-  "faction": "Unaligned"
- },
- {
-  "n": "Mongrel",
-  "tier": 1,
-  "mob": true,
-  "xp": 3,
-  "special": [
-   null,
-   8,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Mongrel",
-  "w2": "Mongrel",
-  "hp": 12,
-  "ap": 6,
-  "pri": 9,
-  "faction": "Unaligned"
- },
- {
-  "n": "Large Mongrel",
-  "tier": 2,
-  "mob": true,
-  "xp": 5,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Large Mongrel",
-  "w2": "Large Mongrel",
-  "hp": 18,
-  "ap": 8,
-  "pri": 9,
-  "faction": "Unaligned"
- },
- {
-  "n": "Civilian Eyebot",
-  "tier": 1,
-  "mob": true,
-  "xp": 5,
-  "special": [
-   null,
-   5,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Civilian Eyebot",
-  "w2": "Civilian Eyebot",
-  "hp": 30,
-  "ap": 3,
-  "pri": 3,
-  "faction": "Unaligned"
- },
- {
-  "n": "Military Eyebot",
-  "tier": 3,
-  "mob": true,
-  "xp": 20,
-  "special": [
-   null,
-   10,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Military Eyebot",
-  "w2": "Military Eyebot",
-  "hp": 20,
-  "dt": 12,
-  "ap": 8,
-  "pri": 13,
-  "faction": "Unaligned"
- },
- {
-  "n": "Feral Ghoul",
-  "tier": 2,
-  "mob": true,
-  "xp": 10,
-  "special": [
-   null,
-   3,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Feral Ghoul",
-  "w2": "Feral Ghoul",
-  "hp": 20,
-  "ap": 5,
-  "pri": 3,
-  "faction": "Unaligned"
- },
- {
-  "n": "Feral Ghoul Roamer",
-  "tier": 3,
-  "mob": true,
-  "xp": 20,
-  "special": [
-   null,
-   4,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Feral Ghoul Roamer",
-  "w2": "Feral Ghoul Roamer",
-  "hp": 25,
-  "dt": 3,
-  "ap": 6,
-  "pri": 5,
-  "faction": "Unaligned"
- },
- {
-  "n": "Feral Ghoul Reaver",
-  "tier": 4,
-  "mob": true,
-  "xp": 30,
-  "special": [
-   null,
-   7,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Feral Ghoul Reaver",
-  "w2": "Feral Ghoul Reaver",
-  "hp": 30,
-  "dt": 12,
-  "ap": 6,
-  "pri": 8,
-  "faction": "Unaligned"
- },
- {
-  "n": "Glowing One",
-  "tier": 4,
-  "mob": true,
-  "xp": 40,
-  "special": [
-   null,
-   5,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Glowing One",
-  "w2": "Glowing One",
-  "hp": 50,
-  "dt": 8,
-  "ap": 8,
-  "pri": 8,
-  "faction": "Unaligned"
- },
- {
-  "n": "Fire Gecko",
-  "tier": 3,
-  "mob": true,
-  "xp": 15,
-  "special": [
-   null,
-   7,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Fire Gecko",
-  "w2": "Fire Gecko",
-  "hp": 20,
-  "ap": 7,
-  "pri": 9,
-  "faction": "Unaligned"
- },
- {
-  "n": "Legendary Fire Gecko",
-  "tier": 5,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   8,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Legendary Fire Gecko",
-  "w2": "Legendary Fire Gecko",
-  "hp": 65,
-  "ap": 8,
-  "pri": 11,
-  "faction": "Unaligned"
- },
- {
-  "n": "Gecko",
-  "tier": 1,
-  "mob": true,
-  "xp": 3,
-  "special": [
-   null,
-   3,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Gecko",
-  "w2": "Gecko",
-  "hp": 15,
-  "ap": 4,
-  "pri": 2,
-  "faction": "Unaligned"
- },
- {
-  "n": "Gecko Hunter",
-  "tier": 2,
-  "mob": true,
-  "xp": 5,
-  "special": [
-   null,
-   3,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Gecko Hunter",
-  "w2": "Gecko Hunter",
-  "hp": 18,
-  "ap": 8,
-  "pri": 6,
-  "faction": "Unaligned"
- },
- {
-  "n": "Green Gecko",
-  "tier": 2,
-  "mob": true,
-  "xp": 10,
-  "special": [
-   null,
-   8,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Green Gecko",
-  "w2": "Green Gecko",
-  "hp": 15,
-  "ap": 6,
-  "pri": 9,
-  "faction": "Unaligned"
- },
- {
-  "n": "Golden Gecko",
-  "tier": 3,
-  "mob": true,
-  "xp": 15,
-  "special": [
-   null,
-   5,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Golden Gecko",
-  "w2": "Golden Gecko",
-  "hp": 20,
-  "ap": 6,
-  "pri": 6,
-  "faction": "Unaligned"
- },
- {
-  "n": "Giant Mantis",
-  "tier": 1,
-  "mob": true,
-  "xp": 2,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Giant Mantis",
-  "w2": "Giant Mantis",
-  "hp": 10,
-  "ap": 5,
-  "pri": 6,
-  "faction": "Unaligned"
- },
- {
-  "n": "Giant Mantis Nymph",
-  "tier": 1,
-  "mob": true,
-  "xp": 2,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Giant Mantis Nymph",
-  "w2": "Giant Mantis Nymph",
-  "hp": 2,
-  "ap": 6,
-  "pri": 7,
-  "faction": "Unaligned"
- },
- {
-  "n": "Giant Rat",
-  "tier": 1,
-  "mob": true,
-  "xp": 2,
-  "special": [
-   null,
-   4,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Giant Rat",
-  "w2": "Giant Rat",
-  "hp": 10,
-  "ap": 6,
-  "pri": 5,
-  "faction": "Unaligned"
- },
- {
-  "n": "Giant Rat Pup",
-  "tier": 1,
-  "mob": true,
-  "xp": 1,
-  "special": [
-   null,
-   2,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Giant Rat Pup",
-  "w2": "Giant Rat Pup",
-  "hp": 12,
-  "ap": 4,
-  "pri": 1,
-  "faction": "Unaligned"
- },
- {
-  "n": "Lakelurk",
-  "tier": 3,
-  "mob": true,
-  "xp": 15,
-  "special": [
-   null,
-   7,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Lakelurk",
-  "w2": "Lakelurk",
-  "hp": 32,
-  "dt": 5,
-  "ap": 6,
-  "pri": 8,
-  "faction": "Unaligned"
- },
- {
-  "n": "Alpha Male Lakelurk",
-  "tier": 4,
-  "mob": true,
-  "xp": 25,
-  "special": [
-   null,
-   7,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Alpha Male Lakelurk",
-  "w2": "Alpha Male Lakelurk",
-  "hp": 50,
-  "dt": 6,
-  "ap": 8,
-  "pri": 10,
-  "faction": "Unaligned"
- },
- {
-  "n": "Lakelurk King",
-  "tier": 6,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   8,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Lakelurk King",
-  "w2": "Lakelurk King",
-  "hp": 90,
-  "dt": 8,
-  "ap": 10,
-  "pri": 13,
-  "faction": "Unaligned"
- },
- {
-  "n": "Mister Gutsy",
-  "tier": 4,
-  "mob": true,
-  "xp": 25,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Mister Gutsy",
-  "w2": "Mister Gutsy",
-  "hp": 35,
-  "dt": 12,
-  "ap": 5,
-  "pri": 6,
-  "faction": "Unaligned"
- },
- {
-  "n": "Hardened Mister Gutsy",
-  "tier": 5,
-  "mob": true,
-  "xp": 40,
-  "special": [
-   null,
-   5,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Hardened Mister Gutsy",
-  "w2": "Hardened Mister Gutsy",
-  "hp": 50,
-  "dt": 18,
-  "ap": 8,
-  "pri": 8,
-  "faction": "Unaligned"
- },
- {
-  "n": "Mister Handy",
-  "tier": 2,
-  "mob": true,
-  "xp": 5,
-  "special": [
-   null,
-   5,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Mister Handy",
-  "w2": "Mister Handy",
-  "hp": 20,
-  "dt": 6,
-  "ap": 4,
-  "pri": 4,
-  "faction": "Unaligned"
- },
- {
-  "n": "Mole Rat",
-  "tier": 1,
-  "mob": true,
-  "xp": 2,
-  "special": [
-   null,
-   2,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Mole Rat",
-  "w2": "Mole Rat",
-  "hp": 5,
-  "ap": 5,
-  "pri": 2,
-  "faction": "Unaligned"
- },
- {
-  "n": "Mole Rat Pup",
-  "tier": 1,
-  "mob": true,
-  "xp": 1,
-  "special": [
-   null,
-   1,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Mole Rat Pup",
-  "w2": "Mole Rat Pup",
-  "hp": 2,
-  "ap": 3,
-  "pri": -1,
-  "faction": "Unaligned"
- },
- {
-  "n": "Nightstalker",
-  "tier": 3,
-  "mob": true,
-  "xp": 15,
-  "special": [
-   null,
-   9,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Nightstalker",
-  "w2": "Nightstalker",
-  "hp": 25,
-  "ap": 7,
-  "pri": 11,
-  "faction": "Unaligned"
- },
- {
-  "n": "Nightstalker Den Mother",
-  "tier": 5,
-  "mob": true,
-  "xp": 25,
-  "special": [
-   null,
-   9,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Nightstalker Den Mother",
-  "w2": "Nightstalker Den Mother",
-  "hp": 45,
-  "ap": 9,
-  "pri": 13,
-  "faction": "Unaligned"
- },
- {
-  "n": "Legendary Nightstalker",
-  "tier": 6,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   10,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Legendary Nightstalker",
-  "w2": "Legendary Nightstalker",
-  "hp": 135,
-  "ap": 6,
-  "pri": 11,
-  "faction": "Unaligned"
- },
- {
-  "n": "Young Nightstalker",
-  "tier": 2,
-  "mob": true,
-  "xp": 10,
-  "special": [
-   null,
-   8,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Young Nightstalker",
-  "w2": "Young Nightstalker",
-  "hp": 12,
-  "ap": 8,
-  "pri": 11,
-  "faction": "Unaligned"
- },
- {
-  "n": "Protectron",
-  "tier": 3,
-  "mob": true,
-  "xp": 25,
-  "special": [
-   null,
-   4,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Protectron",
-  "w2": "Protectron",
-  "hp": 45,
-  "dt": 8,
-  "ap": 4,
-  "pri": 3,
-  "faction": "Unaligned"
- },
- {
-  "n": "Radroach",
-  "tier": 1,
-  "mob": true,
-  "xp": 1,
-  "special": [
-   null,
-   3,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Radroach",
-  "w2": "Radroach",
-  "hp": 12,
-  "ap": 4,
-  "pri": 2,
-  "faction": "Unaligned"
- },
- {
-  "n": "Radscorpion",
-  "tier": 2,
-  "mob": true,
-  "xp": 5,
-  "special": [
-   null,
-   4,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Radscorpion",
-  "w2": "Radscorpion",
-  "hp": 18,
-  "dt": 2,
-  "ap": 4,
-  "pri": 3,
-  "faction": "Unaligned"
- },
- {
-  "n": "Giant Radscorpion",
-  "tier": 3,
-  "mob": true,
-  "xp": 15,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Giant Radscorpion",
-  "w2": "Giant Radscorpion",
-  "hp": 25,
-  "dt": 4,
-  "ap": 3,
-  "pri": 4,
-  "faction": "Unaligned"
- },
- {
-  "n": "Radscorpion Queen",
-  "tier": 6,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Radscorpion Queen",
-  "w2": "Radscorpion Queen",
-  "hp": 80,
-  "ap": 4,
-  "pri": 5,
-  "faction": "Unaligned"
- },
- {
-  "n": "Robobrain",
-  "tier": 2,
-  "mob": true,
-  "xp": 10,
-  "special": [
-   null,
-   5,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "EXP": 1,
-   "MW": 100
-  },
-  "w1": "Robobrain",
-  "w2": "Robobrain",
-  "hp": 32,
-  "dt": 6,
-  "ap": 2,
-  "pri": 2,
-  "faction": "Unaligned"
- },
- {
-  "n": "Securitron",
-  "tier": 3,
-  "mob": true,
-  "xp": 25,
-  "special": [
-   null,
-   6,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "EXP": 1,
-   "MW": 100
-  },
-  "w1": "Securitron",
-  "w2": "Securitron",
-  "hp": 50,
-  "dt": 15,
-  "ap": 7,
-  "pri": 8,
-  "faction": "Unaligned"
- },
- {
-  "n": "Sentry Bot",
-  "tier": 4,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   7,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "EXP": 1,
-   "MW": 100
-  },
-  "w1": "Sentry Bot",
-  "w2": "Sentry Bot",
-  "hp": 80,
-  "dt": 20,
-  "ap": 6,
-  "pri": 8,
-  "faction": "Unaligned"
- },
- {
-  "n": "Hardened Sentry Bot",
-  "tier": 5,
-  "mob": true,
-  "xp": 50,
-  "special": [
-   null,
-   8,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "EXP": 1,
-   "MW": 100
-  },
-  "w1": "Hardened Sentry Bot",
-  "w2": "Hardened Sentry Bot",
-  "hp": 90,
-  "dt": 25,
-  "ap": 8,
-  "pri": 11,
-  "faction": "Unaligned"
- },
- {
-  "n": "Spore Carrier",
-  "tier": 3,
-  "mob": true,
-  "xp": 5,
-  "special": [
-   null,
-   4,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Spore Carrier",
-  "w2": "Spore Carrier",
-  "hp": 22,
-  "ap": 5,
-  "pri": 4,
-  "faction": "Unaligned"
- },
- {
-  "n": "Spore Carrier Beast",
-  "tier": 5,
-  "mob": true,
-  "xp": 15,
-  "special": [
-   null,
-   7,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Spore Carrier Beast",
-  "w2": "Spore Carrier Beast",
-  "hp": 85,
-  "ap": 7,
-  "pri": 9,
-  "faction": "Unaligned"
- },
- {
-  "n": "Spore Plant",
-  "tier": 2,
-  "mob": true,
-  "xp": 3,
-  "special": [
-   null,
-   10,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Spore Plant",
-  "w2": "Spore Plant",
-  "hp": 15,
-  "ap": 4,
-  "pri": 9,
-  "faction": "Unaligned"
- },
- {
-  "n": "Giant Spore Plant",
-  "tier": 4,
-  "mob": true,
-  "xp": 20,
-  "special": [
-   null,
-   8,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "EW": 1,
-   "MW": 100
-  },
-  "w1": "Giant Spore Plant",
-  "w2": "Giant Spore Plant",
-  "hp": 30,
-  "ap": 6,
-  "pri": 9,
-  "faction": "Unaligned"
- },
- {
-  "n": "Wild Boar",
-  "tier": 666,
-  "mob": true,
-  "special": [
-   null,
-   15,
-   null,
-   null,
-   null,
-   null,
-   5
-  ],
-  "skills": {
-   "MW": 100
-  },
-  "w1": "Wild Boar",
-  "w2": "Wild Boar",
-  "hp": 50,
-  "dt": 20,
-  "ap": 10,
-  "pri": 20,
-  "faction": "Unaligned"
- },
- {
-  "n": "Jackal Pup",
-  "tier": 1,
-  "xp": 5,
-  "caps": "5-15",
-  "faction": "Jackals",
-  "special": [
-   5,
-   4,
-   4,
-   3,
-   3,
-   4,
-   4
-  ],
-  "skills": {
-   "EW": 5,
-   "SG": 15,
-   "BG": 5,
-   "MW": 20
-  },
-  "w1": "Pipe Pistol",
-  "w2": "Knife"
- },
- {
-  "n": "Jackal Hanger-On",
-  "tier": 1,
-  "xp": 5,
-  "caps": "5-15",
-  "faction": "Jackals",
-  "special": [
-   5,
-   4,
-   4,
-   3,
-   3,
-   4,
-   4
-  ],
-  "skills": {
-   "EW": 5,
-   "SG": 15,
-   "BG": 5,
-   "MW": 20
-  },
-  "w1": "Hatchet",
-  "w2": "Basic Fighting"
- },
- {
-  "n": "Jackal Gang Member",
-  "tier": 1,
-  "xp": 5,
-  "caps": "5-15",
-  "faction": "Jackals",
-  "special": [
-   4,
-   6,
-   3,
-   3,
-   4,
-   4,
-   4
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 25,
-   "BG": 10,
-   "MW": 15
-  },
-  "w1": "Pipe Rifle",
-  "w2": "Prison Shiv"
- },
- {
-  "n": "Jackal Pack Leader",
-  "tier": 2,
-  "xp": 15,
-  "caps": "10-20",
-  "faction": "Jackals",
-  "special": [
-   6,
-   4,
-   5,
-   4,
-   2,
-   5,
-   5
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 40,
-   "BG": 25,
-   "MW": 35
-  },
-  "w1": ".357 Magnum revolver",
-  "w2": "Lead Pipe"
- },
- {
-  "n": "Jackal Dog Handler",
-  "tier": 2,
-  "xp": 10,
-  "caps": "10-20",
-  "faction": "Jackals",
-  "special": [
-   7,
-   5,
-   5,
-   3,
-   4,
-   5,
-   2
-  ],
-  "skills": {
-   "EW": 0,
-   "SG": 5,
-   "BG": 0,
-   "MW": 40
-  },
-  "w1": "Baseball Bat",
-  "w2": "Basic Fighting"
- },
- {
-  "n": "Viper Cutthroat",
-  "tier": 1,
-  "xp": 5,
-  "caps": "5-15",
-  "faction": "Vipers",
-  "special": [
-   3,
-   6,
-   3,
-   4,
-   4,
-   6,
-   4
-  ],
-  "skills": {
-   "EW": 5,
-   "SG": 20,
-   "BG": 5,
-   "MW": 20
-  },
-  "w1": "Switchblade",
-  "w2": "Pipe Pistol"
- },
- {
-  "n": "Viper Gunslinger",
-  "tier": 2,
-  "xp": 10,
-  "caps": "10-20",
-  "faction": "Vipers",
-  "special": [
-   5,
-   4,
-   5,
-   4,
-   5,
-   5,
-   6
-  ],
-  "skills": {
-   "EW": 20,
-   "SG": 30,
-   "BG": 15,
-   "MW": 20
-  },
-  "w1": "Lever Action Rifle",
-  "w2": "Knife"
- },
- {
-  "n": "Viper Snake Handler",
-  "tier": 2,
-  "xp": 10,
-  "caps": "10-20",
-  "faction": "Vipers",
-  "special": [
-   4,
-   6,
-   4,
-   4,
-   4,
-   6,
-   4
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 30,
-   "BG": 10,
-   "MW": 30
-  },
-  "w1": "Straight Razor",
-  "w2": "Basic Fighting"
- },
- {
-  "n": "Viper Road Warrior",
-  "tier": 2,
-  "xp": 10,
-  "caps": "10-20",
-  "faction": "Vipers",
-  "special": [
-   7,
-   5,
-   5,
-   3,
-   4,
-   5,
-   2
-  ],
-  "skills": {
-   "EW": 0,
-   "SG": 5,
-   "BG": 0,
-   "MW": 40
-  },
-  "w1": "Tire Iron",
-  "w2": "Pipe Shotgun"
- },
- {
-  "n": "Viper Gang Leader",
-  "tier": 3,
-  "xp": 25,
-  "caps": "25-40",
-  "faction": "Vipers",
-  "special": [
-   5,
-   4,
-   5,
-   7,
-   2,
-   6,
-   6
-  ],
-  "skills": {
-   "EW": 30,
-   "SG": 60,
-   "BG": 55,
-   "MW": 40
-  },
-  "w1": "Cowboy repeater",
-  "w2": "War Club"
- },
- {
-  "n": "Fiend Junkie",
-  "tier": 2,
-  "xp": 10,
-  "caps": "10-20",
-  "faction": "Fiends",
-  "special": [
-   5,
-   3,
-   6,
-   2,
-   2,
-   5,
-   5
-  ],
-  "skills": {
-   "EW": 15,
-   "SG": 30,
-   "BG": 20,
-   "MW": 25
-  },
-  "w1": "Lead Pipe",
-  "w2": "Pipe Pistol"
- },
- {
-  "n": "Fiend Stoner",
-  "tier": 2,
-  "xp": 10,
-  "caps": "10-20",
-  "faction": "Fiends",
-  "special": [
-   5,
-   3,
-   6,
-   2,
-   2,
-   5,
-   5
-  ],
-  "skills": {
-   "EW": 15,
-   "SG": 30,
-   "BG": 20,
-   "MW": 25
-  },
-  "w1": "9mm Auto Pistol (Glock)",
-  "w2": "Tire Iron"
- },
- {
-  "n": "Fiend Psycho",
-  "tier": 3,
-  "xp": 20,
-  "caps": "20-50",
-  "faction": "Fiends",
-  "special": [
-   5,
-   3,
-   7,
-   2,
-   2,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 25,
-   "SG": 45,
-   "BG": 30,
-   "MW": 35
-  },
-  "w1": "Sledgehammer",
-  "w2": "Basic Fighting"
- },
- {
-  "n": "Fiend Enforcer",
-  "tier": 3,
-  "xp": 20,
-  "caps": "20-50",
-  "faction": "Fiends",
-  "special": [
-   5,
-   3,
-   7,
-   2,
-   2,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 25,
-   "SG": 45,
-   "BG": 30,
-   "MW": 35
-  },
-  "w1": "Battle rifle",
-  "w2": "War Club"
- },
- {
-  "n": "Fiend Chem Cook",
-  "tier": 3,
-  "xp": 20,
-  "caps": "20-50",
-  "faction": "Fiends",
-  "special": [
-   5,
-   3,
-   7,
-   2,
-   2,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 25,
-   "SG": 45,
-   "BG": 30,
-   "MW": 35
-  },
-  "w1": "Compact 10mm SMG (Uzi)",
-  "w2": "Knife"
- },
- {
-  "n": "Fiend Warlord",
-  "tier": 4,
-  "xp": 35,
-  "caps": "30-55",
-  "faction": "Fiends",
-  "special": [
-   6,
-   3,
-   8,
-   2,
-   2,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 40,
-   "SG": 60,
-   "BG": 45,
-   "MW": 50
-  },
-  "w1": "Handmade Rifle (AK47)",
-  "w2": "Mace"
- },
- {
-  "n": "Fiend Pyro",
-  "tier": 3,
-  "xp": 20,
-  "caps": "20-50",
-  "faction": "Fiends",
-  "special": [
-   5,
-   3,
-   7,
-   2,
-   2,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 25,
-   "SG": 45,
-   "BG": 30,
-   "MW": 35
-  },
-  "w1": "Pipe Flamer",
-  "w2": "Lead Pipe"
- },
- {
-  "n": "Rogue Scavenger",
-  "tier": 1,
-  "xp": 5,
-  "caps": "5-15",
-  "faction": "Rogue Scavengers",
-  "special": [
-   5,
-   8,
-   4,
-   3,
-   6,
-   3,
-   4
-  ],
-  "skills": {
-   "EW": 15,
-   "SG": 20,
-   "BG": 10,
-   "MW": 20
-  },
-  "w1": "Pipe Rifle",
-  "w2": "Pipe Wrench"
- },
- {
-  "n": "Scav Picker",
-  "tier": 1,
-  "xp": 5,
-  "caps": "5-15",
-  "faction": "Rogue Scavengers",
-  "special": [
-   5,
-   8,
-   4,
-   3,
-   6,
-   3,
-   4
-  ],
-  "skills": {
-   "EW": 15,
-   "SG": 20,
-   "BG": 10,
-   "MW": 20
-  },
-  "w1": "Knife",
-  "w2": "Pipe Pistol"
- },
- {
-  "n": "Scav Salvager",
-  "tier": 2,
-  "xp": 10,
-  "caps": "15-30",
-  "faction": "Rogue Scavengers",
-  "special": [
-   5,
-   8,
-   4,
-   3,
-   6,
-   3,
-   4
-  ],
-  "skills": {
-   "EW": 20,
-   "SG": 25,
-   "BG": 15,
-   "MW": 25
-  },
-  "w1": "10mm Carbine",
-  "w2": "Crowbar"
- },
- {
-  "n": "Scav Tinkerer",
-  "tier": 2,
-  "xp": 10,
-  "caps": "15-30",
-  "faction": "Rogue Scavengers",
-  "special": [
-   5,
-   8,
-   4,
-   3,
-   6,
-   3,
-   4
-  ],
-  "skills": {
-   "EW": 20,
-   "SG": 25,
-   "BG": 15,
-   "MW": 25
-  },
-  "w1": "Taser",
-  "w2": "Hammer"
- },
- {
-  "n": "Scav Crew Boss",
-  "tier": 3,
-  "xp": 25,
-  "caps": "25-40",
-  "faction": "Rogue Scavengers",
-  "special": [
-   6,
-   8,
-   5,
-   3,
-   6,
-   4,
-   4
-  ],
-  "skills": {
-   "EW": 30,
-   "SG": 40,
-   "BG": 25,
-   "MW": 35
-  },
-  "w1": "Marksman carbine",
-  "w2": "Shovel"
- },
- {
-  "n": "Highwayman Lookout",
-  "tier": 1,
-  "xp": 5,
-  "caps": "5-15",
-  "faction": "Highwaymen",
-  "special": [
-   4,
-   6,
-   3,
-   3,
-   4,
-   4,
-   4
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 25,
-   "BG": 10,
-   "MW": 15
-  },
-  "w1": "Varmint rifle",
-  "w2": "Knife"
- },
- {
-  "n": "Highwayman Bandit",
-  "tier": 2,
-  "xp": 10,
-  "caps": "10-20",
-  "faction": "Highwaymen",
-  "special": [
-   5,
-   5,
-   3,
-   2,
-   3,
-   7,
-   3
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 20,
-   "BG": 15,
-   "MW": 25
-  },
-  "w1": "RSC SMG",
-  "w2": "Tire Iron"
- },
- {
-  "n": "Highwayman Sharpshooter",
-  "tier": 3,
-  "xp": 20,
-  "caps": "25-40",
-  "faction": "Highwaymen",
-  "special": [
-   6,
-   4,
-   6,
-   3,
-   4,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 30,
-   "SG": 50,
-   "BG": 30,
-   "MW": 35
-  },
-  "w1": "Marksman carbine",
-  "w2": "Knife"
- },
- {
-  "n": "Highwayman Toll Collector",
-  "tier": 2,
-  "xp": 10,
-  "caps": "10-20",
-  "faction": "Highwaymen",
-  "special": [
-   7,
-   5,
-   5,
-   3,
-   4,
-   5,
-   2
-  ],
-  "skills": {
-   "EW": 0,
-   "SG": 5,
-   "BG": 0,
-   "MW": 40
-  },
-  "w1": "Shovel",
-  "w2": ".45 Auto pistol"
- },
- {
-  "n": "Highwayman Captain",
-  "tier": 4,
-  "xp": 35,
-  "caps": "30-55",
-  "faction": "Highwaymen",
-  "special": [
-   7,
-   4,
-   7,
-   2,
-   3,
-   7,
-   5
-  ],
-  "skills": {
-   "EW": 50,
-   "SG": 70,
-   "BG": 50,
-   "MW": 60
-  },
-  "w1": "Trail carbine",
-  "w2": "Mace"
- },
- {
-  "n": "City Mugger",
-  "tier": 1,
-  "xp": 5,
-  "caps": "0-10",
-  "faction": "City Muggers",
-  "special": [
-   5,
-   4,
-   4,
-   3,
-   3,
-   4,
-   4
-  ],
-  "skills": {
-   "EW": 5,
-   "SG": 15,
-   "BG": 5,
-   "MW": 20
-  },
-  "w1": "Switchblade",
-  "w2": "Basic Fighting"
- },
- {
-  "n": "Back-Alley Mugger",
-  "tier": 1,
-  "xp": 5,
-  "caps": "0-10",
-  "faction": "City Muggers",
-  "special": [
-   3,
-   6,
-   3,
-   4,
-   4,
-   6,
-   4
-  ],
-  "skills": {
-   "EW": 5,
-   "SG": 20,
-   "BG": 5,
-   "MW": 20
-  },
-  "w1": "Straight Razor",
-  "w2": ".32 Pistol"
- },
- {
-  "n": "Pickpocket Crew Lookout",
-  "tier": 1,
-  "xp": 5,
-  "caps": "0-10",
-  "faction": "City Muggers",
-  "special": [
-   3,
-   6,
-   3,
-   4,
-   4,
-   6,
-   4
-  ],
-  "skills": {
-   "EW": 5,
-   "SG": 20,
-   "BG": 5,
-   "MW": 20
-  },
-  "w1": "Knife",
-  "w2": "Basic Fighting"
- },
- {
-  "n": "Street Tough",
-  "tier": 2,
-  "xp": 10,
-  "caps": "15-30",
-  "faction": "City Muggers",
-  "special": [
-   7,
-   5,
-   5,
-   3,
-   4,
-   5,
-   2
-  ],
-  "skills": {
-   "EW": 0,
-   "SG": 5,
-   "BG": 0,
-   "MW": 40
-  },
-  "w1": "Lead Pipe",
-  "w2": "Brass Knuckles"
- },
- {
-  "n": "Corner Boss",
-  "tier": 3,
-  "xp": 25,
-  "caps": "25-40",
-  "faction": "City Muggers",
-  "special": [
-   5,
-   4,
-   5,
-   7,
-   2,
-   6,
-   6
-  ],
-  "skills": {
-   "EW": 30,
-   "SG": 60,
-   "BG": 55,
-   "MW": 40
-  },
-  "w1": "Burst Pistol",
-  "w2": "Police Baton"
- },
- {
-  "n": "Omerta Thug",
-  "tier": 2,
-  "xp": 10,
-  "caps": "15-30",
-  "faction": "Omertas",
-  "special": [
-   6,
-   4,
-   5,
-   4,
-   2,
-   5,
-   5
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 40,
-   "BG": 25,
-   "MW": 35
-  },
-  "w1": ".45 Auto pistol",
-  "w2": "Police Baton"
- },
- {
-  "n": "Omerta Button Man",
-  "tier": 3,
-  "xp": 20,
-  "caps": "25-40",
-  "faction": "Omertas",
-  "special": [
-   5,
-   4,
-   5,
-   7,
-   2,
-   6,
-   6
-  ],
-  "skills": {
-   "EW": 30,
-   "SG": 60,
-   "BG": 55,
-   "MW": 40
-  },
-  "w1": "Compact 10mm SMG (Uzi)",
-  "w2": "Knife"
- },
- {
-  "n": "Omerta Capo",
-  "tier": 4,
-  "xp": 35,
-  "caps": "30-55",
-  "faction": "Omertas",
-  "special": [
-   5,
-   4,
-   6,
-   6,
-   3,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 40,
-   "SG": 70,
-   "BG": 65,
-   "MW": 50
-  },
-  "w1": "Silenced Mercenary Rifle",
-  "w2": "Rebar Club"
- },
- {
-  "n": "Garret Bouncer",
-  "tier": 2,
-  "xp": 10,
-  "caps": "15-30",
-  "faction": "Garrets",
-  "special": [
-   7,
-   5,
-   5,
-   3,
-   4,
-   5,
-   2
-  ],
-  "skills": {
-   "EW": 0,
-   "SG": 5,
-   "BG": 0,
-   "MW": 40
-  },
-  "w1": "Baseball Bat",
-  "w2": ".45 Auto pistol"
- },
- {
-  "n": "Garret Enforcer",
-  "tier": 3,
-  "xp": 20,
-  "caps": "25-40",
-  "faction": "Garrets",
-  "special": [
-   5,
-   4,
-   5,
-   7,
-   2,
-   6,
-   6
-  ],
-  "skills": {
-   "EW": 30,
-   "SG": 60,
-   "BG": 55,
-   "MW": 40
-  },
-  "w1": "Burst Pistol",
-  "w2": "Pool Cue"
- },
- {
-  "n": "Chairman Greeter",
-  "tier": 2,
-  "xp": 10,
-  "caps": "15-30",
-  "faction": "Chairmen",
-  "special": [
-   6,
-   4,
-   5,
-   4,
-   2,
-   5,
-   5
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 40,
-   "BG": 25,
-   "MW": 35
-  },
-  "w1": "9mm Auto Pistol (Glock)",
-  "w2": "Knife"
- },
- {
-  "n": "Chairman Hitman",
-  "tier": 3,
-  "xp": 20,
-  "caps": "25-40",
-  "faction": "Chairmen",
-  "special": [
-   4,
-   7,
-   4,
-   4,
-   4,
-   7,
-   3
-  ],
-  "skills": {
-   "EW": 20,
-   "SG": 45,
-   "BG": 15,
-   "MW": 40
-  },
-  "w1": "Burst Pistol",
-  "w2": "Switchblade"
- },
- {
-  "n": "Chairman Boss",
-  "tier": 4,
-  "xp": 35,
-  "caps": "30-55",
-  "faction": "Chairmen",
-  "special": [
-   5,
-   4,
-   6,
-   6,
-   3,
-   6,
-   5
-  ],
-  "skills": {
-   "EW": 40,
-   "SG": 70,
-   "BG": 65,
-   "MW": 50
-  },
-  "w1": "Silenced Mercenary Rifle",
-  "w2": "Rebar Club"
- },
- {
-  "n": "White Glove Attendant",
-  "tier": 2,
-  "xp": 10,
-  "caps": "15-30",
-  "faction": "White Glove Society",
-  "special": [
-   4,
-   6,
-   4,
-   4,
-   4,
-   6,
-   4
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 30,
-   "BG": 10,
-   "MW": 30
-  },
-  "w1": "Silenced .22 pistol",
-  "w2": "Knife"
- },
- {
-  "n": "White Glove Butcher",
-  "tier": 3,
-  "xp": 20,
-  "caps": "25-40",
-  "faction": "White Glove Society",
-  "special": [
-   7,
-   4,
-   7,
-   2,
-   3,
-   7,
-   5
-  ],
-  "skills": {
-   "EW": 5,
-   "SG": 15,
-   "BG": 5,
-   "MW": 50
-  },
-  "w1": "Cleaver",
-  "w2": "Burst Pistol"
- },
- {
-  "n": "King Greaser",
-  "tier": 2,
-  "xp": 10,
-  "caps": "15-30",
-  "faction": "The Kings",
-  "special": [
-   6,
-   4,
-   5,
-   4,
-   2,
-   5,
-   5
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 40,
-   "BG": 25,
-   "MW": 35
-  },
-  "w1": ".357 Magnum revolver",
-  "w2": "Switchblade"
- },
- {
-  "n": "King Lieutenant",
-  "tier": 3,
-  "xp": 25,
-  "caps": "25-40",
-  "faction": "The Kings",
-  "special": [
-   5,
-   4,
-   5,
-   7,
-   2,
-   6,
-   6
-  ],
-  "skills": {
-   "EW": 30,
-   "SG": 60,
-   "BG": 55,
-   "MW": 40
-  },
-  "w1": "Police Carbine (M1Carbine)",
-  "w2": "Tire Iron"
- },
- {
-  "n": "Great Khan Raider",
-  "tier": 2,
-  "xp": 10,
-  "caps": "10-20",
-  "faction": "Great Khans",
-  "special": [
-   5,
-   5,
-   3,
-   2,
-   3,
-   7,
-   3
-  ],
-  "skills": {
-   "EW": 10,
-   "SG": 20,
-   "BG": 15,
-   "MW": 25
-  },
-  "w1": "Pipe Shotgun",
-  "w2": "Baseball Bat"
- },
- {
-  "n": "Great Khan Armorer",
-  "tier": 3,
-  "xp": 20,
-  "caps": "25-40",
-  "faction": "Great Khans",
-  "special": [
-   8,
-   4,
-   7,
-   3,
-   3,
-   3,
-   5
-  ],
-  "skills": {
-   "EW": 25,
-   "SG": 40,
-   "BG": 55,
-   "MW": 40
-  },
-  "w1": "Battle rifle",
-  "w2": "Sledgehammer"
- },
- {
-  "n": "Great Khan Warlord",
-  "tier": 4,
-  "xp": 35,
-  "caps": "30-55",
-  "faction": "Great Khans",
-  "special": [
-   7,
-   4,
-   7,
-   2,
-   3,
-   7,
-   5
-  ],
-  "skills": {
-   "EW": 50,
-   "SG": 70,
-   "BG": 50,
-   "MW": 60
-  },
-  "w1": "Brush gun",
-  "w2": "War Hammer"
- },
- {
-  "n": "Boomer Spotter",
-  "tier": 3,
-  "xp": 20,
-  "caps": "25-40",
-  "faction": "Boomers",
-  "special": [
-   5,
-   6,
-   5,
-   3,
-   6,
-   5,
-   3
-  ],
-  "skills": {
-   "EW": 20,
-   "SG": 40,
-   "BG": 30,
-   "MW": 25,
-   "EXP": 40
-  },
-  "w1": "Battle rifle",
-  "w2": "Knife"
- },
- {
-  "n": "Van Graff Thug",
-  "tier": 4,
-  "xp": 30,
-  "caps": "30-55",
-  "faction": "Van Graffs",
-  "special": [
-   5,
-   6,
-   6,
-   3,
-   8,
-   4,
-   3
-  ],
-  "skills": {
-   "EW": 60,
-   "SG": 50,
-   "BG": 55,
-   "MW": 50
-  },
-  "w1": "Radium Rifle",
-  "w2": "Mace"
- },
- {
-  "n": "Crimson Caravan Guard",
-  "tier": 2,
-  "xp": 10,
-  "caps": "15-30",
-  "faction": "Crimson Caravan",
-  "special": [
-   5,
-   4,
-   5,
-   4,
-   5,
-   5,
-   6
-  ],
-  "skills": {
-   "EW": 20,
-   "SG": 30,
-   "BG": 15,
-   "MW": 20
-  },
-  "w1": "Lever Action Rifle",
-  "w2": "Knife"
+{
+ "enemies": [
+  {
+   "n": "(NO ENEMY)",
+   "tier": 1,
+   "test": true,
+   "special": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "skills": {
+    "BAR": 0,
+    "EW": 0,
+    "EXP": 0,
+    "SG": 0,
+    "BG": 0,
+    "LPK": 0,
+    "MED": 0,
+    "MW": 0,
+    "REP": 0,
+    "SCI": 0,
+    "SNK": 0,
+    "SPE": 0,
+    "SUR": 0
+   },
+   "w1": "Commonwealth Assault Rifle",
+   "w2": "Chinese Carbine (C96 Carbine)"
+  },
+  {
+   "n": "(middle opp.)",
+   "tier": 1,
+   "test": true,
+   "special": [
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5
+   ],
+   "skills": {
+    "BAR": 50,
+    "EW": 50,
+    "EXP": 50,
+    "SG": 50,
+    "BG": 50,
+    "LPK": 50,
+    "MED": 50,
+    "MW": 50,
+    "REP": 50,
+    "SCI": 50,
+    "SNK": 50,
+    "SPE": 50,
+    "SUR": 50
+   },
+   "w1": "World War Carbine (M1)",
+   "w2": "Combat Knife"
+  },
+  {
+   "n": "(min opp.)",
+   "tier": 1,
+   "test": true,
+   "special": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "skills": {
+    "BAR": 10,
+    "EW": 10,
+    "EXP": 10,
+    "SG": 10,
+    "BG": 10,
+    "LPK": 10,
+    "MED": 10,
+    "MW": 10,
+    "REP": 10,
+    "SCI": 10,
+    "SNK": 10,
+    "SPE": 10,
+    "SUR": 10
+   },
+   "w1": "SMG 08/18",
+   "w2": "Recharger Pistol"
+  },
+  {
+   "n": "(max opp.)",
+   "tier": 1,
+   "test": true,
+   "special": [
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+   ],
+   "skills": {
+    "BAR": 100,
+    "EW": 100,
+    "EXP": 100,
+    "SG": 100,
+    "BG": 100,
+    "LPK": 100,
+    "MED": 100,
+    "MW": 100,
+    "REP": 100,
+    "SCI": 100,
+    "SNK": 100,
+    "SPE": 100,
+    "SUR": 100
+   },
+   "w1": "Police pistol",
+   "w2": "Lewis Gun"
+  },
+  {
+   "n": "EVIL TEST",
+   "tier": 1,
+   "test": true,
+   "special": [
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5
+   ],
+   "skills": {
+    "BAR": 10,
+    "EW": 15,
+    "EXP": 20,
+    "SG": 25,
+    "BG": 30,
+    "LPK": 35,
+    "MED": 40,
+    "MW": 45,
+    "REP": 50,
+    "SCI": 55,
+    "SNK": 60,
+    "SPE": 65,
+    "SUR": 70
+   },
+   "head": "Football Helmet",
+   "vanity": "Powder Gang Plain Outfit",
+   "w1": "Pipe Auto Pistol",
+   "w2": "Pickaxe"
+  },
+  {
+   "n": "Agamemnon",
+   "tier": 6,
+   "test": true,
+   "special": [
+    9,
+    4,
+    7,
+    4,
+    7,
+    5,
+    1
+   ],
+   "skills": {
+    "BAR": 50,
+    "EW": 50,
+    "EXP": 50,
+    "SG": 50,
+    "BG": 50,
+    "LPK": 50,
+    "MED": 50,
+    "MW": 100,
+    "REP": 50,
+    "SCI": 50,
+    "SNK": 50,
+    "SPE": 50,
+    "SUR": 50
+   },
+   "head": "T-45 Power Armor Helmet",
+   "armor": "T-45 Power Armor",
+   "w1": "Hailberd",
+   "w2": "Counting (Kirk)"
+  },
+  {
+   "n": "Testy Tessie",
+   "tier": 4,
+   "test": true,
+   "special": [
+    3,
+    7,
+    5,
+    4,
+    1,
+    8,
+    7
+   ],
+   "skills": {
+    "BAR": 54,
+    "EW": 65,
+    "EXP": 48,
+    "SG": 20,
+    "BG": 64,
+    "LPK": 44,
+    "MED": 48,
+    "MW": 55,
+    "REP": 48,
+    "SCI": 18,
+    "SNK": 87,
+    "SPE": 15,
+    "SUR": 84
+   },
+   "head": "Cowboy Hat",
+   "armor": "Prison Body Armor",
+   "vanity": "Caravaneer Outfit",
+   "w1": "Vance's 9mm SMG",
+   "w2": "Marine Rifle (FAL)"
+  },
+  {
+   "n": "Powder Ganger 1",
+   "tier": 1,
+   "faction": "Powder Gangers",
+   "special": [
+    2,
+    4,
+    3,
+    4,
+    2,
+    4,
+    5
+   ],
+   "skills": {
+    "SG": 15,
+    "MW": 25
+   },
+   "vanity": "Powder Gang Plain Outfit",
+   "w1": "Police pistol",
+   "w2": "Basic Fighting"
+  },
+  {
+   "n": "Powder Ganger 2",
+   "tier": 1,
+   "faction": "Powder Gangers",
+   "special": [
+    3,
+    5,
+    2,
+    1,
+    2,
+    3,
+    3
+   ],
+   "skills": {
+    "EXP": 10,
+    "SG": 25
+   },
+   "vanity": "Powder Gang Plain Outfit",
+   "w1": "Pipe Pistol",
+   "w2": "Dynamite"
+  },
+  {
+   "n": "Powder Ganger Ringleader",
+   "tier": 1,
+   "faction": "Powder Gangers",
+   "special": [
+    3,
+    4,
+    3,
+    5,
+    5,
+    4,
+    5
+   ],
+   "skills": {
+    "SG": 15,
+    "BG": 25
+   },
+   "head": "Cowboy Hat",
+   "armor": "Raider Scavanged Armor",
+   "vanity": "Powder Gang Soldier Outfit",
+   "w1": "Police pistol",
+   "w2": "Single Shotgun"
+  },
+  {
+   "n": "Powder Ganger Sharpshooter",
+   "tier": 1,
+   "faction": "Powder Gangers",
+   "special": [
+    2,
+    6,
+    3,
+    4,
+    2,
+    4,
+    5
+   ],
+   "skills": {
+    "SG": 30,
+    "MW": 10
+   },
+   "head": "Sunglasses",
+   "vanity": "Powder Gang Simple Outfit",
+   "w1": "Pipe Bolt Action Rifle",
+   "w2": "Hatchet"
+  },
+  {
+   "n": "Sunny Smiles",
+   "tier": 1,
+   "faction": "Goodsprings",
+   "special": [
+    6,
+    5,
+    4,
+    4,
+    4,
+    5,
+    4
+   ],
+   "skills": {},
+   "armor": "Leather Jacket",
+   "w1": "Varmint rifle",
+   "w2": "Basic Fighting"
+  },
+  {
+   "n": "Displaced Resident",
+   "tier": 1,
+   "special": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "skills": {},
+   "faction": "Goodsprings"
+  },
+  {
+   "n": "Farmer",
+   "tier": 1,
+   "xp": 5,
+   "caps": "0-5",
+   "special": [
+    4,
+    5,
+    1,
+    4,
+    3,
+    2,
+    5
+   ],
+   "skills": {
+    "EW": 5,
+    "SG": 10,
+    "BG": 0,
+    "MW": 15
+   },
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Strong Farmer",
+   "tier": 1,
+   "xp": 7,
+   "caps": "0-5",
+   "special": [
+    4,
+    5,
+    1,
+    4,
+    3,
+    2,
+    5
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 15,
+    "BG": 5,
+    "MW": 20
+   },
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Scavenger",
+   "tier": 1,
+   "xp": 7,
+   "caps": "5-15",
+   "special": [
+    5,
+    8,
+    4,
+    3,
+    6,
+    3,
+    4
+   ],
+   "skills": {
+    "EW": 15,
+    "SG": 20,
+    "BG": 10,
+    "MW": 20
+   },
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Strong Scavenger",
+   "tier": 1,
+   "xp": 10,
+   "caps": "5-15",
+   "special": [
+    5,
+    8,
+    4,
+    3,
+    6,
+    3,
+    4
+   ],
+   "skills": {
+    "EW": 20,
+    "SG": 25,
+    "BG": 15,
+    "MW": 25
+   },
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Raider",
+   "tier": 2,
+   "xp": 10,
+   "caps": "10-20",
+   "special": [
+    5,
+    5,
+    3,
+    2,
+    3,
+    7,
+    3
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 20,
+    "BG": 15,
+    "MW": 25
+   },
+   "faction": "Raiders"
+  },
+  {
+   "n": "Strong Raider",
+   "tier": 2,
+   "xp": 15,
+   "caps": "10-20",
+   "special": [
+    5,
+    5,
+    3,
+    2,
+    3,
+    7,
+    3
+   ],
+   "skills": {
+    "EW": 15,
+    "SG": 25,
+    "BG": 20,
+    "MW": 30
+   },
+   "faction": "Raiders"
+  },
+  {
+   "n": "Fiend",
+   "tier": 3,
+   "xp": 20,
+   "caps": "20-50",
+   "special": [
+    5,
+    3,
+    7,
+    2,
+    2,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 25,
+    "SG": 45,
+    "BG": 30,
+    "MW": 35
+   },
+   "faction": "Fiends"
+  },
+  {
+   "n": "Strong Fiend",
+   "tier": 3,
+   "xp": 25,
+   "caps": "20-50",
+   "special": [
+    5,
+    3,
+    7,
+    2,
+    2,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 30,
+    "SG": 50,
+    "BG": 35,
+    "MW": 45
+   },
+   "faction": "Fiends"
+  },
+  {
+   "n": "Tribal",
+   "tier": 2,
+   "xp": 10,
+   "caps": "0-10",
+   "special": [
+    7,
+    5,
+    5,
+    3,
+    4,
+    5,
+    2
+   ],
+   "skills": {
+    "EW": 0,
+    "SG": 5,
+    "BG": 0,
+    "MW": 40
+   },
+   "faction": "Tribals"
+  },
+  {
+   "n": "Strong Tribal",
+   "tier": 2,
+   "xp": 15,
+   "caps": "0-10",
+   "special": [
+    7,
+    5,
+    5,
+    3,
+    4,
+    5,
+    2
+   ],
+   "skills": {
+    "EW": 5,
+    "SG": 10,
+    "BG": 5,
+    "MW": 50
+   },
+   "faction": "Tribals"
+  },
+  {
+   "n": "Mercenary",
+   "tier": 3,
+   "xp": 20,
+   "caps": "20-50",
+   "special": [
+    6,
+    5,
+    6,
+    4,
+    4,
+    6,
+    3
+   ],
+   "skills": {
+    "EW": 40,
+    "SG": 50,
+    "BG": 40,
+    "MW": 40
+   },
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Strong Mercenary",
+   "tier": 3,
+   "xp": 25,
+   "caps": "20-50",
+   "special": [
+    6,
+    5,
+    6,
+    4,
+    4,
+    6,
+    3
+   ],
+   "skills": {
+    "EW": 45,
+    "SG": 60,
+    "BG": 45,
+    "MW": 45
+   },
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Recruit",
+   "tier": 2,
+   "xp": 10,
+   "caps": "15-30",
+   "special": [
+    5,
+    4,
+    5,
+    4,
+    5,
+    5,
+    6
+   ],
+   "skills": {
+    "EW": 20,
+    "SG": 30,
+    "BG": 15,
+    "MW": 20
+   },
+   "faction": "NCR"
+  },
+  {
+   "n": "Strong Recruit",
+   "tier": 2,
+   "xp": 15,
+   "caps": "15-30",
+   "special": [
+    5,
+    4,
+    5,
+    4,
+    5,
+    5,
+    6
+   ],
+   "skills": {
+    "EW": 25,
+    "SG": 35,
+    "BG": 20,
+    "MW": 25
+   },
+   "faction": "NCR"
+  },
+  {
+   "n": "Soldier",
+   "tier": 3,
+   "xp": 20,
+   "caps": "25-40",
+   "special": [
+    6,
+    4,
+    6,
+    3,
+    4,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 30,
+    "SG": 50,
+    "BG": 30,
+    "MW": 35
+   },
+   "faction": "NCR"
+  },
+  {
+   "n": "Strong Soldier",
+   "tier": 3,
+   "xp": 25,
+   "caps": "25-40",
+   "special": [
+    6,
+    4,
+    6,
+    3,
+    4,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 35,
+    "SG": 55,
+    "BG": 35,
+    "MW": 40
+   },
+   "faction": "NCR"
+  },
+  {
+   "n": "Veteran",
+   "tier": 4,
+   "xp": 30,
+   "caps": "30-55",
+   "special": [
+    7,
+    4,
+    7,
+    2,
+    3,
+    7,
+    5
+   ],
+   "skills": {
+    "EW": 50,
+    "SG": 70,
+    "BG": 50,
+    "MW": 60
+   },
+   "faction": "NCR"
+  },
+  {
+   "n": "Strong Veteran",
+   "tier": 4,
+   "xp": 35,
+   "caps": "30-55",
+   "special": [
+    7,
+    4,
+    7,
+    2,
+    3,
+    7,
+    5
+   ],
+   "skills": {
+    "EW": 55,
+    "SG": 75,
+    "BG": 55,
+    "MW": 65
+   },
+   "faction": "NCR"
+  },
+  {
+   "n": "Ranger",
+   "tier": 5,
+   "xp": 40,
+   "caps": "50-100",
+   "special": [
+    6,
+    6,
+    6,
+    4,
+    5,
+    7,
+    6
+   ],
+   "skills": {
+    "EW": 70,
+    "SG": 90,
+    "BG": 60,
+    "MW": 70
+   },
+   "faction": "NCR"
+  },
+  {
+   "n": "Strong Ranger",
+   "tier": 5,
+   "xp": 45,
+   "caps": "50-100",
+   "special": [
+    6,
+    6,
+    6,
+    4,
+    5,
+    7,
+    6
+   ],
+   "skills": {
+    "EW": 75,
+    "SG": 95,
+    "BG": 65,
+    "MW": 75
+   },
+   "faction": "NCR"
+  },
+  {
+   "n": "Legion Recruit",
+   "tier": 2,
+   "xp": 10,
+   "caps": "15-30",
+   "special": [
+    6,
+    4,
+    6,
+    3,
+    4,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 0,
+    "SG": 5,
+    "BG": 0,
+    "MW": 20
+   },
+   "faction": "Caesar's Legion"
+  },
+  {
+   "n": "Strong Legion Recruit",
+   "tier": 2,
+   "xp": 15,
+   "caps": "50-100",
+   "special": [
+    6,
+    4,
+    6,
+    3,
+    4,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 5,
+    "SG": 10,
+    "BG": 5,
+    "MW": 30
+   },
+   "faction": "Caesar's Legion"
+  },
+  {
+   "n": "Legion Soldier",
+   "tier": 3,
+   "xp": 20,
+   "caps": "25-40",
+   "special": [
+    7,
+    4,
+    7,
+    2,
+    3,
+    7,
+    5
+   ],
+   "skills": {
+    "EW": 5,
+    "SG": 15,
+    "BG": 5,
+    "MW": 50
+   },
+   "faction": "Caesar's Legion"
+  },
+  {
+   "n": "Strong Legion Soldier",
+   "tier": 3,
+   "xp": 25,
+   "caps": "25-40",
+   "special": [
+    7,
+    4,
+    7,
+    2,
+    3,
+    7,
+    5
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 20,
+    "BG": 10,
+    "MW": 60
+   },
+   "faction": "Caesar's Legion"
+  },
+  {
+   "n": "Legion Veteran",
+   "tier": 4,
+   "xp": 30,
+   "caps": "30-55",
+   "special": [
+    8,
+    4,
+    8,
+    1,
+    2,
+    8,
+    3
+   ],
+   "skills": {
+    "EW": 30,
+    "SG": 50,
+    "BG": 40,
+    "MW": 80
+   },
+   "faction": "Caesar's Legion"
+  },
+  {
+   "n": "Strong Legion Veteran",
+   "tier": 4,
+   "xp": 35,
+   "caps": "30-55",
+   "special": [
+    8,
+    4,
+    8,
+    1,
+    2,
+    8,
+    3
+   ],
+   "skills": {
+    "EW": 35,
+    "SG": 60,
+    "BG": 45,
+    "MW": 90
+   },
+   "faction": "Caesar's Legion"
+  },
+  {
+   "n": "Legion Frumentarus",
+   "tier": 5,
+   "xp": 40,
+   "caps": "50-100",
+   "special": [
+    5,
+    8,
+    5,
+    7,
+    6,
+    5,
+    2
+   ],
+   "skills": {
+    "EW": 70,
+    "SG": 80,
+    "BG": 35,
+    "MW": 65
+   },
+   "faction": "Caesar's Legion"
+  },
+  {
+   "n": "Strong Legion Frumentarus",
+   "tier": 5,
+   "xp": 45,
+   "caps": "50-100",
+   "special": [
+    5,
+    8,
+    5,
+    7,
+    6,
+    5,
+    2
+   ],
+   "skills": {
+    "EW": 75,
+    "SG": 85,
+    "BG": 40,
+    "MW": 70
+   },
+   "faction": "Caesar's Legion"
+  },
+  {
+   "n": "PA Initiate",
+   "tier": 3,
+   "xp": 30,
+   "caps": "25-40",
+   "special": [
+    7,
+    5,
+    6,
+    4,
+    6,
+    4,
+    3
+   ],
+   "skills": {
+    "EW": 40,
+    "SG": 30,
+    "BG": 35,
+    "MW": 35
+   },
+   "faction": "Brotherhood of Steel"
+  },
+  {
+   "n": "Strong PA Recruit",
+   "tier": 3,
+   "xp": 35,
+   "caps": "25-40",
+   "special": [
+    7,
+    5,
+    6,
+    4,
+    6,
+    4,
+    3
+   ],
+   "skills": {
+    "EW": 50,
+    "SG": 40,
+    "BG": 45,
+    "MW": 40
+   },
+   "faction": "Brotherhood of Steel"
+  },
+  {
+   "n": "PA Knight",
+   "tier": 4,
+   "xp": 40,
+   "caps": "30-55",
+   "special": [
+    8,
+    5,
+    7,
+    3,
+    6,
+    3,
+    3
+   ],
+   "skills": {
+    "EW": 60,
+    "SG": 50,
+    "BG": 55,
+    "MW": 50
+   },
+   "faction": "Brotherhood of Steel"
+  },
+  {
+   "n": "Strong PA Knight",
+   "tier": 4,
+   "xp": 45,
+   "caps": "30-55",
+   "special": [
+    8,
+    5,
+    7,
+    3,
+    6,
+    3,
+    3
+   ],
+   "skills": {
+    "EW": 75,
+    "SG": 65,
+    "BG": 70,
+    "MW": 55
+   },
+   "faction": "Brotherhood of Steel"
+  },
+  {
+   "n": "PA Paladin",
+   "tier": 5,
+   "xp": 50,
+   "caps": "50-100",
+   "special": [
+    9,
+    5,
+    8,
+    2,
+    7,
+    3,
+    1
+   ],
+   "skills": {
+    "EW": 85,
+    "SG": 75,
+    "BG": 80,
+    "MW": 75
+   },
+   "faction": "Brotherhood of Steel"
+  },
+  {
+   "n": "Strong PA Paladin",
+   "tier": 5,
+   "xp": 55,
+   "caps": "50-100",
+   "special": [
+    9,
+    5,
+    8,
+    2,
+    7,
+    3,
+    1
+   ],
+   "skills": {
+    "EW": 90,
+    "SG": 80,
+    "BG": 85,
+    "MW": 80
+   },
+   "faction": "Brotherhood of Steel"
+  },
+  {
+   "n": "Gangster",
+   "tier": 2,
+   "xp": 10,
+   "caps": "15-30",
+   "special": [
+    6,
+    4,
+    5,
+    4,
+    2,
+    5,
+    5
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 40,
+    "BG": 25,
+    "MW": 35
+   },
+   "faction": "Crime Families"
+  },
+  {
+   "n": "Strong Gangster",
+   "tier": 2,
+   "xp": 15,
+   "caps": "15-30",
+   "special": [
+    6,
+    4,
+    5,
+    4,
+    2,
+    5,
+    5
+   ],
+   "skills": {
+    "EW": 15,
+    "SG": 50,
+    "BG": 30,
+    "MW": 40
+   },
+   "faction": "Crime Families"
+  },
+  {
+   "n": "Mobster",
+   "tier": 3,
+   "xp": 20,
+   "caps": "25-40",
+   "special": [
+    5,
+    4,
+    5,
+    7,
+    2,
+    6,
+    6
+   ],
+   "skills": {
+    "EW": 30,
+    "SG": 60,
+    "BG": 55,
+    "MW": 40
+   },
+   "faction": "Crime Families"
+  },
+  {
+   "n": "Strong Mobster",
+   "tier": 3,
+   "xp": 25,
+   "caps": "25-40",
+   "special": [
+    5,
+    4,
+    5,
+    7,
+    2,
+    6,
+    6
+   ],
+   "skills": {
+    "EW": 40,
+    "SG": 70,
+    "BG": 65,
+    "MW": 45
+   },
+   "faction": "Crime Families"
+  },
+  {
+   "n": "Supermutant",
+   "tier": 4,
+   "xp": 40,
+   "caps": "50-100",
+   "special": [
+    10,
+    3,
+    9,
+    1,
+    2,
+    4,
+    2
+   ],
+   "skills": {
+    "EW": 40,
+    "SG": 50,
+    "BG": 70,
+    "MW": 70
+   },
+   "faction": "Super Mutants"
+  },
+  {
+   "n": "Strong Supermutant",
+   "tier": 4,
+   "xp": 45,
+   "caps": "50-100",
+   "special": [
+    10,
+    3,
+    9,
+    1,
+    2,
+    4,
+    2
+   ],
+   "skills": {
+    "EW": 45,
+    "SG": 55,
+    "BG": 80,
+    "MW": 80
+   },
+   "faction": "Super Mutants"
+  },
+  {
+   "n": "Supermutant Lieutenant",
+   "tier": 5,
+   "xp": 50,
+   "caps": "75-200",
+   "special": [
+    10,
+    5,
+    10,
+    1,
+    2,
+    6,
+    2
+   ],
+   "skills": {
+    "EW": 50,
+    "SG": 70,
+    "BG": 85,
+    "MW": 85
+   },
+   "faction": "Super Mutants"
+  },
+  {
+   "n": "Strong Supermutant Lieutenant",
+   "tier": 5,
+   "xp": 55,
+   "caps": "75-200",
+   "special": [
+    10,
+    5,
+    10,
+    1,
+    2,
+    6,
+    2
+   ],
+   "skills": {
+    "EW": 60,
+    "SG": 75,
+    "BG": 95,
+    "MW": 95
+   },
+   "faction": "Super Mutants"
+  },
+  {
+   "n": "Ant",
+   "tier": 1,
+   "mob": true,
+   "xp": 3,
+   "special": [
+    null,
+    2,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Ant",
+   "w2": "Ant",
+   "hp": 12,
+   "ap": 3,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Assaultron",
+   "tier": 3,
+   "mob": true,
+   "special": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "skills": {
+    "EW": 1
+   },
+   "w1": "Assaultron Arm",
+   "w2": "Assaultron Head",
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Fire Ant Soldier",
+   "tier": 2,
+   "mob": true,
+   "xp": 5,
+   "special": [
+    null,
+    4,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Fire Ant Soldier",
+   "w2": "Fire Ant Soldier",
+   "hp": 20,
+   "ap": 7,
+   "pri": 6,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Fire Ant Worker",
+   "tier": 2,
+   "mob": true,
+   "xp": 5,
+   "special": [
+    null,
+    2,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Fire Ant Worker",
+   "w2": "Fire Ant Worker",
+   "hp": 15,
+   "ap": 3,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Giant Ant Queen",
+   "tier": 6,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    5,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Giant Ant Queen",
+   "w2": "Giant Ant Queen",
+   "hp": 75,
+   "dt": 4,
+   "ap": 10,
+   "pri": 10,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Giant Soldier Ant",
+   "tier": 3,
+   "mob": true,
+   "xp": 10,
+   "special": [
+    null,
+    3,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Giant Soldier Ant",
+   "w2": "Giant Soldier Ant",
+   "hp": 40,
+   "dt": 3,
+   "ap": 7,
+   "pri": 5,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Giant Worker Ant",
+   "tier": 3,
+   "mob": true,
+   "xp": 10,
+   "special": [
+    null,
+    3,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Giant Worker Ant",
+   "w2": "Giant Worker Ant",
+   "hp": 30,
+   "dt": 3,
+   "ap": 3,
+   "pri": 1,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Bark Scorpion",
+   "tier": 1,
+   "mob": true,
+   "xp": 2,
+   "special": [
+    null,
+    3,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Bark Scorpion",
+   "w2": "Bark Scorpion",
+   "hp": 10,
+   "dt": 4,
+   "ap": 5,
+   "pri": 3,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Bark Scorpion Hunter",
+   "tier": 2,
+   "mob": true,
+   "xp": 5,
+   "special": [
+    null,
+    3,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Bark Scorpion Hunter",
+   "w2": "Bark Scorpion Hunter",
+   "hp": 20,
+   "dt": 2,
+   "ap": 8,
+   "pri": 6,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Bighorner",
+   "tier": 1,
+   "mob": true,
+   "xp": 2,
+   "special": [
+    null,
+    2,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Bighorner",
+   "w2": "Bighorner",
+   "hp": 40,
+   "ap": 4,
+   "pri": 1,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Bighorner Bull",
+   "tier": 1,
+   "mob": true,
+   "xp": 2,
+   "special": [
+    null,
+    4,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Bighorner Bull",
+   "w2": "Bighorner Bull",
+   "hp": 60,
+   "ap": 6,
+   "pri": 5,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Bighorner Calf",
+   "tier": 1,
+   "mob": true,
+   "xp": 1,
+   "special": [
+    null,
+    2,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Bighorner Calf",
+   "w2": "Bighorner Calf",
+   "hp": 15,
+   "ap": 2,
+   "pri": -1,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Bloatfly",
+   "tier": 1,
+   "mob": true,
+   "xp": 1,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Bloatfly",
+   "w2": "Bloatfly",
+   "hp": 6,
+   "ap": 2,
+   "pri": 3,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Legendary Bloatfly",
+   "tier": 6,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    9,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Legendary Bloatfly",
+   "w2": "Legendary Bloatfly",
+   "hp": 200,
+   "dt": 20,
+   "ap": 12,
+   "pri": 16,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Brahmin",
+   "tier": 1,
+   "mob": true,
+   "xp": 2,
+   "special": [
+    null,
+    3,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Brahmin",
+   "w2": "Brahmin",
+   "hp": 40,
+   "ap": 5,
+   "pri": 3,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Cazador",
+   "tier": 3,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    9,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Cazador",
+   "w2": "Cazador",
+   "hp": 25,
+   "ap": 8,
+   "pri": 12,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Giant Cazador",
+   "tier": 5,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    9,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Giant Cazador",
+   "w2": "Giant Cazador",
+   "hp": 35,
+   "dt": 5,
+   "ap": 10,
+   "pri": 14,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Legendary Cazador",
+   "tier": 6,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    10,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Legendary Cazador",
+   "w2": "Legendary Cazador",
+   "hp": 75,
+   "dt": 11,
+   "ap": 12,
+   "pri": 17,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Centaur",
+   "tier": 3,
+   "mob": true,
+   "xp": 10,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Centaur",
+   "w2": "Centaur",
+   "hp": 25,
+   "dt": 9,
+   "ap": 3,
+   "pri": 4,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Evolved Centaur",
+   "tier": 4,
+   "mob": true,
+   "xp": 20,
+   "special": [
+    null,
+    7,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Evolved Centaur",
+   "w2": "Evolved Centaur",
+   "hp": 35,
+   "dt": 11,
+   "ap": 6,
+   "pri": 8,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Giant Evolved Centaur",
+   "tier": 5,
+   "mob": true,
+   "xp": 25,
+   "special": [
+    null,
+    8,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Giant Evolved Centaur",
+   "w2": "Giant Evolved Centaur",
+   "hp": 45,
+   "dt": 13,
+   "ap": 8,
+   "pri": 11,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Coyote Den Mother",
+   "tier": 2,
+   "mob": true,
+   "xp": 5,
+   "special": [
+    null,
+    8,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Coyote Den Mother",
+   "w2": "Coyote Den Mother",
+   "hp": 20,
+   "dt": 5,
+   "ap": 7,
+   "pri": 10,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Coyote Pack Alpha",
+   "tier": 3,
+   "mob": true,
+   "xp": 10,
+   "special": [
+    null,
+    8,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Coyote Pack Alpha",
+   "w2": "Coyote Pack Alpha",
+   "hp": 25,
+   "dt": 2,
+   "ap": 9,
+   "pri": 12,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Coyote Pup",
+   "tier": 1,
+   "mob": true,
+   "xp": 1,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Coyote Pup",
+   "w2": "Coyote Pup",
+   "hp": 5,
+   "ap": 10,
+   "pri": 11,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Deathclaw",
+   "tier": 5,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    7,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Deathclaw",
+   "w2": "Deathclaw",
+   "hp": 90,
+   "dt": 20,
+   "ap": 10,
+   "pri": 12,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Deathclaw Alpha Male",
+   "tier": 6,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    10,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Deathclaw Alpha Male",
+   "w2": "Deathclaw Alpha Male",
+   "hp": 150,
+   "dt": 25,
+   "ap": 12,
+   "pri": 17,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Deathclaw Baby",
+   "tier": 3,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Deathclaw Baby",
+   "w2": "Deathclaw Baby",
+   "hp": 50,
+   "dt": 12,
+   "ap": 4,
+   "pri": 5,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Legendary Deathclaw",
+   "tier": 6,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    10,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Legendary Deathclaw",
+   "w2": "Legendary Deathclaw",
+   "hp": 300,
+   "dt": 40,
+   "ap": 14,
+   "pri": 19,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Mother Deathclaw",
+   "tier": 6,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    8,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Mother Deathclaw",
+   "w2": "Mother Deathclaw",
+   "hp": 250,
+   "dt": 30,
+   "ap": 13,
+   "pri": 16,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Young Deathclaw",
+   "tier": 4,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Young Deathclaw",
+   "w2": "Young Deathclaw",
+   "hp": 80,
+   "dt": 10,
+   "ap": 5,
+   "pri": 6,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Coyote",
+   "tier": 1,
+   "mob": true,
+   "xp": 3,
+   "special": [
+    null,
+    8,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Coyote",
+   "w2": "Coyote",
+   "hp": 10,
+   "ap": 5,
+   "pri": 8,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Dog",
+   "tier": 1,
+   "mob": true,
+   "xp": 3,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Dog",
+   "w2": "Dog",
+   "hp": 12,
+   "ap": 5,
+   "pri": 6,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Cyberdog",
+   "tier": 3,
+   "mob": true,
+   "xp": 10,
+   "special": [
+    null,
+    5,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Cyberdog",
+   "w2": "Cyberdog",
+   "hp": 20,
+   "dt": 8,
+   "ap": 6,
+   "pri": 6,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Police Cyberdog",
+   "tier": 4,
+   "mob": true,
+   "xp": 15,
+   "special": [
+    null,
+    10,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Police Cyberdog",
+   "w2": "Police Cyberdog",
+   "hp": 30,
+   "dt": 15,
+   "ap": 7,
+   "pri": 12,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Large Dog",
+   "tier": 2,
+   "mob": true,
+   "xp": 5,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Large Dog",
+   "w2": "Large Dog",
+   "hp": 18,
+   "ap": 8,
+   "pri": 9,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Mongrel",
+   "tier": 1,
+   "mob": true,
+   "xp": 3,
+   "special": [
+    null,
+    8,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Mongrel",
+   "w2": "Mongrel",
+   "hp": 12,
+   "ap": 6,
+   "pri": 9,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Large Mongrel",
+   "tier": 2,
+   "mob": true,
+   "xp": 5,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Large Mongrel",
+   "w2": "Large Mongrel",
+   "hp": 18,
+   "ap": 8,
+   "pri": 9,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Civilian Eyebot",
+   "tier": 1,
+   "mob": true,
+   "xp": 5,
+   "special": [
+    null,
+    5,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Civilian Eyebot",
+   "w2": "Civilian Eyebot",
+   "hp": 30,
+   "ap": 3,
+   "pri": 3,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Military Eyebot",
+   "tier": 3,
+   "mob": true,
+   "xp": 20,
+   "special": [
+    null,
+    10,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Military Eyebot",
+   "w2": "Military Eyebot",
+   "hp": 20,
+   "dt": 12,
+   "ap": 8,
+   "pri": 13,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Feral Ghoul",
+   "tier": 2,
+   "mob": true,
+   "xp": 10,
+   "special": [
+    null,
+    3,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Feral Ghoul",
+   "w2": "Feral Ghoul",
+   "hp": 20,
+   "ap": 5,
+   "pri": 3,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Feral Ghoul Roamer",
+   "tier": 3,
+   "mob": true,
+   "xp": 20,
+   "special": [
+    null,
+    4,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Feral Ghoul Roamer",
+   "w2": "Feral Ghoul Roamer",
+   "hp": 25,
+   "dt": 3,
+   "ap": 6,
+   "pri": 5,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Feral Ghoul Reaver",
+   "tier": 4,
+   "mob": true,
+   "xp": 30,
+   "special": [
+    null,
+    7,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Feral Ghoul Reaver",
+   "w2": "Feral Ghoul Reaver",
+   "hp": 30,
+   "dt": 12,
+   "ap": 6,
+   "pri": 8,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Glowing One",
+   "tier": 4,
+   "mob": true,
+   "xp": 40,
+   "special": [
+    null,
+    5,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Glowing One",
+   "w2": "Glowing One",
+   "hp": 50,
+   "dt": 8,
+   "ap": 8,
+   "pri": 8,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Fire Gecko",
+   "tier": 3,
+   "mob": true,
+   "xp": 15,
+   "special": [
+    null,
+    7,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Fire Gecko",
+   "w2": "Fire Gecko",
+   "hp": 20,
+   "ap": 7,
+   "pri": 9,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Legendary Fire Gecko",
+   "tier": 5,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    8,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Legendary Fire Gecko",
+   "w2": "Legendary Fire Gecko",
+   "hp": 65,
+   "ap": 8,
+   "pri": 11,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Gecko",
+   "tier": 1,
+   "mob": true,
+   "xp": 3,
+   "special": [
+    null,
+    3,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Gecko",
+   "w2": "Gecko",
+   "hp": 15,
+   "ap": 4,
+   "pri": 2,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Gecko Hunter",
+   "tier": 2,
+   "mob": true,
+   "xp": 5,
+   "special": [
+    null,
+    3,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Gecko Hunter",
+   "w2": "Gecko Hunter",
+   "hp": 18,
+   "ap": 8,
+   "pri": 6,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Green Gecko",
+   "tier": 2,
+   "mob": true,
+   "xp": 10,
+   "special": [
+    null,
+    8,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Green Gecko",
+   "w2": "Green Gecko",
+   "hp": 15,
+   "ap": 6,
+   "pri": 9,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Golden Gecko",
+   "tier": 3,
+   "mob": true,
+   "xp": 15,
+   "special": [
+    null,
+    5,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Golden Gecko",
+   "w2": "Golden Gecko",
+   "hp": 20,
+   "ap": 6,
+   "pri": 6,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Giant Mantis",
+   "tier": 1,
+   "mob": true,
+   "xp": 2,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Giant Mantis",
+   "w2": "Giant Mantis",
+   "hp": 10,
+   "ap": 5,
+   "pri": 6,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Giant Mantis Nymph",
+   "tier": 1,
+   "mob": true,
+   "xp": 2,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Giant Mantis Nymph",
+   "w2": "Giant Mantis Nymph",
+   "hp": 2,
+   "ap": 6,
+   "pri": 7,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Giant Rat",
+   "tier": 1,
+   "mob": true,
+   "xp": 2,
+   "special": [
+    null,
+    4,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Giant Rat",
+   "w2": "Giant Rat",
+   "hp": 10,
+   "ap": 6,
+   "pri": 5,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Giant Rat Pup",
+   "tier": 1,
+   "mob": true,
+   "xp": 1,
+   "special": [
+    null,
+    2,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Giant Rat Pup",
+   "w2": "Giant Rat Pup",
+   "hp": 12,
+   "ap": 4,
+   "pri": 1,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Lakelurk",
+   "tier": 3,
+   "mob": true,
+   "xp": 15,
+   "special": [
+    null,
+    7,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Lakelurk",
+   "w2": "Lakelurk",
+   "hp": 32,
+   "dt": 5,
+   "ap": 6,
+   "pri": 8,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Alpha Male Lakelurk",
+   "tier": 4,
+   "mob": true,
+   "xp": 25,
+   "special": [
+    null,
+    7,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Alpha Male Lakelurk",
+   "w2": "Alpha Male Lakelurk",
+   "hp": 50,
+   "dt": 6,
+   "ap": 8,
+   "pri": 10,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Lakelurk King",
+   "tier": 6,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    8,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Lakelurk King",
+   "w2": "Lakelurk King",
+   "hp": 90,
+   "dt": 8,
+   "ap": 10,
+   "pri": 13,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Mister Gutsy",
+   "tier": 4,
+   "mob": true,
+   "xp": 25,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Mister Gutsy",
+   "w2": "Mister Gutsy",
+   "hp": 35,
+   "dt": 12,
+   "ap": 5,
+   "pri": 6,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Hardened Mister Gutsy",
+   "tier": 5,
+   "mob": true,
+   "xp": 40,
+   "special": [
+    null,
+    5,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Hardened Mister Gutsy",
+   "w2": "Hardened Mister Gutsy",
+   "hp": 50,
+   "dt": 18,
+   "ap": 8,
+   "pri": 8,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Mister Handy",
+   "tier": 2,
+   "mob": true,
+   "xp": 5,
+   "special": [
+    null,
+    5,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Mister Handy",
+   "w2": "Mister Handy",
+   "hp": 20,
+   "dt": 6,
+   "ap": 4,
+   "pri": 4,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Mole Rat",
+   "tier": 1,
+   "mob": true,
+   "xp": 2,
+   "special": [
+    null,
+    2,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Mole Rat",
+   "w2": "Mole Rat",
+   "hp": 5,
+   "ap": 5,
+   "pri": 2,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Mole Rat Pup",
+   "tier": 1,
+   "mob": true,
+   "xp": 1,
+   "special": [
+    null,
+    1,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Mole Rat Pup",
+   "w2": "Mole Rat Pup",
+   "hp": 2,
+   "ap": 3,
+   "pri": -1,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Nightstalker",
+   "tier": 3,
+   "mob": true,
+   "xp": 15,
+   "special": [
+    null,
+    9,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Nightstalker",
+   "w2": "Nightstalker",
+   "hp": 25,
+   "ap": 7,
+   "pri": 11,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Nightstalker Den Mother",
+   "tier": 5,
+   "mob": true,
+   "xp": 25,
+   "special": [
+    null,
+    9,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Nightstalker Den Mother",
+   "w2": "Nightstalker Den Mother",
+   "hp": 45,
+   "ap": 9,
+   "pri": 13,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Legendary Nightstalker",
+   "tier": 6,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    10,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Legendary Nightstalker",
+   "w2": "Legendary Nightstalker",
+   "hp": 135,
+   "ap": 6,
+   "pri": 11,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Young Nightstalker",
+   "tier": 2,
+   "mob": true,
+   "xp": 10,
+   "special": [
+    null,
+    8,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Young Nightstalker",
+   "w2": "Young Nightstalker",
+   "hp": 12,
+   "ap": 8,
+   "pri": 11,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Protectron",
+   "tier": 3,
+   "mob": true,
+   "xp": 25,
+   "special": [
+    null,
+    4,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Protectron",
+   "w2": "Protectron",
+   "hp": 45,
+   "dt": 8,
+   "ap": 4,
+   "pri": 3,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Radroach",
+   "tier": 1,
+   "mob": true,
+   "xp": 1,
+   "special": [
+    null,
+    3,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Radroach",
+   "w2": "Radroach",
+   "hp": 12,
+   "ap": 4,
+   "pri": 2,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Radscorpion",
+   "tier": 2,
+   "mob": true,
+   "xp": 5,
+   "special": [
+    null,
+    4,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Radscorpion",
+   "w2": "Radscorpion",
+   "hp": 18,
+   "dt": 2,
+   "ap": 4,
+   "pri": 3,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Giant Radscorpion",
+   "tier": 3,
+   "mob": true,
+   "xp": 15,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Giant Radscorpion",
+   "w2": "Giant Radscorpion",
+   "hp": 25,
+   "dt": 4,
+   "ap": 3,
+   "pri": 4,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Radscorpion Queen",
+   "tier": 6,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Radscorpion Queen",
+   "w2": "Radscorpion Queen",
+   "hp": 80,
+   "ap": 4,
+   "pri": 5,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Robobrain",
+   "tier": 2,
+   "mob": true,
+   "xp": 10,
+   "special": [
+    null,
+    5,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "EXP": 1,
+    "MW": 100
+   },
+   "w1": "Robobrain",
+   "w2": "Robobrain",
+   "hp": 32,
+   "dt": 6,
+   "ap": 2,
+   "pri": 2,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Securitron",
+   "tier": 3,
+   "mob": true,
+   "xp": 25,
+   "special": [
+    null,
+    6,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "EXP": 1,
+    "MW": 100
+   },
+   "w1": "Securitron",
+   "w2": "Securitron",
+   "hp": 50,
+   "dt": 15,
+   "ap": 7,
+   "pri": 8,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Sentry Bot",
+   "tier": 4,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    7,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "EXP": 1,
+    "MW": 100
+   },
+   "w1": "Sentry Bot",
+   "w2": "Sentry Bot",
+   "hp": 80,
+   "dt": 20,
+   "ap": 6,
+   "pri": 8,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Hardened Sentry Bot",
+   "tier": 5,
+   "mob": true,
+   "xp": 50,
+   "special": [
+    null,
+    8,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "EXP": 1,
+    "MW": 100
+   },
+   "w1": "Hardened Sentry Bot",
+   "w2": "Hardened Sentry Bot",
+   "hp": 90,
+   "dt": 25,
+   "ap": 8,
+   "pri": 11,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Spore Carrier",
+   "tier": 3,
+   "mob": true,
+   "xp": 5,
+   "special": [
+    null,
+    4,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Spore Carrier",
+   "w2": "Spore Carrier",
+   "hp": 22,
+   "ap": 5,
+   "pri": 4,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Spore Carrier Beast",
+   "tier": 5,
+   "mob": true,
+   "xp": 15,
+   "special": [
+    null,
+    7,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Spore Carrier Beast",
+   "w2": "Spore Carrier Beast",
+   "hp": 85,
+   "ap": 7,
+   "pri": 9,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Spore Plant",
+   "tier": 2,
+   "mob": true,
+   "xp": 3,
+   "special": [
+    null,
+    10,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Spore Plant",
+   "w2": "Spore Plant",
+   "hp": 15,
+   "ap": 4,
+   "pri": 9,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Giant Spore Plant",
+   "tier": 4,
+   "mob": true,
+   "xp": 20,
+   "special": [
+    null,
+    8,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "EW": 1,
+    "MW": 100
+   },
+   "w1": "Giant Spore Plant",
+   "w2": "Giant Spore Plant",
+   "hp": 30,
+   "ap": 6,
+   "pri": 9,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Wild Boar",
+   "tier": 666,
+   "mob": true,
+   "special": [
+    null,
+    15,
+    null,
+    null,
+    null,
+    null,
+    5
+   ],
+   "skills": {
+    "MW": 100
+   },
+   "w1": "Wild Boar",
+   "w2": "Wild Boar",
+   "hp": 50,
+   "dt": 20,
+   "ap": 10,
+   "pri": 20,
+   "faction": "Unaligned"
+  },
+  {
+   "n": "Jackal Pup",
+   "tier": 1,
+   "xp": 5,
+   "caps": "5-15",
+   "faction": "Jackals",
+   "special": [
+    5,
+    4,
+    4,
+    3,
+    3,
+    4,
+    4
+   ],
+   "skills": {
+    "EW": 5,
+    "SG": 15,
+    "BG": 5,
+    "MW": 20
+   },
+   "w1": "Pipe Pistol",
+   "w2": "Knife"
+  },
+  {
+   "n": "Jackal Hanger-On",
+   "tier": 1,
+   "xp": 5,
+   "caps": "5-15",
+   "faction": "Jackals",
+   "special": [
+    5,
+    4,
+    4,
+    3,
+    3,
+    4,
+    4
+   ],
+   "skills": {
+    "EW": 5,
+    "SG": 15,
+    "BG": 5,
+    "MW": 20
+   },
+   "w1": "Hatchet",
+   "w2": "Basic Fighting"
+  },
+  {
+   "n": "Jackal Gang Member",
+   "tier": 1,
+   "xp": 5,
+   "caps": "5-15",
+   "faction": "Jackals",
+   "special": [
+    4,
+    6,
+    3,
+    3,
+    4,
+    4,
+    4
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 25,
+    "BG": 10,
+    "MW": 15
+   },
+   "w1": "Pipe Rifle",
+   "w2": "Prison Shiv"
+  },
+  {
+   "n": "Jackal Pack Leader",
+   "tier": 2,
+   "xp": 15,
+   "caps": "10-20",
+   "faction": "Jackals",
+   "special": [
+    6,
+    4,
+    5,
+    4,
+    2,
+    5,
+    5
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 40,
+    "BG": 25,
+    "MW": 35
+   },
+   "w1": ".357 Magnum revolver",
+   "w2": "Lead Pipe"
+  },
+  {
+   "n": "Jackal Dog Handler",
+   "tier": 2,
+   "xp": 10,
+   "caps": "10-20",
+   "faction": "Jackals",
+   "special": [
+    7,
+    5,
+    5,
+    3,
+    4,
+    5,
+    2
+   ],
+   "skills": {
+    "EW": 0,
+    "SG": 5,
+    "BG": 0,
+    "MW": 40
+   },
+   "w1": "Baseball Bat",
+   "w2": "Basic Fighting"
+  },
+  {
+   "n": "Viper Cutthroat",
+   "tier": 1,
+   "xp": 5,
+   "caps": "5-15",
+   "faction": "Vipers",
+   "special": [
+    3,
+    6,
+    3,
+    4,
+    4,
+    6,
+    4
+   ],
+   "skills": {
+    "EW": 5,
+    "SG": 20,
+    "BG": 5,
+    "MW": 20
+   },
+   "w1": "Switchblade",
+   "w2": "Pipe Pistol"
+  },
+  {
+   "n": "Viper Gunslinger",
+   "tier": 2,
+   "xp": 10,
+   "caps": "10-20",
+   "faction": "Vipers",
+   "special": [
+    5,
+    4,
+    5,
+    4,
+    5,
+    5,
+    6
+   ],
+   "skills": {
+    "EW": 20,
+    "SG": 30,
+    "BG": 15,
+    "MW": 20
+   },
+   "w1": "Lever Action Rifle",
+   "w2": "Knife"
+  },
+  {
+   "n": "Viper Snake Handler",
+   "tier": 2,
+   "xp": 10,
+   "caps": "10-20",
+   "faction": "Vipers",
+   "special": [
+    4,
+    6,
+    4,
+    4,
+    4,
+    6,
+    4
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 30,
+    "BG": 10,
+    "MW": 30
+   },
+   "w1": "Straight Razor",
+   "w2": "Basic Fighting"
+  },
+  {
+   "n": "Viper Road Warrior",
+   "tier": 2,
+   "xp": 10,
+   "caps": "10-20",
+   "faction": "Vipers",
+   "special": [
+    7,
+    5,
+    5,
+    3,
+    4,
+    5,
+    2
+   ],
+   "skills": {
+    "EW": 0,
+    "SG": 5,
+    "BG": 0,
+    "MW": 40
+   },
+   "w1": "Tire Iron",
+   "w2": "Pipe Shotgun"
+  },
+  {
+   "n": "Viper Gang Leader",
+   "tier": 3,
+   "xp": 25,
+   "caps": "25-40",
+   "faction": "Vipers",
+   "special": [
+    5,
+    4,
+    5,
+    7,
+    2,
+    6,
+    6
+   ],
+   "skills": {
+    "EW": 30,
+    "SG": 60,
+    "BG": 55,
+    "MW": 40
+   },
+   "w1": "Cowboy repeater",
+   "w2": "War Club"
+  },
+  {
+   "n": "Fiend Junkie",
+   "tier": 2,
+   "xp": 10,
+   "caps": "10-20",
+   "faction": "Fiends",
+   "special": [
+    5,
+    3,
+    6,
+    2,
+    2,
+    5,
+    5
+   ],
+   "skills": {
+    "EW": 15,
+    "SG": 30,
+    "BG": 20,
+    "MW": 25
+   },
+   "w1": "Lead Pipe",
+   "w2": "Pipe Pistol"
+  },
+  {
+   "n": "Fiend Stoner",
+   "tier": 2,
+   "xp": 10,
+   "caps": "10-20",
+   "faction": "Fiends",
+   "special": [
+    5,
+    3,
+    6,
+    2,
+    2,
+    5,
+    5
+   ],
+   "skills": {
+    "EW": 15,
+    "SG": 30,
+    "BG": 20,
+    "MW": 25
+   },
+   "w1": "9mm Auto Pistol (Glock)",
+   "w2": "Tire Iron"
+  },
+  {
+   "n": "Fiend Psycho",
+   "tier": 3,
+   "xp": 20,
+   "caps": "20-50",
+   "faction": "Fiends",
+   "special": [
+    5,
+    3,
+    7,
+    2,
+    2,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 25,
+    "SG": 45,
+    "BG": 30,
+    "MW": 35
+   },
+   "w1": "Sledgehammer",
+   "w2": "Basic Fighting"
+  },
+  {
+   "n": "Fiend Enforcer",
+   "tier": 3,
+   "xp": 20,
+   "caps": "20-50",
+   "faction": "Fiends",
+   "special": [
+    5,
+    3,
+    7,
+    2,
+    2,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 25,
+    "SG": 45,
+    "BG": 30,
+    "MW": 35
+   },
+   "w1": "Battle rifle",
+   "w2": "War Club"
+  },
+  {
+   "n": "Fiend Chem Cook",
+   "tier": 3,
+   "xp": 20,
+   "caps": "20-50",
+   "faction": "Fiends",
+   "special": [
+    5,
+    3,
+    7,
+    2,
+    2,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 25,
+    "SG": 45,
+    "BG": 30,
+    "MW": 35
+   },
+   "w1": "Compact 10mm SMG (Uzi)",
+   "w2": "Knife"
+  },
+  {
+   "n": "Fiend Warlord",
+   "tier": 4,
+   "xp": 35,
+   "caps": "30-55",
+   "faction": "Fiends",
+   "special": [
+    6,
+    3,
+    8,
+    2,
+    2,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 40,
+    "SG": 60,
+    "BG": 45,
+    "MW": 50
+   },
+   "w1": "Handmade Rifle (AK47)",
+   "w2": "Mace"
+  },
+  {
+   "n": "Fiend Pyro",
+   "tier": 3,
+   "xp": 20,
+   "caps": "20-50",
+   "faction": "Fiends",
+   "special": [
+    5,
+    3,
+    7,
+    2,
+    2,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 25,
+    "SG": 45,
+    "BG": 30,
+    "MW": 35
+   },
+   "w1": "Pipe Flamer",
+   "w2": "Lead Pipe"
+  },
+  {
+   "n": "Rogue Scavenger",
+   "tier": 1,
+   "xp": 5,
+   "caps": "5-15",
+   "faction": "Rogue Scavengers",
+   "special": [
+    5,
+    8,
+    4,
+    3,
+    6,
+    3,
+    4
+   ],
+   "skills": {
+    "EW": 15,
+    "SG": 20,
+    "BG": 10,
+    "MW": 20
+   },
+   "w1": "Pipe Rifle",
+   "w2": "Pipe Wrench"
+  },
+  {
+   "n": "Scav Picker",
+   "tier": 1,
+   "xp": 5,
+   "caps": "5-15",
+   "faction": "Rogue Scavengers",
+   "special": [
+    5,
+    8,
+    4,
+    3,
+    6,
+    3,
+    4
+   ],
+   "skills": {
+    "EW": 15,
+    "SG": 20,
+    "BG": 10,
+    "MW": 20
+   },
+   "w1": "Knife",
+   "w2": "Pipe Pistol"
+  },
+  {
+   "n": "Scav Salvager",
+   "tier": 2,
+   "xp": 10,
+   "caps": "15-30",
+   "faction": "Rogue Scavengers",
+   "special": [
+    5,
+    8,
+    4,
+    3,
+    6,
+    3,
+    4
+   ],
+   "skills": {
+    "EW": 20,
+    "SG": 25,
+    "BG": 15,
+    "MW": 25
+   },
+   "w1": "10mm Carbine",
+   "w2": "Crowbar"
+  },
+  {
+   "n": "Scav Tinkerer",
+   "tier": 2,
+   "xp": 10,
+   "caps": "15-30",
+   "faction": "Rogue Scavengers",
+   "special": [
+    5,
+    8,
+    4,
+    3,
+    6,
+    3,
+    4
+   ],
+   "skills": {
+    "EW": 20,
+    "SG": 25,
+    "BG": 15,
+    "MW": 25
+   },
+   "w1": "Taser",
+   "w2": "Hammer"
+  },
+  {
+   "n": "Scav Crew Boss",
+   "tier": 3,
+   "xp": 25,
+   "caps": "25-40",
+   "faction": "Rogue Scavengers",
+   "special": [
+    6,
+    8,
+    5,
+    3,
+    6,
+    4,
+    4
+   ],
+   "skills": {
+    "EW": 30,
+    "SG": 40,
+    "BG": 25,
+    "MW": 35
+   },
+   "w1": "Marksman carbine",
+   "w2": "Shovel"
+  },
+  {
+   "n": "Highwayman Lookout",
+   "tier": 1,
+   "xp": 5,
+   "caps": "5-15",
+   "faction": "Highwaymen",
+   "special": [
+    4,
+    6,
+    3,
+    3,
+    4,
+    4,
+    4
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 25,
+    "BG": 10,
+    "MW": 15
+   },
+   "w1": "Varmint rifle",
+   "w2": "Knife"
+  },
+  {
+   "n": "Highwayman Bandit",
+   "tier": 2,
+   "xp": 10,
+   "caps": "10-20",
+   "faction": "Highwaymen",
+   "special": [
+    5,
+    5,
+    3,
+    2,
+    3,
+    7,
+    3
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 20,
+    "BG": 15,
+    "MW": 25
+   },
+   "w1": "RSC SMG",
+   "w2": "Tire Iron"
+  },
+  {
+   "n": "Highwayman Sharpshooter",
+   "tier": 3,
+   "xp": 20,
+   "caps": "25-40",
+   "faction": "Highwaymen",
+   "special": [
+    6,
+    4,
+    6,
+    3,
+    4,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 30,
+    "SG": 50,
+    "BG": 30,
+    "MW": 35
+   },
+   "w1": "Marksman carbine",
+   "w2": "Knife"
+  },
+  {
+   "n": "Highwayman Toll Collector",
+   "tier": 2,
+   "xp": 10,
+   "caps": "10-20",
+   "faction": "Highwaymen",
+   "special": [
+    7,
+    5,
+    5,
+    3,
+    4,
+    5,
+    2
+   ],
+   "skills": {
+    "EW": 0,
+    "SG": 5,
+    "BG": 0,
+    "MW": 40
+   },
+   "w1": "Shovel",
+   "w2": ".45 Auto pistol"
+  },
+  {
+   "n": "Highwayman Captain",
+   "tier": 4,
+   "xp": 35,
+   "caps": "30-55",
+   "faction": "Highwaymen",
+   "special": [
+    7,
+    4,
+    7,
+    2,
+    3,
+    7,
+    5
+   ],
+   "skills": {
+    "EW": 50,
+    "SG": 70,
+    "BG": 50,
+    "MW": 60
+   },
+   "w1": "Trail carbine",
+   "w2": "Mace"
+  },
+  {
+   "n": "City Mugger",
+   "tier": 1,
+   "xp": 5,
+   "caps": "0-10",
+   "faction": "City Muggers",
+   "special": [
+    5,
+    4,
+    4,
+    3,
+    3,
+    4,
+    4
+   ],
+   "skills": {
+    "EW": 5,
+    "SG": 15,
+    "BG": 5,
+    "MW": 20
+   },
+   "w1": "Switchblade",
+   "w2": "Basic Fighting"
+  },
+  {
+   "n": "Back-Alley Mugger",
+   "tier": 1,
+   "xp": 5,
+   "caps": "0-10",
+   "faction": "City Muggers",
+   "special": [
+    3,
+    6,
+    3,
+    4,
+    4,
+    6,
+    4
+   ],
+   "skills": {
+    "EW": 5,
+    "SG": 20,
+    "BG": 5,
+    "MW": 20
+   },
+   "w1": "Straight Razor",
+   "w2": ".32 Pistol"
+  },
+  {
+   "n": "Pickpocket Crew Lookout",
+   "tier": 1,
+   "xp": 5,
+   "caps": "0-10",
+   "faction": "City Muggers",
+   "special": [
+    3,
+    6,
+    3,
+    4,
+    4,
+    6,
+    4
+   ],
+   "skills": {
+    "EW": 5,
+    "SG": 20,
+    "BG": 5,
+    "MW": 20
+   },
+   "w1": "Knife",
+   "w2": "Basic Fighting"
+  },
+  {
+   "n": "Street Tough",
+   "tier": 2,
+   "xp": 10,
+   "caps": "15-30",
+   "faction": "City Muggers",
+   "special": [
+    7,
+    5,
+    5,
+    3,
+    4,
+    5,
+    2
+   ],
+   "skills": {
+    "EW": 0,
+    "SG": 5,
+    "BG": 0,
+    "MW": 40
+   },
+   "w1": "Lead Pipe",
+   "w2": "Brass Knuckles"
+  },
+  {
+   "n": "Corner Boss",
+   "tier": 3,
+   "xp": 25,
+   "caps": "25-40",
+   "faction": "City Muggers",
+   "special": [
+    5,
+    4,
+    5,
+    7,
+    2,
+    6,
+    6
+   ],
+   "skills": {
+    "EW": 30,
+    "SG": 60,
+    "BG": 55,
+    "MW": 40
+   },
+   "w1": "Burst Pistol",
+   "w2": "Police Baton"
+  },
+  {
+   "n": "Omerta Thug",
+   "tier": 2,
+   "xp": 10,
+   "caps": "15-30",
+   "faction": "Omertas",
+   "special": [
+    6,
+    4,
+    5,
+    4,
+    2,
+    5,
+    5
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 40,
+    "BG": 25,
+    "MW": 35
+   },
+   "w1": ".45 Auto pistol",
+   "w2": "Police Baton"
+  },
+  {
+   "n": "Omerta Button Man",
+   "tier": 3,
+   "xp": 20,
+   "caps": "25-40",
+   "faction": "Omertas",
+   "special": [
+    5,
+    4,
+    5,
+    7,
+    2,
+    6,
+    6
+   ],
+   "skills": {
+    "EW": 30,
+    "SG": 60,
+    "BG": 55,
+    "MW": 40
+   },
+   "w1": "Compact 10mm SMG (Uzi)",
+   "w2": "Knife"
+  },
+  {
+   "n": "Omerta Capo",
+   "tier": 4,
+   "xp": 35,
+   "caps": "30-55",
+   "faction": "Omertas",
+   "special": [
+    5,
+    4,
+    6,
+    6,
+    3,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 40,
+    "SG": 70,
+    "BG": 65,
+    "MW": 50
+   },
+   "w1": "Silenced Mercenary Rifle",
+   "w2": "Rebar Club"
+  },
+  {
+   "n": "Garret Bouncer",
+   "tier": 2,
+   "xp": 10,
+   "caps": "15-30",
+   "faction": "Garrets",
+   "special": [
+    7,
+    5,
+    5,
+    3,
+    4,
+    5,
+    2
+   ],
+   "skills": {
+    "EW": 0,
+    "SG": 5,
+    "BG": 0,
+    "MW": 40
+   },
+   "w1": "Baseball Bat",
+   "w2": ".45 Auto pistol"
+  },
+  {
+   "n": "Garret Enforcer",
+   "tier": 3,
+   "xp": 20,
+   "caps": "25-40",
+   "faction": "Garrets",
+   "special": [
+    5,
+    4,
+    5,
+    7,
+    2,
+    6,
+    6
+   ],
+   "skills": {
+    "EW": 30,
+    "SG": 60,
+    "BG": 55,
+    "MW": 40
+   },
+   "w1": "Burst Pistol",
+   "w2": "Pool Cue"
+  },
+  {
+   "n": "Chairman Greeter",
+   "tier": 2,
+   "xp": 10,
+   "caps": "15-30",
+   "faction": "Chairmen",
+   "special": [
+    6,
+    4,
+    5,
+    4,
+    2,
+    5,
+    5
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 40,
+    "BG": 25,
+    "MW": 35
+   },
+   "w1": "9mm Auto Pistol (Glock)",
+   "w2": "Knife"
+  },
+  {
+   "n": "Chairman Hitman",
+   "tier": 3,
+   "xp": 20,
+   "caps": "25-40",
+   "faction": "Chairmen",
+   "special": [
+    4,
+    7,
+    4,
+    4,
+    4,
+    7,
+    3
+   ],
+   "skills": {
+    "EW": 20,
+    "SG": 45,
+    "BG": 15,
+    "MW": 40
+   },
+   "w1": "Burst Pistol",
+   "w2": "Switchblade"
+  },
+  {
+   "n": "Chairman Boss",
+   "tier": 4,
+   "xp": 35,
+   "caps": "30-55",
+   "faction": "Chairmen",
+   "special": [
+    5,
+    4,
+    6,
+    6,
+    3,
+    6,
+    5
+   ],
+   "skills": {
+    "EW": 40,
+    "SG": 70,
+    "BG": 65,
+    "MW": 50
+   },
+   "w1": "Silenced Mercenary Rifle",
+   "w2": "Rebar Club"
+  },
+  {
+   "n": "White Glove Attendant",
+   "tier": 2,
+   "xp": 10,
+   "caps": "15-30",
+   "faction": "White Glove Society",
+   "special": [
+    4,
+    6,
+    4,
+    4,
+    4,
+    6,
+    4
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 30,
+    "BG": 10,
+    "MW": 30
+   },
+   "w1": "Silenced .22 pistol",
+   "w2": "Knife"
+  },
+  {
+   "n": "White Glove Butcher",
+   "tier": 3,
+   "xp": 20,
+   "caps": "25-40",
+   "faction": "White Glove Society",
+   "special": [
+    7,
+    4,
+    7,
+    2,
+    3,
+    7,
+    5
+   ],
+   "skills": {
+    "EW": 5,
+    "SG": 15,
+    "BG": 5,
+    "MW": 50
+   },
+   "w1": "Cleaver",
+   "w2": "Burst Pistol"
+  },
+  {
+   "n": "King Greaser",
+   "tier": 2,
+   "xp": 10,
+   "caps": "15-30",
+   "faction": "The Kings",
+   "special": [
+    6,
+    4,
+    5,
+    4,
+    2,
+    5,
+    5
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 40,
+    "BG": 25,
+    "MW": 35
+   },
+   "w1": ".357 Magnum revolver",
+   "w2": "Switchblade"
+  },
+  {
+   "n": "King Lieutenant",
+   "tier": 3,
+   "xp": 25,
+   "caps": "25-40",
+   "faction": "The Kings",
+   "special": [
+    5,
+    4,
+    5,
+    7,
+    2,
+    6,
+    6
+   ],
+   "skills": {
+    "EW": 30,
+    "SG": 60,
+    "BG": 55,
+    "MW": 40
+   },
+   "w1": "Police Carbine (M1Carbine)",
+   "w2": "Tire Iron"
+  },
+  {
+   "n": "Great Khan Raider",
+   "tier": 2,
+   "xp": 10,
+   "caps": "10-20",
+   "faction": "Great Khans",
+   "special": [
+    5,
+    5,
+    3,
+    2,
+    3,
+    7,
+    3
+   ],
+   "skills": {
+    "EW": 10,
+    "SG": 20,
+    "BG": 15,
+    "MW": 25
+   },
+   "w1": "Pipe Shotgun",
+   "w2": "Baseball Bat"
+  },
+  {
+   "n": "Great Khan Armorer",
+   "tier": 3,
+   "xp": 20,
+   "caps": "25-40",
+   "faction": "Great Khans",
+   "special": [
+    8,
+    4,
+    7,
+    3,
+    3,
+    3,
+    5
+   ],
+   "skills": {
+    "EW": 25,
+    "SG": 40,
+    "BG": 55,
+    "MW": 40
+   },
+   "w1": "Battle rifle",
+   "w2": "Sledgehammer"
+  },
+  {
+   "n": "Great Khan Warlord",
+   "tier": 4,
+   "xp": 35,
+   "caps": "30-55",
+   "faction": "Great Khans",
+   "special": [
+    7,
+    4,
+    7,
+    2,
+    3,
+    7,
+    5
+   ],
+   "skills": {
+    "EW": 50,
+    "SG": 70,
+    "BG": 50,
+    "MW": 60
+   },
+   "w1": "Brush gun",
+   "w2": "War Hammer"
+  },
+  {
+   "n": "Boomer Spotter",
+   "tier": 3,
+   "xp": 20,
+   "caps": "25-40",
+   "faction": "Boomers",
+   "special": [
+    5,
+    6,
+    5,
+    3,
+    6,
+    5,
+    3
+   ],
+   "skills": {
+    "EW": 20,
+    "SG": 40,
+    "BG": 30,
+    "MW": 25,
+    "EXP": 40
+   },
+   "w1": "Battle rifle",
+   "w2": "Knife"
+  },
+  {
+   "n": "Van Graff Thug",
+   "tier": 4,
+   "xp": 30,
+   "caps": "30-55",
+   "faction": "Van Graffs",
+   "special": [
+    5,
+    6,
+    6,
+    3,
+    8,
+    4,
+    3
+   ],
+   "skills": {
+    "EW": 60,
+    "SG": 50,
+    "BG": 55,
+    "MW": 50
+   },
+   "w1": "Radium Rifle",
+   "w2": "Mace"
+  },
+  {
+   "n": "Crimson Caravan Guard",
+   "tier": 2,
+   "xp": 10,
+   "caps": "15-30",
+   "faction": "Crimson Caravan",
+   "special": [
+    5,
+    4,
+    5,
+    4,
+    5,
+    5,
+    6
+   ],
+   "skills": {
+    "EW": 20,
+    "SG": 30,
+    "BG": 15,
+    "MW": 20
+   },
+   "w1": "Lever Action Rifle",
+   "w2": "Knife"
+  }
+ ],
+ "namePools": {
+  "american": "Jake,Tom,Bill,Mike,Joe,Dave,Steve,Bob,Jim,Frank,Ray,Earl,Hank,Walt,Gus,Roy,Lou,Carl,Dale,Wayne,Mark,Luke,Sam,Ben,Dan,Ed,Al,Ted,Rick,Tony,Pete,Nick,Matt,Chris,Kevin,Brian,Eric,Greg,Scott,Jeff,Doug,Gary,Larry,Terry,Dennis,Wesley,Travis,Cody,Tyler,Austin,Dustin,Brandon,Jesse,Caleb,Cole,Colt,Wade,Clay,Troy,Glenn,Russ,Vern,Floyd,Lyle,Clint,Buck,Chester,Harold,Eugene,Norman,Leon,Marvin,Calvin,Curtis,Darnell,Andre,Marcus,Malik,Luis,Carlos,Miguel,Jose,Manny,Hector,Diego,Rafael,Ruben,Victor,Mary,Sarah,Linda,Susan,Karen,Nancy,Betty,Helen,Sandra,Donna,Carol,Ruth,Sharon,Laura,Amy,Kim,Lisa,Jenny,Beth,Kate,Anne,Megan,Rachel,Rosa,Maria,Lucy,Grace,Dolores,June,Peggy,Joan,Rita,Ellie,Tess,Nora,Vera,Hazel,Dottie,Gloria,Ana,Carmen,Tanya,Jolene",
+  "americanLast": "Smith,Johnson,Williams,Brown,Jones,Miller,Davis,Garcia,Rodriguez,Wilson,Martinez,Anderson,Taylor,Thomas,Hernandez,Moore,Martin,Jackson,Thompson,White,Lopez,Lee,Gonzalez,Harris,Clark,Lewis,Robinson,Walker,Perez,Hall,Young,Allen,Sanchez,Wright,King,Scott,Green,Baker,Adams,Nelson,Hill,Ramirez,Campbell,Mitchell,Roberts,Carter,Phillips,Evans,Turner,Torres,Parker,Collins,Edwards,Stewart,Flores,Morris,Murphy,Cook,Rogers,Morgan,Cooper,Peterson,Reed,Bailey,Bell,Kelly,Howard,Ward,Cox,Richardson,Wood,Watson,Brooks,Bennett,Gray,James,Hughes,Price,Sanders,Myers,Long,Ross,Foster,Powell,Jenkins,Perry,Russell,Sullivan,Fisher,Henderson,Coleman,Simmons,Patterson,Jordan,Reynolds,Hamilton,Graham,Wallace,Cole,West,Hayes,Bryant,Ellis,Stone,Hunt,Dixon,Ford,Marshall,Owens,Harper,Mason,Boyd,Tucker,Porter,Hunter,Hicks,Crawford,Webb,Mills,Hudson,Grant,Knight,Black,Wagner,Riley,Dunn,Shaw,Holt,Pierce,Walsh,Dalton,Garner,Burke,Fletcher,Lowe,McCoy,Wolfe,Vance,Booker,Cobb,Pruitt",
+  "ncrNick": "Dusty,Tex,Doc,Lucky,Sarge,Slim,Hoss,Buck,Gunny,Red,Ace,Bear,Hawk,Moose,Tank,Snake,Ghost,Preacher,Cowboy,Bones,Sparky,Mule,Chief,Rook,Dutch,Brahmin,Shotgun,Deadeye,Smokey,Two-Bit,Hollywood,Shiloh,Iron,Rusty,Lefty,Scratch,Crash,Sunny,Bulldog,Patch,Gator,Wildcat,Coyote,Hardcase,Grit,Vegas,Bishop,Boomer,Longshot,Mojave,Scarecrow,Saint,Chalk,Whiskey,Duke,Rawhide,Spurs,Tumbleweed,Old Reliable,Stonewall",
+  "latin": "Aquilius,Aurelius,Antonius,Atticus,Augustus,Brutus,Caecilius,Caelius,Cassius,Cato,Claudius,Cornelius,Crassus,Decimus,Didius,Domitius,Drusus,Fabius,Flavius,Fulvius,Gaius,Galba,Gallus,Gnaeus,Gracchus,Hadrianus,Horatius,Julius,Junius,Laelius,Lentulus,Licinius,Livius,Lucius,Lucretius,Manlius,Marcellus,Marcus,Marius,Maximus,Metellus,Nero,Nerva,Numerius,Octavius,Otho,Ovidius,Papirius,Paulus,Petronius,Plautius,Pompeius,Porcius,Postumus,Quintus,Quirinus,Regulus,Rufus,Sabinus,Scaevola,Scipio,Septimus,Sergius,Servius,Sextus,Silvanus,Spurius,Sulla,Tacitus,Tarquinius,Tiberius,Titus,Tullius,Valerius,Varro,Varus,Vibius,Vitellius,Aemilius,Albinus,Appius,Arrius,Avitus,Balbus,Blandus,Calvus,Camillus,Canus,Cicero,Corvinus,Crispus,Cyprianus,Dentatus,Fidus,Flaccus,Florus,Fronto,Gemellus,Germanicus,Lepidus,Longinus,Lucanus,Macro,Magnus,Mamercus,Martialis,Naso,Nonius,Novius,Opiter,Paetus,Pansa,Piso,Plancus,Priscus,Proculus,Pulcher,Quadratus,Rutilus,Salvius,Saturninus,Secundus,Severus,Silius,Statius,Tertius,Torquatus,Trebonius,Turbo,Ulpius,Verus,Vespasianus,Vinicius,Volusus,Ahenobarbus,Agrippa,Calidus,Dexter,Felix,Iustus,Lupercus,Nasica,Pertinax,Placidus,Probus,Sabellus,Valens,Vulso,Vulpa",
+  "latinEpithet": "Ferox,Lupus,Saevus,Durus,Fortis,Victor,Invictus,Malleus,Gladius,Ursus,Corvus,Aquila,Leo,Ignis,Ferrum,Sanguineus,Mortifer,Crudelis,Fidelis,Implacabilis,Umbra,Ferreus,Acer,Truculentus,Vindex,Atrox,Taurus,Vulpes,Serpens,Fulmen,Rapax,Bellicosus,Torvus,Niger,Cicatrix,Carnifex,Venator,Ossifragus,Pugnax,Indomitus,Lapis,Silex,Tempestas,Flagellum,Securis,Hasta,Scutum",
+  "raider": "Razor,Spike,Mad Dog,Skullface,Rot,Gutter,Jinx,Chopper,Rabid,Scab,Shiv,Grinder,Twitch,Psycho Pete,Big Mama,Cutter,Bonesaw,Rattler,Torch,Sledge,Mangler,Leech,Spider,Vulture,Grim,Hacksaw,Dregs,Ripper,Blister,Scrap,Fang,Hook,Snag,Nails,Rust,Jaws,Tank,Crank,Junkyard,Buzzard,Maggot,Sludge,Chainz,Bloody Mary,Two-Tooth,One-Eye,No-Nose,Stitches,Patches,Skunk,Rat King,Roach,Tetanus,Feral Fran,Wrecker,Dynamite,Kaboom,Firecracker,Smash,Crusher,Brick,Mace,Shank,Spigot,Bleach,Lockjaw,Toothless,Dirtbag,Gravel,Cinder,Ash,Smoke,Ditch,Gash,Splinter,Crowbar,Tire Iron,Mohawk,Spiky Sue,Hellcat,Banshee,Wraith,Hex,Voodoo,Lucky Lou,Dice,Snake Eyes,Deuce,Jackknife,Switchblade,Stiletto,Machete,Cleaver,Bones,Ghoulie,Glowstick,Nuke,Jet Jackie,Buffout,Mentats,Psycho,Chem,Huffer,Sniffles,Jitters,Shakes,Krazy Kate,Loco,Skitz,Scramble,Wreck,Havoc,Mayhem,Riot,Carnage,Blight,Plague,Pox,Gangrene,Hangnail,Scalp,Skinner,Flayer,Hammer,Anvil,Bolt,Rivet,Gearhead,Sprocket,Pistons,Tailpipe,Muffler,Hubcap,Roadkill,Dust Devil,Sandworm,Scorpion,Gila,Copperhead,Sidewinder,Coyote Ugly,Hyena,Dingo,Mutt,Cur,Skeeter,Gnat"
+ },
+ "nameStyles": {
+  "NCR": {
+   "style": "full",
+   "first": "american",
+   "last": "americanLast",
+   "nick": "ncrNick",
+   "nickFrom": 4,
+   "ranks": {
+    "1": "Pvt.",
+    "2": "Pvt.,Pvt.,PFC",
+    "3": "PFC,Cpl.,Cpl.",
+    "4": "Sgt.,Sgt.,Staff Sgt.,Lt.",
+    "5": ""
+   }
+  },
+  "Caesar's Legion": {
+   "style": "latin",
+   "first": "latin",
+   "nick": "latinEpithet",
+   "nickFrom": 4,
+   "ranks": {
+    "4": ",,Decanus",
+    "5": ""
+   }
+  },
+  "Raiders": {
+   "style": "gang",
+   "nick": "raider"
+  },
+  "Fiends": {
+   "style": "gang",
+   "nick": "raider"
+  },
+  "Jackals": {
+   "style": "gang",
+   "nick": "raider"
+  },
+  "Vipers": {
+   "style": "gang",
+   "nick": "raider"
+  },
+  "Highwaymen": {
+   "style": "gang",
+   "nick": "raider"
+  },
+  "City Muggers": {
+   "style": "gang",
+   "nick": "raider"
+  },
+  "Powder Gangers": {
+   "style": "gang",
+   "nick": "raider"
+  },
+  "Great Khans": {
+   "style": "gang",
+   "nick": "raider"
+  },
+  "The Kings": {
+   "style": "gang",
+   "nick": "raider"
+  },
+  "Rogue Scavengers": {
+   "style": "gang",
+   "nick": "raider"
+  }
  }
-]
+}
