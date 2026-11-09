@@ -301,17 +301,39 @@ test("a saved named NPC comes back without old statuses", () => {
   assert.deepStrictEqual(again.statuses, []); assert.ok(again.hp > 1);
 });
 
-test("20 archetypes: every kit item is real, and kits stay at the poverty bar", () => {
-  const list = DEFAULT_RULES.archetypes; assert.strictEqual(list.length, 20);
-  const has = (n) => !!E.get({ db, ov: {} }, n);
+test("40 archetypes: every kit is real, everyone can fight, wears clothes and carries something, and kits stay modest", () => {
+  const list = DEFAULT_RULES.archetypes; assert.strictEqual(list.length, 40);
+  const get = (n) => E.get({ db, ov: {} }, n);
   for (const a of list) {
-    assert.ok(has(a.w), `${a.n}: ${a.w}`);
-    if (a.ammo) { assert.ok(has(a.ammo[0]), `${a.n}: ${a.ammo[0]}`); assert.ok(a.ammo[1] <= 8, `${a.n} rounds`); }
-    for (const n of a.wear) assert.ok(has(n), `${a.n}: ${n}`);
-    for (const [n, q] of a.items) { assert.ok(has(n), `${a.n}: ${n}`); assert.ok(q <= 5); }
-    assert.ok(a.items.length <= 2, `${a.n} has too much`); assert.ok(a.wear.length <= 1, `${a.n} wears too much`);
-    assert.ok(Number(E.get({ db, ov: {} }, a.w).o.tier) === 1, `${a.n}: weapon must be tier 1`);
+    const w = get(a.w); assert.ok(w, `${a.n}: ${a.w}`); assert.ok(Number(w.o.tier) <= 2, `${a.n}: weapon tier ${w.o.tier}`);
+    if (["SG", "BG"].includes(w.o.tab) && !w.o.thrown) assert.ok(a.ammo, `${a.n} has a gun but no ammo`);
+    if (a.ammo) { assert.ok(get(a.ammo[0]), `${a.n}: ${a.ammo[0]}`); assert.ok(a.ammo[1] <= 10, `${a.n} rounds`); }
+    const locs = a.wear.map((n) => { const g = get(n); assert.ok(g, `${a.n}: ${n}`); return g.o.loc; });
+    assert.ok(locs.includes("Vanity") || locs.includes("Body"), `${a.n} has no clothes`);
+    assert.ok(a.items.length >= 1 && a.items.length <= 3, `${a.n} items`);
+    for (const [n, q] of a.items) { assert.ok(get(n), `${a.n}: ${n}`); assert.ok(q <= 10); }
+    assert.ok(a.d && a.d.length <= 60 && !/ - |—|–/.test(a.d), `${a.n}: short plain description`);
   }
+  assert.strictEqual(new Set(list.map((a) => a.n)).size, list.length, "names are unique");
+});
+
+test("combat stories: every token filled, players only go down, robots never bleed, and lines vary", () => {
+  const { COMBAT_TEXT } = require("../src/combat_text.js");
+  const parts = ["Head", "Body", "LArm", "RArm", "LLeg", "RLeg"], outs = ["hit", "crit", "super", "miss", "jam"];
+  const weapons = data.weapons.filter((w) => w.tier).filter((_, i) => i % 7 === 0);
+  let r = 0.21; const rng = () => (r = (r * 9301 + 49297) % 233280 / 233280);
+  for (const w of weapons) for (const part of parts) for (const outcome of outs) for (const kind of ["flesh", "robot", "insect"]) for (const end of ["", "killed", "downed"]) {
+    const s = E.story({ a: "Albert", t: "Raider 1", w, ammo: w.ammo ? w.ammo + " - Hollow Point" : "", d: 23, n: 3, part, outcome, kind, statuses: ["Bleeding", "Poisoned", "Burned"], killed: end === "killed", downed: end === "downed" }, COMBAT_TEXT, rng);
+    assert.ok(s.length > 5 && !/[{}]/.test(s), "unfilled: " + s);
+    if (outcome !== "miss" && outcome !== "jam") assert.ok(s.includes("23"), "damage shown: " + s);
+    if (kind === "robot" && end !== "killed") assert.ok(!/blood|lung|skin|bone|venom|femur/i.test(s.split(w.n).join("")), "robot read as flesh: " + s);
+  }
+  const W = data.weapons.find((w) => /Sniper/.test(w.type));
+  const once = () => E.story({ a: "Albert", t: "Raider 1", w: W, ammo: ".50 BMG - Standard", d: 40, n: 1, part: "LArm", outcome: "crit", kind: "flesh", statuses: [], killed: true }, COMBAT_TEXT);
+  const lines = Array.from({ length: 6 }, once);
+  for (let i = 1; i < lines.length; i++) assert.notStrictEqual(lines[i], lines[i - 1], "same line twice in a row");
+  const down = E.story({ a: "Raider", t: "Gordon", w: W, d: 30, part: "Head", outcome: "super", kind: "flesh", downed: true }, COMBAT_TEXT);
+  assert.ok(!/dead|skull|brains|decapitat/i.test(down.split(".").slice(-3).join(".")) || /down|breathing|grey|ground/i.test(down), "players go down, they don't die: " + down);
 });
 
 test("line of fire: the worst tier crossed wins, and open is the default", () => {

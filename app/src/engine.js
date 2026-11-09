@@ -533,8 +533,91 @@ const E = (() => {
         : [rank, any(st.first), nick && `'${nick}'`, any(st.last)].filter(Boolean).join(" ");
       if (!name) return null;
       const full = `${tmpl.n} - ${name}`;
-      if (!taken.has(full) || i === 24) return full;
+      if (![...taken].some((x) => String(x).split(" - ").slice(1).join(" - ") === name) || i === 24) return full;
     }
+  }
+  // ---------- combat log stories
+  /** Which family of lines a weapon uses. */
+  function weaponFamily(w) {
+    const tab = w.tab || "", type = String(w.type || "");
+    if (tab === "MW" || w.melee) { if (/hand/i.test(type)) return "unarmed"; return { B: "blunt", S: "blade", P: "pierce" }[type[0]] || "blunt"; }
+    if (tab === "EX" || /grenade|launcher|missile|mine|trap/i.test(type)) return "explosive";
+    if (tab === "EW") return /laser/i.test(type) ? "laser" : /plasma/i.test(type) ? "plasma" : /electric/i.test(type) ? "electric" : /magnetic/i.test(type) ? "gauss" : /fuel/i.test(type) ? "fire" : "energy";
+    if (/shotgun/i.test(type)) return "shotgun";
+    if (/sniper|anti-mat|dmr/i.test(type)) return "sniper";
+    if (/bow/i.test(type)) return "bow";
+    if (/^heavy$/i.test(type)) return "heavy";
+    if (/lmg|smg|machine pistol|pdw|auto rifle/i.test(type)) return "auto";
+    if (/pistol|revolver|plinker/i.test(type)) return "pistol";
+    return "rifle";
+  }
+  const storyRecent = {};
+  /** A random line from a list, skipping the ones used lately, so the same fight never reads the same way twice in a row. */
+  function storyPick(key, list, rng) {
+    if (!list || !list.length) return "";
+    const seen = storyRecent[key] || (storyRecent[key] = []);
+    const fresh = list.map((_, i) => i).filter((i) => !seen.includes(i));
+    const i = (fresh.length ? fresh : list.map((_, j) => j))[Math.floor(rng() * (fresh.length || list.length))];
+    seen.push(i); while (seen.length > Math.min(list.length - 1, 6)) seen.shift();
+    return list[i];
+  }
+  /**
+   * One or two sentences for the combat log. o: { a, t, w: weapon row, ammo, d, n, part: "Head"|"Body"|"LArm"..., outcome, kind: "flesh"|"robot"|"insect", statuses: [names], killed, downed }.
+   * text is COMBAT_TEXT. Player characters only ever go down (o.downed); o.killed is for everyone else.
+   */
+  function story(o, text, rng = Math.random) {
+    const fam = weaponFamily(o.w || {}); const F = text.families[fam] || text.families.rifle;
+    const group = o.part === "Head" ? "Head" : o.part === "Body" ? "Body" : "Limb";
+    const limb = /Leg/.test(o.part || "") ? "leg" : /Arm/.test(o.part || "") ? "arm" : "body";
+    const side = /^L/.test(o.part || "") ? "left " : /^R/.test(o.part || "") ? "right " : "";
+    const partName = group === "Limb" ? side + limb : group.toLowerCase();
+    const cal = String(o.ammo || "").split(" - ")[0].trim();
+    const withT = rng() < 0.45 ? (cal && !/^n\/a$/i.test(cal) ? ` with ${/^[aeiou8]|^\.(11|18)/i.test(cal) ? "an" : "a"} ${cal}` : o.w && o.w.n ? ` with the ${o.w.n}` : "") : "";
+    const verb = storyPick(`verb:${fam}`, F.verbs, rng);
+    const fill = (s) => s.replace(/\{a\}/g, o.a).replace(/\{t\}/g, o.t).replace(/\{d\}/g, o.d).replace(/\{n\}/g, o.n || 1).replace(/\{w\}/g, (o.w && o.w.n) || "weapon")
+      .replace(/\{with\}/g, withT).replace(/\{verb\}/g, verb).replace(/\{proj\}/g, F.proj).replace(/\{part\}/g, partName).replace(/\{limb\}/g, limb);
+    const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+    if (o.outcome === "miss") return fill(storyPick("miss", text.miss, rng));
+    if (o.outcome === "jam") return fill(storyPick("jam", text.jam, rng));
+    const crit = o.outcome === "crit" || o.outcome === "super", sup = o.outcome === "super";
+    const out = [];
+    if (o.killed) {
+      const K = text.kills; let key;
+      if (o.kind === "robot" || o.kind === "insect") key = o.kind;
+      else if (sup) key = "super" + group;
+      else if (crit) key = "crit" + group;
+      else key = ["burn", "blast", "shock"].includes(F.nature) && rng() < 0.6 ? F.nature : "plain";
+      if (crit && o.kind === "flesh" && ["burn", "blast"].includes(F.nature) && rng() < 0.35) key = F.nature;
+      out.push(fill(storyPick(`kill:${key}`, K[key] || K.plain, rng)));
+      return out.join(" ");
+    }
+    const generic = crit ? ["{a} {verb} {t} in the {part} for {d}{with}.", "{a} {verb} {t}'s {part} for {d}.", "Critical: {a} {verb} {t} right in the {part}, {d} damage.", "{a} finds the gap and {verb} {t} in the {part} for {d}."]
+      : ["{a} {verb} {t} for {d}{with}.", "{a} {verb} {t} in the {part} for {d}.", "{t} takes {d} as {a} {verb} them{with}.", "{a}'s {proj} catches {t} for {d}."];
+    let main;
+    if ((o.n || 1) > 1 && F.multi && F.multi.length && rng() < 0.75) main = storyPick(`multi:${fam}`, F.multi, rng);
+    else if (crit || rng() < 0.4) main = storyPick(`gen:${crit}`, generic, rng);
+    else main = storyPick(`hit:${fam}`, F.hit, rng);
+    main = fill(main);
+    if (main.startsWith(o.a) && rng() < 0.15) main = `${storyPick("open", text.openers, rng)} ${main}`;
+    out.push(main);
+    if (crit) {
+      const kind = text.wounds[o.kind] ? o.kind : "flesh";
+      const fits = (row) => (!row[1] || row[1].split(" ").includes(F.nature)) && (!row[2] || row[2] === limb);
+      const pool = (text.wounds[kind][group] || []).filter(fits).map((r) => r[0]);
+      const strong = ((text.superWounds[kind] || {})[group]) || [];
+      const line = sup && strong.length && rng() < 0.7 ? storyPick(`sw:${kind}:${group}`, strong, rng) : storyPick(`w:${kind}:${group}:${F.nature}:${limb}`, pool, rng);
+      if (line) out.push(fill(line));
+    }
+    const ammoKey = Object.keys(text.ammo).find((k) => new RegExp(k, "i").test(String(o.ammo || "").split(" - ").slice(1).join(" - ")));
+    if (ammoKey && rng() < 0.35) out.push(fill(storyPick(`ammo:${ammoKey}`, text.ammo[ammoKey], rng)));
+    for (const st of o.statuses || []) {
+      const S = text.status[st] || text.status[Object.keys(text.status).find((k) => st.toLowerCase().startsWith(k.toLowerCase().slice(0, 6)))];
+      if (!S) continue;
+      const list = o.kind === "robot" ? S.robot : (o.kind === "flesh" && S[group]) || S.any || S[group];
+      if (list) out.push(fill(storyPick(`st:${st}:${group}`, list, rng)));
+    }
+    if (o.downed) out.push(fill(storyPick("down", text.downed, rng)));
+    return out.map(cap).join(" ");
   }
   /** Boost a copy in place. Returns the rolled percentages for the log. */
   function makeBoss(e, ctx, rng = Math.random) {
@@ -867,6 +950,6 @@ const E = (() => {
     return skipped;
   }
 
-  return { npcSkills, tierReq, npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
+  return { story, weaponFamily, npcSkills, tierReq, npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
 })();
 if (typeof module !== "undefined") module.exports = E;

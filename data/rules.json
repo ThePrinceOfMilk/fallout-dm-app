@@ -2398,6 +2398,7 @@
   ]
  },
  "autoNames": true,
+ "storyLog": true,
  "namePools": {
   "american": "Jake,Tom,Bill,Mike,Joe,Dave,Steve,Bob,Jim,Frank,Ray,Earl,Hank,Walt,Gus,Roy,Lou,Carl,Dale,Wayne,Mark,Luke,Sam,Ben,Dan,Ed,Al,Ted,Rick,Tony,Pete,Nick,Matt,Chris,Kevin,Brian,Eric,Greg,Scott,Jeff,Doug,Gary,Larry,Terry,Dennis,Wesley,Travis,Cody,Tyler,Austin,Dustin,Brandon,Jesse,Caleb,Cole,Colt,Wade,Clay,Troy,Glenn,Russ,Vern,Floyd,Lyle,Clint,Buck,Chester,Harold,Eugene,Norman,Leon,Marvin,Calvin,Curtis,Darnell,Andre,Marcus,Malik,Luis,Carlos,Miguel,Jose,Manny,Hector,Diego,Rafael,Ruben,Victor,Mary,Sarah,Linda,Susan,Karen,Nancy,Betty,Helen,Sandra,Donna,Carol,Ruth,Sharon,Laura,Amy,Kim,Lisa,Jenny,Beth,Kate,Anne,Megan,Rachel,Rosa,Maria,Lucy,Grace,Dolores,June,Peggy,Joan,Rita,Ellie,Tess,Nora,Vera,Hazel,Dottie,Gloria,Ana,Carmen,Tanya,Jolene",
   "americanLast": "Smith,Johnson,Williams,Brown,Jones,Miller,Davis,Garcia,Rodriguez,Wilson,Martinez,Anderson,Taylor,Thomas,Hernandez,Moore,Martin,Jackson,Thompson,White,Lopez,Lee,Gonzalez,Harris,Clark,Lewis,Robinson,Walker,Perez,Hall,Young,Allen,Sanchez,Wright,King,Scott,Green,Baker,Adams,Nelson,Hill,Ramirez,Campbell,Mitchell,Roberts,Carter,Phillips,Evans,Turner,Torres,Parker,Collins,Edwards,Stewart,Flores,Morris,Murphy,Cook,Rogers,Morgan,Cooper,Peterson,Reed,Bailey,Bell,Kelly,Howard,Ward,Cox,Richardson,Wood,Watson,Brooks,Bennett,Gray,James,Hughes,Price,Sanders,Myers,Long,Ross,Foster,Powell,Jenkins,Perry,Russell,Sullivan,Fisher,Henderson,Coleman,Simmons,Patterson,Jordan,Reynolds,Hamilton,Graham,Wallace,Cole,West,Hayes,Bryant,Ellis,Stone,Hunt,Dixon,Ford,Marshall,Owens,Harper,Mason,Boyd,Tucker,Porter,Hunter,Hicks,Crawford,Webb,Mills,Hudson,Grant,Knight,Black,Wagner,Riley,Dunn,Shaw,Holt,Pierce,Walsh,Dalton,Garner,Burke,Fletcher,Lowe,McCoy,Wolfe,Vance,Booker,Cobb,Pruitt",
@@ -2475,7 +2476,7 @@
  "archetypes": [
   {
    "n": "Veteran Conscript",
-   "d": "Served, got discharged, kept the rifle.",
+   "d": "A discharged soldier. Good with a rifle.",
    "w": "Single Rifle",
    "ammo": [
     "5.56mm NATO - Junk",
@@ -2488,12 +2489,16 @@
     [
      "Bandage",
      1
+    ],
+    [
+     "Water (Purified)",
+     1
     ]
    ]
   },
   {
    "n": "Butcher",
-   "d": "Knows where every cut goes.",
+   "d": "A meat cutter who knows anatomy and a blade.",
    "w": "Cleaver",
    "wear": [
     "Settler Outfit"
@@ -2502,46 +2507,62 @@
     [
      "Bighorner Steak",
      2
+    ],
+    [
+     "Leather",
+     1
     ]
    ]
   },
   {
    "n": "Technician",
-   "d": "Kept the old machines limping along.",
+   "d": "Keeps old machines running.",
    "w": "Ball Peen Hammer",
    "wear": [
-    "Engineer Jumpsuit"
+    "Engineer Jumpsuit",
+    "Welding Goggles"
    ],
    "items": [
     [
      "Screws",
+     2
+    ],
+    [
+     "Gear",
      1
     ]
    ]
   },
   {
    "n": "Raider Deserter",
-   "d": "Walked out on the gang with what was in hand.",
+   "d": "A former raider who walked away from the gang.",
    "w": "Pipe Pistol",
    "ammo": [
     ".32 ACP - Standard",
     6
    ],
    "wear": [
+    "Leather Jacket",
     "Sack Hood"
    ],
-   "items": []
+   "items": [
+    [
+     "Jet",
+     1
+    ]
+   ]
   },
   {
    "n": "Caravan Guard",
-   "d": "Paid in meals to ride shotgun.",
+   "d": "Hired muscle for trade caravans.",
    "w": "Pipe Shotgun",
    "ammo": [
     "20 Gauge - Junk",
     4
    ],
    "wear": [
-    "Caravaneer Outfit"
+    "Caravaneer Outfit",
+    "Cowboy Hat"
    ],
    "items": [
     [
@@ -2552,10 +2573,11 @@
   },
   {
    "n": "Scavenger",
-   "d": "Picks the ruins clean for scraps.",
+   "d": "Picks ruins clean for salvage.",
    "w": "Pipe Wrench",
    "wear": [
-    "Settler Outfit"
+    "Settler Outfit",
+    "Light Satchel"
    ],
    "items": [
     [
@@ -2570,10 +2592,11 @@
   },
   {
    "n": "Field Medic",
-   "d": "Patched people up with whatever was left.",
-   "w": "Syringe",
+   "d": "Patches people up with whatever is around.",
+   "w": "Knife",
    "wear": [
-    "Settler Outfit"
+    "Settler Outfit",
+    "Medical Mask"
    ],
    "items": [
     [
@@ -2583,12 +2606,16 @@
     [
      "Antiseptic Rub",
      1
+    ],
+    [
+     "Healing Powder",
+     1
     ]
    ]
   },
   {
    "n": "Prospector",
-   "d": "Always one more dig from getting rich.",
+   "d": "Digs through the wastes for anything of value.",
    "w": "Knife",
    "wear": [
     "Prospector Outfit"
@@ -2597,16 +2624,20 @@
     [
      "Water (Dirty)",
      1
+    ],
+    [
+     "Mutfruit",
+     1
     ]
    ]
   },
   {
    "n": "Tribal Hunter",
-   "d": "Raised outside the ruins, hunts to eat.",
+   "d": "Raised by a tribe. Hunts with a bow.",
    "w": "Makeshift Bow",
    "ammo": [
     "Arrow - Junk",
-    6
+    8
    ],
    "wear": [
     "Tribal Garb"
@@ -2615,12 +2646,16 @@
     [
      "Healing Powder",
      1
+    ],
+    [
+     "Iguana on a Stick",
+     1
     ]
    ]
   },
   {
    "n": "Vault Runaway",
-   "d": "Left the vault with the clothes on their back.",
+   "d": "Left a vault with almost nothing.",
    "w": "Switchblade",
    "wear": [
     "RobCo Jumpsuit"
@@ -2629,12 +2664,16 @@
     [
      "Nuka Cola",
      1
+    ],
+    [
+     "Rad-X",
+     1
     ]
    ]
   },
   {
    "n": "Ex-Convict",
-   "d": "Out, by one means or another.",
+   "d": "Recently out of prison.",
    "w": "Prison Shiv",
    "wear": [
     "Jailhouse Outfit"
@@ -2648,25 +2687,29 @@
   },
   {
    "n": "Farmhand",
-   "d": "Broke their back for someone else's crop.",
-   "w": "Hatchet",
+   "d": "Works other people's fields.",
+   "w": "Pitchfork",
    "wear": [
     "Field Hand Outfit"
    ],
    "items": [
     [
-     "Pork N Beans",
+     "Mutfruit",
+     2
+    ],
+    [
+     "Broc Flower",
      1
     ]
    ]
   },
   {
    "n": "Courier",
-   "d": "Carries other people's mail through bad country.",
+   "d": "Delivers mail through dangerous country.",
    "w": ".22 Pistol",
    "ammo": [
     ".22 LR - Standard",
-    6
+    8
    ],
    "wear": [
     "Athletic Clothing"
@@ -2681,21 +2724,26 @@
   },
   {
    "n": "Drifter",
-   "d": "Never stayed anywhere long enough to own much.",
-   "w": "Wood Plank",
+   "d": "Never stays anywhere for long.",
+   "w": "Lead Pipe",
    "wear": [
-    "Settler Outfit"
+    "Leather Jacket",
+    "Beanie"
    ],
    "items": [
     [
      "Water (Dirty)",
+     1
+    ],
+    [
+     "Tobacco Chew",
      1
     ]
    ]
   },
   {
    "n": "Bar Brawler",
-   "d": "Settles things outside, then comes back in.",
+   "d": "Fights for fun or for money.",
    "w": "Brass Knuckles",
    "wear": [
     "Pre-War Casualwear"
@@ -2704,44 +2752,64 @@
     [
      "Moonshine",
      1
+    ],
+    [
+     "Bandage",
+     1
     ]
    ]
   },
   {
    "n": "Desk Clerk",
-   "d": "Filed paperwork for people who no longer matter.",
+   "d": "Pushed paper for people who no longer matter.",
    "w": "Dress Cane",
    "wear": [
-    "Pre-War Businesswear"
+    "Pre-War Businesswear",
+    "Eyeglasses"
    ],
    "items": [
     [
      "Pre War Money",
      5
+    ],
+    [
+     "Nuka Cola",
+     1
     ]
    ]
   },
   {
    "n": "Town Deputy",
-   "d": "Keeps the peace in a place that can barely pay.",
+   "d": "Keeps the peace in a town that can barely pay.",
    "w": "Police pistol",
    "ammo": [
     ".357 Magnum - Junk",
     4
    ],
    "wear": [
-    "Settler Outfit"
+    "Settler Outfit",
+    "Cowboy Hat"
    ],
-   "items": []
+   "items": [
+    [
+     "Bandage",
+     1
+    ]
+   ]
   },
   {
    "n": "Chem Runner",
-   "d": "Moved product, kept a little to take the edge off.",
+   "d": "Smuggles chems between towns.",
    "w": "Straight Razor",
    "wear": [
-    "Pre-War Casualwear"
+    "Pre-War Casualwear",
+    "Sunglasses"
    ],
    "items": [
+    [
+     "Jet",
+     1
+    ],
     [
      "Numbing Salve",
      1
@@ -2750,10 +2818,12 @@
   },
   {
    "n": "Miner",
-   "d": "Spent years underground for scrip.",
+   "d": "Spent years working underground.",
    "w": "Pickaxe",
    "wear": [
-    "Mining Helmet"
+    "Settler Outfit",
+    "Mining Helmet",
+    "Miner's Chest Protection"
    ],
    "items": [
     [
@@ -2764,7 +2834,7 @@
   },
   {
    "n": "Wasteland Cook",
-   "d": "Makes something edible out of anything.",
+   "d": "Makes a meal out of anything.",
    "w": "Frying Pan",
    "wear": [
     "Settler Outfit"
@@ -2773,6 +2843,394 @@
     [
      "Iguana on a Stick",
      2
+    ],
+    [
+     "Water (Dirty)",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Brahmin Herder",
+   "d": "Drives cattle between settlements.",
+   "w": "Machete",
+   "wear": [
+    "Field Hand Outfit",
+    "Cowboy Hat"
+   ],
+   "items": [
+    [
+     "Water (Dirty)",
+     1
+    ],
+    [
+     "Bighorner Steak",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Gravedigger",
+   "d": "Buries the dead for a living.",
+   "w": "Shovel",
+   "wear": [
+    "Settler Outfit",
+    "Scarf"
+   ],
+   "items": [
+    [
+     "Tobacco Chew",
+     1
+    ],
+    [
+     "Water (Dirty)",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Mechanic",
+   "d": "Fixes engines, generators and anything with parts.",
+   "w": "Tire Iron",
+   "wear": [
+    "Repairman Jumpsuit",
+    "Black Gloves"
+   ],
+   "items": [
+    [
+     "Adhesive",
+     1
+    ],
+    [
+     "Screws",
+     2
+    ]
+   ]
+  },
+  {
+   "n": "Preacher",
+   "d": "Carries faith out into the wasteland.",
+   "w": "Flagpole",
+   "wear": [
+    "Pre-War Businesswear"
+   ],
+   "items": [
+    [
+     "Bandage",
+     2
+    ],
+    [
+     "Water (Purified)",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Gambler",
+   "d": "Lives by luck and bluffing.",
+   "w": "Silenced .22 pistol",
+   "ammo": [
+    ".22 LR - Junk",
+    6
+   ],
+   "wear": [
+    "Pre-War Casualwear"
+   ],
+   "items": [
+    [
+     "Pre War Money",
+     10
+    ],
+    [
+     "Wasteland Tequila",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Bartender",
+   "d": "Runs a bar and handles the trouble in it.",
+   "w": "Single Shotgun",
+   "ammo": [
+    "20 Gauge - Junk",
+    3
+   ],
+   "wear": [
+    "Pre-War Casualwear"
+   ],
+   "items": [
+    [
+     "Moonshine",
+     2
+    ],
+    [
+     "Beer - Gwinnett Ale",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Lumberjack",
+   "d": "Cuts timber for settlements.",
+   "w": "Hatchet",
+   "wear": [
+    "Handyman Jumpsuit",
+    "Beanie"
+   ],
+   "items": [
+    [
+     "Water (Dirty)",
+     1
+    ],
+    [
+     "Leather",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Dockworker",
+   "d": "Hauls cargo on the river docks.",
+   "w": "Pole Hook",
+   "wear": [
+    "Handyman Jumpsuit"
+   ],
+   "items": [
+    [
+     "Water (Dirty)",
+     1
+    ],
+    [
+     "Tobacco Chew",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Trapper",
+   "d": "Catches animals for fur and meat.",
+   "w": "Spear",
+   "wear": [
+    "Leather Jacket",
+    "Cowboy Hat"
+   ],
+   "items": [
+    [
+     "Leather",
+     2
+    ],
+    [
+     "Iguana on a Stick",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Pit Fighter",
+   "d": "Fought in arenas for caps.",
+   "w": "Boxing Tape",
+   "wear": [
+    "Athletic Clothing"
+   ],
+   "items": [
+    [
+     "Bandage",
+     2
+    ],
+    [
+     "Buffout",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Pickpocket",
+   "d": "Steals to get by.",
+   "w": "Knife",
+   "wear": [
+    "Pre-War Casualwear",
+    "Black Gloves"
+   ],
+   "items": [
+    [
+     "Pre War Money",
+     3
+    ],
+    [
+     "Nuka Cola",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Hunter",
+   "d": "Shoots game to feed the family.",
+   "w": "Varmint rifle",
+   "ammo": [
+    ".22 LR - Standard",
+    10
+   ],
+   "wear": [
+    "Field Hand Outfit",
+    "Beanie"
+   ],
+   "items": [
+    [
+     "Iguana on a Stick",
+     1
+    ],
+    [
+     "Leather",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Scribe Dropout",
+   "d": "Washed out of training with old tech.",
+   "w": "Laser Musket",
+   "wear": [
+    "Engineer Jumpsuit",
+    "Eyeglasses"
+   ],
+   "items": [
+    [
+     "Circuitry",
+     1
+    ],
+    [
+     "Mentats",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Street Kid",
+   "d": "Grew up running through the ruins.",
+   "w": "Baseball Bat",
+   "wear": [
+    "Athletic Clothing",
+    "Beanie"
+   ],
+   "items": [
+    [
+     "Nuka Cola",
+     1
+    ],
+    [
+     "Pork N Beans",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Settlement Militia",
+   "d": "A part-time defender of a small town.",
+   "w": "Pipe Rifle",
+   "ammo": [
+    ".32 ACP - Junk",
+    8
+   ],
+   "wear": [
+    "Settler Outfit",
+    "Baseball Helmet"
+   ],
+   "items": [
+    [
+     "Bandage",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Bootlegger",
+   "d": "Brews and sells moonshine.",
+   "w": "Crowbar",
+   "wear": [
+    "Pre-War Casualwear"
+   ],
+   "items": [
+    [
+     "Moonshine",
+     3
+    ],
+    [
+     "Molotov Cocktail",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Powder Runaway",
+   "d": "Escaped a prison gang that taught explosives.",
+   "w": "Nail Board",
+   "wear": [
+    "Powder Gang Simple Outfit",
+    "Face Cover"
+   ],
+   "items": [
+    [
+     "Dynamite",
+     2
+    ]
+   ]
+  },
+  {
+   "n": "Water Merchant",
+   "d": "Sells clean water and guards it closely.",
+   "w": "Classic 9mm Pistol",
+   "ammo": [
+    "9mm Parabellum - Standard",
+    6
+   ],
+   "wear": [
+    "Leather Jacket"
+   ],
+   "items": [
+    [
+     "Water (Purified)",
+     3
+    ]
+   ]
+  },
+  {
+   "n": "Herbalist",
+   "d": "Knows which plants heal and which kill.",
+   "w": "Sickle",
+   "wear": [
+    "Settler Outfit"
+   ],
+   "items": [
+    [
+     "Healing Powder",
+     2
+    ],
+    [
+     "Broc Flower",
+     1
+    ],
+    [
+     "Xander Root",
+     1
+    ]
+   ]
+  },
+  {
+   "n": "Scrapper",
+   "d": "Breaks wrecks down into useful parts.",
+   "w": "Hammer",
+   "wear": [
+    "Handyman Jumpsuit",
+    "Welding Goggles"
+   ],
+   "items": [
+    [
+     "Steel",
+     2
+    ],
+    [
+     "Screws",
+     1
     ]
    ]
   }

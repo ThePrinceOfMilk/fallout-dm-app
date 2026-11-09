@@ -444,7 +444,7 @@ async function launch() {
     assert.ok((await state()).combat.last.c4.tgt, "last target stored");
     await type("00"); await press("Enter");
     let s = await state();
-    assert.match(s.log[s.log.length - 1].x, /JAM/);
+    assert.match(s.log.filter((l) => !/story/.test(l.k)).slice(-1)[0].x, /JAM/); assert.match(s.log.slice(-1)[0].k, /story o-jam/, "a story line follows");
     assert.strictEqual(s.chars[3].weapons[0].jammed, true);
     await type("50"); await press("Enter"); await has("Jammed");
     const before = (await state()).chars[3].ap;
@@ -914,7 +914,7 @@ async function launch() {
     let s = await state();
     assert.strictEqual(s.chars.length, 0); assert.strictEqual(s.rules.maxHit, 0.95, "rules reset"); assert.deepStrictEqual(s.overrides, {}, "item edits reset"); assert.deepStrictEqual(s.notesList, []); assert.strictEqual(s.vendor.tier, 1); assert.deepStrictEqual(s.log, []);
     await has("Archetype", ".dialog");
-    assert.strictEqual(await page.locator(".dialog .arch").count(), 20, "twenty archetypes");
+    assert.strictEqual(await page.locator(".dialog .arch").count(), 40, "forty archetypes");
     await click("wizGo", "1"); assert.strictEqual(await page.evaluate(() => ui.wiz.step), 0, "must pick an archetype");
     await page.fill("#wizName", "Sarge"); await page.locator(".dialog .arch", { hasText: "Veteran Conscript" }).click();
     await click("wizGo", "1"); await has("POINTS LEFT", ".dialog");

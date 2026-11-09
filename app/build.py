@@ -276,7 +276,7 @@ data["report"] = "\n".join(rep)
 if os.path.exists(os.path.join(HERE, "src", "shell.html")):
     blob = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/").replace("<!--", "<\\u0021--")
     html = src("shell.html").replace("/*STYLE*/", src("style.css")).replace("/*FONT*/", b64(os.path.join(HERE, "src", "fonts", "vt323.woff2"))).replace("/*FONT2*/", b64(os.path.join(HERE, "src", "fonts", "sharetech.woff2")))
-    html = html.replace("/*RULES*/", src("rules.js")).replace("/*ENGINE*/", src("engine.js")).replace("/*UI*/", src("ui.js"))
+    html = html.replace("/*RULES*/", src("combat_text.js") + "\n" + src("rules.js")).replace("/*ENGINE*/", src("engine.js")).replace("/*UI*/", src("ui.js"))
     html = html.replace("/*DATA*/", blob).replace("/*WIKI*/", b64(os.path.join(ROOT, "Fallout TTRPG Game Bible.pdf")))
     out = os.path.join(ROOT, "Fallout DM App.html")
     open(out, "w", encoding="utf8").write(html)

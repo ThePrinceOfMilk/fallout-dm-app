@@ -708,3 +708,16 @@ html, body { max-width: 100%; overflow-x: hidden; }
 html.lt600 .rail { width: calc(100vw / var(--z, 1)); }
 @media (max-width: 1000px) { .win > .wt { flex-wrap: wrap; row-gap: 4px; padding-top: 2px; padding-bottom: 2px; } }
 html.lt1000 .win > .wt { flex-wrap: wrap; row-gap: 4px; }
+
+.log-story { color: var(--ink); padding-left: 10px; border-left: 2px solid var(--line2); margin: 1px 0 3px; }
+.result .story { color: var(--bright); margin-bottom: 3px; }
+
+/* attack outcomes: miss red, hit solid green, crit very bright green, super crit bright pink */
+:root { --o-miss: #ff4b4b; --o-hit: #2fd65a; --o-crit: #9dff3c; --o-super: #ff4fd8; }
+.o-miss { color: var(--o-miss); } .o-hit { color: var(--o-hit); }
+.o-crit { color: var(--o-crit); text-shadow: 0 0 6px rgba(157, 255, 60, .55); }
+.o-super { color: var(--o-super); text-shadow: 0 0 7px rgba(255, 79, 216, .6); }
+.log-story.o-miss { border-left-color: var(--o-miss); } .log-story.o-hit { border-left-color: var(--o-hit); } .log-story.o-crit { border-left-color: var(--o-crit); } .log-story.o-super { border-left-color: var(--o-super); }
+.result.miss { border-color: var(--o-miss); color: var(--o-miss); } .result.hit { border-color: var(--o-hit); color: var(--o-hit); }
+.result.crit { border-color: var(--o-crit); color: var(--o-crit); } .result.super { border-color: var(--o-super); color: var(--o-super); }
+.result .story { color: inherit; font-size: calc(var(--fs) * 1.05); }

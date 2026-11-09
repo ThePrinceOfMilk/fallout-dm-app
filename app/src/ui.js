@@ -475,11 +475,19 @@ function fire() {
     const NAME = { jam: "JAM", miss: "MISS", hit: "HIT", crit: "CRIT", super: "SUPER CRIT" }[res.outcome];
     const head = `${A.name} → ${T.name} · ${v.n}${v.modeName ? " " + v.modeName : ""} · R${p.range} ${PARTS[a.part][0]}${p.cov.tier !== "open" ? ` · ${p.cov.n}` : ""} · ${fmt(E.pct(p.hit))}% · rolled ${E.two(roll)}`;
     const line = `${head}: ${NAME}` + (res.total ? ` · ${res.math} · ${T.name} ${T.hp}/${dT.hp}` : jammed ? ` · clear costs ${v.clearJam} AP` : "") + (ammoText ? ` · ${ammoText}` : "");
-    log(res.total ? "hit" : jammed ? "jam" : "miss", line);
+    log(`${res.total ? "hit" : jammed ? "jam" : "miss"} o-${res.outcome}`, line); const at = S.log.length;
     const fx = hitStatuses(res, T, v, a.part, p.dA.m);
+    let story = "";
+    if (S.rules.storyLog) {
+      const ty = E.enemyType(T, S.rules);
+      const nm = (e) => (e.kind !== "pc" && / - /.test(e.name) ? e.name.split(" - ").slice(1).join(" - ") : e.name);
+      story = E.story({ a: nm(A), t: nm(T), w: v, ammo: slot.ammo || "", d: fmt(res.total), n: res.hits || res.bullets || 1, part: a.part, outcome: res.outcome, kind: T.kind === "pc" ? "flesh" : ty === "robot" ? "robot" : ty === "insect" ? "insect" : "flesh",
+        statuses: fx.auto.map((x) => x.replace(/\s+\d.*$/, "")), killed: wasUp && T.hp <= 0 && T.kind !== "pc", downed: wasUp && T.hp <= 0 && T.kind === "pc" }, COMBAT_TEXT);
+      S.log.splice(at, 0, { k: `story o-${res.outcome}`, x: story, r: K().round });  // right under the numbers
+    }
     K().last[A.id] = { tgt: T.id, mode: a.mode, part: a.part };
     if (K().phase === "stealth" && A.kind === "pc") { K().stealthDue = A.id; ui.focus = "#stealthRoll"; }
-    a.res = { outcome: res.outcome, name: NAME, head, math: res.math, total: res.total, auto: fx.auto, status: fx.manual, tgt: T.id, tName: T.name, hp: T.hp, max: dT.hp, ammoText, radius: v.radius };
+    a.res = { story, outcome: res.outcome, name: NAME, head, math: res.math, total: res.total, auto: fx.auto, status: fx.manual, tgt: T.id, tName: T.name, hp: T.hp, max: dT.hp, ammoText, radius: v.radius };
     a.roll = ""; a.ov = {}; a.err = "";
     if (cbOf(T.id) && !alive(cbOf(T.id))) { const nx = targetsFor(A.id).find((id) => sideOf(id) !== sideOf(A.id) && !ent(id).dbno); if (nx) a.tgt = nx; }
     if (K().phase !== "stealth") ui.focus = "#roll";
@@ -1071,7 +1079,7 @@ function attackPanel() {
   const rolling = `<div class="bands">${bars}</div><div class="bright bandtext">${h(E.bandText(p.b))}</div>
    <div class="rollrow"><input class="rollbox" id="roll" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="00" value="${h(a.roll)}" data-u="atk.roll" data-enter="fire" aria-label="Two-dice roll, 00 to 99">${btn("fire", "", "Resolve", "Enter", `primary ${p.cost > (A.ap || 0) && !a.ov.free ? "na" : ""}`)}<span class="spacer"></span><button class="btn tiny ${ui.atkOv ? "on" : ""}" data-a="atkOvToggle" data-v="" title="Overrides">OVR</button>${K().phase === "stealth" ? btn("closeAtk", "", "Close", "Esc", "tiny") : ""}</div>${ovr}
    ${a.err ? `<div class="errline">${h(a.err)}</div>` : ""}${warn.map((x) => `<div class="warnline">${h(x)}</div>`).join("")}
-   ${r ? `<div class="result ${r.outcome}">${r.name}: ${h(r.head)}${r.math ? `<br>${h(r.math)}<br>${h(r.tName)} ${r.hp}/${r.max} HP${r.hp <= 0 ? " DOWN" : ""}` : ""}${r.ammoText ? ` · ${h(r.ammoText)}` : ""}${r.outcome === "jam" ? `<br>Weapon jammed. Press J to clear.` : ""}${(r.auto || []).length ? `<br><span class="warn">Applied: ${h(r.auto.join(", "))}</span>` : ""}${r.status ? `<br>${btn("applyHitStatus", r.status, `Apply ${h(r.status)} to ${h(r.tName)}`, "", "tiny")}` : ""}${r.radius ? `<br><span class="warn">Blast radius ${r.radius}: apply damage to anyone else in it by typing their HP.</span>` : ""}</div>` : ""}`;
+   ${r ? `<div class="result ${r.outcome}">${r.story ? `<div class="story">${h(r.story)}</div>` : ""}${r.name}: ${h(r.head)}${r.math ? `<br>${h(r.math)}<br>${h(r.tName)} ${r.hp}/${r.max} HP${r.hp <= 0 ? " DOWN" : ""}` : ""}${r.ammoText ? ` · ${h(r.ammoText)}` : ""}${r.outcome === "jam" ? `<br>Weapon jammed. Press J to clear.` : ""}${(r.auto || []).length ? `<br><span class="warn">Applied: ${h(r.auto.join(", "))}</span>` : ""}${r.status ? `<br>${btn("applyHitStatus", r.status, `Apply ${h(r.status)} to ${h(r.tName)}`, "", "tiny")}` : ""}${r.radius ? `<br><span class="warn">Blast radius ${r.radius}: apply damage to anyone else in it by typing their HP.</span>` : ""}</div>` : ""}`;
   return `${seg("Loadout", loadout, "full")}${seg("Target", targeting, "full")}${seg("Roll", rolling, "full hot")}`;
 }
 function roundEndStage() {
@@ -1535,12 +1543,13 @@ const rollTrait = (not = []) => { const pool = DATA.traits.filter((t) => !not.in
 const newWiz = () => ({ step: 0, name: "", arch: null, special: Array(7).fill(S.rules.startSpecial), rolled: rollTrait(), rerolled: false, pick: ["", ""], tags: [] });
 const WIZ_STEPS = ["Who", "SPECIAL", "Traits", "Tag skills", "Review"];
 function kitText(a) {
-  return [a.w, a.ammo ? `${a.ammo[1]} x ${a.ammo[0]}` : "", ...(a.wear || []), ...(a.items || []).map(([n, q]) => (q > 1 ? `${q} x ${n}` : n)), a.caps ? `${a.caps} caps` : ""].filter(Boolean).join(", ");
+  const plain = (n) => n.replace(/\s+-\s+/g, " ");
+  return [a.w + (a.ammo ? ` (${a.ammo[1]} rounds)` : ""), ...(a.wear || []), ...(a.items || []).map(([n, q]) => plain(n) + (q > 1 ? ` x${q}` : "")), a.caps ? `${a.caps} caps` : ""].filter(Boolean).join(", ");
 }
 function buildChar(w) {
   const a = S.rules.archetypes[w.arch];
   const c = { id: "c" + Date.now().toString(36) + S.seq++, name: w.name.trim() || a.n, background: a.n, spec: "", special: [...w.special], traits: [w.rolled, ...w.pick], tags: [...w.tags], inv: [], caps: a.caps || 0, weapons: [], gear: {} };
-  for (const n of a.wear || []) { const it = E.get(ctx(), n); if (!it) continue; const slot = /head/i.test(it.o.loc) ? "head" : it.o.loc === "Vanity" ? "vanity" : "armor"; c.gear[slot] = it.o.n; }
+  for (const n of a.wear || []) { const it = E.get(ctx(), n); if (!it) continue; if (it.o.loc === "Accessory") { c.gear.acc = [...(c.gear.acc || []), it.o.n].slice(0, 3); continue; } const slot = /head/i.test(it.o.loc) ? "head" : it.o.loc === "Vanity" ? "vanity" : "armor"; c.gear[slot] = it.o.n; }
   for (const [n, q] of a.items || []) addInv(c, n, q, true);
   const wp = E.get(ctx(), a.w);
   if (wp) {
@@ -1557,7 +1566,7 @@ function wizardBody() {
   const nav = (next, label = "Next") => `<div class="acts wiznav">${w.step > 0 ? btn("wizGo", w.step - 1, "Back") : ""}<span class="spacer"></span>${primary(next, next === "wizGo" ? w.step + 1 : "", label, "Enter")}</div>`;
   const trait = (code) => { const t = db.traitByCode.get(code); return t ? `<div class="txt"><span class="bright">${h(t.code)} ${h(t.n)}</span> <span class="s dim">${h(t.cat)}</span><br>+ ${h(t.ben)}<br>- ${h(t.draw)}</div>` : ""; };
   if (w.step === 5) return `<div class="wizsteps"><span class="on">Party so far: ${S.chars.length}</span></div>${S.chars.map((c) => `<div class="line"><span class="bright grow">${h(c.name)}</span><span class="s dim">${h(c.background)}</span></div>`).join("")}<div class="acts wiznav">${btn("wizAnother", "", "Create another character")}<span class="spacer"></span>${primary("closeModal", "", "Start the campaign", "Enter")}</div>`;
-  if (w.step === 0) return `${steps}<div class="row" style="margin-bottom:4px"><label class="f grow">Name<input id="wizName" autocomplete="off" data-u="wiz.name" value="${h(w.name)}" placeholder="Character name"></label></div><h3>Archetype <span class="s dim">your starting kit, and little else</span></h3><div class="archgrid">${S.rules.archetypes.map((a, i) => `<button class="arch ${w.arch === i ? "on" : ""}" data-a="wizArch" data-v="${i}"><span class="bright">${h(a.n)}</span><span class="s dim">${h(a.d)}</span><span class="s">${h(kitText(a))}</span></button>`).join("")}</div>${nav("wizGo")}${S.chars.length ? "" : `<div class="s dim" style="margin-top:6px">Testing? ${btn("wizSample", "", "Load the workbook's sample party", "", "tiny")}</div>`}`;
+  if (w.step === 0) return `${steps}<div class="row" style="margin-bottom:4px"><label class="f grow">Name<input id="wizName" autocomplete="off" data-u="wiz.name" value="${h(w.name)}" placeholder="Character name"></label></div><h3>Archetype <span class="s dim">who they were, and what they carry</span></h3><div class="archgrid">${S.rules.archetypes.map((a, i) => `<button class="arch ${w.arch === i ? "on" : ""}" data-a="wizArch" data-v="${i}"><span class="bright">${h(a.n)}</span><span class="s">${h(a.d)}</span><span class="s dim">${h(kitText(a))}</span></button>`).join("")}</div>${nav("wizGo")}${S.chars.length ? "" : `<div class="s dim" style="margin-top:6px">Testing? ${btn("wizSample", "", "Load the workbook's sample party", "", "tiny")}</div>`}`;
   if (w.step === 1) return `${steps}<div class="geartop"><div class="bigdt"><b>${pool - used}</b><span>POINTS LEFT</span></div><div class="s dim">Everyone starts at ${S.rules.startSpecial} in each. The total can't go over ${pool}. Lower one to raise another. Each stat is 1 to 10.</div></div>${E.SPECIAL.map((k, i) => `<div class="line wizstat"><span class="grow">${E.SPECIAL_NAMES[k]}</span><button class="btn" data-a="wizStat" data-v="${i}|-1" aria-label="Lower ${E.SPECIAL_NAMES[k]}">-</button><b>${w.special[i]}</b><button class="btn" data-a="wizStat" data-v="${i}|1" aria-label="Raise ${E.SPECIAL_NAMES[k]}">+</button></div>`).join("")}${nav("wizGo")}`;
   if (w.step === 2) { const opts = (cur, other) => `<option value="">Choose a trait</option>${options(DATA.traits.filter((t) => t.code !== w.rolled && t.code !== other).map((t) => [t.code, `${t.code} ${t.n}`]), cur)}`; return `${steps}<h3>Rolled for you</h3>${trait(w.rolled)}<div style="margin:3px 0 6px">${w.rerolled ? `<span class="s dim">Reroll used.</span>` : btn("wizReroll", "", "Reroll (once only)", "", "tiny")}</div><h3>Pick two</h3><div class="grid wide"><label class="f">First<select id="wizP0" data-u="wiz.pick.0">${opts(w.pick[0], w.pick[1])}</select></label><label class="f">Second<select id="wizP1" data-u="wiz.pick.1">${opts(w.pick[1], w.pick[0])}</select></label></div>${trait(w.pick[0])}${trait(w.pick[1])}${nav("wizGo")}`; }
   const preview = E.derive({ kind: "pc", special: w.special, traits: [w.rolled, ...w.pick], tags: w.tags, gear: {}, inv: [], weapons: [], statuses: [], effects: [], level: 1 }, ctx());
