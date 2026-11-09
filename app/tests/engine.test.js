@@ -265,17 +265,24 @@ test("armor text reads into modifiers", () => {
   assert.deepStrictEqual(E.parseGear("10+ Big Guns, +10 Explosives, 1+ END, AG:L - 2"), { BG: 10, EXP: 10, E: 1, A: -2 });
   assert.deepStrictEqual(E.parseGear("Poison resistance, Sneak +10"), { SNK: 10 });
 });
-test("vendor stock stays in tier and has no unique weapons", () => {
+test("vendor stock: guns and armor stay in tier, consumables reach down, and higher tiers carry much more", () => {
+  const size = {};
   for (const tier of [1, 3, 6]) {
     const stock = E.vendorStock({ db, rules, ov: {} }, tier);
     assert.ok(stock.length > 10);
     for (const l of stock) {
       const it = E.get({ db, ov: {} }, l.n); const t = Number(it.o.tier) || 1;
-      assert.ok(t <= tier && t >= Math.max(1, tier - 1), `${l.n} is tier ${t}`);
+      if (it.cat === "weapon" || it.cat === "armor") assert.ok(t <= tier && t >= Math.max(1, tier - 1), `${l.n} is tier ${t}`);
+      else assert.ok(t <= tier, `${l.n} is tier ${t}`);
       if (it.cat === "weapon") assert.ok(!E.isUnique(it.o), l.n);
       assert.ok(l.q > 0);
     }
+    const kind = (l) => E.get({ db, ov: {} }, l.n).cat;
+    size[tier] = { guns: stock.filter((l) => kind(l) === "weapon").length, cons: stock.filter((l) => kind(l) === "item").length, ammo: stock.filter((l) => kind(l) === "ammo").reduce((t, l) => t + l.q, 0) };
   }
+  assert.ok(size[6].cons >= size[1].cons * 2, "a tier 6 vendor has far more consumables");
+  assert.ok(size[6].ammo >= size[1].ammo * 3, "and far more ammo");
+  assert.ok(size[6].guns <= size[1].guns + 3, "but still only a few guns");
 });
 test("barter: a vendor at 100 matches the sheet's price formula, and no resale profit", () => {
   const f = E.barterFactors(40, 100); near(f.buy, 100 / 40, "buy"); near(f.sell, 40 / 100, "sell");
@@ -572,4 +579,16 @@ test("layouts: a building setting on open ground is a building in the middle, an
     for (const o of machines) assert.ok(walled(o), `the ${o.item} is inside a building, not in the street`);
     assert.ok(city.some((o) => o.item === "car") && city.some((o) => o.item === "lamppost"), "streets keep their cars and lamp posts");
   }
+});
+
+test("frag grenade: damage falls off by meter out to 5m, and it weighs half a pound", () => {
+  const t = rules.throwables["Frag Grenade"];
+  assert.deepStrictEqual([0, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 5.01].map((d) => E.blastDamage(t, d)), [12, 12, 12, 8, 8, 4, 4, 2, 1, 0]);
+  assert.strictEqual(t.ap, 1);
+  const c = JSON.parse(JSON.stringify(data.party[0])); const before = E.derive(c, ctx).enc.total; c.inv.push({ n: "Frag Grenade", q: 2, active: true });
+  assert.ok(Math.abs(E.derive(c, ctx).enc.total - before - 1) < 0.01, "two grenades are 1 lb");
+});
+test("cover: beds, campfires and other low things are open ground", () => {
+  for (const k of ["bed", "cot", "bedroll", "campfire", "pallet", "footlocker", "bench", "smallRock", "stump", "tentPole"]) assert.strictEqual(rules.mapItems[k].cover, "open", k);
+  assert.strictEqual(rules.mapItems.kitchenTable.cover, "concealment");
 });

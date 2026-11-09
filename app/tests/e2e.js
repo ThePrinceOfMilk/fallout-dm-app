@@ -690,7 +690,7 @@ async function launch() {
     assert.strictEqual(await page.locator('.w-vendor [data-a="venBarter"]').count(), 8, "eight barter levels");
     await click("venTier", "3");
     let v = (await state()).vendor; assert.strictEqual(v.tier, 3);
-    for (const l of v.stock) { const r = await page.evaluate((n) => { const it = E.get(ctx(), n); return [Number(it.o.tier), it.cat === "weapon" && E.isUnique(it.o)]; }, l.n); assert.ok(r[0] >= 2 && r[0] <= 3 && !r[1], `${l.n} tier ${r[0]}`); }
+    for (const l of v.stock) { const r = await page.evaluate((n) => { const it = E.get(ctx(), n); return [Number(it.o.tier) || 1, it.cat === "weapon" && E.isUnique(it.o), it.cat === "weapon" || it.cat === "armor"]; }, l.n); assert.ok((r[2] ? r[0] >= 2 : true) && r[0] <= 3 && !r[1], `${l.n} tier ${r[0]}`); }
     const buyAt = async () => { const row = page.locator('.w-vendor tr', { has: page.locator('[data-a="venBuy"]') }).first(); return Number((await row.locator("td").nth(3).innerText()).replace("~", "")); };
     await click("venBarter", "100"); const dear = await buyAt();
     await click("venBarter", "10"); const cheap = await buyAt();
@@ -979,9 +979,8 @@ async function launch() {
     assert.strictEqual(await p2.locator(".devlist").isVisible(), false, "Dev buttons start folded"); await p2.locator(".devtoggle").click(); assert.ok(await p2.locator(".devlist").isVisible());
     await p2.evaluate(() => { ui.setup = true; render(); });
     assert.ok((await p2.locator("#map").boundingBox()).height > 200, "the map has room");
-    let asked = ""; p2.on("dialog", (d) => { asked = d.message(); d.dismiss(); });
     await p2.evaluate(() => ACT.saveNow()); await p2.waitForTimeout(50);
-    assert.match(asked, /save a copy to your device/i);
+    assert.match(await p2.locator(".dialog").innerText(), /save a copy to this device/i, "Save asks where else to keep it");
     await ctx2.close();
   });
   await ok("UI size: six steps from the right column, remembered, and the layout keeps fitting", async () => {
@@ -996,6 +995,33 @@ async function launch() {
     await p2.evaluate(() => ACT.setScale(0.5)); assert.ok(await p2.evaluate(() => !document.documentElement.classList.contains("lt1000")));
     const d = await p2.evaluate(() => document.querySelector(".dash").getBoundingClientRect().height); assert.ok(Math.abs(d - 900) < 4, "50% still fills the screen: " + d);
     await ctx2.close();
+  });
+  await ok("Grenades, dice buttons, no standing in walls, skill check ranges, Save asks where", async () => {
+    const p3 = await (await browser.newContext({ viewport: { width: 1440, height: 900 } })).newPage(); await p3.goto(APP); await p3.waitForTimeout(150);
+    // a frag grenade thrown 2m from a raider: 8 damage, one fewer grenade, one story line
+    const r = await p3.evaluate(() => {
+      ui.setup = true; S.scene.objects = []; const e = addEnemy("Raider"); S.scene.pos[e.id] = { x: 10, y: 0 }; S.scene.pos.c1 = { x: -10, y: 0 }; e.hp = 30;
+      S.chars[0].inv.push({ n: "Frag Grenade", q: 1, active: true }); render();
+      ACT.throwStart("c1|Frag Grenade"); ui.throwing.at = { x: 8, y: 0 }; render();
+      const bar = document.querySelector(".moveconfirm").innerText;
+      ACT.throwConfirm();
+      return { hp: S.scene.npcs[0].hp, left: S.chars[0].inv.filter((l) => l.n === "Frag Grenade").length, last: S.log.slice(-1)[0], bar };
+    });
+    assert.strictEqual(r.hp, 22, "2m from the blast is 8 damage"); assert.strictEqual(r.left, 0, "the grenade is used up");
+    assert.match(r.bar, /8/); assert.match(r.last.x, /Frag Grenade/); assert.match(r.last.x, /8 DMG/);
+    assert.match(await p3.evaluate(() => throwOverlay.toString()), /throwline/);
+    assert.ok(await p3.evaluate(() => { S.chars[0].inv.push({ n: "Frag Grenade", q: 1, active: true }); ACT.throwStart("c1|Frag Grenade"); ui.throwing.at = { x: 40, y: 0 }; render(); const ok = /too far/i.test(document.querySelector(".moveconfirm").innerText); ACT.throwCancel(); return ok; }), "a throw has a 30m reach");
+    // nobody stands inside a wall
+    assert.ok(await p3.evaluate(() => { S.scene.objects = [{ id: "w1", kind: "cover", item: "concreteWall", x: 0, y: 0, w: 6, h: 0.4, cover: "impenetrable", block: true }]; return standBlocked({ x: 0, y: 0 }) && !standBlocked({ x: 0, y: 2 }); }), "walls can't be stood in");
+    // the skill check: fail and pass ranges, never below 1 or past 20, and the dice button rolls it
+    await p3.evaluate(() => { ui.setup = false; ui.chk.target = 200; render(); });
+    assert.match(await p3.locator(".w-check").innerText(), /fail 1-19 \/ pass 20/i, "a target nobody can reach still passes on a natural 20");
+    await p3.evaluate(() => { ui.chk.target = 0; render(); });
+    await p3.locator('[data-a="rollDice"][data-v="chk-c1|d20"]').click(); await p3.waitForTimeout(40);
+    const roll = await p3.evaluate(() => ui.chk.res.c1 && ui.chk.res.c1.roll); assert.ok(roll >= 1 && roll <= 20, "the dice button rolled a d20 and checked it: " + roll);
+    // Save asks where else to put it
+    await p3.evaluate(() => ACT.saveNow()); assert.match(await p3.locator(".dialog").innerText(), /save to a new location|download a copy/i);
+    await p3.context().close();
   });
   await ok("The hosted copy starts a fresh campaign on the wizard", async () => {
     const ctx2 = await browser.newContext({ viewport: { width: 1440, height: 900 } }); const p2 = await ctx2.newPage();

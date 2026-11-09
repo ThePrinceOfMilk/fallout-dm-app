@@ -732,3 +732,30 @@ html.lt1000 .win > .wt { flex-wrap: wrap; row-gap: 4px; }
 .shotmore > summary::-webkit-details-marker { display: none; }
 .shotmore .moretag { margin-left: auto; font-size: var(--fs-s); color: var(--dim); border: 1px solid var(--line); padding: 0 5px; white-space: nowrap; }
 .shotmore .facts { color: var(--dim); font-size: var(--fs-s); margin-top: 3px; }
+
+/* the roll bar and whose turn it is: heavier borders */
+.bands { border-width: 3px; height: 24px; }
+.bands .lit { outline-width: 3px; outline-offset: -3px; }
+.card.cur { border-width: 3px; }
+@keyframes turnblink { 0%, 100% { box-shadow: 0 0 0 3px #4dff7c, 0 0 16px rgba(77, 255, 124, .85); } 50% { box-shadow: 0 0 0 3px rgba(77, 255, 124, .12), 0 0 0 rgba(77, 255, 124, 0); } }
+/* numbers raised or lowered by statuses and gear */
+.cell.up, .num.up { color: var(--o-crit); } .cell.down, .num.down { color: var(--bad); }
+.statlist td.num { text-align: right; width: 3em; }
+/* dice */
+.dicebtn { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; margin-left: 3px; padding: 2px; border: 1px solid var(--line2); background: #000; color: var(--ink); cursor: pointer; vertical-align: middle; }
+.dicebtn svg { width: 100%; height: 100%; fill: currentColor; }
+.dicebtn:hover { background: var(--ink); color: #000; }
+.nowrap { white-space: nowrap; }
+@media (pointer: coarse) { .dicebtn { width: 40px; height: 40px; } }
+/* health: a box figure */
+.bodymap { display: grid; grid-template-columns: repeat(3, 62px); grid-template-areas: ". head ." "larm body rarm" "lleg . rleg"; gap: 3px; flex: none; margin-right: 8px; }
+.bodymap > div { border: 1px solid var(--line2); padding: 2px; text-align: center; font-size: var(--fs-s); display: flex; flex-direction: column; justify-content: center; min-height: 34px; background: #031007; }
+.bodymap > div span { color: var(--dim); font-size: 11px; line-height: 1.1; }
+.bodymap > div.hurt { border-color: var(--bad); background: rgba(255, 90, 77, .14); } .bodymap > div.hurt span { color: var(--bad); }
+.bodymap .hm-Head { grid-area: head; } .bodymap .hm-Body { grid-area: body; min-height: 52px; } .bodymap .hm-LArm { grid-area: larm; } .bodymap .hm-RArm { grid-area: rarm; } .bodymap .hm-LLeg { grid-area: lleg; } .bodymap .hm-RLeg { grid-area: rleg; }
+/* throwing */
+#map .throwline { stroke: var(--warn); stroke-width: 2; stroke-dasharray: 6 5; fill: none; }
+#map .blastring { fill: #ff8a3c; stroke: #ff8a3c; stroke-width: 1; stroke-opacity: .7; stroke-dasharray: 3 3; }
+#map #throwPrev.follow { opacity: .75; pointer-events: none; }
+#map #throwPrev { pointer-events: none; }
+.bodymap { width: 200px; min-width: 200px; } .bodymap > div b { white-space: nowrap; }

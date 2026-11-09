@@ -28,7 +28,9 @@ const E = (() => {
     if (!hit) return ov ? { cat: "custom", o: { n: name, ...ov } } : null;
     return ov ? { cat: hit.cat, o: { ...hit.o, ...ov } } : hit;
   }
-  const weightOf = (ctx, name) => { const h = get(ctx, name); return (h && h.o.lb) || 0; };
+  const weightOf = (ctx, name) => { const t = ctx.rules && ctx.rules.throwables && ctx.rules.throwables[name]; if (t && t.lb != null) return t.lb; const h = get(ctx, name); return (h && h.o.lb) || 0; };
+  /** Damage a blast does at this many meters: dmg[0] within 1m, dmg[1] within 2m, and so on out to the radius. */
+  const blastDamage = (t, d) => (d > t.radius + 1e-9 ? 0 : t.dmg[Math.min(t.dmg.length - 1, Math.max(0, Math.ceil(d - 1e-9) - 1))] || 0);
 
   // ---- reading numbers out of status and item text
   function parseEffect(text, positive = true) {
@@ -483,19 +485,23 @@ const E = (() => {
   }
   /** A vendor's shelf: this tier and the one below, never unique weapons. */
   function vendorStock(ctx, tier, rng = Math.random) {
-    const d = ctx.db.data; const c = ctx.rules.vendorCounts;
+    const d = ctx.db.data; const c = ctx.rules.vendorCounts; const g = ctx.rules.vendorGrowth || {}, qg = ctx.rules.vendorQtyGrowth || {};
     const inTier = (o) => { const t = Number(o.tier); return t >= Math.max(1, tier - 1) && t <= tier; };
+    const upTo = (o) => Number(o.tier || 1) <= tier;  // consumables: anything up to the vendor's tier
+    const n = (k) => Math.round((c[k] || 0) + (g[k] || 0) * (tier - 1));
+    const grow = (k) => 1 + (qg[k] || 0) * (tier - 1);
+    const med = (o) => /heal|chem|drug|stim|med/i.test(`${o.cat || ""} ${o.n}`);
     const draw = (list, n) => { const pool = [...list], out = []; while (out.length < n && pool.length) out.push(pool.splice(Math.floor(rng() * pool.length), 1)[0]); return out; };
     const armor = d.armor.filter((a) => inTier(a) && a.tier < 100 && !a.faction);
     const groups = [
-      [d.weapons.filter((w) => w.ok && inTier(w) && !isUnique(w) && !ctx.rules.genExclude.includes(w.n)), c.weapon, () => 1],
-      [armor.filter((a) => a.loc !== "Accessory"), c.armor, () => 1],
-      [armor.filter((a) => a.loc === "Accessory"), c.accessory, () => 1],
-      [d.items.filter((i) => i.effect && inTier({ tier: i.tier || 1 })), c.item, () => 1 + Math.floor(rng() * 3)],
-      [d.ammo.filter((a) => a.ok && inTier(a)), c.ammo, () => 10 + Math.floor(rng() * 41)],
-      [d.materials.filter((m) => inTier(m)), c.material, () => 1 + Math.floor(rng() * 5)],
+      [d.weapons.filter((w) => w.ok && inTier(w) && !isUnique(w) && !ctx.rules.genExclude.includes(w.n)), n("weapon"), () => 1],
+      [armor.filter((a) => a.loc !== "Accessory"), n("armor"), () => 1],
+      [armor.filter((a) => a.loc === "Accessory"), n("accessory"), () => 1],
+      [d.items.filter((i) => i.effect && upTo({ tier: i.tier || 1 })), n("item"), (o) => Math.max(1, Math.round((1 + rng() * 2) * grow(med(o) ? "med" : "item")))],
+      [d.ammo.filter((a) => a.ok && upTo(a)), n("ammo"), () => Math.round((10 + rng() * 40) * grow("ammo"))],
+      [d.materials.filter((m) => upTo(m)), n("material"), () => Math.max(1, Math.round((1 + rng() * 4) * grow("material")))],
     ];
-    return groups.flatMap(([list, n, qty]) => draw(list, n).map((o) => ({ n: o.n, q: qty() })));
+    return groups.flatMap(([list, k, qty]) => draw(list, k).map((o) => ({ n: o.n, q: qty(o) })));
   }
   /** Base value of an item in caps. est means the workbook had no price, so this is the rules' placeholder. */
   function valueOf(ctx, name) {
@@ -1306,6 +1312,6 @@ const E = (() => {
     return skipped;
   }
 
-  return { layoutReach, LAYOUT, story, weaponFamily, npcSkills, tierReq, npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
+  return { blastDamage, layoutReach, LAYOUT, story, weaponFamily, npcSkills, tierReq, npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
 })();
 if (typeof module !== "undefined") module.exports = E;

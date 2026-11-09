@@ -256,13 +256,22 @@ function turnMods(e) { const k = K(); return E.forShot(der(e), e, { round: k ? k
 function canPay(e, cost, what) { if (!fightPhase() || !cost || (e.ap || 0) >= cost) return true; toast(`${e.name} needs ${cost} AP to ${what}, has ${fmt(e.ap)}.`); return false; }
 const SOLID = new Set(["wall", "hard", "tree"]);
 const solidAt = (p) => S.scene.objects.some((o) => SOLID.has(o.kind) && o.w && E.inside(p, o));
+const WALKABLE = new Set(["bedroll", "pallet"]);
+/** Can someone stand here? Not inside walls, furniture, rocks or tree trunks. Rugs and bedrolls are fine, and hazards and markers are areas, not things. */
+function standBlocked(p) {
+  return S.scene.objects.some((o) => {
+    if (o.kind === "hazard" || o.kind === "note" || WALKABLE.has(o.item)) return false;
+    if (o.kind === "tree") { const tr = E.trunkOf(o, S.rules); return Math.hypot(p.x - o.x, p.y - o.y) <= (tr ? (o.w || 1) * tr / 2 : (o.w || 1) / 2) + 0.25; }
+    return E.inside(p, { ...o, w: (o.w || 1) + 0.4, h: (o.h || 1) + 0.4 });
+  });
+}
 function freeSpot() {
   const M = mapOf(), u = unit();
   const others = [...S.chars.map((c) => posOf(c.id)), ...foes().map((n) => posOf(n.id))];
   let best = null, bestGap = -1;
   for (let i = 0; i < 24; i++) {
     const p = { x: E.fix(-M.w / 2 + M.w * 0.38 + Math.random() * (M.w * 0.62 - u)), y: E.fix((Math.random() - 0.5) * (M.h - u * 1.6)) };
-    if (solidAt(p)) continue;
+    if (standBlocked(p)) continue;
     const gap = Math.min(1e6, ...others.map((o) => dist(o, p)));
     if (gap > bestGap) { best = p; bestGap = gap; }
     if (gap > u * 2.5) break;
@@ -659,10 +668,12 @@ function enemyWin() {
   const allies = foes().filter((e) => e.ally).length;
   return win("w-enemies", `Enemies ${n - allies < 0 ? 0 : k ? n : n - allies}${allies ? ` · Allies ${allies}` : ""}`, "", enemyTab(), { tools: btn("pwOpen", "enemies", "All", "", "tiny", "Change every enemy at once") });
 }
+const baseStats = (c) => E.derive({ ...c, statuses: [], effects: [], gear: { acc: [] } }, ctx());  // without statuses, item effects or worn gear
+const moved = (now, was) => (now > was ? "up" : now < was ? "down" : "");
 function charCard(c) {
-  const d = der(c); const sel = c.id === ui.sel; const cb = cbOf(c.id); const me = K() ? actorId() : null;
-  const sp = E.SPECIAL.map((k, i) => `<label title="${E.SPECIAL_NAMES[k]}. Base ${c.special[i]}"><span>${k}</span>${numBox(`data-c="setSpecial" data-id="${c.id}" data-i="${i}" id="sp-${c.id}-${i}"`, d.sp[k], "cell")}</label>`).join("");
-  const sk = E.SKILLS.map(([k, n]) => { const tagged = (c.tags || []).includes(k); const ovr = c.skills && c.skills[k] != null; return `<label class="${tagged ? "tagged" : ""}" title="${n}${tagged ? " (tagged)" : ""}. Type to override, clear to go back to the formula."><span>${ABBR[k]}</span>${numBox(`data-c="setSkill" data-id="${c.id}" data-k="${k}" id="sk-${c.id}-${k}"`, d.skills[k], `cell ${ovr ? "ovr" : ""}`)}</label>`; }).join("");
+  const d = der(c); const b0 = baseStats(c); const sel = c.id === ui.sel; const cb = cbOf(c.id); const me = K() ? actorId() : null;
+  const sp = E.SPECIAL.map((k, i) => `<label title="${E.SPECIAL_NAMES[k]}: ${d.sp[k]}${d.sp[k] !== b0.sp[k] ? ` (base ${b0.sp[k]}, changed by statuses or gear)` : ""}"><span>${k}</span>${numBox(`data-c="setSpecial" data-id="${c.id}" data-i="${i}" id="sp-${c.id}-${i}"`, d.sp[k], `cell ${moved(d.sp[k], b0.sp[k])}`)}</label>`).join("");
+  const sk = E.SKILLS.map(([k, n]) => { const tagged = (c.tags || []).includes(k); const ovr = c.skills && c.skills[k] != null; return `<label class="${tagged ? "tagged" : ""}" title="${n}: ${d.skills[k]}${d.skills[k] !== b0.skills[k] ? ` (base ${b0.skills[k]})` : ""}${tagged ? ", tagged" : ""}. Type to override, clear to go back to the formula."><span>${ABBR[k]}</span>${numBox(`data-c="setSkill" data-id="${c.id}" data-k="${k}" id="sk-${c.id}-${k}"`, d.skills[k], `cell ${ovr ? "ovr" : ""} ${moved(d.skills[k], b0.skills[k])}`)}</label>`; }).join("");
   const count = { inv: (c.inv || []).length, sheet: (c.perks || []).length, health: (c.statuses || []).length + (c.effects || []).length };
   const menus = CARD_MENUS.map(([id, n, ic]) => `<button class="icb" data-a="openChar" data-v="${c.id}|${id}" title="${n}">${pix(ic)}<span>${n}</span>${count[id] ? `<b>${count[id]}</b>` : ""}</button>`).join("");
   const due = (c.ptsBank || 0) > 0 || (c.perkDue || 0) > 0;
@@ -722,8 +733,53 @@ function gearMenu(c, d) {
 function sheetBody() {
   const m = ui.modal; const c = ent(m.id); if (!c) return ""; const d = der(c);
   const tabs = [["stats", "Stats"], ["perks", "Perks"], ["traits", "Traits"]].map(([id, n]) => `<button class="opt ${m.tab === id ? "on" : ""}" data-a="sheetTab" data-v="${id}">${n}</button>`).join("");
-  const body = m.tab === "perks" ? perksSect(c) : m.tab === "traits" ? traitsSect(c) : `${d.m.lucky ? `<label class="rr" style="max-width:220px"><span>Lucky Number digit</span>${bindNum(c.id, "luckyDigit", c.luckyDigit != null ? c.luckyDigit : 7)}</label>` : ""}<div class="hpline" style="margin-bottom:3px"><span>DT</span>${ovCell(c, "dt", fmt(d.dt), "Damage Threshold")}<span>INIT</span>${ovCell(c, "pri", fmt(d.pri), "Initiative base")}<span>SAVE</span>${ovCell(c, "save", d.save, "Saving throw: roll at or under on a d20")}</div>${statsSect(c, d)}<h3>What's changing this character's numbers</h3>${modsSect(c, d)}`;
+  const body = m.tab === "perks" ? perksSect(c) : m.tab === "traits" ? traitsSect(c) : `${d.m.lucky ? `<label class="rr" style="max-width:220px"><span>Lucky Number digit</span>${bindNum(c.id, "luckyDigit", c.luckyDigit != null ? c.luckyDigit : 7)}</label>` : ""}<div class="hpline" style="margin-bottom:3px"><span>DT</span>${ovCell(c, "dt", fmt(d.dt), "Damage Threshold")}<span>INIT</span>${ovCell(c, "pri", fmt(d.pri), "Initiative base")}<span>SAVE</span>${ovCell(c, "save", d.save, "Saving throw: roll at or under on a d20")}</div>${statList(c, d)}${statsSect(c, d)}<h3>What's changing this character's numbers</h3>${modsSect(c, d)}`;
   return `<div class="opts" style="margin-bottom:4px">${tabs}</div>${body}`;
+}
+// A box figure: each body part shows what's wrong with it. Limbs from the statuses that name them, head and body from the crit statuses.
+const diceBtn = (id, kind) => `<button type="button" class="dicebtn" data-a="rollDice" data-v="${id}|${kind}" title="Roll ${kind === "2d10" ? "two d10 (00 to 99)" : kind} for me" aria-label="Roll ${kind}">${DIE_SVG}</button>`;
+const DIE_SVG = `<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="5" cy="5" r="1.3"/><circle cx="11" cy="11" r="1.3"/><circle cx="8" cy="8" r="1.3"/><circle cx="11" cy="5" r="1.3"/><circle cx="5" cy="11" r="1.3"/></svg>`;
+// skill checks read as the d20 faces that fail and pass: a natural 1 always fails, a natural 20 always passes
+function checkRange(need) { const n = Math.min(20, Math.max(2, need)); return n === 20 ? "fail 1-19 / pass 20" : `fail 1-${n - 1} / pass ${n}-20`; }
+// ---- throwing
+function blastHits(at, t) {
+  const who = K() ? K().cbs.filter((c) => alive(c)).map((c) => ent(c.id)) : [...S.chars, ...S.scene.npcs];
+  return who.filter(Boolean).map((e) => { const d = dist(posOf(e.id), at); return { e, d, dmg: E.blastDamage(t, d) }; }).filter((x) => x.dmg > 0).sort((p, q) => p.d - q.d);
+}
+function throwOverlay() {
+  const T = ui.throwing; if (!T) return ""; const t = S.rules.throwables[T.item]; const from = posOf(T.id); const at = T.at || from;
+  const rings = t.dmg.map((dm, i) => `<circle class="blastring" cx="${at.x}" cy="${at.y}" r="${i + 1}" style="fill-opacity:${0.22 - i * 0.035}" vector-effect="non-scaling-stroke"/>`).reverse().join("");
+  return `<g id="throwPrev" class="${T.at ? "set" : "follow"}"><line class="throwline" x1="${from.x}" y1="${from.y}" x2="${at.x}" y2="${at.y}" vector-effect="non-scaling-stroke"/>${rings}</g>`;
+}
+function throwPreview(svg, ev) {
+  const g = document.getElementById("throwPrev"); if (!g) return; const p = inMap(svgPoint(svg, ev));
+  const ln = g.querySelector(".throwline"); if (ln) { ln.setAttribute("x2", p.x); ln.setAttribute("y2", p.y); }
+  for (const c of g.querySelectorAll(".blastring")) { c.setAttribute("cx", p.x); c.setAttribute("cy", p.y); }
+}
+function throwBar() {
+  const T = ui.throwing; const A = ent(T.id); const t = S.rules.throwables[T.item];
+  if (!T.at) return `<div class="moveconfirm"><span class="bright">${h(A.name)}: throw ${h(T.item)}</span><span class="s">Click where it lands, up to ${t.range || "any"}m. Blast ${t.radius}m: ${t.dmg.map((x, i) => `${x} at ${i + 1}m`).join(", ")}</span><span class="spacer"></span><button class="btn tiny" data-a="throwCancel" data-v="">${kbd("Esc")}Cancel</button></div>`;
+  const hits = blastHits(T.at, t); const far = dist(posOf(A.id), T.at);
+  if (t.range && far > t.range) return `<div class="moveconfirm"><span class="warn">${Math.round(far)}m is too far: ${h(T.item)} reaches ${t.range}m.</span><span class="s">Click closer.</span><span class="spacer"></span><button class="btn tiny" data-a="throwCancel" data-v="">${kbd("Esc")}Cancel</button></div>`;
+  return `<div class="moveconfirm"><span class="bright">Throw ${h(T.item)} ${far.toFixed(1)}m?</span><span><b>${t.ap}</b> AP</span><span class="s">${hits.map((x) => `${h(x.e.name)} <b>${x.dmg}</b>`).join(" · ") || "Nobody in the blast"}</span><span class="spacer"></span><button class="btn primary tiny" data-primary="1" data-a="throwConfirm" data-v="">${kbd("Enter")}Throw</button><button class="btn tiny" data-a="throwCancel" data-v="">${kbd("Esc")}Cancel</button></div>`;
+}
+function saveToBody() {
+  const m = ui.modal; const coarse = matchMedia("(pointer: coarse)").matches; const pick = !coarse && typeof window.showSaveFilePicker === "function";  // phones use the share sheet
+  return `<div class="s" style="margin-bottom:6px">${m.ok ? `Saved in this browser as <b>${h(m.slot)}</b>.` : `<span class="bad">Saving in this browser failed.</span>`} Save a copy to a file too?</div>
+   <div class="acts" style="flex-direction:column;align-items:stretch">${packFile ? `<button class="btn primary" data-primary="1" data-a="saveToFile" data-v="same">Save to ${h(packFile.name)}</button>` : ""}
+   <button class="btn ${packFile ? "" : "primary"}" ${packFile ? "" : 'data-primary="1"'} data-a="saveToFile" data-v="new">${pick ? "Save to a new location…" : coarse ? "Save a copy to this device" : "Download a copy"}</button>${btn("closeModal", "", "Not now")}</div>
+   <div class="s dim" style="margin-top:6px">${pick ? "The file you pick, or the pack you loaded, is remembered for this session." : "This browser can't remember a file location, so a copy is downloaded instead."}</div>`;
+}
+function bodyMap(c) {
+  const r = S.rules; const on = {}; for (const id of Object.keys(PARTS)) on[id] = [];
+  for (const st of c.statuses || []) {
+    const label = `${st.n.replace(/ \(.*\)$/, "")}${st.tier > 1 ? " " + st.tier : ""}`;
+    for (const p of st.parts || []) if (on[p]) on[p].push(label);
+    if (!st.parts && st.n === (r.critStatus || {}).Head) on.Head.push(label);
+    if (!st.parts && st.n === (r.critStatus || {}).Body) on.Body.push(label);
+  }
+  const box = (id) => { const bad = on[id].length; const crip = on[id].some((x) => /injur|cripp/i.test(x)); return `<div class="hm-${id} ${bad ? "hurt" : ""}" title="${h(PARTS[id][0])}${bad ? ": " + h(on[id].join(", ")) : ": fine"}"><b>${h(PARTS[id][0].replace(/^(Left|Right) /, (m) => m[0] + " "))}</b><span>${crip ? "CRIPPLED" : bad ? h(on[id].join(", ")) : "OK"}</span></div>`; };
+  return `<div class="bodymap" aria-label="Body">${["Head", "LArm", "Body", "RArm", "LLeg", "RLeg"].map(box).join("")}</div>`;
 }
 function healthBody() {
   const c = ent(ui.modal.id); if (!c) return ""; const d = der(c);
@@ -735,7 +791,7 @@ function healthBody() {
   const diffs = [...E.SPECIAL.map((k) => [E.SPECIAL_NAMES[k], base.sp[k], d.sp[k]]), ...E.SKILLS.map(([k, n]) => [n, base.skills[k], d.skills[k]]), ["Max HP", base.hp, d.hp], ["AP", base.ap, d.ap], ["DT", base.dt, d.dt]].filter(([, a, b]) => a !== b);
   const other = []; const acc = (d.m.acc || 0) - (base.m.acc || 0), dam = (d.m.dam || 0) - (base.m.dam || 0);
   if (acc) other.push(`Hit chance ${acc > 0 ? "+" : ""}${fmt(E.pct(acc))}%`); if (dam) other.push(`Damage ${dam > 0 ? "+" : ""}${fmt(E.pct(dam))}%`);
-  return `<div class="geartop"><div class="bigdt"><b>${fmt(c.hp)}/${d.hp}</b><span>HEALTH</span></div><div class="grow">${hpBar(c.hp, d.hp)}<div class="s dim" style="margin-top:2px">AP ${fmt(c.ap)}/${d.ap} · DT ${fmt(d.dt)} · Save ${d.save}${c.dbno ? ' · <span class="bad">DOWN (DBNO)</span>' : ""}${c.timesRevived ? ` · Revived ${c.timesRevived}x` : ""}</div></div></div>
+  return `<div class="geartop">${bodyMap(c)}<div class="bigdt"><b>${fmt(c.hp)}/${d.hp}</b><span>HEALTH</span></div><div class="grow">${hpBar(c.hp, d.hp)}<div class="s dim" style="margin-top:2px">AP ${fmt(c.ap)}/${d.ap} · DT ${fmt(d.dt)} · Save ${d.save}${c.dbno ? ' · <span class="bad">DOWN (DBNO)</span>' : ""}${c.timesRevived ? ` · Revived ${c.timesRevived}x` : ""}</div></div></div>
    <div class="hcols"><div><h3>Harmful</h3>${bad.map(([st, i]) => line(st, i)).join("") || `<div class="s dim">None.</div>`}<h3>Beneficial</h3>${good.map(([st, i]) => line(st, i)).join("") || `<div class="s dim">None.</div>`}${fx ? `<h3>From items</h3>${fx}` : ""}<div class="line"><input class="grow" id="addSt-${c.id}" list="dl-status" placeholder="Add status: type, Enter" data-enter="addStatusFromInput" data-id="${c.id}"></div></div>
    <div><h3>Effect on skills and stats</h3>${diffs.length ? `<table class="t"><tr><th>What</th><th>Without</th><th>Now</th></tr>${diffs.map(([n, a, b]) => `<tr><td>${h(n)}</td><td class="dim">${fmt(a)}</td><td class="${b < a ? "warn" : "bright"}">${fmt(b)}</td></tr>`).join("")}</table>` : `<div class="s dim">Nothing is changing them right now.</div>`}${other.length ? `<div class="s warn" style="margin-top:3px">${h(other.join(" · "))}</div>` : ""}</div></div>`;
 }
@@ -753,6 +809,11 @@ function vendorWin() {
   return win("w-vendor", "Vendor", "", `<div class="row wrap"><span class="s dim">TIER</span>${chipsRow("venTier", [1, 2, 3, 4, 5, 6], v.tier)}<span class="s dim" style="margin-left:6px">BARTER</span>${chipsRow("venBarter", S.rules.vendorBarter, v.barter)}</div>
     <div class="row wrap" style="margin:3px 0"><button class="opt ${ui.venTab === "buy" ? "on" : ""}" data-a="venTab" data-v="buy">Buy</button><button class="opt ${ui.venTab === "sell" ? "on" : ""}" data-a="venTab" data-v="sell">Sell</button><select id="venWho" data-u="sel" title="Who is trading">${options(S.chars.map((x) => [x.id, x.name]), ui.sel)}</select><span class="bright">${c ? fmt(c.caps) : 0} caps</span><span class="s dim">Barter ${fmt(bar)} · Buy x${fmt(Math.round(f.buy * 100) / 100)} · Sell x${fmt(Math.round(f.sell * 100) / 100)}</span></div>
     <table class="t"><tr><th></th><th>Item</th><th>Qty</th><th>Caps</th><th></th></tr>${body || `<tr><td colspan="5" class="dim">Nothing here.</td></tr>`}</table>`, { tools: btn("venRoll", "", "Restock", "", "tiny", "New stock at this tier") });
+}
+function statList(c, d) {
+  const b0 = baseStats(c);
+  const row = (name, now, was) => `<tr><td>${h(name)}</td><td class="num ${moved(now, was) || "bright"}">${fmt(now)}</td><td class="s dim">${now !== was ? "base " + fmt(was) : ""}</td></tr>`;
+  return `<div class="hcols statlist"><div><h3>S.P.E.C.I.A.L.</h3><table class="t">${E.SPECIAL.map((k) => row(E.SPECIAL_NAMES[k], d.sp[k], b0.sp[k])).join("")}</table></div><div><h3>Skills</h3><table class="t">${E.SKILLS.map(([k, n]) => row(n + ((c.tags || []).includes(k) ? " (tagged)" : ""), d.skills[k], b0.skills[k])).join("")}</table></div></div>`;
 }
 function statsSect(c, d) {
   return `<div class="grid">${field("AP now", bindNum(c.id, "ap", c.ap))}${field("Caps", bindNum(c.id, "caps", c.caps))}${field(`XP (next ${E.xpFor(c.level + 1, S.rules)})`, bindNum(c.id, "xp", c.xp))}${field("Level", bindNum(c.id, "level", c.level))}${field("Revived", bindNum(c.id, "timesRevived", c.timesRevived))}${field("Super crit %", numBox(`data-c="setSuper" data-id="${c.id}" id="sc-${c.id}" placeholder="${fmt(E.pct(d.superCrit))}"`, c.superCrit == null ? "" : E.pct(c.superCrit)))}</div>
@@ -852,6 +913,7 @@ function fightMap() {
 }
 const mapTools = () => Object.entries(MAP_OBJ).filter(([, x]) => x[1]).map(([id, [n]]) => `<button class="btn tiny ${ui.place === id ? "on" : ""}" data-a="mapPlace" data-v="${id}" title="Then click the map to place ${h(n.toLowerCase())}">+${h(n.split(" ")[0])}</button>`).join("");
 function mapExtras() {
+  if (ui.throwing) return throwBar();
   const pm = ui.pendingMove && ent(ui.pendingMove.id);
   if (pm) { const m = ui.pendingMove; const left = (pm.ap || 0) - m.cost; const tgt = ui.atk && ui.atk.tgt && ui.atk.att === m.id && ent(ui.atk.tgt); const newR = tgt ? bandFor(dist(m, posOf(tgt.id))) : null; return `<div class="moveconfirm"><span class="bright">Move ${h(pm.name)}?</span><span><b>${fmt(m.cost)}</b> AP</span><span><b>${fmt(left)}</b> left</span>${tgt ? `<span>${h(tgt.name)}: <b>R${rangeOf(m.id, tgt.id)} to R${newR}</b></span>` : ""}<span class="spacer"></span><button class="btn primary tiny" data-primary="1" data-a="moveConfirm" data-v="">${kbd("Enter")}Confirm</button><button class="btn tiny" data-a="moveCancel" data-v="">${kbd("Esc")}Cancel</button></div>`; }
   const sel = ui.mapSel && S.scene.objects.find((o) => o.id === ui.mapSel);
@@ -1002,7 +1064,7 @@ function mapSvg() {
   if (k && fightPhase() && actorId()) { const a = posOf(actorId()); const r = reachOf(ent(actorId())); if (r) extra += `<circle class="reach" cx="${a.x}" cy="${a.y}" r="${r}"/>`; }
   if (ui.atk && ui.atk.tgt && ent(ui.atk.tgt)) { const a = posOf(ui.atk.att), b = posOf(ui.atk.tgt); extra += aimLine(a, b); }
   const zoomed = ui.zoom ? ui.zoom.k : 1;
-  return `<div class="mapwrap"><svg id="map" class="${ui.place ? "placing" : ""}" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of ${h(M.n)}, ${M.w} by ${M.h} meters"><rect class="floor" x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/><path class="grid" d="${grid}" style="stroke-opacity:${v.w > 120 ? 0.35 : v.w > 60 ? 0.6 : 1}"/>${objs}${extra}${people}</svg><div class="zoombar"><span class="scale s">${step}m grid · ${Math.round(v.w)}m across</span><button class="btn tiny" data-a="mapZoom" data-v="1.5" title="Zoom in (or scroll)">+</button><button class="btn tiny" data-a="mapZoom" data-v="0.667" title="Zoom out (or scroll)">-</button><button class="btn tiny ${zoomed > 1 ? "on" : ""}" data-a="mapZoom" data-v="0" title="Show the whole map">Fit</button></div></div>`;
+  return `<div class="mapwrap"><svg id="map" class="${ui.place ? "placing" : ""}" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of ${h(M.n)}, ${M.w} by ${M.h} meters"><rect class="floor" x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/><path class="grid" d="${grid}" style="stroke-opacity:${v.w > 120 ? 0.35 : v.w > 60 ? 0.6 : 1}"/>${objs}${extra}${throwOverlay()}${people}</svg><div class="zoombar"><span class="scale s">${step}m grid · ${Math.round(v.w)}m across</span><button class="btn tiny" data-a="mapZoom" data-v="1.5" title="Zoom in (or scroll)">+</button><button class="btn tiny" data-a="mapZoom" data-v="0.667" title="Zoom out (or scroll)">-</button><button class="btn tiny ${zoomed > 1 ? "on" : ""}" data-a="mapZoom" data-v="0" title="Show the whole map">Fit</button></div></div>`;
 }
 function checkValue(e, use) { const d = der(e); return E.SPECIAL.includes(use) ? { v: (d.sp[use] || 0) * S.rules.specialAsSkill, label: `${SP_LABEL[use]} ${d.sp[use]} x ${S.rules.specialAsSkill}` } : { v: d.skills[use] || 0, label: `${SKILL_NAME[use]} ${d.skills[use] || 0}` }; }
 function checkBody() {
@@ -1013,11 +1075,11 @@ function checkBody() {
   const rows = who.map((e) => {
     const { v } = checkValue(e, m.use); const need = E.checkNeeded(v, num(m.target, 0), S.rules); const r = m.res[e.id];
     const used = S.scene.checks[e.id] || 0;
-    return `<tr class="${e.dbno ? "faint" : ""}"><td class="${r ? "" : "bright"}">${h(e.name)}${!k && used >= S.rules.checksPerPlayer ? ` <span class="tag warn" title="Pre-combat checks used">${used}/${S.rules.checksPerPlayer}</span>` : ""}</td><td>${fmt(v)}</td><td class="bright">${need}+</td><td class="faint">${E.checkOdds(need)}%</td><td style="width:40px">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.roll}</span>` : numBox(`id="chk-${e.id}" maxlength="2" data-enter="chkRoll" data-id="${e.id}" placeholder="d20" aria-label="d20 for ${h(e.name)}"`, "", "cell")}</td><td style="width:48px">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.pass ? "PASS" : "FAIL"}</span>` : ""}</td></tr>`;
+    return `<tr class="${e.dbno ? "faint" : ""}"><td class="${r ? "" : "bright"}">${h(e.name)}${!k && used >= S.rules.checksPerPlayer ? ` <span class="tag warn" title="Pre-combat checks used">${used}/${S.rules.checksPerPlayer}</span>` : ""}</td><td>${fmt(v)}</td><td class="bright nowrap">${checkRange(need)}</td><td class="faint">${E.checkOdds(need)}%</td><td style="width:74px" class="nowrap">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.roll}</span>` : numBox(`id="chk-${e.id}" maxlength="2" data-enter="chkRoll" data-id="${e.id}" placeholder="d20" aria-label="d20 for ${h(e.name)}"`, "", "cell")}${diceBtn(`chk-${e.id}`, "d20")}</td><td style="width:48px">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.pass ? "PASS" : "FAIL"}</span>` : ""}</td></tr>`;
   }).join("");
   const any = Object.keys(m.res).length;
   return `${m.revive && ent(m.revive) ? `<div class="banner s">Reviving ${h(ent(m.revive).name)}: type the medic's roll</div>` : ""}<div class="row wrap" style="margin-bottom:2px"><select id="chkUse" data-u="chk.use" title="Skill or SPECIAL">${options(uses, m.use)}</select><span class="s dim">VS</span><span style="width:34px">${numBox(`id="chkTarget" data-u="chk.target" title="NPC skill or difficulty"`, m.target, "cell")}</span>${Object.entries(S.rules.difficulty).map(([n, x]) => `<button class="opt ${num(m.target) === x ? "on" : ""}" data-a="chkPreset" data-v="${x}" title="${h(n)}">${h(n[0] === "V" ? "VH" : n[0] === "E" && n[1] === "x" ? "X" : n[0])}${x}</button>`).join("")}</div>
-   <table class="t"><tr><th>Who</th><th>Has</th><th>Roll</th><th>Odds</th><th>d20</th><th></th></tr>${rows}</table>
+   <table class="t"><tr><th>Who</th><th>Has</th><th>d20: fail / pass</th><th>Odds</th><th>d20</th><th></th></tr>${rows}</table>
    ${any ? `<div class="row s dim" style="margin-top:2px">${btn("chkClear", "", "New check", "", "tiny")}<span class="spacer"></span>XP to passers ${numBox(`id="chkXp" style="width:36px" data-u="chk.xp" data-enter="chkXp"`, m.xp)}${btn("chkXp", "", "Add", "", "tiny")}</div>` : ""}`;
 }
 function stealthStage() {
@@ -1026,12 +1088,12 @@ function stealthStage() {
   return `<div class="s dim" style="margin-bottom:3px">Pick a player on the left. Each action gets a d20 stealth roll. Caught means ${S.rules.caughtInit} initiative.</div>${ui.atk ? attackPanel() : ""}
    <div class="bright">${h(A.name)} <span class="tag">${c.caught ? "CAUGHT" : "HIDDEN"}</span> <span class="s dim">AP ${fmt(A.ap)}/${d.ap} · Sneak ${d.skills.SNK}</span></div>
    ${ui.atk ? "" : `<div class="acts">${btn("attack", "", "Attack", "A")}${btn("moveModal", "", "Move", "M")}${btn("itemModal", "", "Item", "I")}${btn("reload", "", "Reload", "R")}</div>`}
-   ${!c.caught ? `<div class="rollrow"><span>Stealth: at or under <span class="bright">${n}</span> stays hidden <span class="tag warn" title="The Gameplay Loop says Sneak/5-5 without saying how to read it. Change it in Settings.">PROVISIONAL</span></span><input class="rollbox" id="stealthRoll" inputmode="numeric" maxlength="2" autocomplete="off" data-enter="stealthRoll" placeholder="d20" aria-label="Stealth d20 roll">${btn("stealthRoll", "", "Roll", "", "tiny")}</div>` : ""}
+   ${!c.caught ? `<div class="rollrow"><span>Stealth: at or under <span class="bright">${n}</span> stays hidden <span class="tag warn" title="The Gameplay Loop says Sneak/5-5 without saying how to read it. Change it in Settings.">PROVISIONAL</span></span><input class="rollbox" id="stealthRoll" inputmode="numeric" maxlength="2" autocomplete="off" data-enter="stealthRoll" placeholder="d20" aria-label="Stealth d20 roll">${diceBtn("stealthRoll", "d20")}${btn("stealthRoll", "", "Roll", "", "tiny")}</div>` : ""}
    <div class="acts" style="margin-top:6px">${ui.atk ? "" : primary("toInit", "", "Roll initiative", "Enter")}${btn("endCombat", "", "Cancel fight")}</div>`;
 }
 function initStage() {
   const k = K();
-  const rows = k.cbs.map((c) => { const e = ent(c.id); return `<tr><td>${h(e.name)}${c.caught ? ` <span class="tag bad">CAUGHT ${S.rules.caughtInit}</span>` : ""}</td><td>${fmt(c.base)}</td><td style="width:60px">${numBox(`id="init-${c.id}" data-initroll="${c.id}" data-enter="initNext" aria-label="d20 for ${h(e.name)}"`, c.roll, "cell")}</td><td class="bright">${c.roll == null || c.roll === "" ? "-" : fmt(c.base + num(c.roll, 0))}</td></tr>`; }).join("");
+  const rows = k.cbs.map((c) => { const e = ent(c.id); return `<tr><td>${h(e.name)}${c.caught ? ` <span class="tag bad">CAUGHT ${S.rules.caughtInit}</span>` : ""}</td><td>${fmt(c.base)}</td><td style="width:60px">${numBox(`id="init-${c.id}" data-initroll="${c.id}" data-enter="initNext" aria-label="d20 for ${h(e.name)}"`, c.roll, "cell")}${diceBtn(`init-${c.id}`, "d20")}${""}</td><td class="bright">${c.roll == null || c.roll === "" ? "-" : fmt(c.base + num(c.roll, 0))}</td></tr>`; }).join("");
   return `<div class="s dim" style="margin-bottom:3px">d20 + (AGL + PER) / 2. Type each player's roll. Enemy rolls are filled in, and you can change them.</div><table class="t"><tr><th>Who</th><th>Base</th><th>d20</th><th>Total</th></tr>${rows}</table><div class="acts" style="margin-top:6px">${primary("beginRounds", "", "Start round 1", "Enter")}${btn("rerollNpcInit", "", "Reroll enemies")}</div>`;
 }
 function apPips(cur, max) { const n = Math.min(Math.max(max, cur), 30); let r = ""; for (let i = 0; i < n; i++) r += `<i class="${i < cur ? "on" : ""}"></i>`; return `<span class="pips" title="${fmt(cur)} of ${fmt(max)} AP">${r}</span>`; }
@@ -1053,7 +1115,9 @@ function turnStage() {
   const cons = (A.inv || []).map((l, i) => ({ l, i, it: E.get(ctx(), l.n) })).filter((x) => x.it && x.it.cat === "item" && usable(x.it.o));
   const head = `<div class="turnhead ${A.kind === "pc" ? "" : A.ally ? "ally" : "foe"}"><div class="turnwho"><span class="turnlabel">ROUND ${k.round} // ACTING</span><span class="actname">${h(A.name)}</span></div><div class="turnap"><span class="turnlabel">ACTION POINTS</span><span class="apbig">${fmt(A.ap)}<small>/${d.ap}</small></span>${apPips(A.ap || 0, d.ap)}</div><button class="btn primary endturn" data-a="next" data-v="">${kbd("N")}End turn</button></div>`;
   const actions = `<div class="acts">${btn("reload", "", `Reload${v && v.usesAmmo ? ` ${fmt(v.reload)}` : ""}`, "R", v && v.usesAmmo ? na(v.reload) : "na")}${btn("swap", "", `Swap ${S.rules.swapAP}`, "", na(S.rules.swapAP))}${btn("moveModal", "", "Move", "M", free)}${slot && slot.jammed ? btn("clearJamBtn", "", `Clear jam ${v.clearJam}`, "", `primary ${na(v.clearJam)}`) : ""}${btn("check", "", "Skill check")}${btn("reviveChk", "", "Revive", "", S.chars.some((x) => x.dbno) ? "" : "na")}${btn("statusModal", "", "Status")}${d.m.inspire ? btn("inspire", "", "Inspire 2", "", na(2)) : ""}</div>`;
-  const consBody = cons.map((x) => `<button class="opt" data-a="useItemFrom" data-v="${A.id}|${x.i}" title="${h(x.it.o.effect || "")}">${pix(itemKind(x.l.n)[1])} ${h(x.l.n)} x${fmt(x.l.q)}${x.it.o.ap ? ` <small>${x.it.o.ap}AP</small>` : ""}</button>`).join("") || `<span class="s dim">None carried.</span>`;
+  const throws = (A.inv || []).filter((l) => (S.rules.throwables || {})[l.n]);
+  const throwBtns = throws.map((l) => `<button class="opt" data-a="throwStart" data-v="${A.id}|${h(l.n)}" title="Throw it: pick where it lands on the map">${pix("bomb")} Throw ${h(l.n)} x${fmt(l.q)} <small>${S.rules.throwables[l.n].ap}AP</small></button>`).join("");
+  const consBody = throwBtns + cons.map((x) => `<button class="opt" data-a="useItemFrom" data-v="${A.id}|${x.i}" title="${h(x.it.o.effect || "")}">${pix(itemKind(x.l.n)[1])} ${h(x.l.n)} x${fmt(x.l.q)}${x.it.o.ap ? ` <small>${x.it.o.ap}AP</small>` : ""}</button>`).join("") || `<span class="s dim">None carried.</span>`;
   return `${head}${banners.join("")}<div class="segs">${ui.atk ? attackPanel() : seg("Attack", `<span class="s dim">${h(A.name)} has no weapon.</span>`)}${seg("Actions", actions, "half")}${seg("Consumables", `<div class="row wrap">${consBody}</div>`, "half")}${d.notes.length ? seg(`For the DM <small>${d.notes.length}</small>`, fold(`rem:${A.id}`, "Reminders", d.notes.map((n) => `<div class="txt s">${h(n)}</div>`).join("")), "half") : ""}${(S.scene.effects || []).length ? seg("Carried over", S.scene.effects.map((f) => `<div class="txt s">${h(f.label)}${f.hit ? `: ${f.who} ${E.pct(f.hit)}% to hit` : ""}</div>`).join(""), "half") : ""}</div>`;
 }
 function lastResult() { const l = [...S.log].reverse().find((x) => ["hit", "miss", "jam"].includes(x.k)); return l ? `<div class="s dim" style="margin-bottom:4px">LAST: ${h(l.x)}</div>` : ""; }
@@ -1083,7 +1147,7 @@ function attackPanel() {
      <div class="math">HIT ${h(E.hitLine(hc))}${num(a.ov.hit) != null ? ` <span class="warn">DM SET ${h(a.ov.hit)}%</span>` : ""}</div>
      <div class="s dim">Dam ${v.pellets ? `${fmt(v.base)}x${v.pellets}` : fmt(v.base)} Pen ${fmt(v.pen)}${v.count > 1 ? ` · burst ${v.count}` : ""}${p.extra || p.swap ? ` · ${fmt(v.ap)}${p.extra ? ` +${p.extra} aimed` : ""}${p.swap ? ` +${p.swap} swap` : ""} AP` : ""}</div></div></div>`;
   const rolling = `<div class="bands">${bars}</div><div class="bright bandtext">${h(E.bandText(p.b))}</div>
-   <div class="rollrow"><input class="rollbox" id="roll" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="00" value="${h(a.roll)}" data-u="atk.roll" data-enter="fire" aria-label="Two-dice roll, 00 to 99">${btn("fire", "", "Resolve", "Enter", `primary ${p.cost > (A.ap || 0) && !a.ov.free ? "na" : ""}`)}<span class="spacer"></span><button class="btn tiny ${ui.atkOv ? "on" : ""}" data-a="atkOvToggle" data-v="" title="Overrides">OVR</button>${K().phase === "stealth" ? btn("closeAtk", "", "Close", "Esc", "tiny") : ""}</div>${ovr}
+   <div class="rollrow"><input class="rollbox" id="roll" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="00" value="${h(a.roll)}" data-u="atk.roll" data-enter="fire" aria-label="Two-dice roll, 00 to 99">${diceBtn("roll", "2d10")}${btn("fire", "", "Resolve", "Enter", `primary ${p.cost > (A.ap || 0) && !a.ov.free ? "na" : ""}`)}<span class="spacer"></span><button class="btn tiny ${ui.atkOv ? "on" : ""}" data-a="atkOvToggle" data-v="" title="Overrides">OVR</button>${K().phase === "stealth" ? btn("closeAtk", "", "Close", "Esc", "tiny") : ""}</div>${ovr}
    ${a.err ? `<div class="errline">${h(a.err)}</div>` : ""}${warn.map((x) => `<div class="warnline">${h(x)}</div>`).join("")}
    ${r ? `<div class="result ${r.outcome}">${(() => { const facts = `${r.name}: ${h(r.head)}${r.math ? `<br>${h(r.math)}<br>${h(r.tName)} ${r.hp}/${r.max} HP${r.hp <= 0 ? " DOWN" : ""}` : ""}${r.ammoText ? ` · ${h(r.ammoText)}` : ""}${(r.auto || []).length ? `<br>Applied: ${h(r.auto.join(", "))}` : ""}`;
      return r.story ? `<details class="shotmore" data-k="atkres"${ui.open.atkres ? " open" : ""}><summary><span class="story">${h(r.story)}</span><span class="moretag">${ui.open.atkres ? "less" : "details"}</span></summary><div class="facts">${facts}</div></details>` : facts; })()}${r.outcome === "jam" ? `<br>Press J to clear the jam.` : ""}${r.status ? `<br>${btn("applyHitStatus", r.status, `Apply ${h(r.status)} to ${h(r.tName)}`, "", "tiny")}` : ""}${r.radius ? `<br><span class="warn">Blast radius ${r.radius}: apply damage to anyone else in it by typing their HP.</span>` : ""}</div>` : ""}`;
@@ -1091,7 +1155,7 @@ function attackPanel() {
 }
 function roundEndStage() {
   const k = K(); const down = S.chars.filter((c) => c.dbno);
-  const rows = down.map((c) => { const d = der(c); const sv = (k.saves || {})[c.id]; return `<div class="line"><span class="grow"><span class="bright">${h(c.name)}</span> <span class="s dim">save at or under ${d.save}${c.timesRevived ? `, revived ${c.timesRevived}x` : ""}</span></span>${sv ? `<span class="${sv.pass ? "bright" : "warn"}">${sv.pass ? "PASS" : "FAIL"} rolled ${sv.roll}</span>${btn("saveUp", c.id, `Up at ${S.rules.reviveHP} HP with Shock`, "", sv.pass ? "tiny primary" : "tiny")}` : `<input class="rollbox" style="width:44px;height:22px;font-size:var(--fs)" id="save-${c.id}" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="d20" data-enter="saveRoll" data-id="${c.id}" aria-label="Saving throw for ${h(c.name)}">${btn("saveRollBtn", c.id, "Roll", "", "tiny")}`}</div>`; }).join("");
+  const rows = down.map((c) => { const d = der(c); const sv = (k.saves || {})[c.id]; return `<div class="line"><span class="grow"><span class="bright">${h(c.name)}</span> <span class="s dim">save at or under ${d.save}${c.timesRevived ? `, revived ${c.timesRevived}x` : ""}</span></span>${sv ? `<span class="${sv.pass ? "bright" : "warn"}">${sv.pass ? "PASS" : "FAIL"} rolled ${sv.roll}</span>${btn("saveUp", c.id, `Up at ${S.rules.reviveHP} HP with Shock`, "", sv.pass ? "tiny primary" : "tiny")}` : `<input class="rollbox" style="width:44px;height:22px;font-size:var(--fs)" id="save-${c.id}" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="d20" data-enter="saveRoll" data-id="${c.id}" aria-label="Saving throw for ${h(c.name)}">${diceBtn(`save-${c.id}`, "d20")}${btn("saveRollBtn", c.id, "Roll", "", "tiny")}`}</div>`; }).join("");
   const npcs = k.cbs.filter((c) => sideOf(c.id) === "npc" && alive(c));
   return `${down.length ? `<h3>Saving throws <span class="tag warn" title="What a passed save does is not decided yet, so you choose.">YOUR CALL</span></h3>${rows}<div class="s dim">Roll a d20 at or under the number. What a pass does isn't decided yet, so you choose.</div>` : ""}
    ${npcs.length ? fold("flee", "Enemies fleeing", npcs.map((c) => `<div class="line"><span class="grow">${h(ent(c.id).name)}</span>${btn("flee", c.id, "Fled", "", "tiny")}</div>`).join(""), { badge: npcs.length }) : ""}
@@ -1122,10 +1186,10 @@ function endStage() {
   const who = S.chars.map((c) => [c.id, c.name]);
   const extras = u.extra.map((l, i) => `<tr><td class="bright">${pix(itemKind(l.n)[1])} ${h(l.n)}</td><td>${fmt(l.q)}</td><td class="dim">Added by DM</td><td><select id="exTo-${i}" data-u="end.extra.${i}.to">${options([["", "Leave"], ...who], l.to || "")}</select> <button class="btn tiny" data-a="endExDel" data-v="${i}" title="Remove">X</button></td></tr>`).join("");
   const dropRows = loot.map((l) => `<tr><td class="bright">${pix(l.caps ? "dot" : itemKind(l.n)[1])} ${h(l.n)}</td><td>${l.q}</td><td class="dim">${h(l.from)}</td><td><select id="loot-${h(l.key.replace(":", "-"))}" data-u="end.loot.${h(l.key)}">${options([["", "Leave"], ...who], u.loot[l.key] || "")}</select></td></tr>`).join("");
-  const lootBody = `<div class="row wrap" style="margin-bottom:3px"><label class="chk s">Give all to <select data-c="lootAll" id="lootAll" style="margin-left:4px"><option value="">Choose</option>${options(who, "")}</select></label><span class="spacer"></span><span class="s dim">Loot roll d20</span><span style="width:40px">${numBox(`id="lootRoll" data-u="end.lootRoll"`, u.lootRoll, "cell")}</span>${shift != null ? `<span class="bright s">average tier ${shift >= 0 ? "+" : ""}${shift}</span>` : ""}</div>${dropRows || extras ? `<table class="t"><tr><th>Item</th><th>Qty</th><th>From</th><th>Goes to</th></tr>${dropRows}${extras}</table>` : `<div class="s dim">Nothing dropped.</div>`}
+  const lootBody = `<div class="row wrap" style="margin-bottom:3px"><label class="chk s">Give all to <select data-c="lootAll" id="lootAll" style="margin-left:4px"><option value="">Choose</option>${options(who, "")}</select></label><span class="spacer"></span><span class="s dim">Loot roll d20</span><span style="width:40px">${numBox(`id="lootRoll" data-u="end.lootRoll"`, u.lootRoll, "cell")}${diceBtn("lootRoll", "d20")}${""}</span>${shift != null ? `<span class="bright s">average tier ${shift >= 0 ? "+" : ""}${shift}</span>` : ""}</div>${dropRows || extras ? `<table class="t"><tr><th>Item</th><th>Qty</th><th>From</th><th>Goes to</th></tr>${dropRows}${extras}</table>` : `<div class="s dim">Nothing dropped.</div>`}
     <div class="row wrap lootadd"><input id="exN" class="grow" autocomplete="off" list="dl-all" placeholder="Add an item to the loot: type a name" data-u="end.exN" value="${h(u.exN)}" data-enter="endExAdd"><span style="width:40px">${numBox(`id="exQ" data-u="end.exQ" title="How many"`, u.exQ, "cell")}</span><select id="exTo" data-u="end.exTo" title="Goes to">${options(who, u.exTo)}</select>${btn("endExAdd", "", "Add", "", "tiny")}</div>`;
   const banner = `<div class="turnhead"><div class="turnwho"><span class="turnlabel">COMBAT OVER // ${k.round} ROUND${k.round === 1 ? "" : "S"}</span><span class="actname">After Action</span></div><span></span><button class="btn primary endturn" data-a="finishCombat" data-v="">Finish and apply</button></div>`;
-  return `${banner}<div class="segs">${seg("XP and healing", `<table class="t"><tr><th>Who</th><th>HP</th><th title="Passive heal has no number in the sheet. Set it in Settings.">Heal</th><th title="Who earns enemy XP is not decided. Change it in Settings.">XP: ${h(S.rules.xpAward)}</th></tr>${pcs}</table>`)}${seg("Loot", lootBody)}${k.used.length ? seg("Addiction rolls", k.used.map((x, i) => `<div class="line"><span class="grow">${h(ent(x.who) ? ent(x.who).name : "")} used ${h(x.n)}: d100 at or under ${E.pct(x.addict)} = addicted</span><span style="width:44px">${numBox(`id="add-${i}" data-u="end.add.${i}" aria-label="d100"`, u.add[i], "cell")}</span></div>`).join("")) : ""}</div>`;
+  return `${banner}<div class="segs">${seg("XP and healing", `<table class="t"><tr><th>Who</th><th>HP</th><th title="Passive heal has no number in the sheet. Set it in Settings.">Heal</th><th title="Who earns enemy XP is not decided. Change it in Settings.">XP: ${h(S.rules.xpAward)}</th></tr>${pcs}</table>`)}${seg("Loot", lootBody)}${k.used.length ? seg("Addiction rolls", k.used.map((x, i) => `<div class="line"><span class="grow">${h(ent(x.who) ? ent(x.who).name : "")} used ${h(x.n)}: d100 at or under ${E.pct(x.addict)} = addicted</span><span style="width:44px">${numBox(`id="add-${i}" data-u="end.add.${i}" aria-label="d100"`, u.add[i], "cell")}${diceBtn(`add-${i}`, "d100")}${""}</span></div>`).join("")) : ""}</div>`;
 }
 function defeatStage() {
   const u = (ui.def = ui.def || { lose: {}, caps: {}, xp: {} });
@@ -1446,12 +1510,12 @@ function renderModal() {
   const m = ui.modal; const ce = ent(m.id);
   const defs = {
     move: [`Move: ${h((ent(m.att) || {}).name)}`, moveModal], item: [`Use item: ${h((ent(m.who) || {}).name)}`, itemModal], status: [`Status: ${h((ce || {}).name)}`, statusModal], edit: [`Edit: ${h((ce || {}).name)}`, editModal], level: [`${h((ce || {}).name)}: now level ${(ce || {}).level}`, levelModal], help: ["Keys", helpModal], search: ["Search", searchModal], detail: [m.hit ? `${h(m.hit[1].n)} [${h(m.hit[0])}]` : "", detailModal], dev: [m.cat ? h((DEV.find(([id]) => id === m.cat) || [])[1]) : "", devWin],
-    settings: ["Settings: game rules", settingsBody], items: ["Item browser", itemsBody], loadWin: ["Load save", loadBody], autoWin: ["Autosave", autoBody], uiScale: ["UI size", scaleBody], notes: ["Old notes", notesBody], check: ["Skill check", checkBody], sheet: [`${h((ce || {}).name)}: Character`, sheetBody], health: [`${h((ce || {}).name)}: Health`, healthBody], guide: ["How to use this", guideBody], wizard: ["New character", wizardBody], newc: ["New campaign", newcBody], pwide: [m.side === "enemies" ? "All enemies" : "Party-wide", pwBody],
+    settings: ["Settings: game rules", settingsBody], items: ["Item browser", itemsBody], loadWin: ["Load save", loadBody], autoWin: ["Autosave", autoBody], uiScale: ["UI size", scaleBody], saveTo: ["Save", saveToBody], notes: ["Old notes", notesBody], check: ["Skill check", checkBody], sheet: [`${h((ce || {}).name)}: Character`, sheetBody], health: [`${h((ce || {}).name)}: Health`, healthBody], guide: ["How to use this", guideBody], wizard: ["New character", wizardBody], newc: ["New campaign", newcBody], pwide: [m.side === "enemies" ? "All enemies" : "Party-wide", pwBody],
     char: [`${h((ce || {}).name)}: Inventory`, () => (ce ? invSect(ce, der(ce)) : "")],
   };
   const [title, body] = defs[m.type];
   const key = m.type === "dev" ? "dev" : m.type;
-  const size = m.type === "dev" ? "full" : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard"].includes(m.type) ? "big" : ["autoWin", "move", "uiScale"].includes(m.type) ? "tiny" : "";
+  const size = m.type === "dev" ? "full" : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard"].includes(m.type) ? "big" : ["autoWin", "move", "uiScale", "saveTo"].includes(m.type) ? "tiny" : "";
   return `<div class="scrim" data-a="closeModal"><div class="dialog float ${size}" data-a="noop" data-dlg="${key}" style="${dlgStyle(key)}" role="dialog" aria-modal="true"><header class="wt"><span>${title}</span><span class="spacer"></span><button class="btn tiny" data-a="closeModal" data-v="">${kbd("Esc")}Close</button></header><div class="wb" data-scroll="modal-${key}">${body()}</div></div></div>`;
 }
 function moveSpot(att, tgt, r) {
@@ -1468,7 +1532,8 @@ function itemModal() {
   const m = ui.modal; const A = ent(m.who);
   const lines = (A.inv || []).map((l, i) => ({ l, i, it: E.get(ctx(), l.n) })).filter((x) => x.it && x.it.cat === "item" && usable(x.it.o));
   const sel = m.sel != null ? (A.inv || [])[m.sel] : null; const it = sel && E.get(ctx(), sel.n);
-  const list = lines.map((x, n) => `<button class="rowbtn ${m.sel === x.i ? "on" : ""}" data-a="itemPick" data-v="${x.i}">${n < 9 ? kbd(String(n + 1)) : ""}<span class="grow">${h(x.l.n)} <span class="dim">x ${fmt(x.l.q)}</span>${x.l.active ? "" : ` <span class="tag">STOWED</span>`}</span><span class="s dim">${x.it.o.ap != null ? x.it.o.ap + " AP" : ""}</span></button>`).join("");
+  const tl = (A.inv || []).filter((l) => (S.rules.throwables || {})[l.n]).map((l) => `<button class="rowbtn" data-a="throwStart" data-v="${A.id}|${h(l.n)}">${pix("bomb")}<span class="grow">Throw ${h(l.n)} <span class="dim">x ${fmt(l.q)}</span></span><span class="s dim">${S.rules.throwables[l.n].ap} AP</span></button>`).join("");
+  const list = tl + lines.map((x, n) => `<button class="rowbtn ${m.sel === x.i ? "on" : ""}" data-a="itemPick" data-v="${x.i}">${n < 9 ? kbd(String(n + 1)) : ""}<span class="grow">${h(x.l.n)} <span class="dim">x ${fmt(x.l.q)}</span>${x.l.active ? "" : ` <span class="tag">STOWED</span>`}</span><span class="s dim">${x.it.o.ap != null ? x.it.o.ap + " AP" : ""}</span></button>`).join("");
   let detail = "";
   if (it) {
     const tgtE = ent(m.tgt) || A;
@@ -1630,9 +1695,8 @@ const ACT = {
     if (!cur) { cur = { id: "s" + Date.now().toString(36), name: `Save ${list.length + 1}` }; prefs.slot = cur.id; savePrefs(); }
     const ok = writeSlot(cur.id, cur.name); save();
     toast(ok && !saveFailed ? `Saved: ${cur.name}` : "Save failed. Browser storage may be full. Save a pack.");
-    // a browser on a phone can lose its storage, so offer a real file too
-    if (matchMedia("(pointer: coarse)").matches && confirm(`Saved in this browser as ${cur.name}.\n\nAlso save a copy to your device (Files on iPhone or iPad, Downloads on Android)?`)) ACT.exportSave();
-    if (ui.modal && ui.modal.type === "loadWin") render();
+    // then ask where else to keep it: the file this session saves to, a new place, or nowhere
+    ui.modal = { type: "saveTo", slot: cur.name, ok: ok && !saveFailed }; render();
   },
   autoToggle(v) { prefs.autosave = !!v; savePrefs(); if (prefs.autosave && dirty && !prefs.interval) save(); render(); },
   wiki() {
@@ -1654,7 +1718,43 @@ const ACT = {
     }
     download();
   },
-  importSave() { document.getElementById("importFile").click(); },
+  importSave() {
+    // where the browser allows it, open with a picker so later saves can go back to the same file
+    if (typeof window.showOpenFilePicker !== "function") return document.getElementById("importFile").click();
+    window.showOpenFilePicker({ types: [{ description: "Fallout DM pack or backup", accept: { "application/zip": [".zip"], "application/json": [".json"] } }] })
+      .then(async ([fh]) => readImport(await fh.getFile(), fh), (err) => { if (err && err.name !== "AbortError") document.getElementById("importFile").click(); });
+  },
+  saveToFile(v) {
+    if (v === "same" && packFile) { writePack(packFile).then(() => toast(`Saved to ${packFile.name}`), (err) => toast(err.message || "Couldn't write that file.")); ui.modal = null; return render(); }
+    if (!matchMedia("(pointer: coarse)").matches && typeof window.showSaveFilePicker === "function") {
+      window.showSaveFilePicker({ suggestedName: packName(), types: [{ description: "Fallout DM pack", accept: { "application/zip": [".zip"] } }] })
+        .then((fh) => { packFile = fh; return writePack(fh); }).then(() => toast(`Saved to ${packFile.name}. This session will save there.`), (err) => { if (err && err.name !== "AbortError") toast(err.message || "Couldn't save there."); });
+    } else ACT.exportSave();
+    ui.modal = null; render();
+  },
+  throwStart(v) { const [id, item] = splitV(v); ui.throwing = { id, item, at: null }; ui.modal = null; toast(`Click the map where the ${item} lands`); render(); },
+  throwCancel() { ui.throwing = null; render(); },
+  throwConfirm() {
+    const T = ui.throwing; if (!T || !T.at) return; const A = ent(T.id); const t = S.rules.throwables[T.item]; const k = K();
+    const line = (A.inv || []).find((l) => l.n === T.item); if (!line) { ui.throwing = null; return toast(`${A.name} has no ${T.item} left.`); }
+    if (k && fightPhase() && !canPay(A, t.ap, `throw the ${T.item}`)) return;
+    const hits = blastHits(T.at, t); const thrown = dist(posOf(A.id), T.at);
+    if (t.range && thrown > t.range) return toast(`Too far: a ${T.item} reaches ${t.range}m.`);
+    act(`Throw: ${T.item}`, () => {
+      if (k && fightPhase()) A.ap = Math.max(0, (A.ap || 0) - t.ap);
+      line.q--; if (line.q <= 0) A.inv = A.inv.filter((x) => x !== line);
+      const start = S.log.length;
+      log("hit o-hit", `${A.name} throws ${T.item} ${thrown.toFixed(1)}m · ${t.ap} AP · ${hits.map((x) => `${x.e.name} ${fmt(x.d)}m: ${x.dmg}`).join(", ") || "nobody in the blast"}`);
+      for (const x of hits) { x.e.hp = Math.max(0, (x.e.hp || 0) - x.dmg); syncDown(x.e, A.id); log("hit", `${x.e.name} ${x.e.hp}/${der(x.e).hp} HP after the blast`); }
+      if (S.rules.storyLog) {
+        const nm = (e) => (e.kind !== "pc" && / - /.test(e.name) ? e.name.split(" - ").slice(1).join(" - ") : e.name);
+        const list = hits.map((x) => `${nm(x.e)} for ${x.dmg} DMG`); const tail = hits.filter((x) => x.e.hp <= 0).map((x) => (x.e.kind === "pc" ? `${nm(x.e)} goes down.` : `${nm(x.e)} is torn apart.`));
+        const story = hits.length ? `${nm(A)} throws a ${T.item}. The blast hits ${list.length > 1 ? list.slice(0, -1).join(", ") + " and " + list[list.length - 1] : list[0]}.${tail.length ? " " + tail.join(" ") : ""}` : `${nm(A)} throws a ${T.item}, but the blast catches nobody.`;
+        const more = S.log.splice(start).map((l) => l.x); S.log.push({ k: `story o-${hits.length ? "hit" : "miss"}`, x: story, r: k ? k.round : 0, id: S.seq++, more });
+      }
+    });
+    ui.throwing = null; render();
+  },
   pick(v) {
     const e = ent(v); if (!e) return;
     const cb = cbOf(v);
@@ -1670,6 +1770,14 @@ const ACT = {
   refresh() { applyData(); render(); toast("Lists refreshed"); },
   devToggle() { ui.devOpen = !ui.devOpen; render(); },
   railMore() { ui.railMore = !ui.railMore; render(); },
+  rollDice(v) {
+    const [id, kind] = splitV(v); const el = document.getElementById(id); if (!el) return;
+    const n = kind === "d100" ? 1 + Math.floor(Math.random() * 100) : kind === "2d10" ? Math.floor(Math.random() * 100) : 1 + Math.floor(Math.random() * 20);
+    const val = kind === "2d10" ? String(n).padStart(2, "0") : String(n); const enter = el.dataset.enter;
+    el.value = val; el.dispatchEvent(new Event("input", { bubbles: true })); el.dispatchEvent(new Event("change", { bubbles: true }));
+    toast(`Rolled ${val}`);
+    if (enter && ACT[enter]) ACT[enter](val, el);  // the same as typing it and pressing Enter
+  },
   setScale(v) { prefs.uiScale = Number(v) || 1; savePrefs(); applyScale(); render(); toast(`UI size ${Math.round(prefs.uiScale * 100)}%`); },
   fold(v) { prefs.fold = { ...(prefs.fold || {}), [v]: !(prefs.fold || {})[v] }; savePrefs(); render(); },
   setNamePool(v, el) { const k = el.dataset.k, next = v.split(/[,\n]/).map((x) => x.trim()).filter(Boolean).join(","); if (next === S.rules.namePools[k]) return; act(`Edit ${k} names`, () => { S.rules.namePools[k] = next; }); },
@@ -1833,7 +1941,7 @@ const ACT = {
     act("Surround", () => {
       const M = mapOf(); const ps = S.chars.map((c) => posOf(c.id)); const cx = ps.reduce((t, p) => t + p.x, 0) / (ps.length || 1), cy = ps.reduce((t, p) => t + p.y, 0) / (ps.length || 1);
       const r = Math.min(M.w, M.h) * 0.35; const n = S.scene.npcs.length;
-      S.scene.npcs.forEach((e, i) => { const t = (i / Math.max(n, 1)) * Math.PI * 2; const p = inMap({ x: cx + r * Math.cos(t), y: cy + r * Math.sin(t) }); S.scene.pos[e.id] = { x: E.fix(p.x), y: E.fix(p.y) }; });
+      S.scene.npcs.forEach((e, i) => { const t = (i / Math.max(n, 1)) * Math.PI * 2; let p = inMap({ x: cx + r * Math.cos(t), y: cy + r * Math.sin(t) }); if (standBlocked(p)) p = freeSpot(); S.scene.pos[e.id] = { x: E.fix(p.x), y: E.fix(p.y) }; });
     });
   },
   setBand(val, el) {
@@ -1980,6 +2088,7 @@ const ACT = {
     if (cost === Infinity) return toast(`${A.name} can't walk: a shattered leg.`);
     if (!canPay(A, cost, "move there")) return;
     if (E.pathBlocked(posOf(m.att), to, S.scene.objects)) return toast("Something solid is in the way. Drag around it on the map.");
+    if (r !== cur && standBlocked(to)) return toast("That spot is inside something. Drag to a clear spot on the map.");
     act(`Move: ${A.name}`, () => {
       const a = cbOf(m.att); a.x = E.fix(to.x); a.y = E.fix(to.y); a.moved = true;
       for (const k of Object.keys(K().ranges)) if (k.split("|").includes(m.att)) delete K().ranges[k];
@@ -2228,16 +2337,21 @@ document.addEventListener("change", async (e) => {
     toast(err || `Replaced with ${rows.length} rows. Undo goes back.`);
   } catch (err) { toast("Could not read that file."); }
 });
-document.getElementById("importFile").addEventListener("change", async (e) => {
-  const f = e.target.files[0]; if (!f) return;
+// ---- files: the pack this session saves to, if the browser lets us keep hold of one
+let packFile = null;
+const packName = () => `fallout-pack-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-")}.zip`;
+async function writePack(fh) { const w = await fh.createWritable(); await w.write(new Blob([makeZip(packFiles())], { type: "application/zip" })); await w.close(); }
+async function readImport(f, fh) {
   try {
     if (/\.(rar|7z)$/i.test(f.name)) throw new Error("Browsers can't open that. Re-pack it as a .zip: WinRAR can save as zip.");
     const buf = await f.arrayBuffer(); const head = new Uint8Array(buf, 0, Math.min(2, buf.byteLength));
-    if (head[0] === 0x50 && head[1] === 0x4b) { const n = await loadPack(buf);  /* zip files start with the letters PK, whatever they're named */ toast(`Pack loaded: ${n} edited table${n === 1 ? "" : "s"}. Undo goes back.`); }
+    if (head[0] === 0x50 && head[1] === 0x4b) { const n = await loadPack(buf); if (fh) packFile = fh; toast(`Pack loaded: ${n} edited table${n === 1 ? "" : "s"}.${fh ? ` Saves will go to ${fh.name}.` : ""} Undo goes back.`); }
     else { const p = normalize(JSON.parse(await f.text())); act("Restore backup", () => { S = p; ui.sel = (S.chars[0] || {}).id; ui.atk = null; ui.modal = null; }); toast("Backup restored"); }
-  }
-  catch (err) { toast(err.message || "Could not read that file."); }
-  e.target.value = "";
+  } catch (err) { toast(err.message || "Could not read that file."); }
+}
+document.getElementById("importFile").addEventListener("change", async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  await readImport(f, null); e.target.value = "";
 });
 
 function pickCard(dir) { const l = S.chars.map((c) => c.id); if (l.length) { ui.sel = cycle(l, ui.sel, dir); ui.rowSel = ui.sel; render(); } }
@@ -2270,6 +2384,8 @@ document.addEventListener("keydown", (e) => {
     return;
   }
   if (e.altKey) return;
+  if (k === "escape" && ui.throwing) { e.preventDefault(); return ACT.throwCancel(); }
+  if (k === "enter" && ui.throwing && ui.throwing.at && !typing) { e.preventDefault(); return ACT.throwConfirm(); }
   if (k === "escape") {
     e.preventDefault();
     if (ui.modal) return ACT.closeModal();
@@ -2347,6 +2463,7 @@ document.addEventListener("pointerdown", (ev) => {
   }
 });
 document.addEventListener("pointermove", (ev) => {
+  if (ui.throwing && !ui.throwing.at && !drag) { const svg = ev.target.closest && ev.target.closest("#map"); if (svg) throwPreview(svg, ev); }
   if (!drag) return;
   if (drag.kind === "gut") {
     const right = drag.box.right - 47; // the rail
@@ -2392,6 +2509,7 @@ document.addEventListener("pointerup", (ev) => {
   if (d.kind === "rot") { if (d.angle != null) act("Rotate", () => { d.o.angle = d.angle; }); return; }
   if (d.kind === "mapbg") {
     if (d.panned) return;
+    if (ui.throwing) { ui.throwing.at = inMap(svgPoint(d.svg, ev)); return render(); }
     if (ui.place) { const p = inMap(svgPoint(d.svg, ev)); const kind = ui.place; const id = "o" + S.seq++; act(`Place ${MAP_OBJ[kind][0]}`, () => { const size = { cover: [1, 1], hard: [1.2, 1.2], hazard: [2, 2], note: [0.5, 0.5] }[kind]; const big = Math.max(1, (ui.viewW || 20) / 40);  /* a little larger when zoomed far out, so it can be seen and grabbed */ S.scene.objects.push({ id, kind, x: E.fix(p.x), y: E.fix(p.y), w: E.fix(size[0] * big), h: E.fix(size[1] * big), label: "" }); ui.mapSel = kind === "note" ? id : null; if (kind === "note") ui.focus = "#objLabel"; }); }
     else if (ui.mapSel) { ui.mapSel = null; render(); }
     return;
@@ -2399,11 +2517,13 @@ document.addEventListener("pointerup", (ev) => {
   if (d.kind === "map") {
     if (!d.moved) {
       if (d.obj && d.angle != null) { ui.mapSel = d.obj; return act("Rotate", () => { const o = S.scene.objects.find((q) => q.id === d.obj); if (o) o.angle = d.angle; }); }
+      if (d.tok && ui.throwing) { ui.throwing.at = { ...posOf(d.tok) }; return render(); }
       if (d.tok) ACT.pick(d.tok); else { ui.mapSel = d.obj; render(); }
       return;
     }
     const x = E.fix(d.p.x), y = E.fix(d.p.y);
     if (d.obj) return act("Move on map", () => { const o = S.scene.objects.find((q) => q.id === d.obj); if (o) { o.x = x; o.y = y; if (d.angle != null) o.angle = d.angle; } });
+    if (standBlocked({ x, y })) { toast("Nobody can stand there: something's in the way."); return render(); }
     const k = K();
     if (!k) return act("Move token", () => { S.scene.pos[d.tok] = { x, y }; });
     const c = cbOf(d.tok); const e = ent(d.tok); const free = ev.shiftKey || !fightPhase();
