@@ -122,7 +122,7 @@ const SHOWN_KEYS = new Set(["A", "R", "M", "I", "N", "B", "Enter", "Esc", "/", "
 const btn = (a, v, label, key = "", cls = "", title = "") => `<button class="btn ${cls}" data-a="${a}" data-v="${h(v)}"${title ? ` title="${h(title)}"` : ""}>${SHOWN_KEYS.has(key) ? kbd(key) : ""}${label}</button>`;
 const primary = (a, v, label, key = "") => `<button class="btn primary" data-primary="1" data-a="${a}" data-v="${h(v)}">${kbd(key)}${label}</button>`;
 const small = () => matchMedia("(max-width: 1000px)").matches;
-const win = (cls, title, key, body, opt = {}) => `<section class="win ${cls} ${opt.act ? "act" : ""} ${(prefs.fold || {})[cls] ? "folded" : ""}"><header class="wt" data-fold="${cls}"><span class="foldmark" aria-hidden="true"></span>${kbd(key)}<span>${title}</span><span class="spacer"></span>${opt.tools || ""}</header><div class="wb" data-scroll="${cls}">${body}</div></section>`;
+const win = (cls, title, key, body, opt = {}) => `<section class="win ${cls} ${opt.act ? "act" : ""} ${(prefs.fold || {})[cls] ? "folded" : ""}"><header class="wt" data-fold="${cls}"><button type="button" class="foldbtn" data-a="fold" data-v="${cls}" aria-label="${(prefs.fold || {})[cls] ? "Open" : "Fold"} ${h(String(title).replace(/<[^>]*>/g, ""))}" aria-expanded="${!(prefs.fold || {})[cls]}">${(prefs.fold || {})[cls] ? "+" : "-"}</button>${kbd(key)}<span>${title}</span><span class="spacer"></span>${opt.tools || ""}</header><div class="wb" data-scroll="${cls}">${body}</div></section>`;
 function fold(k, title, body, opt = {}) {
   const open = ui.open[k] != null ? ui.open[k] : !!opt.open;
   return `<details class="fold" data-k="${h(k)}"${open ? " open" : ""}><summary>${kbd(opt.key)}<span>${title}</span>${opt.badge != null && opt.badge !== "" ? `<span class="fb">${opt.badge}</span>` : ""}</summary><div class="fbody">${open ? body : ""}</div></details>`;
@@ -1616,6 +1616,7 @@ const ACT = {
   noteNew() { ui.noteId = null; ui.focus = ui.modal ? "#noteText" : "#qnText"; render(); },
   refresh() { applyData(); render(); toast("Lists refreshed"); },
   devToggle() { ui.devOpen = !ui.devOpen; render(); },
+  fold(v) { prefs.fold = { ...(prefs.fold || {}), [v]: !(prefs.fold || {})[v] }; savePrefs(); render(); },
   setNamePool(v, el) { const k = el.dataset.k, next = v.split(/[,\n]/).map((x) => x.trim()).filter(Boolean).join(","); if (next === S.rules.namePools[k]) return; act(`Edit ${k} names`, () => { S.rules.namePools[k] = next; }); },
   tableExport(v) {
     const [id, kind] = splitV(v); const rows = tableRows(id);
@@ -2093,7 +2094,7 @@ document.addEventListener("pointerdown", () => { pointerDown = true; }, true);
 document.addEventListener("pointerup", () => { pointerDown = false; setTimeout(() => { if (pendingRender) render(); }, 0); }, true);
 document.addEventListener("click", (e) => {
   const head = small() && e.target.closest("[data-fold]");
-  if (head && !e.target.closest("button,input,select,textarea,label,a,[data-a]")) { prefs.fold = { ...(prefs.fold || {}), [head.dataset.fold]: !(prefs.fold || {})[head.dataset.fold] }; savePrefs(); render(); return; }
+  if (head && !e.target.closest("button,input,select,textarea,label,a,[data-a]")) { ACT.fold(head.dataset.fold); return; }
   const sum = e.target.closest("summary");
   if (sum) { e.preventDefault(); const d = sum.parentElement; ui.open[d.dataset.k] = !d.open; render(); return; }
   const el = e.target.closest("[data-a]");

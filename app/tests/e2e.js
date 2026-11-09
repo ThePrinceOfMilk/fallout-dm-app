@@ -955,10 +955,15 @@ async function launch() {
     await p2.goto(APP); await p2.waitForTimeout(200);
     const hs = await p2.evaluate(() => [...document.querySelectorAll(".win")].map((w) => [w.className.split(" ")[1], w.getBoundingClientRect().height]));
     assert.ok(hs.every(([, h]) => h > 30), "no squeezed panels: " + JSON.stringify(hs));
-    await p2.locator(".w-party .wt").click({ position: { x: 8, y: 8 } }); await p2.waitForTimeout(30);
-    assert.ok(await p2.locator(".w-party.folded").count(), "the header folds the panel");
+    await p2.locator(".w-party .foldbtn").tap(); await p2.waitForTimeout(30);
+    assert.ok(await p2.locator(".w-party.folded").count(), "tapping the fold button folds the panel");
     assert.ok((await p2.locator(".w-party").boundingBox()).height < 60);
-    await p2.locator(".w-party .wt").click({ position: { x: 8, y: 8 } });
+    await p2.locator(".w-party .foldbtn").tap(); await p2.waitForTimeout(30);
+    assert.strictEqual(await p2.locator(".w-party.folded").count(), 0, "and opens it again");
+    await p2.locator(".w-notes .wt").tap({ position: { x: 120, y: 12 } }); await p2.waitForTimeout(30);
+    assert.ok(await p2.locator(".w-notes.folded").count(), "tapping the header works too"); await p2.locator(".w-notes .foldbtn").tap();
+    const pad = await p2.evaluate(() => parseFloat(getComputedStyle(document.body).paddingBottom));
+    assert.ok(pad >= 90, "room under the last button for the browser toolbar: " + pad);
     assert.strictEqual(await p2.locator(".devlist").isVisible(), false, "Dev buttons start folded"); await p2.locator(".devtoggle").click(); assert.ok(await p2.locator(".devlist").isVisible());
     await p2.evaluate(() => { ui.setup = true; render(); });
     assert.ok((await p2.locator("#map").boundingBox()).height > 200, "the map has room");
