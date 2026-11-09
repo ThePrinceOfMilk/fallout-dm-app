@@ -300,6 +300,7 @@ function addEnemy(name) {
   ensureMap(); const p = freeSpot();
   const e = E.spawn(t, id, ctx(), Math.random);
   if (t.saved) e.customName = true;
+  else { const n = E.npcName(t, S.rules, Math.random, new Set([...list, ...S.scene.npcs].map((x) => x.name))); if (n) { e.name = n; e.customName = true; } }
   list.push(e); renumber(list, t.n);
   if (k) { const d = der(e); const roll = 1 + Math.floor(Math.random() * 20); k.cbs.push({ id, x: p.x, y: p.y, base: d.pri, roll, init: E.fix(d.pri + roll) }); log("turn", `${e.name} joins the fight, initiative ${E.fix(d.pri + roll)}.`); } else S.scene.pos[id] = p;
   return e;

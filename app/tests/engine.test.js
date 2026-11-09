@@ -175,6 +175,20 @@ test("status and item text become numbers", () => {
   assert.deepStrictEqual(E.parseHeal("10 HP + END"), { flat: 10, end: true });
 });
 
+test("generic enemies get a faction name, with ranks that follow tier", () => {
+  const r = JSON.parse(JSON.stringify(DEFAULT_RULES)); const T = (n) => data.enemies.find((e) => e.n === n);
+  const many = (n) => Array.from({ length: 200 }, () => E.npcName(T(n), r));
+  assert.ok(many("Ranger").every((x) => /^Ranger - /.test(x) && !/Pvt|PFC|Cpl|Sgt/.test(x) && /'/.test(x)), "Rangers have no rank and do have a nickname");
+  assert.ok(many("Recruit").every((x) => /^Recruit - (Pvt\.|PFC) /.test(x) && !/'/.test(x)));
+  assert.ok(many("Legion Recruit").every((x) => /^Legion Recruit - [A-Z][a-z]+$/.test(x)));
+  assert.ok(many("Legion Veteran").some((x) => /Decanus/.test(x)) && many("Legion Veteran").every((x) => x.split(" - ")[1].split(" ").length >= 2));
+  assert.ok(many("Fiend").every((x) => /^Fiend - \S/.test(x)));
+  assert.strictEqual(E.npcName(T("Omerta Thug"), r), null, "mafia keeps its plain name");
+  assert.strictEqual(E.npcName(T("Bloatfly"), r), null);
+  const taken = new Set(); for (let i = 0; i < 20; i++) taken.add(E.npcName(T("Fiend"), r, Math.random, taken));
+  assert.strictEqual(taken.size, 20, "no repeats in one fight");
+  r.autoNames = false; assert.strictEqual(E.npcName(T("Fiend"), r), null);
+});
 test("spawned enemies are independent copies with stats and gear", () => {
   let i = 0; const seq = () => (i++ * 0.137) % 1;
   const t = db.enemies.get("raider");

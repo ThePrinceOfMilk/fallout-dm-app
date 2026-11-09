@@ -496,6 +496,23 @@ const E = (() => {
     e.hp = d.hp; e.ap = d.ap;
     return e;
   }
+  /** "Legion Recruit - Aquilius". Null when the faction has no name style. taken: names already in the fight, so two don't match. */
+  function npcName(tmpl, rules, rng = Math.random, taken = new Set()) {
+    const st = rules.autoNames && (rules.nameStyles || {})[tmpl.faction]; if (!st) return null;
+    const list = (k) => String((rules.namePools || {})[k] || "").split(",").map((x) => x.trim()).filter(Boolean);
+    const any = (k) => { const l = list(k); return l.length ? pick(l, rng) : ""; };
+    const tier = tmpl.tier || 1;
+    for (let i = 0; i < 25; i++) {
+      const rank = pick(String((st.ranks || {})[tier] ?? "").split(",").map((x) => x.trim()), rng);
+      const nick = st.style === "gang" || (st.nickFrom && tier >= st.nickFrom) ? any(st.nick) : "";
+      const name = st.style === "gang" ? nick
+        : st.style === "latin" ? [rank, any(st.first), nick].filter(Boolean).join(" ")
+        : [rank, any(st.first), nick && `'${nick}'`, any(st.last)].filter(Boolean).join(" ");
+      if (!name) return null;
+      const full = `${tmpl.n} - ${name}`;
+      if (!taken.has(full) || i === 24) return full;
+    }
+  }
   /** Boost a copy in place. Returns the rolled percentages for the log. */
   function makeBoss(e, ctx, rng = Math.random) {
     const lo = ctx.rules.bossMin, hi = ctx.rules.bossMax;
@@ -827,6 +844,6 @@ const E = (() => {
     return skipped;
   }
 
-  return { inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
+  return { npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
 })();
 if (typeof module !== "undefined") module.exports = E;

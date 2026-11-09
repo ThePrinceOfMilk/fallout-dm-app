@@ -270,7 +270,9 @@ async function launch() {
   });
   await ok("The new enemies are in the list and can be added", async () => {
     const r = await page.evaluate(() => { const before = S.scene.npcs.length; const e = addEnemy("Jackal Pack Leader"); const out = [e.name, e.faction, e.weapons.map((w) => w.n)]; S.scene.npcs = S.scene.npcs.filter((n) => n !== e); delete S.scene.pos[e.id]; render(); return [out, DATA.enemies.filter((x) => x.faction === "Unaligned").length > 50, before === S.scene.npcs.length]; });
-    assert.strictEqual(r[0][0], "Jackal Pack Leader"); assert.strictEqual(r[0][1], "Jackals"); assert.ok(r[0][2].includes(".357 Magnum revolver"), "their weapon"); assert.ok(r[1], "creatures are Unaligned"); assert.ok(r[2]);
+    assert.match(r[0][0], /^Jackal Pack Leader - [^ ]/, "a gang name: " + r[0][0]);
+    const leg = await page.evaluate(() => { const e = addEnemy("Legion Soldier"); const n = e.name; S.scene.npcs = S.scene.npcs.filter((x) => x !== e); delete S.scene.pos[e.id]; return n; });
+    assert.match(leg, /^Legion Soldier - [A-Z][a-z]+$/, "not Legion Soldier 1"); assert.strictEqual(r[0][1], "Jackals"); assert.ok(r[0][2].includes(".357 Magnum revolver"), "their weapon"); assert.ok(r[1], "creatures are Unaligned"); assert.ok(r[2]);
   });
   await ok("Rooms: 2m grid everywhere, settings, randomize, city blocks stop walking", async () => {
     const sizes = await page.evaluate(() => Object.keys(S.rules.maps).length); assert.ok(sizes > 8);
