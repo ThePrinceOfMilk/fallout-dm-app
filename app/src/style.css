@@ -567,10 +567,35 @@ label.btn { cursor: pointer; }
   .calm, .setupgrid, .hcols, .gearmenu { grid-template-columns: minmax(0, 1fr); }
   .arena { grid-template-columns: minmax(0, 1fr); } .arena > .gut { display: none; }
   .rail { grid-column: 2; grid-row: 1 / span 3; }
-  #map { flex: none; height: 80vw; }
+  #map, .mapwrap #map { flex: none; height: max(260px, 75vw); max-height: 70vh; }
+  /* panels take the height their content needs and the page scrolls; nothing is squeezed to zero */
+  .win, .w-party, .calmcol .w-check, .calmcol .w-recent, .w-map, .w-vendor, .w-action, .w-enemies, .w-notes, .w-clog, .w-enc { flex: none !important; height: auto !important; max-height: none !important; }
+  .stage, .calmcol, .setupgrid, .arena, .calm { min-height: auto; }
+  .w-map .wb, .mapwrap { flex: none; overflow: visible; }
+  .bottom { height: auto !important; }
+  .wt { cursor: pointer; min-height: 2em; }
+  .foldmark { display: inline-block; width: 1em; text-align: center; color: var(--dim); }
+  .foldmark::before { content: "-"; }
+  .win.folded .foldmark::before { content: "+"; }
+  .win.folded > .wb { display: none; }
+  .devlabel, .devlist { display: none; }
+  .devlist.open { display: flex; flex-wrap: wrap; gap: 3px; width: 100%; order: 9; }
+  .foot { display: none; }
+  .scrim { inset: 0; padding: 6px; }
+  .dialog, .dialog.big, .dialog.full, .dialog.tiny { width: 100%; height: auto; max-height: calc(100vh - 12px); resize: none; }
   .keys { columns: 1; }
 }
 
+.devtoggle { display: none; }
+@media (max-width: 1000px) { .devtoggle { display: inline-block; } }
+@media (pointer: coarse) { .btn, .opt, select, input { min-height: 30px; } .btn.tiny { padding: 2px 7px; } }
+.devlist { display: contents; }
 .namegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 6px; margin-top: 4px; }
 .namegrid label { display: flex; flex-direction: column; gap: 2px; }
 .namegrid textarea { width: 100%; resize: vertical; font: inherit; }
+@media (max-width: 1000px) {
+  .devbar .devlist:not(.open) { display: none; }
+  .devbar .devlist.open { display: flex; flex-wrap: wrap; gap: 3px; width: 100%; order: 9; }
+  .bottom > .win { width: 100% !important; flex: none !important; }
+}
+@media (pointer: coarse) { .foot { display: none; } }

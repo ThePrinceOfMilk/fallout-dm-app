@@ -1336,6 +1336,10 @@
   1.5
  ],
  "passiveHealPct": 0.1,
+ "genSkills": true,
+ "npcSkillSpecial": 3,
+ "npcSkillSpread": 7,
+ "npcOffSkill": 0.6,
  "bossMin": 0.1,
  "bossMax": 0.3,
  "genArmor": true,

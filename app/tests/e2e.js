@@ -950,6 +950,23 @@ async function launch() {
     assert.deepStrictEqual(r, [0, true, true]);
   });
   await ok("Keys list opens", async () => { await page.keyboard.press("?"); await has("End turn", ".dialog"); await press("Escape"); });
+  await ok("Phones: every panel shows, panels fold, the map loads, Save offers a file", async () => {
+    const ctx2 = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }); const p2 = await ctx2.newPage();
+    await p2.goto(APP); await p2.waitForTimeout(200);
+    const hs = await p2.evaluate(() => [...document.querySelectorAll(".win")].map((w) => [w.className.split(" ")[1], w.getBoundingClientRect().height]));
+    assert.ok(hs.every(([, h]) => h > 30), "no squeezed panels: " + JSON.stringify(hs));
+    await p2.locator(".w-party .wt").click({ position: { x: 8, y: 8 } }); await p2.waitForTimeout(30);
+    assert.ok(await p2.locator(".w-party.folded").count(), "the header folds the panel");
+    assert.ok((await p2.locator(".w-party").boundingBox()).height < 60);
+    await p2.locator(".w-party .wt").click({ position: { x: 8, y: 8 } });
+    assert.strictEqual(await p2.locator(".devlist").isVisible(), false, "Dev buttons start folded"); await p2.locator(".devtoggle").click(); assert.ok(await p2.locator(".devlist").isVisible());
+    await p2.evaluate(() => { ui.setup = true; render(); });
+    assert.ok((await p2.locator("#map").boundingBox()).height > 200, "the map has room");
+    let asked = ""; p2.on("dialog", (d) => { asked = d.message(); d.dismiss(); });
+    await p2.evaluate(() => ACT.saveNow()); await p2.waitForTimeout(50);
+    assert.match(asked, /save a copy to your device/i);
+    await ctx2.close();
+  });
   await ok("The hosted copy starts a fresh campaign on the wizard", async () => {
     const ctx2 = await browser.newContext({ viewport: { width: 1440, height: 900 } }); const p2 = await ctx2.newPage();
     await p2.goto("file:///" + path.resolve(__dirname, "../../index.html").replace(/\\/g, "/"));

@@ -573,13 +573,38 @@ label.btn { cursor: pointer; }
   .calm, .setupgrid, .hcols, .gearmenu { grid-template-columns: minmax(0, 1fr); }
   .arena { grid-template-columns: minmax(0, 1fr); } .arena > .gut { display: none; }
   .rail { grid-column: 2; grid-row: 1 / span 3; }
-  #map { flex: none; height: 80vw; }
+  #map, .mapwrap #map { flex: none; height: max(260px, 75vw); max-height: 70vh; }
+  /* panels take the height their content needs and the page scrolls; nothing is squeezed to zero */
+  .win, .w-party, .calmcol .w-check, .calmcol .w-recent, .w-map, .w-vendor, .w-action, .w-enemies, .w-notes, .w-clog, .w-enc { flex: none !important; height: auto !important; max-height: none !important; }
+  .stage, .calmcol, .setupgrid, .arena, .calm { min-height: auto; }
+  .w-map .wb, .mapwrap { flex: none; overflow: visible; }
+  .bottom { height: auto !important; }
+  .wt { cursor: pointer; min-height: 2em; }
+  .foldmark { display: inline-block; width: 1em; text-align: center; color: var(--dim); }
+  .foldmark::before { content: "-"; }
+  .win.folded .foldmark::before { content: "+"; }
+  .win.folded > .wb { display: none; }
+  .devlabel, .devlist { display: none; }
+  .devlist.open { display: flex; flex-wrap: wrap; gap: 3px; width: 100%; order: 9; }
+  .foot { display: none; }
+  .scrim { inset: 0; padding: 6px; }
+  .dialog, .dialog.big, .dialog.full, .dialog.tiny { width: 100%; height: auto; max-height: calc(100vh - 12px); resize: none; }
   .keys { columns: 1; }
 }
 
+.devtoggle { display: none; }
+@media (max-width: 1000px) { .devtoggle { display: inline-block; } }
+@media (pointer: coarse) { .btn, .opt, select, input { min-height: 30px; } .btn.tiny { padding: 2px 7px; } }
+.devlist { display: contents; }
 .namegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 6px; margin-top: 4px; }
 .namegrid label { display: flex; flex-direction: column; gap: 2px; }
 .namegrid textarea { width: 100%; resize: vertical; font: inherit; }
+@media (max-width: 1000px) {
+  .devbar .devlist:not(.open) { display: none; }
+  .devbar .devlist.open { display: flex; flex-wrap: wrap; gap: 3px; width: 100%; order: 9; }
+  .bottom > .win { width: 100% !important; flex: none !important; }
+}
+@media (pointer: coarse) { .foot { display: none; } }
 </style>
 </head>
 <body>
@@ -652,6 +677,8 @@ const DEFAULT_RULES = {
   xpAward: "each", xpIntStep: 0.05, defeatXpPct: 0, levelXpStep: 50, maxLevel: 30,
   activePct: 0.25, activeTiers: [1, 1.25, 1.5, 1.75, 2], totalTiers: [1, 1.2, 1.4, 1.5],
   passiveHealPct: 0.1,
+  // Generated enemies' combat skills: weapon skill = the tier's usual requirement + SPECIAL x per point over 5, +/- spread. Skills with no weapon get offSkill of it.
+  genSkills: true, npcSkillSpecial: 3, npcSkillSpread: 7, npcOffSkill: 0.6,
   bossMin: 0.1, bossMax: 0.3, genArmor: true, genLootMax: 2, genExclude: [],
   sceneDefaults: { time: "Daytime", weather: "Clear", env: "Grassland", map: "wild", theme: "desert" }, startPool: 40, startSpecial: 5,
   // COVER TIERS. Every shot draws a line from shooter to target. The worst thing the line crosses sets the tier.
@@ -775,7 +802,7 @@ const RULE_SCHEMA = [
   ["Vendors", [["ammoPrice", "Ammo price per round, per tier", "num", "flag"], ["noPrice.0", "Unpriced item, tier 1", "num", "flag"], ["noPrice.1", "Unpriced item, tier 2", "num", "flag"], ["noPrice.2", "Unpriced item, tier 3", "num", "flag"], ["noPrice.3", "Unpriced item, tier 4", "num", "flag"], ["noPrice.4", "Unpriced item, tier 5", "num", "flag"], ["noPrice.5", "Unpriced item, tier 6", "num", "flag"]]],
   ["Cover tiers", [["cover.concealment.hit", "Concealment: hit", "pct"], ["cover.soft.hit", "Soft cover: hit", "pct"], ["cover.soft.dam", "Soft cover: damage", "pct"], ["cover.hard.hit", "Hard cover: hit", "pct"], ["cover.hard.dam", "Hard cover: damage", "pct"], ["cover.impenetrable.hit", "Impenetrable: hit", "pct"], ["cover.impenetrable.dam", "Impenetrable: damage", "pct"]]],
   ["Auto status effects", [["autoStatus", "Crits apply a status by body part", "bool"], ["autoWeaponStatus", "Weapons apply their status on a hit", "bool", "flag"], ["critStatus.Head", "Head crit", "text", "flag"], ["critStatus.Body", "Body crit", "text", "flag"], ["critStatus.Arm", "Arm crit", "text"], ["critStatus.Leg", "Leg crit", "text"], ["critTier.Crit", "Tier on a crit", "num", "flag"], ["critTier.Super", "Tier on a super crit", "num", "flag"]]],
-  ["Enemies and inventory", [["autoNames", "Generic enemies get a name by faction", "bool"], ["bossMin", "Make Boss: minimum boost", "pct"], ["bossMax", "Make Boss: maximum boost", "pct"], ["genArmor", "Generated humans get armor", "bool", "flag"], ["genLootMax", "Generated consumables, up to", "num", "flag"], ["activePct", "Active inventory share of Carry", "pct"], ["startPool", "SPECIAL points at creation", "num"]]],
+  ["Enemies and inventory", [["autoNames", "Generic enemies get a name by faction", "bool"], ["genSkills", "Enemy skills follow tier, SPECIAL and weapon", "bool"], ["npcSkillSpecial", "Enemy skill per SPECIAL point over 5", "num"], ["npcSkillSpread", "Enemy skill random spread (+/-)", "num"], ["npcOffSkill", "Skills without a weapon, share of the tier", "pct"], ["bossMin", "Make Boss: minimum boost", "pct"], ["bossMax", "Make Boss: maximum boost", "pct"], ["genArmor", "Generated humans get armor", "bool", "flag"], ["genLootMax", "Generated consumables, up to", "num", "flag"], ["activePct", "Active inventory share of Carry", "pct"], ["startPool", "SPECIAL points at creation", "num"]]],
 ];
 if (typeof module !== "undefined") module.exports = { DEFAULT_RULES, RULE_SCHEMA };
 </script>
@@ -1230,6 +1257,7 @@ const E = (() => {
     const side = keep && tmpl.w2 && get(ctx, tmpl.w2) ? get(ctx, tmpl.w2).o : keep ? null : pick(poolFor(ctx, ["MW"], tier), rng);
     if (side) out.push(slotFor(ctx, side, tier, rng));
     e.weapons = out; e.activeW = 0;
+    if (ctx.rules.genSkills) e.skills = { ...e.skills, ...npcSkills(e, ctx, rng) };
     e.gear = keep ? { head: tmpl.head || "", armor: tmpl.armor || "", vanity: tmpl.vanity || "" } : { head: ctx.rules.genArmor && rng() < 0.5 ? pickArmor(ctx, ["Head"], tier, rng) : "", armor: ctx.rules.genArmor ? pickArmor(ctx, ["Body"], tier, rng) : "", vanity: "" };
     e.caps = rollCaps(e.capsRange, rng);
     const inv = [];
@@ -1238,6 +1266,28 @@ const E = (() => {
     const n = Math.floor(rng() * (ctx.rules.genLootMax + 1));
     for (let i = 0; i < n && cons.length; i++) inv.push({ n: pick(cons, rng).n, q: 1 });
     e.inv = inv;
+  }
+  /** What a typical weapon of this skill and tier asks for: the 75th percentile requirement, from the nearest tier that has any. */
+  function tierReq(ctx, skill, tier) {
+    const all = ctx.db.data.weapons.filter((w) => w.skill === skill && w.ok && w.tier > 0 && w.tier < 100 && w.req != null);
+    for (let t = tier; t >= 1; t--) { const r = all.filter((w) => w.tier === t).map((w) => w.req).sort((a, b) => a - b); if (r.length) return r[Math.floor(r.length * 0.75)]; }
+    return 10 * tier;
+  }
+  /** Enemy combat skills from tier, SPECIAL and the weapons it carries. A carried weapon's skill reaches most weapons of the tier and never falls short of that weapon. */
+  function npcSkills(e, ctx, rng = Math.random) {
+    const r = ctx.rules, out = {};
+    const carried = {};
+    for (const s of e.weapons || []) { const w = get(ctx, s.n); if (w && w.o.skill) carried[w.o.skill] = Math.max(carried[w.o.skill] || 0, w.o.req || 0); }
+    for (const k of ["SG", "BG", "EW", "MW", "EXP"]) {
+      const sk = SKILLS.find((x) => x[0] === k); const sp = e.special || [];
+      const stat = (c) => Number(sp[SPECIAL.indexOf(c)]) || 5;
+      const special = Math.round(((stat(sk[2]) + stat(sk[3])) / 2 - 5) * r.npcSkillSpecial);
+      const noise = Math.round((rng() * 2 - 1) * r.npcSkillSpread);
+      const base = tierReq(ctx, k, e.tier || 1);
+      const v = k in carried ? Math.max(carried[k], Math.max(base, carried[k]) + special + noise) : Math.round(base * r.npcOffSkill) + special + noise;
+      out[k] = Math.max(0, Math.min(100, v));
+    }
+    return out;
   }
   /** A vendor's shelf: this tier and the one below, never unique weapons. */
   function vendorStock(ctx, tier, rng = Math.random) {
@@ -1625,7 +1675,7 @@ const E = (() => {
     return skipped;
   }
 
-  return { npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
+  return { npcSkills, tierReq, npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
 })();
 if (typeof module !== "undefined") module.exports = E;
 </script>
@@ -1752,7 +1802,8 @@ const kbd = (k) => (k ? `<kbd>${h(k)}</kbd>` : "");
 const SHOWN_KEYS = new Set(["A", "R", "M", "I", "N", "B", "Enter", "Esc", "/", "?"]);  // only the keys for what happens all the time
 const btn = (a, v, label, key = "", cls = "", title = "") => `<button class="btn ${cls}" data-a="${a}" data-v="${h(v)}"${title ? ` title="${h(title)}"` : ""}>${SHOWN_KEYS.has(key) ? kbd(key) : ""}${label}</button>`;
 const primary = (a, v, label, key = "") => `<button class="btn primary" data-primary="1" data-a="${a}" data-v="${h(v)}">${kbd(key)}${label}</button>`;
-const win = (cls, title, key, body, opt = {}) => `<section class="win ${cls} ${opt.act ? "act" : ""}"><header class="wt">${kbd(key)}<span>${title}</span><span class="spacer"></span>${opt.tools || ""}</header><div class="wb" data-scroll="${cls}">${body}</div></section>`;
+const small = () => matchMedia("(max-width: 1000px)").matches;
+const win = (cls, title, key, body, opt = {}) => `<section class="win ${cls} ${opt.act ? "act" : ""} ${(prefs.fold || {})[cls] ? "folded" : ""}"><header class="wt" data-fold="${cls}"><span class="foldmark" aria-hidden="true"></span>${kbd(key)}<span>${title}</span><span class="spacer"></span>${opt.tools || ""}</header><div class="wb" data-scroll="${cls}">${body}</div></section>`;
 function fold(k, title, body, opt = {}) {
   const open = ui.open[k] != null ? ui.open[k] : !!opt.open;
   return `<details class="fold" data-k="${h(k)}"${open ? " open" : ""}><summary>${kbd(opt.key)}<span>${title}</span>${opt.badge != null && opt.badge !== "" ? `<span class="fb">${opt.badge}</span>` : ""}</summary><div class="fbody">${open ? body : ""}</div></details>`;
@@ -2249,7 +2300,7 @@ function notesWin() {
 }
 const DEV = [["loot", "Loot tables"], ["items", "Items"], ["weapons", "Weapons"], ["armor", "Armor"], ["ammo", "Ammo"], ["mods", "Mods"], ["materials", "Materials"], ["recipes", "Recipes"], ["enemies", "Enemies"], ["traits", "Traits"], ["perks", "Perks"], ["statuses", "Statuses"], ["variables", "Variables"], ["report", "Data report"], ["state", "Raw state"]];
 function devBar() {
-  return `<header class="devbar"><span class="brand">Fallout DM</span><span class="devlabel">Dev:</span>${DEV.map(([id, n]) => btn("dev", id, n, "", "tiny")).join("")}<span class="spacer"></span>${btn("refresh", "", "Refresh", "", "tiny", "Reload every list and table into the menus after you edit them")}${btn("undo", "", "Undo", "U", "tiny", undoStack.length ? "Undo: " + undoStack[undoStack.length - 1].label : "Nothing to undo")}${btn("redo", "", "Redo", "Y", "tiny")}${btn("search", "", "Search", "/", "tiny")}${btn("help", "", "Keys", "?", "tiny")}</header>`;
+  return `<header class="devbar"><span class="brand">Fallout DM</span><button class="btn tiny devtoggle ${ui.devOpen ? "on" : ""}" data-a="devToggle" data-v="">Dev ${ui.devOpen ? "-" : "+"}</button><span class="devlabel">Dev:</span><span class="devlist ${ui.devOpen ? "open" : ""}">${DEV.map(([id, n]) => btn("dev", id, n, "", "tiny")).join("")}</span><span class="spacer"></span>${btn("refresh", "", "Refresh", "", "tiny", "Reload every list and table into the menus after you edit them")}${btn("undo", "", "Undo", "U", "tiny", undoStack.length ? "Undo: " + undoStack[undoStack.length - 1].label : "Nothing to undo")}${btn("redo", "", "Redo", "Y", "tiny")}${btn("search", "", "Search", "/", "tiny")}${btn("help", "", "Keys", "?", "tiny")}</header>`;
 }
 function hints() {
   if (ui.modal) return [["Esc", "Close"], ["Enter", "Confirm"]];
@@ -3207,6 +3258,8 @@ const ACT = {
     if (!cur) { cur = { id: "s" + Date.now().toString(36), name: `Save ${list.length + 1}` }; prefs.slot = cur.id; savePrefs(); }
     const ok = writeSlot(cur.id, cur.name); save();
     toast(ok && !saveFailed ? `Saved: ${cur.name}` : "Save failed. Browser storage may be full. Save a pack.");
+    // a browser on a phone can lose its storage, so offer a real file too
+    if (matchMedia("(pointer: coarse)").matches && confirm(`Saved in this browser as ${cur.name}.\n\nAlso save a copy to your device (Files on iPhone or iPad, Downloads on Android)?`)) ACT.exportSave();
     if (ui.modal && ui.modal.type === "loadWin") render();
   },
   autoToggle(v) { prefs.autosave = !!v; savePrefs(); if (prefs.autosave && dirty && !prefs.interval) save(); render(); },
@@ -3219,10 +3272,15 @@ const ACT = {
   exportSave() {
     // A pack: a normal .zip you can open, edit and pass around. Campaign and rules as JSON, every table as a spreadsheet.
     const blob = new Blob([makeZip(packFiles())], { type: "application/zip" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-    a.download = `fallout-pack-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-")}.zip`;
-    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
-    toast("Pack saved");
+    const name = `fallout-pack-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-")}.zip`;
+    const download = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000); toast("Pack saved"); };
+    // the share sheet is how iOS and Android offer "Save to Files"; desktops just download
+    const file = typeof File === "function" ? new File([blob], name, { type: "application/zip" }) : null;
+    if (file && matchMedia("(pointer: coarse)").matches && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: name }).then(() => toast("Pack saved"), (err) => { if (err && err.name !== "AbortError") download(); });
+      return;
+    }
+    download();
   },
   importSave() { document.getElementById("importFile").click(); },
   pick(v) {
@@ -3238,6 +3296,7 @@ const ACT = {
   setMapSize(val, el) { const t = num(val); if (t == null || t <= 0) return render(); const M = mapOf(); act("Map size", () => { applyMap("custom", el.dataset.k === "w" ? t : M.w, el.dataset.k === "h" ? t : M.h); }); },
   noteNew() { ui.noteId = null; ui.focus = ui.modal ? "#noteText" : "#qnText"; render(); },
   refresh() { applyData(); render(); toast("Lists refreshed"); },
+  devToggle() { ui.devOpen = !ui.devOpen; render(); },
   setNamePool(v, el) { const k = el.dataset.k, next = v.split(/[,\n]/).map((x) => x.trim()).filter(Boolean).join(","); if (next === S.rules.namePools[k]) return; act(`Edit ${k} names`, () => { S.rules.namePools[k] = next; }); },
   tableExport(v) {
     const [id, kind] = splitV(v); const rows = tableRows(id);
@@ -3714,6 +3773,8 @@ function render() {
 document.addEventListener("pointerdown", () => { pointerDown = true; }, true);
 document.addEventListener("pointerup", () => { pointerDown = false; setTimeout(() => { if (pendingRender) render(); }, 0); }, true);
 document.addEventListener("click", (e) => {
+  const head = small() && e.target.closest("[data-fold]");
+  if (head && !e.target.closest("button,input,select,textarea,label,a,[data-a]")) { prefs.fold = { ...(prefs.fold || {}), [head.dataset.fold]: !(prefs.fold || {})[head.dataset.fold] }; savePrefs(); render(); return; }
   const sum = e.target.closest("summary");
   if (sum) { e.preventDefault(); const d = sum.parentElement; ui.open[d.dataset.k] = !d.open; render(); return; }
   const el = e.target.closest("[data-a]");

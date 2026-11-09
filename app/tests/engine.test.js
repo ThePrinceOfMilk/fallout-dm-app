@@ -175,6 +175,23 @@ test("status and item text become numbers", () => {
   assert.deepStrictEqual(E.parseHeal("10 HP + END"), { flat: 10, end: true });
 });
 
+test("enemy skills follow tier, SPECIAL and the weapon carried", () => {
+  const T = (n) => data.enemies.find((e) => e.n === n);
+  let r = 0.37; const rng = () => (r = (r * 9301 + 49297) % 233280 / 233280);
+  for (const n of ["Legion Veteran", "Recruit", "Fiend", "Ranger", "Viper Cutthroat"]) for (let i = 0; i < 25; i++) {
+    const e = E.spawn(T(n), "x", ctx, rng);
+    for (const s of e.weapons) { const w = E.get(ctx, s.n); if (w && w.o.req != null) assert.ok(e.skills[w.o.skill] >= w.o.req, `${n} can use its ${s.n}: ${w.o.skill} ${e.skills[w.o.skill]} vs ${w.o.req}`); }
+    for (const k of ["SG", "BG", "EW", "MW", "EXP"]) assert.ok(e.skills[k] >= 0 && e.skills[k] <= 100);
+  }
+  // a Legion Veteran with a small gun is at about the tier's usual requirement
+  const vets = Array.from({ length: 40 }, () => E.spawn(T("Legion Veteran"), "v", ctx, rng)).filter((e) => e.weapons.some((s) => (E.get(ctx, s.n) || { o: {} }).o.skill === "SG"));
+  const avg = vets.reduce((t, e) => t + e.skills.SG, 0) / Math.max(1, vets.length);
+  assert.ok(!vets.length || avg >= E.tierReq(ctx, "SG", 4) - 8, "veterans handle most tier 4 small guns: " + avg);
+  // more PER and AGI means more Small Guns, everything else equal
+  const lo = { ...T("Soldier"), special: [5, 3, 5, 5, 5, 3, 5] }, hi = { ...T("Soldier"), special: [5, 9, 5, 5, 5, 9, 5] };
+  const mean = (t) => { let s = 0; for (let i = 0; i < 80; i++) s += E.spawn(t, "s", ctx).skills.SG; return s / 80; };
+  assert.ok(mean(hi) > mean(lo) + 6, "SPECIAL raises the skill");
+});
 test("generic enemies get a faction name, with ranks that follow tier", () => {
   const r = JSON.parse(JSON.stringify(DEFAULT_RULES)); const T = (n) => data.enemies.find((e) => e.n === n);
   const many = (n) => Array.from({ length: 200 }, () => E.npcName(T(n), r));

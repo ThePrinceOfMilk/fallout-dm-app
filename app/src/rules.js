@@ -61,6 +61,8 @@ const DEFAULT_RULES = {
   xpAward: "each", xpIntStep: 0.05, defeatXpPct: 0, levelXpStep: 50, maxLevel: 30,
   activePct: 0.25, activeTiers: [1, 1.25, 1.5, 1.75, 2], totalTiers: [1, 1.2, 1.4, 1.5],
   passiveHealPct: 0.1,
+  // Generated enemies' combat skills: weapon skill = the tier's usual requirement + SPECIAL x per point over 5, +/- spread. Skills with no weapon get offSkill of it.
+  genSkills: true, npcSkillSpecial: 3, npcSkillSpread: 7, npcOffSkill: 0.6,
   bossMin: 0.1, bossMax: 0.3, genArmor: true, genLootMax: 2, genExclude: [],
   sceneDefaults: { time: "Daytime", weather: "Clear", env: "Grassland", map: "wild", theme: "desert" }, startPool: 40, startSpecial: 5,
   // COVER TIERS. Every shot draws a line from shooter to target. The worst thing the line crosses sets the tier.
@@ -184,6 +186,6 @@ const RULE_SCHEMA = [
   ["Vendors", [["ammoPrice", "Ammo price per round, per tier", "num", "flag"], ["noPrice.0", "Unpriced item, tier 1", "num", "flag"], ["noPrice.1", "Unpriced item, tier 2", "num", "flag"], ["noPrice.2", "Unpriced item, tier 3", "num", "flag"], ["noPrice.3", "Unpriced item, tier 4", "num", "flag"], ["noPrice.4", "Unpriced item, tier 5", "num", "flag"], ["noPrice.5", "Unpriced item, tier 6", "num", "flag"]]],
   ["Cover tiers", [["cover.concealment.hit", "Concealment: hit", "pct"], ["cover.soft.hit", "Soft cover: hit", "pct"], ["cover.soft.dam", "Soft cover: damage", "pct"], ["cover.hard.hit", "Hard cover: hit", "pct"], ["cover.hard.dam", "Hard cover: damage", "pct"], ["cover.impenetrable.hit", "Impenetrable: hit", "pct"], ["cover.impenetrable.dam", "Impenetrable: damage", "pct"]]],
   ["Auto status effects", [["autoStatus", "Crits apply a status by body part", "bool"], ["autoWeaponStatus", "Weapons apply their status on a hit", "bool", "flag"], ["critStatus.Head", "Head crit", "text", "flag"], ["critStatus.Body", "Body crit", "text", "flag"], ["critStatus.Arm", "Arm crit", "text"], ["critStatus.Leg", "Leg crit", "text"], ["critTier.Crit", "Tier on a crit", "num", "flag"], ["critTier.Super", "Tier on a super crit", "num", "flag"]]],
-  ["Enemies and inventory", [["autoNames", "Generic enemies get a name by faction", "bool"], ["bossMin", "Make Boss: minimum boost", "pct"], ["bossMax", "Make Boss: maximum boost", "pct"], ["genArmor", "Generated humans get armor", "bool", "flag"], ["genLootMax", "Generated consumables, up to", "num", "flag"], ["activePct", "Active inventory share of Carry", "pct"], ["startPool", "SPECIAL points at creation", "num"]]],
+  ["Enemies and inventory", [["autoNames", "Generic enemies get a name by faction", "bool"], ["genSkills", "Enemy skills follow tier, SPECIAL and weapon", "bool"], ["npcSkillSpecial", "Enemy skill per SPECIAL point over 5", "num"], ["npcSkillSpread", "Enemy skill random spread (+/-)", "num"], ["npcOffSkill", "Skills without a weapon, share of the tier", "pct"], ["bossMin", "Make Boss: minimum boost", "pct"], ["bossMax", "Make Boss: maximum boost", "pct"], ["genArmor", "Generated humans get armor", "bool", "flag"], ["genLootMax", "Generated consumables, up to", "num", "flag"], ["activePct", "Active inventory share of Carry", "pct"], ["startPool", "SPECIAL points at creation", "num"]]],
 ];
 if (typeof module !== "undefined") module.exports = { DEFAULT_RULES, RULE_SCHEMA };

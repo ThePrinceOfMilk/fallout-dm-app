@@ -121,7 +121,8 @@ const kbd = (k) => (k ? `<kbd>${h(k)}</kbd>` : "");
 const SHOWN_KEYS = new Set(["A", "R", "M", "I", "N", "B", "Enter", "Esc", "/", "?"]);  // only the keys for what happens all the time
 const btn = (a, v, label, key = "", cls = "", title = "") => `<button class="btn ${cls}" data-a="${a}" data-v="${h(v)}"${title ? ` title="${h(title)}"` : ""}>${SHOWN_KEYS.has(key) ? kbd(key) : ""}${label}</button>`;
 const primary = (a, v, label, key = "") => `<button class="btn primary" data-primary="1" data-a="${a}" data-v="${h(v)}">${kbd(key)}${label}</button>`;
-const win = (cls, title, key, body, opt = {}) => `<section class="win ${cls} ${opt.act ? "act" : ""}"><header class="wt">${kbd(key)}<span>${title}</span><span class="spacer"></span>${opt.tools || ""}</header><div class="wb" data-scroll="${cls}">${body}</div></section>`;
+const small = () => matchMedia("(max-width: 1000px)").matches;
+const win = (cls, title, key, body, opt = {}) => `<section class="win ${cls} ${opt.act ? "act" : ""} ${(prefs.fold || {})[cls] ? "folded" : ""}"><header class="wt" data-fold="${cls}"><span class="foldmark" aria-hidden="true"></span>${kbd(key)}<span>${title}</span><span class="spacer"></span>${opt.tools || ""}</header><div class="wb" data-scroll="${cls}">${body}</div></section>`;
 function fold(k, title, body, opt = {}) {
   const open = ui.open[k] != null ? ui.open[k] : !!opt.open;
   return `<details class="fold" data-k="${h(k)}"${open ? " open" : ""}><summary>${kbd(opt.key)}<span>${title}</span>${opt.badge != null && opt.badge !== "" ? `<span class="fb">${opt.badge}</span>` : ""}</summary><div class="fbody">${open ? body : ""}</div></details>`;
@@ -618,7 +619,7 @@ function notesWin() {
 }
 const DEV = [["loot", "Loot tables"], ["items", "Items"], ["weapons", "Weapons"], ["armor", "Armor"], ["ammo", "Ammo"], ["mods", "Mods"], ["materials", "Materials"], ["recipes", "Recipes"], ["enemies", "Enemies"], ["traits", "Traits"], ["perks", "Perks"], ["statuses", "Statuses"], ["variables", "Variables"], ["report", "Data report"], ["state", "Raw state"]];
 function devBar() {
-  return `<header class="devbar"><span class="brand">Fallout DM</span><span class="devlabel">Dev:</span>${DEV.map(([id, n]) => btn("dev", id, n, "", "tiny")).join("")}<span class="spacer"></span>${btn("refresh", "", "Refresh", "", "tiny", "Reload every list and table into the menus after you edit them")}${btn("undo", "", "Undo", "U", "tiny", undoStack.length ? "Undo: " + undoStack[undoStack.length - 1].label : "Nothing to undo")}${btn("redo", "", "Redo", "Y", "tiny")}${btn("search", "", "Search", "/", "tiny")}${btn("help", "", "Keys", "?", "tiny")}</header>`;
+  return `<header class="devbar"><span class="brand">Fallout DM</span><button class="btn tiny devtoggle ${ui.devOpen ? "on" : ""}" data-a="devToggle" data-v="">Dev ${ui.devOpen ? "-" : "+"}</button><span class="devlabel">Dev:</span><span class="devlist ${ui.devOpen ? "open" : ""}">${DEV.map(([id, n]) => btn("dev", id, n, "", "tiny")).join("")}</span><span class="spacer"></span>${btn("refresh", "", "Refresh", "", "tiny", "Reload every list and table into the menus after you edit them")}${btn("undo", "", "Undo", "U", "tiny", undoStack.length ? "Undo: " + undoStack[undoStack.length - 1].label : "Nothing to undo")}${btn("redo", "", "Redo", "Y", "tiny")}${btn("search", "", "Search", "/", "tiny")}${btn("help", "", "Keys", "?", "tiny")}</header>`;
 }
 function hints() {
   if (ui.modal) return [["Esc", "Close"], ["Enter", "Confirm"]];
@@ -1576,6 +1577,8 @@ const ACT = {
     if (!cur) { cur = { id: "s" + Date.now().toString(36), name: `Save ${list.length + 1}` }; prefs.slot = cur.id; savePrefs(); }
     const ok = writeSlot(cur.id, cur.name); save();
     toast(ok && !saveFailed ? `Saved: ${cur.name}` : "Save failed. Browser storage may be full. Save a pack.");
+    // a browser on a phone can lose its storage, so offer a real file too
+    if (matchMedia("(pointer: coarse)").matches && confirm(`Saved in this browser as ${cur.name}.\n\nAlso save a copy to your device (Files on iPhone or iPad, Downloads on Android)?`)) ACT.exportSave();
     if (ui.modal && ui.modal.type === "loadWin") render();
   },
   autoToggle(v) { prefs.autosave = !!v; savePrefs(); if (prefs.autosave && dirty && !prefs.interval) save(); render(); },
@@ -1588,10 +1591,15 @@ const ACT = {
   exportSave() {
     // A pack: a normal .zip you can open, edit and pass around. Campaign and rules as JSON, every table as a spreadsheet.
     const blob = new Blob([makeZip(packFiles())], { type: "application/zip" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-    a.download = `fallout-pack-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-")}.zip`;
-    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
-    toast("Pack saved");
+    const name = `fallout-pack-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-")}.zip`;
+    const download = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000); toast("Pack saved"); };
+    // the share sheet is how iOS and Android offer "Save to Files"; desktops just download
+    const file = typeof File === "function" ? new File([blob], name, { type: "application/zip" }) : null;
+    if (file && matchMedia("(pointer: coarse)").matches && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: name }).then(() => toast("Pack saved"), (err) => { if (err && err.name !== "AbortError") download(); });
+      return;
+    }
+    download();
   },
   importSave() { document.getElementById("importFile").click(); },
   pick(v) {
@@ -1607,6 +1615,7 @@ const ACT = {
   setMapSize(val, el) { const t = num(val); if (t == null || t <= 0) return render(); const M = mapOf(); act("Map size", () => { applyMap("custom", el.dataset.k === "w" ? t : M.w, el.dataset.k === "h" ? t : M.h); }); },
   noteNew() { ui.noteId = null; ui.focus = ui.modal ? "#noteText" : "#qnText"; render(); },
   refresh() { applyData(); render(); toast("Lists refreshed"); },
+  devToggle() { ui.devOpen = !ui.devOpen; render(); },
   setNamePool(v, el) { const k = el.dataset.k, next = v.split(/[,\n]/).map((x) => x.trim()).filter(Boolean).join(","); if (next === S.rules.namePools[k]) return; act(`Edit ${k} names`, () => { S.rules.namePools[k] = next; }); },
   tableExport(v) {
     const [id, kind] = splitV(v); const rows = tableRows(id);
@@ -2083,6 +2092,8 @@ function render() {
 document.addEventListener("pointerdown", () => { pointerDown = true; }, true);
 document.addEventListener("pointerup", () => { pointerDown = false; setTimeout(() => { if (pendingRender) render(); }, 0); }, true);
 document.addEventListener("click", (e) => {
+  const head = small() && e.target.closest("[data-fold]");
+  if (head && !e.target.closest("button,input,select,textarea,label,a,[data-a]")) { prefs.fold = { ...(prefs.fold || {}), [head.dataset.fold]: !(prefs.fold || {})[head.dataset.fold] }; savePrefs(); render(); return; }
   const sum = e.target.closest("summary");
   if (sum) { e.preventDefault(); const d = sum.parentElement; ui.open[d.dataset.k] = !d.open; render(); return; }
   const el = e.target.closest("[data-a]");

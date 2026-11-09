@@ -449,6 +449,7 @@ const E = (() => {
     const side = keep && tmpl.w2 && get(ctx, tmpl.w2) ? get(ctx, tmpl.w2).o : keep ? null : pick(poolFor(ctx, ["MW"], tier), rng);
     if (side) out.push(slotFor(ctx, side, tier, rng));
     e.weapons = out; e.activeW = 0;
+    if (ctx.rules.genSkills) e.skills = { ...e.skills, ...npcSkills(e, ctx, rng) };
     e.gear = keep ? { head: tmpl.head || "", armor: tmpl.armor || "", vanity: tmpl.vanity || "" } : { head: ctx.rules.genArmor && rng() < 0.5 ? pickArmor(ctx, ["Head"], tier, rng) : "", armor: ctx.rules.genArmor ? pickArmor(ctx, ["Body"], tier, rng) : "", vanity: "" };
     e.caps = rollCaps(e.capsRange, rng);
     const inv = [];
@@ -457,6 +458,28 @@ const E = (() => {
     const n = Math.floor(rng() * (ctx.rules.genLootMax + 1));
     for (let i = 0; i < n && cons.length; i++) inv.push({ n: pick(cons, rng).n, q: 1 });
     e.inv = inv;
+  }
+  /** What a typical weapon of this skill and tier asks for: the 75th percentile requirement, from the nearest tier that has any. */
+  function tierReq(ctx, skill, tier) {
+    const all = ctx.db.data.weapons.filter((w) => w.skill === skill && w.ok && w.tier > 0 && w.tier < 100 && w.req != null);
+    for (let t = tier; t >= 1; t--) { const r = all.filter((w) => w.tier === t).map((w) => w.req).sort((a, b) => a - b); if (r.length) return r[Math.floor(r.length * 0.75)]; }
+    return 10 * tier;
+  }
+  /** Enemy combat skills from tier, SPECIAL and the weapons it carries. A carried weapon's skill reaches most weapons of the tier and never falls short of that weapon. */
+  function npcSkills(e, ctx, rng = Math.random) {
+    const r = ctx.rules, out = {};
+    const carried = {};
+    for (const s of e.weapons || []) { const w = get(ctx, s.n); if (w && w.o.skill) carried[w.o.skill] = Math.max(carried[w.o.skill] || 0, w.o.req || 0); }
+    for (const k of ["SG", "BG", "EW", "MW", "EXP"]) {
+      const sk = SKILLS.find((x) => x[0] === k); const sp = e.special || [];
+      const stat = (c) => Number(sp[SPECIAL.indexOf(c)]) || 5;
+      const special = Math.round(((stat(sk[2]) + stat(sk[3])) / 2 - 5) * r.npcSkillSpecial);
+      const noise = Math.round((rng() * 2 - 1) * r.npcSkillSpread);
+      const base = tierReq(ctx, k, e.tier || 1);
+      const v = k in carried ? Math.max(carried[k], Math.max(base, carried[k]) + special + noise) : Math.round(base * r.npcOffSkill) + special + noise;
+      out[k] = Math.max(0, Math.min(100, v));
+    }
+    return out;
   }
   /** A vendor's shelf: this tier and the one below, never unique weapons. */
   function vendorStock(ctx, tier, rng = Math.random) {
@@ -844,6 +867,6 @@ const E = (() => {
     return skipped;
   }
 
-  return { npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
+  return { npcSkills, tierReq, npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
 })();
 if (typeof module !== "undefined") module.exports = E;
