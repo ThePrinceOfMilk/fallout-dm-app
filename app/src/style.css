@@ -835,3 +835,26 @@ html.lt1000 .win > .wt { flex-wrap: wrap; row-gap: 4px; }
 .sti svg { width: 18px; height: 18px; }
 /* phones: the last panel scrolls clear of the tab bar along the bottom */
 @media (max-width: 1000px) { .stage { padding-bottom: calc(env(safe-area-inset-bottom) + 100px); } }
+
+/* ---------- 10 Nov: clearer AP, attack costs, short roll bands, ring edges */
+.turnap .apbig { font-size: 40px; }
+.turnap .apbig small { font-size: 20px; }
+.turnap .pips { max-width: 300px; gap: 2px; }
+.turnap .pips i { width: 11px; height: 16px; }
+.apafter { font-size: var(--fs-s); color: var(--warn); }
+.costbig b { font-size: 30px !important; color: var(--warn) !important; }
+.costbig.over b { color: #ff4d4d !important; }
+.costbig span { color: var(--warn) !important; }
+.aptypes { display: flex; flex-wrap: wrap; gap: 4px; margin: 3px 0; }
+.apt { display: inline-flex; align-items: baseline; gap: 4px; padding: 1px 6px; border: 1px solid var(--line2); color: var(--dim); font-size: var(--fs-s); text-transform: uppercase; }
+.apt b { font-size: calc(var(--fs) * 1.25); color: var(--bright); font-weight: normal; }
+.apt.on { border-color: var(--warn); color: var(--warn); } .apt.on b { color: var(--warn); }
+.bandshort { display: flex; gap: 14px; flex-wrap: wrap; font-family: var(--head); font-size: 22px; line-height: 1.1; margin: 2px 0; }
+.bs-jam { color: #ff4d4d; } .bs-hit { color: #ffffff; } .bs-crit { color: #39ff14; } .bs-super { color: #4da3ff; }
+#map .ringedge { fill: none; stroke: #000; stroke-width: 2.5px; vector-effect: non-scaling-stroke; pointer-events: none; }
+.apafter { font-size: calc(var(--fs-s) * .9); margin-top: 4px; opacity: .85; }
+.seg .wcards, .aptypes, .seg .acts, .seg .opts { justify-content: center; }
+.atkinfo .tgtcard .nm { font-size: calc(var(--fs) * 1.35); color: var(--bright); }
+.atkinfo .tgtcard .s { font-size: calc(var(--fs) * 1.15); color: var(--ink); }
+.atkinfo .tgtcard { flex-wrap: wrap; row-gap: 0; }
+.atkinfo .tgtcard .nm { white-space: normal; overflow: visible; text-overflow: clip; flex: 1 1 100%; }

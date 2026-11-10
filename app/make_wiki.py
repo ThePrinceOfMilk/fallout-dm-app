@@ -292,10 +292,19 @@ upd(9, D10, "Weapon familiarity", "New.", bl(
 upd(11, D10, "Fists never cost a swap", "Was: after shooting, the first punch cost 1 AP more, the weapon swap. Now: punching never pays to swap, because fists are always ready.")
 upd(12, D10, "Cover has health", "New.", bl(
     "When a shot goes through cover, the cover takes the damage it stopped. Soft cover stops 10% of a hit, so it takes that 10%; hard cover stops half.",
-    f"Each tier lasts a set number of 5.56 Standard rounds ({R['coverRound']} damage each): soft {R['coverRounds']['soft']}, hard {R['coverRounds']['hard']}, impenetrable {R['coverRounds']['impenetrable']}. Its health is that many rounds of the damage it stops, so soft cover has {round(R['coverRounds']['soft'] * R['coverRound'] * 0.1)} HP and hard cover {round(R['coverRounds']['hard'] * R['coverRound'] * 0.5)}.",
+    "Each tier lasted a set number of 5.56 Standard rounds (11 damage each): soft 15, hard 60, impenetrable 400. Its health was that many rounds of the damage it stops, so soft cover had 17 HP and hard cover 330.",
     "Open ground and concealment stop no damage, so they never break.",
     f"Explosives hit objects for {R['objBlastMul']}x their blast damage at that distance.",
     "Damaged cover shows a small health bar. At 0 it is destroyed and taken off the map. Settings > Cover health and familiarity."))
+upd(12, D10, "Flimsy cover wears out faster, and protects less as it does", "Was: cover took the damage it stopped, so hard cover took the most and concealment never broke. Now: it is the other way round.", bl(
+    "A hit through cover hurts it by the shot's damage before cover, times a share for its tier: " + ", ".join(f"{t} x{x}" for t, x in R['coverTake'].items()) + ". Misses and jams leave it alone.",
+    f"Each tier still lasts a set number of 5.56 Standard rounds: " + ", ".join(f"{t} {n}" for t, n in R['coverRounds'].items()) + f". So its health is rounds x {R['coverRound']} x its share: " + ", ".join(f"{t} {round(n * R['coverRound'] * R['coverTake'][t])} HP" for t, n in R['coverRounds'].items()) + ".",
+    "Concealment and soft cover protect in proportion to the health they have left: at half health a bush gives half its hit penalty and soft cover half its damage cut. The attack panel shows the percent left. Hard cover and impenetrable protect fully until they break.",
+    f"Explosives still hit objects for {R['objBlastMul']}x, times the same share."))
+upd(9, D10, "Roll ranges in short form", "Was: a list such as Jam 00-09 · Miss 10-62 · Hit 63-96. Now: only where each result starts.", bl(
+    "Red 10 - means a jam on anything below 10. White 63 + means a hit from 63 up. Green 97 ++ is a crit, blue 99 $$$ a super crit. Anything not covered is a miss.",
+    "The rolls are 00 to 99, so a 5% jam reads 05 - (00 to 04). The full ranges show when you point at the line."))
+upd(17, D10, "Rounds roll on", "Was: every round ended on a screen with a Start round button. Now: when the last turn ends, the next round starts by itself.", p("The end-of-round screen only stops play when someone is down and has a saving throw to roll."))
 upd(12, D10, "Square or hex grid", "Was: a 2m square grid. Now: the map can show 2m squares, hexes 12.5m across, or no grid.", p("The buttons are next to the zoom. The grid is only a picture: ranges are still measured in meters."))
 upd(12, D10, "Chests", "New, for testing.", bl(
     "Tick Chest next to Randomize room and a chest of ammo for the party's guns is placed a few meters in front of them.",

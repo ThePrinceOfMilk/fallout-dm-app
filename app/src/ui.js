@@ -398,7 +398,8 @@ function enterRoundEnd() {
   tickRound();
   log("turn", `End of round ${k.round}.`);
   const firstDown = S.chars.find((c) => c.dbno);
-  if (firstDown) ui.focus = `#save-${firstDown.id}`;
+  if (firstDown) { ui.focus = `#save-${firstDown.id}`; return; }  // saving throws to roll: stop here
+  k.round++; k.phase = "turns"; startFirstTurn();  // nothing to decide between rounds, so the next one starts by itself
 }
 function nextRound() { act("Next round", () => { const k = K(); k.round++; k.phase = "turns"; startFirstTurn(); }); }
 const npcsAlive = () => K().cbs.filter((c) => sideOf(c.id) === "npc" && alive(c)).length;
@@ -442,7 +443,7 @@ function atkView() {
   const v = E.weaponView(slot, A, dA, c, a.mode);
   if (dA.m.critPerRange) v.crit = E.fix(v.crit * range);  // Sharpshooter
   // Cover is a flag on every shot, from the line between the two of them. OVR can set it by hand.
-  const lc = T ? E.lineCover(posOf(A.id), posOf(T.id), S.scene.objects, S.rules) : { tier: "open", n: "Open", hit: 0, dam: 0, by: "" };
+  const lc = T ? coverNow(E.lineCover(posOf(A.id), posOf(T.id), S.scene.objects, S.rules)) : { tier: "open", n: "Open", hit: 0, dam: 0, by: "" };
   const cov = a.ov.cover ? { ...S.rules.cover[a.ov.cover], tier: a.ov.cover, by: "DM set" } : lc;
   const hc = E.hitChance(A, dA, T || A, dT, v, range, c, cov);
   const hit = num(a.ov.hit) != null ? num(a.ov.hit) / 100 : hc.hit * (1 + (dA.m.accMul || 0));
@@ -486,8 +487,8 @@ function fire() {
     // Familiarity: rounds fired with this weapon (a swing is 1), a crit counts famCritMul times.
     const fired = jammed ? 0 : v.usesAmmo ? v.count * (v.perShot || 1) : 1;
     if (fired) { A.fam = A.fam || {}; const fk = E.low(v.n); A.fam[fk] = (A.fam[fk] || 0) + fired * (crit ? S.rules.famCritMul || 1 : 1); }
-    // The cover in the way takes the damage it stopped.
-    if (p.cov.id && res.total != null && !jammed) { const open = E.resolve({ ...args, mult: Math.max(0, 1 + (dT.m.dmgTaken || 0)) }); hurtObj(S.scene.objects.find((o) => o.id === p.cov.id), (open.total || 0) - (res.total || 0), `${A.name}'s shot`); }
+    // A hit through cover wears it down: the shot's damage before cover, times that tier's share.
+    if (p.cov.id && res.total != null && !jammed && !["miss", "jam"].includes(res.outcome)) { const o = S.scene.objects.find((x) => x.id === p.cov.id); const open = E.resolve({ ...args, mult: Math.max(0, 1 + (dT.m.dmgTaken || 0)) }); hurtObj(o, E.fix((open.total || 0) * coverTake(o)), `${A.name}'s shot`); }
     if (!a.ov.free) A.ap = Math.max(0, (A.ap || 0) - (jammed && !S.rules.jamSpendsAP ? p.swap : p.cost));
     A.activeW = a.w;
     if (v.punch) A.punches = (A.punches || 0) + 1;  // each punch this turn costs more
@@ -768,8 +769,17 @@ const DIE_SVG = `<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.
 // skill checks read as the d20 faces that fail and pass: a natural 1 always fails, a natural 20 always passes
 function checkRange(need) { const n = Math.min(20, Math.max(2, need)); return n === 20 ? "fail 1-19 / pass 20" : `fail 1-${n - 1} / pass ${n}-20`; }
 // ---- throwing
-// Cover health: soft, hard and impenetrable pieces last coverRounds 5.56 rounds' worth of the damage they stop. Open and concealment never break.
-function objHp(o) { if (!o) return 0; const t = E.coverTier(o, S.rules); const stop = -((S.rules.cover[t] || {}).dam || 0); const n = (S.rules.coverRounds || {})[t]; return stop > 0 && n ? Math.round(n * (S.rules.coverRound || 11) * stop) : 0; }
+// Cover health: each tier lasts coverRounds 5.56 rounds. A hit through it does the shot's damage x coverTake, so flimsy cover wears out
+// in fewer hits of the same gun's worth. Open ground never breaks.
+const coverTake = (o) => ((S.rules.coverTake || {})[E.coverTier(o, S.rules)] || 0);
+function objHp(o) { if (!o) return 0; const t = E.coverTier(o, S.rules); const n = (S.rules.coverRounds || {})[t]; const take = coverTake(o); return n && take ? Math.round(n * (S.rules.coverRound || 11) * take) : 0; }
+// Concealment and soft cover protect in proportion to the health they have left. Hard cover and walls protect fully until they break.
+function coverNow(lc) {
+  const o = lc.id && S.scene.objects.find((x) => x.id === lc.id); const max = objHp(o);
+  if (!o || !max || !o.dmg || !(S.rules.coverFade || []).includes(lc.tier)) return lc;
+  const f = clamp(1 - o.dmg / max, 0, 1);
+  return { ...lc, hit: E.fix(lc.hit * f), dam: E.fix(lc.dam * f), n: `${lc.n} ${Math.round(f * 100)}%`, worn: f };
+}
 function hurtObj(o, amount, by) {
   const max = objHp(o); if (!max || !(amount > 0)) return;
   o.dmg = E.fix((o.dmg || 0) + amount);
@@ -1185,7 +1195,7 @@ function aimLine(a, b) {
 }
 // THE ACCURACY RING. On someone's turn, a halo around them shows their real hit chance with the weapon in hand at every range band:
 // clear where they can't hit, light red at low odds through yellow, green only above 65%, brighter as it climbs.
-const ringColor = (x) => (x < 0.65 ? `hsl(${Math.round((55 * x) / 0.65)},100%,${Math.round(72 - (14 * x) / 0.65)}%)` : `hsl(${Math.round(85 + (50 * (x - 0.65)) / 0.35)},100%,${Math.round(42 + (28 * (x - 0.65)) / 0.35)}%)`);
+const ringColor = (x) => (x < 0.65 ? `hsl(${Math.round((55 * x) / 0.65)},100%,${Math.round(66 - (10 * x) / 0.65)}%)` : `hsl(${Math.round(85 + (50 * (x - 0.65)) / 0.35)},100%,${Math.round(50 + (25 * (x - 0.65)) / 0.35)}%)`);
 function ringHits(id) {
   const A = ent(id); const c = ctx(); const wi = ui.atk && ui.atk.att === id ? ui.atk.w : A.activeW || 0; const slot = (A.weapons || [])[wi]; if (!slot) return null;
   const o = (E.get(c, slot.n) || { o: {} }).o; const d0 = der(A); const open = { tier: "open", n: "Open", hit: 0, dam: 0 };
@@ -1198,9 +1208,12 @@ function accRing(id) {
   hits.forEach((x, i) => {
     const lo = (i ? m[i - 1] : 0) / R, hi = m[i] / R;
     if (x <= 0) stops += `<stop offset="${lo.toFixed(4)}" stop-color="#000" stop-opacity="0"/><stop offset="${hi.toFixed(4)}" stop-color="#000" stop-opacity="0"/>`;
-    else stops += `<stop offset="${((lo + hi) / 2).toFixed(4)}" stop-color="${ringColor(x)}" stop-opacity="${(0.16 + 0.3 * x).toFixed(2)}"/>`;
+    else stops += `<stop offset="${((lo + hi) / 2).toFixed(4)}" stop-color="${ringColor(x)}" stop-opacity="${(0.38 + 0.42 * x).toFixed(2)}"/>`;
   });
-  return `<defs><radialGradient id="accg" gradientUnits="userSpaceOnUse" cx="${a.x}" cy="${a.y}" r="${R}">${stops}</radialGradient></defs><circle class="accring" cx="${a.x}" cy="${a.y}" r="${R}" fill="url(#accg)"><title>Hit chance by range: ${hits.map((x, i) => `R${i + 1} ${Math.round(x * 100)}%`).join(", ")}</title></circle>`;
+  // Black lines where the chance to hit starts and stops, so the limits of a possible shot are plain.
+  let edges = ""; hits.forEach((x, i) => { const prev = i ? hits[i - 1] > 0 : false; if ((x > 0) !== prev) edges += `<circle class="ringedge" cx="${a.x}" cy="${a.y}" r="${i ? m[i - 1] : 0}"/>`; });
+  if (hits[hits.length - 1] > 0) edges += `<circle class="ringedge" cx="${a.x}" cy="${a.y}" r="${R}"/>`;
+  return `<defs><radialGradient id="accg" gradientUnits="userSpaceOnUse" cx="${a.x}" cy="${a.y}" r="${R}">${stops}</radialGradient></defs><circle class="accring" cx="${a.x}" cy="${a.y}" r="${R}" fill="url(#accg)"><title>Hit chance by range: ${hits.map((x, i) => `R${i + 1} ${Math.round(x * 100)}%`).join(", ")}</title></circle>${edges}`;
 }
 // Ctrl while dragging on a turn: the token snaps to the middle of the range band it's in, measured from the target (or the nearest foe).
 function snapRange(id, p) {
@@ -1304,7 +1317,7 @@ function turnStage() {
   const na = (cost) => (cost > (A.ap || 0) ? "na" : "");
   const free = S.rules.moveAP[1] > (A.ap || 0) ? "na" : "";
   const cons = (A.inv || []).map((l, i) => ({ l, i, it: E.get(ctx(), l.n) })).filter((x) => x.it && x.it.cat === "item" && usable(x.it.o));
-  const head = `<div class="turnhead ${A.kind === "pc" ? "" : A.ally ? "ally" : "foe"}"><div class="turnwho"><span class="turnlabel">ROUND ${k.round} // ACTING</span><span class="actname">${h(A.name)}</span></div><div class="turnap"><span class="turnlabel">ACTION POINTS</span><span class="apbig">${fmt(A.ap)}<small>/${d.ap}</small></span>${apPips(A.ap || 0, d.ap)}</div><button class="btn primary endturn" data-a="next" data-v="">${kbd("N")}End turn</button></div>`;
+  const head = `<div class="turnhead ${A.kind === "pc" ? "" : A.ally ? "ally" : "foe"}"><div class="turnwho"><span class="turnlabel">ROUND ${k.round} // ACTING</span><span class="actname">${h(A.name)}</span></div><div class="turnap"><span class="turnlabel">ACTION POINTS</span><span class="apbig">${fmt(A.ap)}<small>/${d.ap}</small></span>${apPips(A.ap || 0, d.ap)}${ui.atk && atkView() ? `<span class="apafter">after this shot: ${fmt(Math.max(0, (A.ap || 0) - atkView().cost))}</span>` : ""}</div><button class="btn primary endturn" data-a="next" data-v="">${kbd("N")}End turn</button></div>`;
   const actions = `<div class="acts">${btn("reload", "", `Reload${v && v.usesAmmo ? ` ${fmt(v.reload)}` : ""}`, "R", v && v.usesAmmo ? na(v.reload) : "na")}${btn("swap", "", `Swap ${S.rules.swapAP}`, "", na(S.rules.swapAP))}${btn("moveModal", "", "Move", "M", free)}${slot && slot.jammed ? btn("clearJamBtn", "", `Clear jam ${v.clearJam}`, "", `primary ${na(v.clearJam)}`) : ""}${btn("check", "", "Skill check")}${btn("reviveChk", "", "Revive", "", S.chars.some((x) => x.dbno) ? "" : "na")}${btn("statusModal", "", "Status")}${d.m.inspire ? btn("inspire", "", "Inspire 2", "", na(2)) : ""}</div>`;
   const throws = (A.inv || []).filter((l) => (S.rules.throwables || {})[l.n]);
   const throwBtns = throws.map((l) => `<button class="opt" data-a="throwStart" data-v="${A.id}|${h(l.n)}" title="Throw it: pick where it lands on the map">${pix("bomb")} Throw ${h(l.n)} x${fmt(l.q)} <small>${S.rules.throwables[l.n].ap}AP</small></button>`).join("");
@@ -1330,14 +1343,21 @@ function attackPanel() {
   const hitPct = Math.round(E.pct(p.hit));
   const tgt = T ? `<div class="tgtcard"><span class="nm grow">${h(T.name)}</span><span class="s">${fmt(T.hp)}/${p.dT.hp} HP · DT ${fmt(p.dT.dt)}</span></div>${hpBar(T.hp, p.dT.hp)}${chips(T)}` : `<div class="warnline">Click an enemy on the map or in the list.</div>`;
   const ovr = ui.atkOv ? `<div class="ovrow s">Hit%${numBox(`id="ovHit" data-u="atk.ov.hit"`, a.ov.hit)} Bullets${numBox(`id="ovB" data-u="atk.ov.bullets"`, a.ov.bullets)} Dmg${numBox(`id="ovD" data-u="atk.ov.dmg"`, a.ov.dmg)}<label class="chk"><input type="checkbox" id="ovFree" data-u="atk.ov.free"${a.ov.free ? " checked" : ""}>Free</label><select id="ovCover" data-u="atk.ov.cover" title="Cover on this shot"><option value="">Cover: from map</option>${options(Object.entries(S.rules.cover).map(([id, t]) => [id, t.n]), a.ov.cover || "")}</select><select data-c="atkAs" id="atkAs" title="Acting as">${options(k.cbs.filter(alive).map((c) => [c.id, ent(c.id).name]), a.att)}</select></div>` : "";
-  const loadout = `<div class="wcards">${kbd("W")}${weapons}</div>
+  // What each kind of attack with this weapon costs: aimed at body, a limb or the head, the other fire mode, plus swap and reload.
+  const swapAP = a.w !== (A.activeW || 0) && !v.punch ? S.rules.swapAP : 0; const tAP = S.rules.targetAP || {};
+  const modeAP = (mode) => E.weaponView(p.slot, A, p.dA, ctx(), mode).ap;
+  const apTypes = [["Body", v.ap + (tAP.Body || 0)], ["Limb", v.ap + (tAP.Limb || 0)], ["Head", v.ap + (tAP.Head || 0)], ...(v.hasSecondary ? [[`${a.mode === "se" ? "1st" : "2nd"} mode`, modeAP(a.mode === "se" ? "pr" : "se")]] : []), ...(swapAP ? [["Swap", `+${swapAP}`]] : []), ...(v.usesAmmo ? [["Reload", v.reload]] : [])];
+  const apRow = `<div class="aptypes">${apTypes.map(([n, c]) => `<span class="apt ${n === a.loc ? "on" : ""}"><b>${typeof c === "number" ? fmt(c) : c}</b>${h(n)}</span>`).join("")}</div>`;
+  const loadout = `<div class="wcards">${kbd("W")}${weapons}</div>${apRow}
    ${v.hasSecondary ? `<div class="opts"><button class="opt ${a.mode !== "se" ? "on" : ""}" data-a="atkMode" data-v="pr">1st ${h(w.o.prName || "")}</button><button class="opt ${a.mode === "se" ? "on" : ""}" data-a="atkMode" data-v="se">2nd ${h(w.o.seName || "")}</button></div>` : ""}
    ${loads.length ? `<select id="atkLoad" style="width:100%" data-c="setLoad" data-id="${A.id}" data-i="${a.w}"><option value="">Choose ammo</option>${options(loads.map((x) => [x.n, `${x.load} (${x.n === p.slot.ammo ? `${p.slot.mag || 0} loaded, ` : ""}${ammoHeld(A, x.n)} held): Dam ${x.pellets ? x.dam + "x" + x.pellets : x.dam ?? "?"} Pen ${x.pen ?? 0}`]), p.slot.ammo)}</select>` : v.caliber ? `<div class="warnline">No ${h(v.caliber)} ammo in inventory.</div>` : ""}`;
   const targeting = `<div class="atkmid">${T ? bodyFig(a, T) : ""}<div class="atkinfo">${tgt}
-     <div class="stats3"><div><b>${hitPct}%</b><span>HIT</span></div><div><b>x${S.rules.loc[a.loc]}</b><span>${h(PARTS[a.part][0])}</span></div><div><b>${fmt(p.cost)}</b><span>AP COST</span></div><div class="covflag tier-${p.cov.tier}" title="${h(p.cov.by ? "Blocked by: " + p.cov.by : "Nothing in the way")}"><b>${h(p.cov.n)}</b><span>${p.cov.hit ? `${fmt(E.pct(p.cov.hit))}% hit` : "NO PENALTY"}${p.cov.dam ? ` ${fmt(E.pct(p.cov.dam))}% dmg` : ""}</span></div><div class="rng"><b><button class="xb" data-a="atkRange" data-v="-1" title="Closer">-</button>R${range}<button class="xb" data-a="atkRange" data-v="1" title="Farther">+</button> <small class="rngm">${T ? `${dist(posOf(A.id), posOf(T.id)).toFixed(1)}m` : ""}</small></b><span>${k.ranges[pairKey(a.att, a.tgt)] != null ? "DM SET" : "FROM MAP"}</span></div></div>
+     <div class="stats3"><div><b>${hitPct}%</b><span>HIT</span></div><div><b>x${S.rules.loc[a.loc]}</b><span>${h(PARTS[a.part][0])}</span></div><div class="costbig ${p.cost > (A.ap || 0) && !a.ov.free ? "over" : ""}"><b>${fmt(p.cost)} AP</b><span>THIS SHOT · ${fmt(Math.max(0, (A.ap || 0) - p.cost))} LEFT</span></div><div class="covflag tier-${p.cov.tier}" title="${h(p.cov.by ? "Blocked by: " + p.cov.by : "Nothing in the way")}"><b>${h(p.cov.n)}</b><span>${p.cov.hit ? `${fmt(E.pct(p.cov.hit))}% hit` : "NO PENALTY"}${p.cov.dam ? ` ${fmt(E.pct(p.cov.dam))}% dmg` : ""}</span></div><div class="rng"><b><button class="xb" data-a="atkRange" data-v="-1" title="Closer">-</button>R${range}<button class="xb" data-a="atkRange" data-v="1" title="Farther">+</button> <small class="rngm">${T ? `${dist(posOf(A.id), posOf(T.id)).toFixed(1)}m` : ""}</small></b><span>${k.ranges[pairKey(a.att, a.tgt)] != null ? "DM SET" : "FROM MAP"}</span></div></div>
      <div class="math">HIT ${h(E.hitLine(hc))}${num(a.ov.hit) != null ? ` <span class="warn">DM SET ${h(a.ov.hit)}%</span>` : ""}</div>
      <div class="s dim">Dam ${v.pellets ? `${fmt(v.base)}x${v.pellets}` : fmt(v.base)} Pen ${fmt(v.pen)}${v.count > 1 ? ` · burst ${v.count}` : ""}${p.extra || p.swap ? ` · ${fmt(v.ap)}${p.extra ? ` +${p.extra} aimed` : ""}${p.swap ? ` +${p.swap} swap` : ""} AP` : ""}</div></div></div>`;
-  const rolling = `<div class="bands">${bars}</div><div class="bright bandtext">${h(E.bandText(p.b))}</div>
+  const short = { jam: (s) => `${E.two(s.to + 1)} -`, hit: (s) => `${E.two(s.from)} +`, crit: (s) => `${E.two(s.from)} ++`, super: (s) => `${E.two(s.from)} $$$` };
+  const bandShort = spans.filter((s) => short[s.id]).map((s) => `<span class="bs bs-${s.id}" title="${s.label}: ${E.two(s.from)}-${E.two(s.to)}">${h(short[s.id](s))}</span>`).join("") || `<span class="bs bs-jam">No hit possible</span>`;
+  const rolling = `<div class="bands">${bars}</div><div class="bandtext bandshort" title="${h(E.bandText(p.b))}">${bandShort}</div>
    <div class="rollrow"><input class="rollbox" id="roll" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="00" value="${h(a.roll)}" data-u="atk.roll" data-enter="fire" aria-label="Two-dice roll, 00 to 99">${diceBtn("roll", "2d10")}${btn("fire", "", "Resolve", "Enter", `primary ${p.cost > (A.ap || 0) && !a.ov.free ? "na" : ""}`)}<span class="spacer"></span><button class="btn tiny ${ui.atkOv ? "on" : ""}" data-a="atkOvToggle" data-v="" title="Overrides">OVR</button>${K().phase === "stealth" ? btn("closeAtk", "", "Close", "Esc", "tiny") : ""}</div>${ovr}
    ${a.err ? `<div class="errline">${h(a.err)}</div>` : ""}${warn.map((x) => `<div class="warnline">${h(x)}</div>`).join("")}
    ${r ? `<div class="result ${r.outcome}">${(() => { const facts = `${r.name}: ${h(r.head)}${r.math ? `<br>${h(r.math)}<br>${h(r.tName)} ${r.hp}/${r.max} HP${r.hp <= 0 ? " DOWN" : ""}` : ""}${r.ammoText ? ` · ${h(r.ammoText)}` : ""}${(r.auto || []).length ? `<br>Applied: ${h(r.auto.join(", "))}` : ""}`;
@@ -2001,7 +2021,7 @@ const ACT = {
       const start = S.log.length;
       log("hit o-hit", `${A.name} throws ${T.item} ${thrown.toFixed(1)}m · ${t.ap} AP · ${hits.map((x) => `${x.e.name} ${fmt(x.d)}m: ${x.dmg}`).join(", ") || "nobody in the blast"}`);
       for (const x of hits) { x.e.hp = Math.max(0, (x.e.hp || 0) - x.dmg); syncDown(x.e, A.id); log("hit", `${x.e.name} ${x.e.hp}/${der(x.e).hp} HP after the blast`); }
-      for (const o of [...S.scene.objects]) { const d = Math.max(0, dist(o, T.at) - Math.max(o.w || 1, o.h || 1) / 2); hurtObj(o, E.blastDamage(t, d) * (S.rules.objBlastMul || 1), `the ${T.item}`); }  // explosives wreck cover
+      for (const o of [...S.scene.objects]) { const d = Math.max(0, dist(o, T.at) - Math.max(o.w || 1, o.h || 1) / 2); hurtObj(o, E.fix(E.blastDamage(t, d) * (S.rules.objBlastMul || 1) * coverTake(o)), `the ${T.item}`); }  // explosives wreck cover
       if (S.rules.storyLog) {
         const nm = (e) => (e.kind !== "pc" && / - /.test(e.name) ? e.name.split(" - ").slice(1).join(" - ") : e.name);
         const list = hits.map((x) => `${nm(x.e)} for ${x.dmg} DMG`); const tail = hits.filter((x) => x.e.hp <= 0).map((x) => `${nm(x.e)} ${x.e.kind === "pc" ? "goes down" : "is torn apart"}`);

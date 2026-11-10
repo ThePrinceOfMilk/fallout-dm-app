@@ -443,7 +443,7 @@ async function launch() {
   });
   await ok("Attack in three taps: A, roll, Enter", async () => {
     await blur(); await page.evaluate(() => { startTurn("c4"); S.combat.acted = { c4: true }; ui.focus = null; render(); }); const s0 = await state(); assert.strictEqual(s0.combat.turnId, "c4");
-    await press("a"); await has("HIT "); await has("Jam ");
+    await press("a"); await has("HIT "); assert.match(await text(".bandshort .bs-jam"), /^[0-9][0-9] -$/, "jam reads as a number and a minus");
     assert.strictEqual(await page.locator("#map .aim").count(), 1, "the map shows who is aimed at");
     assert.strictEqual(await page.locator(".body .bp").count(), 6, "body mock-up: head, body, four limbs");
     await page.evaluate(() => { K().ranges[pairKey(ui.atk.att, ui.atk.tgt)] = 2; ui.atk.ov.cover = "open"; ui.focus = "#roll"; render(); });  // scattered enemies can be out of pistol range, where a 99 rightly misses
@@ -1066,11 +1066,15 @@ async function launch() {
       const crate = { id: "o" + S.seq++, kind: "cover", item: "crate", cover: "soft", x: 3, y: 0, w: 1, h: 1, label: "" }; S.scene.objects.push(crate);
       ACT.attack(); ui.atk.tgt = T.id; const gun = pc.weapons[ui.atk.w]; gun.mag = 2; pc.ap = 99; ent(T.id).hp = 99; ui.atk.roll = "50"; ui.atk.ov.hit = "95"; ACT.fire();
       out.crate = [objHp(crate), crate.dmg > 0]; out.fam = famOf(pc, gun.n).n;
+      crate.dmg = objHp(crate) / 2; out.half = atkView().cov.hit; out.bush = objHp({ cover: "concealment", item: "bush", kind: "cover" }) > objHp({ cover: "soft", item: "crate", kind: "cover" }) * 0;
+      out.take = ["concealment", "soft", "hard", "impenetrable"].map((t) => S.rules.coverTake[t]);
+      out.bands = [...document.querySelectorAll(".bandshort .bs")].map((x) => x.textContent);
       // punching right after a gunshot costs no swap
       ACT.attack(); ui.atk.w = pc.weapons.findIndex((w) => w.n === "Basic Fighting"); out.punch = atkView().cost;
       // looting score: Survival + 10 x Luck
       out.score = lootScore().score; const d = der(lootScore().who); out.scoreMath = (d.skills.SUR || 0) + 10 * d.sp.L;
       const snap = snapRange(pc.id, { x: 0.3, y: 0.1 }); out.snap = snap.band != null;
+      const r0 = K().round; for (let i = 0; i < 12 && K().round === r0; i++) nextTurn(); out.autoRound = [K().round - r0, K().phase];
       ACT.setGrid("hex"); out.hex = S.rules.gridMode; out.turnbar = document.querySelectorAll(".turnbar .tbi").length;
       ACT.endCombat();
       return out;
@@ -1078,10 +1082,14 @@ async function launch() {
     assert.ok(r.uniques >= 140, "named weapons flagged unique"); assert.strictEqual(r.shop, 0, "no uniques on shelves");
     assert.ok(r.chestLoot > 0 && r.opened, "the chest opens for whoever starts a turn within R1 and its ammo goes to them");
     assert.ok(r.ring, "the accuracy ring is drawn on a turn");
-    assert.deepStrictEqual(r.crate, [17, true], "soft cover has 15 rounds of what it stops, and the shot through it hurts it");
+    assert.deepStrictEqual(r.crate, [132, true], "soft cover lasts 12 rounds of 5.56, and a hit through it hurts it");
+    assert.strictEqual(r.half, -0.125, "half-broken soft cover gives about half its hit penalty");
+    assert.ok(r.bush && r.take.every((x, i) => !i || x < r.take[i - 1]), "concealment breaks too, and weaker cover takes more of each hit");
+    assert.ok(r.bands.length && r.bands.every((x) => /^[0-9][0-9] (-|\+|\+\+|\$\$\$)$/.test(x)), "short roll bands: " + r.bands.join(" "));
     assert.ok(r.fam >= 1, "rounds fired count toward familiarity");
     assert.strictEqual(r.punch, 1, "a punch after a gunshot costs 1 AP, no swap");
     assert.strictEqual(r.score, r.scoreMath, "loot score is Survival + 10 x Luck");
+    assert.deepStrictEqual(r.autoRound, [1, "turns"], "with nobody down, the next round starts by itself");
     assert.ok(r.snap && r.hex === "hex" && r.turnbar >= 2, "snap, hex grid and the turn bar");
     await page.evaluate(() => ACT.iconPick("c1")); await page.locator('[data-a="iconSet"][data-v="c1|cowboy"]').click();
     assert.strictEqual((await state()).chars[0].icon, "cowboy", "pick a map icon from the card");
