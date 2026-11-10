@@ -1,6 +1,6 @@
 # Fallout DM App
 
-A campaign manager for the DM of a homebrew Fallout tabletop game. It runs in one HTML file with nothing to install. The table keeps the drama, and the app does the bookkeeping: map and range bands, cover, hit chance, damage, AP, ammo, status effects, XP, level-ups, loot and vendors.
+A campaign manager for the DM of a homebrew Fallout tabletop game. It runs in one HTML file with nothing to install. Keeping the unfun complexity in this and streamlining the DM experience: map and range bands, cover, hit chance, damage, AP, ammo, status effects, XP, level-ups, loot and vendors.
 
 This is a fan project and isn't affiliated with Bethesda or Obsidian.
 
