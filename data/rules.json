@@ -792,7 +792,8 @@
   "bigRoom",
   "hallway",
   "interior",
-  "warehouse"
+  "warehouse",
+  "shack"
  ],
  "noteRules": {
   "Mobile Firepower": {
@@ -2232,6 +2233,303 @@
    "cover": "hard",
    "w": 1.2,
    "h": 1.2
+  },
+  "void": {
+   "n": "Out of bounds",
+   "cover": "impenetrable",
+   "w": 4,
+   "h": 4,
+   "block": true
+  },
+  "tirePile": {
+   "n": "Tire pile",
+   "cover": "soft",
+   "w": 1.5,
+   "h": 1.5,
+   "round": true
+  },
+  "scrapHeap": {
+   "n": "Scrap heap",
+   "cover": "hard",
+   "w": 3,
+   "h": 2.5
+  },
+  "shippingContainer": {
+   "n": "Shipping container",
+   "cover": "impenetrable",
+   "w": 6,
+   "h": 2.4,
+   "block": true
+  },
+  "carStack": {
+   "n": "Stacked cars",
+   "cover": "hard",
+   "w": 4.5,
+   "h": 2.2,
+   "block": true
+  },
+  "engineBlock": {
+   "n": "Engine block",
+   "cover": "hard",
+   "w": 1,
+   "h": 0.8
+  },
+  "guardTower": {
+   "n": "Guard tower",
+   "cover": "hard",
+   "w": 3,
+   "h": 3,
+   "block": true
+  },
+  "hesco": {
+   "n": "Hesco barrier",
+   "cover": "hard",
+   "w": 2,
+   "h": 1
+  },
+  "ammoCrate": {
+   "n": "Ammo crate",
+   "cover": "soft",
+   "w": 1.2,
+   "h": 0.6
+  },
+  "razorWire": {
+   "n": "Razor wire",
+   "cover": "concealment",
+   "w": 4,
+   "h": 0.6
+  },
+  "fieldTent": {
+   "n": "Field tent",
+   "cover": "concealment",
+   "w": 4,
+   "h": 3
+  },
+  "flagpole": {
+   "n": "Flagpole",
+   "cover": "open",
+   "w": 0.3,
+   "h": 0.3,
+   "round": true
+  },
+  "radioTable": {
+   "n": "Radio table",
+   "cover": "soft",
+   "w": 1.6,
+   "h": 0.8
+  },
+  "concreteBlock": {
+   "n": "Concrete block",
+   "cover": "hard",
+   "w": 1,
+   "h": 1
+  },
+  "metalSheet": {
+   "n": "Sheet metal",
+   "cover": "soft",
+   "w": 2,
+   "h": 0.2
+  },
+  "barCounter": {
+   "n": "Bar counter",
+   "cover": "hard",
+   "w": 5,
+   "h": 0.8
+  },
+  "barStool": {
+   "n": "Bar stool",
+   "cover": "open",
+   "w": 0.4,
+   "h": 0.4,
+   "round": true
+  },
+  "pokerTable": {
+   "n": "Poker table",
+   "cover": "soft",
+   "w": 1.8,
+   "h": 1.8,
+   "round": true
+  },
+  "slotMachine": {
+   "n": "Slot machine",
+   "cover": "hard",
+   "w": 0.8,
+   "h": 0.7
+  },
+  "jukebox": {
+   "n": "Jukebox",
+   "cover": "soft",
+   "w": 1,
+   "h": 0.7
+  },
+  "stage": {
+   "n": "Stage",
+   "cover": "open",
+   "w": 4,
+   "h": 2.5
+  },
+  "piano": {
+   "n": "Piano",
+   "cover": "soft",
+   "w": 1.5,
+   "h": 1.4
+  },
+  "vaultConsole": {
+   "n": "Console",
+   "cover": "hard",
+   "w": 2,
+   "h": 0.8
+  },
+  "bunkBed": {
+   "n": "Bunk bed",
+   "cover": "soft",
+   "w": 2,
+   "h": 1
+  },
+  "reactorCore": {
+   "n": "Reactor",
+   "cover": "hard",
+   "w": 3,
+   "h": 3,
+   "round": true
+  },
+  "waterPurifier": {
+   "n": "Water purifier",
+   "cover": "hard",
+   "w": 2,
+   "h": 1.5
+  },
+  "hayBale": {
+   "n": "Hay bale",
+   "cover": "soft",
+   "w": 1.4,
+   "h": 1.4,
+   "round": true
+  },
+  "fence": {
+   "n": "Wooden fence",
+   "cover": "concealment",
+   "w": 4,
+   "h": 0.2
+  },
+  "waterTrough": {
+   "n": "Water trough",
+   "cover": "soft",
+   "w": 2,
+   "h": 0.7
+  },
+  "tractor": {
+   "n": "Tractor",
+   "cover": "hard",
+   "w": 3.5,
+   "h": 1.8
+  },
+  "scarecrow": {
+   "n": "Scarecrow",
+   "cover": "open",
+   "w": 0.5,
+   "h": 0.5,
+   "round": true
+  },
+  "cropRow": {
+   "n": "Crop row",
+   "cover": "concealment",
+   "w": 5,
+   "h": 0.8
+  },
+  "silo": {
+   "n": "Silo",
+   "cover": "hard",
+   "w": 4,
+   "h": 4,
+   "round": true
+  },
+  "gasPump": {
+   "n": "Gas pump",
+   "cover": "hard",
+   "w": 1,
+   "h": 0.6
+  },
+  "vendingMachine": {
+   "n": "Vending machine",
+   "cover": "hard",
+   "w": 1,
+   "h": 0.8
+  },
+  "billboard": {
+   "n": "Billboard",
+   "cover": "concealment",
+   "w": 5,
+   "h": 0.4
+  },
+  "phoneBooth": {
+   "n": "Phone booth",
+   "cover": "soft",
+   "w": 1,
+   "h": 1
+  },
+  "tollBooth": {
+   "n": "Toll booth",
+   "cover": "hard",
+   "w": 2,
+   "h": 2
+  },
+  "brokenColumn": {
+   "n": "Broken column",
+   "cover": "hard",
+   "w": 1,
+   "h": 1,
+   "round": true
+  },
+  "collapsedWall": {
+   "n": "Collapsed wall",
+   "cover": "hard",
+   "w": 5,
+   "h": 0.8
+  },
+  "statue": {
+   "n": "Statue",
+   "cover": "hard",
+   "w": 1.5,
+   "h": 1.5
+  },
+  "crater": {
+   "n": "Crater",
+   "cover": "open",
+   "w": 4,
+   "h": 4,
+   "round": true
+  },
+  "stalagmite": {
+   "n": "Stalagmite",
+   "cover": "hard",
+   "w": 1,
+   "h": 1,
+   "round": true
+  },
+  "mineCart": {
+   "n": "Mine cart",
+   "cover": "hard",
+   "w": 1.6,
+   "h": 1
+  },
+  "supportBeam": {
+   "n": "Support beam",
+   "cover": "soft",
+   "w": 0.4,
+   "h": 0.4
+  },
+  "oreVein": {
+   "n": "Ore vein",
+   "cover": "hard",
+   "w": 2.5,
+   "h": 1.2
+  },
+  "railTrack": {
+   "n": "Rail track",
+   "cover": "open",
+   "w": 6,
+   "h": 1
   }
  },
  "roomThemes": {
@@ -2385,6 +2683,158 @@
     "barricade": 2,
     "rubble": 3,
     "concreteWall": 1
+   }
+  },
+  "scrapyard": {
+   "n": "Scrapyard",
+   "density": 0.02,
+   "min": 3,
+   "max": 60,
+   "loose": true,
+   "items": {
+    "wreck": 4,
+    "carStack": 2,
+    "scrapHeap": 4,
+    "tirePile": 4,
+    "shippingContainer": 2,
+    "engineBlock": 2,
+    "oilDrum": 3,
+    "crateStack": 1,
+    "metalSheet": 2,
+    "rubble": 2
+   }
+  },
+  "military": {
+   "n": "Military outpost",
+   "density": 0.018,
+   "min": 3,
+   "max": 60,
+   "loose": true,
+   "items": {
+    "sandbags": 5,
+    "hesco": 4,
+    "ammoCrate": 3,
+    "razorWire": 3,
+    "fieldTent": 2,
+    "guardTower": 1,
+    "radioTable": 1,
+    "barricade": 2,
+    "crate": 2,
+    "flagpole": 1,
+    "concreteBlock": 2
+   }
+  },
+  "saloon": {
+   "n": "Saloon or casino",
+   "density": 0.07,
+   "min": 3,
+   "max": 60,
+   "loose": true,
+   "items": {
+    "barCounter": 1,
+    "barStool": 5,
+    "pokerTable": 3,
+    "slotMachine": 4,
+    "jukebox": 1,
+    "stage": 1,
+    "piano": 1,
+    "kitchenTable": 2,
+    "couch": 1,
+    "barrels": 1
+   }
+  },
+  "vault": {
+   "n": "Vault",
+   "density": 0.06,
+   "min": 3,
+   "max": 60,
+   "loose": true,
+   "items": {
+    "vaultConsole": 3,
+    "bunkBed": 3,
+    "lockers": 3,
+    "waterPurifier": 1,
+    "reactorCore": 1,
+    "generator": 1,
+    "crate": 2,
+    "bench": 2,
+    "pipeRack": 1,
+    "footlocker": 2
+   }
+  },
+  "farm": {
+   "n": "Farmstead",
+   "density": 0.016,
+   "min": 3,
+   "max": 60,
+   "loose": true,
+   "items": {
+    "hayBale": 5,
+    "fence": 5,
+    "cropRow": 5,
+    "waterTrough": 2,
+    "tractor": 1,
+    "scarecrow": 1,
+    "silo": 1,
+    "crate": 2,
+    "barrels": 2,
+    "log": 1
+   }
+  },
+  "roadside": {
+   "n": "Gas station",
+   "density": 0.016,
+   "min": 3,
+   "max": 60,
+   "loose": true,
+   "items": {
+    "gasPump": 3,
+    "vendingMachine": 2,
+    "billboard": 1,
+    "phoneBooth": 1,
+    "tollBooth": 1,
+    "car": 4,
+    "dumpster": 2,
+    "lamppost": 2,
+    "barricade": 2,
+    "oilDrum": 2,
+    "tirePile": 2
+   }
+  },
+  "ruins": {
+   "n": "Ruins",
+   "density": 0.02,
+   "min": 3,
+   "max": 60,
+   "loose": true,
+   "items": {
+    "collapsedWall": 5,
+    "brokenColumn": 4,
+    "ruinWall": 4,
+    "rubble": 5,
+    "statue": 1,
+    "crater": 2,
+    "pillar": 2,
+    "stoneWall": 2,
+    "deadTree": 1
+   }
+  },
+  "cave": {
+   "n": "Cave or mine",
+   "density": 0.03,
+   "min": 3,
+   "max": 60,
+   "loose": true,
+   "items": {
+    "stalagmite": 6,
+    "rock": 4,
+    "boulder": 2,
+    "smallRock": 4,
+    "oreVein": 3,
+    "mineCart": 2,
+    "supportBeam": 3,
+    "railTrack": 1,
+    "crate": 1
    }
   }
  },
@@ -3973,6 +4423,281 @@
      18,
      1,
      2.5
+    ]
+   ]
+  },
+  "shack": {
+   "n": "Shack",
+   "w": 8,
+   "h": 6,
+   "objs": [
+    [
+     "crate",
+     2.5,
+     -2,
+     1,
+     1
+    ],
+    [
+     "bedroll",
+     -2,
+     2,
+     1.8,
+     0.7
+    ]
+   ]
+  },
+  "courtyard": {
+   "n": "Courtyard",
+   "w": 20,
+   "h": 20,
+   "objs": [
+    [
+     "pillar",
+     -5,
+     -5,
+     1.2,
+     1.2
+    ],
+    [
+     "pillar",
+     5,
+     -5,
+     1.2,
+     1.2
+    ],
+    [
+     "pillar",
+     -5,
+     5,
+     1.2,
+     1.2
+    ],
+    [
+     "pillar",
+     5,
+     5,
+     1.2,
+     1.2
+    ],
+    [
+     "bench",
+     0,
+     -8,
+     1.8,
+     0.5
+    ]
+   ]
+  },
+  "parkingLot": {
+   "n": "Parking lot",
+   "w": 40,
+   "h": 30,
+   "objs": [
+    [
+     "car",
+     -6,
+     -9,
+     2,
+     4.5
+    ],
+    [
+     "car",
+     0,
+     -9,
+     2,
+     4.5
+    ],
+    [
+     "car",
+     9,
+     -9,
+     2,
+     4.5
+    ],
+    [
+     "car",
+     -3,
+     9,
+     2,
+     4.5
+    ],
+    [
+     "car",
+     12,
+     9,
+     2,
+     4.5
+    ],
+    [
+     "lamppost",
+     0,
+     0,
+     0.4,
+     0.4
+    ],
+    [
+     "dumpster",
+     17,
+     0,
+     1,
+     2
+    ]
+   ]
+  },
+  "road": {
+   "n": "Stretch of road",
+   "w": 80,
+   "h": 24,
+   "objs": [
+    [
+     "car",
+     -8,
+     -3,
+     4.5,
+     2
+    ],
+    [
+     "bus",
+     14,
+     4,
+     9,
+     2.5
+    ],
+    [
+     "barricade",
+     30,
+     -6,
+     0.6,
+     3
+    ],
+    [
+     "barricade",
+     30,
+     6,
+     0.6,
+     3
+    ],
+    [
+     "rubble",
+     -24,
+     8,
+     3,
+     2
+    ]
+   ]
+  },
+  "compound": {
+   "n": "Walled compound",
+   "w": 70,
+   "h": 50,
+   "objs": [
+    [
+     "concreteWall",
+     0,
+     -22,
+     50,
+     0.4
+    ],
+    [
+     "concreteWall",
+     0,
+     22,
+     50,
+     0.4
+    ],
+    [
+     "concreteWall",
+     25,
+     0,
+     0.4,
+     44
+    ],
+    [
+     "concreteWall",
+     -25,
+     -13,
+     0.4,
+     18
+    ],
+    [
+     "concreteWall",
+     -25,
+     13,
+     0.4,
+     18
+    ],
+    [
+     "building",
+     12,
+     -8,
+     16,
+     14
+    ],
+    [
+     "crateStack",
+     -8,
+     10,
+     2,
+     2
+    ],
+    [
+     "sandbags",
+     -22,
+     -3,
+     0.6,
+     2
+    ],
+    [
+     "sandbags",
+     -22,
+     3,
+     0.6,
+     2
+    ]
+   ]
+  },
+  "cavern": {
+   "n": "Cavern",
+   "w": 60,
+   "h": 40,
+   "scatter": [
+    [
+     "boulder",
+     8,
+     3,
+     6
+    ],
+    [
+     "rock",
+     16,
+     1,
+     2.5
+    ]
+   ]
+  },
+  "field": {
+   "n": "Open field",
+   "w": 150,
+   "h": 110,
+   "scatter": [
+    [
+     "bush",
+     20,
+     1.5,
+     3
+    ],
+    [
+     "rock",
+     12,
+     1,
+     2.5
+    ],
+    [
+     "boulder",
+     4,
+     3,
+     5
     ]
    ]
   },

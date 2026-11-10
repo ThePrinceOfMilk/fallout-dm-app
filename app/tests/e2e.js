@@ -968,11 +968,13 @@ async function launch() {
     assert.deepStrictEqual(r, [0, true, true]);
   });
   await ok("Keys list opens", async () => { await page.keyboard.press("?"); await has("End turn", ".dialog"); await press("Escape"); });
-  await ok("Phones: every panel shows, panels fold, the map loads, Save offers a file", async () => {
+  await ok("Phones: everything fits the screen inside a border, panels fold, a fight stacks map, targeting and two columns, Save offers a file", async () => {
     const ctx2 = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }); const p2 = await ctx2.newPage();
     await p2.goto(APP); await p2.waitForTimeout(200);
     const hs = await p2.evaluate(() => [...document.querySelectorAll(".win")].map((w) => [w.className.split(" ")[1], w.getBoundingClientRect().height]));
-    assert.ok(hs.every(([, h]) => h > 30), "no squeezed panels: " + JSON.stringify(hs));
+    assert.ok(hs.filter(([c]) => !["w-recent", "w-clog"].includes(c)).every(([, h]) => h > 30), "no squeezed panels: " + JSON.stringify(hs));
+    const fit = () => p2.evaluate(() => { const seen = [...document.querySelectorAll(".win, .rail, .turnbar")].filter((w) => w.getBoundingClientRect().height > 0).map((w) => w.getBoundingClientRect()); return { page: [document.documentElement.scrollHeight <= innerHeight, document.documentElement.scrollWidth <= innerWidth], inside: seen.every((r) => r.left >= 6 && r.top >= 6 && r.right <= innerWidth - 6 && r.bottom <= innerHeight - 6), n: seen.length }; });
+    assert.deepStrictEqual({ ...(await fit()), n: 0 }, { page: [true, true], inside: true, n: 0 }, "between fights everything sits inside a border and the page does not scroll");
     await p2.locator(".w-party .foldbtn").tap(); await p2.waitForTimeout(30);
     assert.ok(await p2.locator(".w-party.folded").count(), "tapping the fold button folds the panel");
     assert.ok((await p2.locator(".w-party").boundingBox()).height < 60);
@@ -980,11 +982,16 @@ async function launch() {
     assert.strictEqual(await p2.locator(".w-party.folded").count(), 0, "and opens it again");
     await p2.locator(".w-notes .wt").tap({ position: { x: 120, y: 12 } }); await p2.waitForTimeout(30);
     assert.ok(await p2.locator(".w-notes.folded").count(), "tapping the header works too"); await p2.locator(".w-notes .foldbtn").tap();
-    const pad = await p2.evaluate(() => parseFloat(getComputedStyle(document.body).paddingBottom));
-    assert.ok(pad >= 90, "room under the last button for the browser toolbar: " + pad);
-    assert.strictEqual(await p2.locator(".devlist").isVisible(), false, "Dev buttons start folded"); await p2.locator(".devtoggle").click(); assert.ok(await p2.locator(".devlist").isVisible());
+    const gap = await p2.evaluate(() => innerHeight - document.querySelector(".rail").getBoundingClientRect().bottom);
+    assert.ok(gap >= 6, "the tab bar keeps clear of the bottom edge: " + gap);
+    assert.strictEqual(await p2.locator(".devlist").isVisible(), false, "Dev buttons start folded"); await p2.locator(".devtoggle").click(); assert.ok(await p2.locator(".devlist").isVisible()); await p2.locator(".devtoggle").click();
     await p2.evaluate(() => { ui.setup = true; render(); });
     assert.ok((await p2.locator("#map").boundingBox()).height > 200, "the map has room");
+    assert.deepStrictEqual({ ...(await fit()), n: 0 }, { page: [true, true], inside: true, n: 0 }, "encounter setup fits the screen too");
+    const order = await p2.evaluate(() => { const raider = DATA.enemies.find((e) => !e.mob && !e.test).n; ACT.addPick(raider); ACT.beginC(""); beginRounds(); render(); const r = (q) => document.querySelector(q).getBoundingClientRect(); const bar = r(".turnbar"), map = r(".w-map"), act = r(".w-action"), party = r(".w-party"), foes = r(".w-enemies"); return [bar.top < map.top, map.bottom <= act.top + 1, act.bottom <= party.top + 1, Math.abs(party.top - foes.top) < 2, party.right <= foes.left + 1, map.height > 150, getComputedStyle(document.querySelector(".devbar")).display]; });
+    assert.deepStrictEqual(order, [true, true, true, true, true, true, "none"], "a fight on a phone: turn order, map, targeting, then players and enemies side by side, with the top bar out of the way");
+    assert.deepStrictEqual({ ...(await fit()), n: 0 }, { page: [true, true], inside: true, n: 0 }, "and the fight fits the screen");
+    await p2.evaluate(() => { S.combat = null; S.scene = freshScene(S.rules); ui.atk = null; ui.setup = true; render(); });
     await p2.evaluate(() => ACT.saveNow()); await p2.waitForTimeout(50);
     assert.match(await p2.locator(".dialog").innerText(), /save a copy to this device/i, "Save asks where else to keep it");
     await ctx2.close();
@@ -1215,6 +1222,57 @@ async function launch() {
     assert.ok(r.drawn, "the enemy's token on the map is drawn with its faction icon");
     assert.deepStrictEqual(r.layout, [true, true, false, "w-enc"], "skill check sits under the enemy list; the encounter panel can be resized");
     assert.deepStrictEqual(r.geo, [true, true, true], "the encounter panel has the middle to itself");
+  });
+  await ok("Map creator, new settings and maps, whole names on tokens, panel sizes that follow the screen", async () => {
+    await page.evaluate(() => { S = fresh(); Object.assign(ui, { atk: null, modal: null, end: null, def: null, sel: S.chars[0].id, setup: null }); applyData(); ACT.setupOpen("1"); });
+    // draw a map with the mouse: open the creator, name it, drag out a building and a wall, place an item, save
+    await page.locator('[data-a="mmOpen"][data-v=""]').click();
+    await page.fill("#mmName", "Test depot"); await page.fill("#mmW", "40"); await page.locator("#mmW").dispatchEvent("change"); await page.selectOption("#mmShape", "L");
+    const at = async (x, y) => page.evaluate(([x, y]) => { const svg = document.getElementById("mmSvg"); const q = new DOMPoint(x, y).matrixTransform(svg.getScreenCTM()); return { x: q.x, y: q.y }; }, [x, y]);
+    const drag = async (a, b) => { await page.mouse.move(a.x, a.y); await page.mouse.down(); await page.mouse.move((a.x + b.x) / 2, (a.y + b.y) / 2); await page.mouse.move(b.x, b.y); await page.mouse.up(); await page.waitForTimeout(30); };
+    await page.locator('[data-a="mmTool"][data-v="building"]').click(); await drag(await at(-12, -2), await at(-2, 6));
+    await page.locator('[data-a="mmTool"][data-v="wall"]').click(); await drag(await at(2, 8), await at(14, 8.3));
+    await page.selectOption("#mmItem", "gasPump"); { const q = await at(6, 2); await page.mouse.click(q.x, q.y); }
+    const drawn = await page.evaluate(() => ui.mm.objects.map((o) => [o.item, o.w, o.h]));
+    assert.deepStrictEqual(drawn, [["building", 10, 8], ["concreteWall", 12, 0.4], ["gasPump", 1, 0.6]], "dragging sizes the building and the wall; a click places the item");
+    await page.keyboard.press("Delete"); assert.strictEqual(await page.evaluate(() => ui.mm.objects.length), 2, "Delete removes the selected thing");
+    await page.locator('.dialog [data-a="mmSave"]').click(); await page.waitForTimeout(40);
+    const r = await page.evaluate(() => {
+      const out = {}; const id = Object.keys(S.customMaps)[0]; const cm = S.customMaps[id];
+      out.saved = [cm.n, cm.w, cm.h, cm.shape, cm.objs.filter((o) => o.voidBlock).length, cm.objs.length]; out.scene = [S.scene.map.id === "cm:" + id, S.scene.theme, S.scene.objects.length];
+      out.listed = mapOptions().some(([v, n]) => v === "cm:" + id && /Test depot 40x20m/.test(n)); out.themeChoice = !!document.querySelector('#themeId option[value="asBuilt"]');
+      // the corner the shape closes off can't be stood in, and enemies never start there
+      const v = cm.objs.find((o) => o.voidBlock); out.voidBlocks = standBlocked({ x: v.x, y: v.y }); for (let i = 0; i < 12; i++) ACT.addPick("Raider"); out.foesInside = S.scene.npcs.every((n) => !E.inside(posOf(n.id), v));
+      // another setting can be rolled on it, and As built brings the drawing back
+      ACT.setTheme("scrapyard"); ACT.randomRoom(); out.rolled = [S.scene.objects.some((o) => ["wreck", "scrapHeap", "tirePile", "carStack", "oilDrum"].includes(o.item)), S.scene.objects.filter((o) => o.voidBlock).length, S.scene.objects.every((o) => o.voidBlock || !E.inside(o, v))];
+      ACT.setTheme("asBuilt"); out.back = S.scene.objects.map((o) => o.item).sort().join(",");
+      // it travels with the campaign
+      out.kept = Object.keys(normalize(JSON.parse(JSON.stringify(S))).customMaps).length; ACT.setMapId("wild"); out.away = [S.scene.theme !== "asBuilt", !!document.querySelector('#themeId option[value="asBuilt"]')];
+      // the new settings and maps are on the lists, and every new object has a picture
+      out.themes = ["scrapyard", "military", "saloon", "vault", "farm", "roadside", "ruins", "cave"].every((t) => S.rules.roomThemes[t] && document.querySelector(`#themeId option[value="${t}"]`));
+      out.maps = ["shack", "courtyard", "parkingLot", "road", "compound", "cavern", "field"].every((m) => S.rules.maps[m] && document.querySelector(`#mapId option[value="${m}"]`));
+      out.noPicture = Object.keys(S.rules.mapItems).filter((k) => !GLYPH[ITEM_GLYPH[k]]); out.items = Object.keys(S.rules.mapItems).length;
+      // tokens carry the whole name, or the nickname when there is one
+      S.scene.npcs = []; ACT.addPick("Crimson Caravan Guard"); const e = S.scene.npcs[0]; out.label = [tokenLabel({ kind: "npc", name: "Crimson Caravan Guard" }), tokenLabel({ kind: "npc", name: "Fiend - Zed" }), tokenLabel(S.chars[0]) === S.chars[0].name, labelLines({ kind: "npc", name: "Crimson Caravan Guard" }, " R3")];
+      render(); out.onMap = document.querySelector(`#map [data-tok="${e.id}"] text.lab`).textContent.replace(/\s+/g, " ");
+      // panel sizes are shares of the screen
+      const left0 = getComputedStyle(document.documentElement).getPropertyValue("--left"); out.left = [left0.trim(), Math.round(prefs.partyW * kx())];
+      S = fresh(); applyData(); ui.setup = null; render(); save();
+      return out;
+    });
+    assert.deepStrictEqual(r.saved, ["Test depot", 40, 20, "L", 1, 3], "saved with its name, size and shape");
+    assert.deepStrictEqual(r.scene, [true, "asBuilt", 3], "saving puts the new map on the table, as built"); assert.ok(r.listed && r.themeChoice, "it is under Location, with an As built setting");
+    assert.ok(r.voidBlocks && r.foesInside, "the closed-off corner is out of bounds");
+    assert.deepStrictEqual(r.rolled, [true, 1, true], "another setting can be rolled inside the same shape"); assert.strictEqual(r.back, "building,concreteWall,void", "As built brings the drawing back");
+    assert.strictEqual(r.kept, 1, "the map is saved with the campaign"); assert.deepStrictEqual(r.away, [true, false], "As built is only offered on a drawn map");
+    assert.ok(r.themes && r.maps && r.items >= 118, "eight new settings, seven new maps, 46 new objects"); assert.deepStrictEqual(r.noPicture, [], "every object has a picture");
+    assert.deepStrictEqual(r.label, ["Crimson Caravan Guard", "Zed", true, ["Crimson", "Caravan Guard R3"]], "whole names, nicknames, and long names on two lines"); assert.match(r.onMap, /Guard|Caravan/, "the token on the map shows the name: " + r.onMap);
+    assert.strictEqual(r.left[0], r.left[1] + "px");
+    const ctx2 = await browser.newContext({ viewport: { width: 1920, height: 1080 } }); const p2 = await ctx2.newPage(); await p2.goto(APP);
+    const wide = await p2.evaluate(() => document.querySelector(".w-party").getBoundingClientRect().width);
+    const narrow = await page.evaluate(() => document.querySelector(".w-party").getBoundingClientRect().width);
+    assert.ok(Math.abs(wide / 1920 - narrow / 1440) < 0.01, `the party column is the same share of a 1920 and a 1440 screen: ${wide} and ${narrow}`);
+    await ctx2.close();
   });
   await browser.close();
   for (const r of results) console.log(r.join("  "));

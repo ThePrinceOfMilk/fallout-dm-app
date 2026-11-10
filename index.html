@@ -894,26 +894,26 @@ body.dragging {
   flex-wrap: wrap;
   flex: none;
 }
-#map .floor {
+:is(#map, #mmSvg) .floor {
   fill: #06140a;
   stroke: var(--ink);
   stroke-width: 2px;
   vector-effect: non-scaling-stroke;
 }
-#map .grid {
+:is(#map, #mmSvg) .grid {
   fill: none;
   stroke: #16492a;
   stroke-width: 1px;
   vector-effect: non-scaling-stroke;
   pointer-events: none;
 }
-#map .scale {
+:is(#map, #mmSvg) .scale {
   fill: #3aa35f;
   font-size: 0.42px;
   text-shadow: none;
   pointer-events: none;
 }
-#map .reach {
+:is(#map, #mmSvg) .reach {
   fill: rgba(77, 255, 124, 0.06);
   stroke: var(--ink);
   stroke-width: 1px;
@@ -921,81 +921,81 @@ body.dragging {
   vector-effect: non-scaling-stroke;
   pointer-events: none;
 }
-#map .rb {
+:is(#map, #mmSvg) .rb {
   fill: var(--bright) !important;
   font-size: 0.46px;
 }
-#map .drg {
+:is(#map, #mmSvg) .drg {
   fill: #fff !important;
   font-size: 0.55px;
 }
-#map .drg.bad {
+:is(#map, #mmSvg) .drg.bad {
   fill: var(--bad) !important;
 }
-#map .tok {
+:is(#map, #mmSvg) .tok {
   cursor: grab;
 }
-#map .tok.lift {
+:is(#map, #mmSvg) .tok.lift {
   cursor: grabbing;
   opacity: 0.85;
 }
-#map .tok text {
+:is(#map, #mmSvg) .tok text {
   font-size: 0.46px;
   text-anchor: middle;
   text-shadow: none;
   pointer-events: none;
   font-family: var(--font);
 }
-#map .pc .b {
+:is(#map, #mmSvg) .pc .b {
   fill: var(--ink);
   stroke: #000;
   stroke-width: 0.04;
 }
-#map .pc text {
+:is(#map, #mmSvg) .pc text {
   fill: #000;
 }
-#map .npc .b {
+:is(#map, #mmSvg) .npc .b {
   fill: #000;
   stroke: var(--warn);
   stroke-width: 0.09;
 }
-#map .npc text {
+:is(#map, #mmSvg) .npc text {
   fill: var(--warn);
 }
-#map .hpb {
+:is(#map, #mmSvg) .hpb {
   fill: var(--ink);
 }
-#map .npc .hpb {
+:is(#map, #mmSvg) .npc .hpb {
   fill: var(--warn);
 }
-#map .sel .b {
+:is(#map, #mmSvg) .sel .b {
   stroke: var(--bright);
   stroke-width: 0.13;
 }
-#map .cur .b {
+:is(#map, #mmSvg) .cur .b {
   stroke: #fff;
   stroke-width: 0.15;
   animation: pulse 1.1s steps(2) infinite;
 }
-#map .tgt .b {
+:is(#map, #mmSvg) .tgt .b {
   stroke: var(--bad);
   stroke-width: 0.15;
 }
-#map .dbno .b {
+:is(#map, #mmSvg) .dbno .b {
   fill: #5a1712;
 }
-#map .dbno text {
+:is(#map, #mmSvg) .dbno text {
   fill: var(--bright);
 }
-#map .gone {
+:is(#map, #mmSvg) .gone {
   opacity: 0.45;
 }
-#map .x {
+:is(#map, #mmSvg) .x {
   stroke: var(--bad);
   stroke-width: 0.1;
   fill: none;
 }
-#map .cov .b {
+:is(#map, #mmSvg) .cov .b {
   stroke-dasharray: 0.12 0.08;
 }
 @keyframes pulse {
@@ -1003,39 +1003,39 @@ body.dragging {
     stroke-opacity: 0.25;
   }
 }
-#map .obj {
+:is(#map, #mmSvg) .obj {
   cursor: grab;
   fill: #1b4a29;
   stroke: var(--ink);
   stroke-width: 1px;
 }
-#map .obj > * {
+:is(#map, #mmSvg) .obj > * {
   vector-effect: non-scaling-stroke;
 }
-#map .obj.hard {
+:is(#map, #mmSvg) .obj.hard {
   fill: #2c7a44;
 }
-#map .obj.wall {
+:is(#map, #mmSvg) .obj.wall {
   fill: #123a20;
   stroke: #8fe3a9;
 }
-#map .obj.tree {
+:is(#map, #mmSvg) .obj.tree {
   fill: #0f5a2a;
   stroke: #2c9a50;
 }
-#map .obj.hazard {
+:is(#map, #mmSvg) .obj.hazard {
   fill: #4a3d08;
   stroke: var(--warn);
 }
-#map .obj.note {
+:is(#map, #mmSvg) .obj.note {
   fill: var(--bright);
   stroke: none;
 }
-#map .obj.sel {
+:is(#map, #mmSvg) .obj.sel {
   stroke: #fff;
   stroke-width: 2px;
 }
-#map .obj text {
+:is(#map, #mmSvg) .obj text {
   fill: var(--bright);
   stroke: none;
   font-size: 0.4px;
@@ -1043,7 +1043,7 @@ body.dragging {
   text-shadow: none;
   pointer-events: none;
 }
-#map .aim {
+:is(#map, #mmSvg) .aim {
   stroke: var(--bad);
   stroke-width: 2px;
   stroke-dasharray: 6 4;
@@ -1812,59 +1812,59 @@ pre.rep {
 }
 
 /* people on the map */
-#map .tok .hit {
+:is(#map, #mmSvg) .tok .hit {
   fill: transparent;
   stroke: none;
 }
-#map .tok .b {
+:is(#map, #mmSvg) .tok .b {
   stroke: #000;
   stroke-width: 1px;
   vector-effect: non-scaling-stroke;
 }
-#map .pc .b {
+:is(#map, #mmSvg) .pc .b {
   fill: #4dff7c;
   stroke: #000;
 }
-#map .ally .b {
+:is(#map, #mmSvg) .ally .b {
   fill: #4da6ff;
   stroke: #000;
 }
-#map .npc .b {
+:is(#map, #mmSvg) .npc .b {
   fill: #ff4d4d;
   stroke: #000;
 }
-#map .hpb {
+:is(#map, #mmSvg) .hpb {
   fill: var(--bright);
 }
-#map .pc .hpb,
-#map .npc .hpb,
-#map .ally .hpb {
+:is(#map, #mmSvg) .pc .hpb,
+:is(#map, #mmSvg) .npc .hpb,
+:is(#map, #mmSvg) .ally .hpb {
   fill: var(--bright);
 }
-#map .tok text.lab {
+:is(#map, #mmSvg) .tok text.lab {
   fill: var(--bright);
   font-size: 0.97px;
   text-anchor: middle;
   pointer-events: none;
   text-shadow: none;
 }
-#map .sel .b {
+:is(#map, #mmSvg) .sel .b {
   stroke: #fff;
   stroke-width: 1.5px;
 }
-#map .cur .b {
+:is(#map, #mmSvg) .cur .b {
   stroke: #fff;
   stroke-width: 2px;
   animation: pulse 1.1s steps(2) infinite;
 }
-#map .tgt .b {
+:is(#map, #mmSvg) .tgt .b {
   stroke: #ffd23f;
   stroke-width: 2px;
 }
-#map .drg {
+:is(#map, #mmSvg) .drg {
   font-size: 1.3px;
 }
-#map .dbno .b {
+:is(#map, #mmSvg) .dbno .b {
   fill: #5a1712;
 }
 .chipb.foe {
@@ -2420,7 +2420,7 @@ table.t th {
       0 0 0 rgba(77, 255, 124, 0);
   }
 }
-#map .tok.cur .hit {
+:is(#map, #mmSvg) .tok.cur .hit {
   fill: rgba(77, 255, 124, 0.16);
   stroke: #4dff7c;
   stroke-width: 1.5px;
@@ -2484,12 +2484,12 @@ table.t th {
 .covflag b {
   font-size: 16px !important;
 }
-#map .aim {
+:is(#map, #mmSvg) .aim {
   stroke-width: 4px;
   stroke-dasharray: none;
   stroke-linecap: round;
 }
-#map .aimbg {
+:is(#map, #mmSvg) .aimbg {
   stroke: #000;
   stroke-width: 7px;
   stroke-linecap: round;
@@ -2506,34 +2506,34 @@ label.btn {
   cursor: pointer;
 }
 /* map objects show their cover tier: the more solid the color, the more it stops */
-#map .obj.tier-open {
+:is(#map, #mmSvg) .obj.tier-open {
   fill: transparent;
   stroke: #2a7a44;
   stroke-dasharray: 2 2;
 }
-#map .obj.tier-concealment {
+:is(#map, #mmSvg) .obj.tier-concealment {
   fill: rgba(46, 160, 80, 0.25);
   stroke: #3aa35f;
   stroke-dasharray: 3 2;
 }
-#map .obj.tier-soft {
+:is(#map, #mmSvg) .obj.tier-soft {
   fill: #1d5e33;
   stroke: var(--ink);
 }
-#map .obj.tier-hard {
+:is(#map, #mmSvg) .obj.tier-hard {
   fill: #4a8a3a;
   stroke: #c9ff7c;
 }
-#map .obj.tier-impenetrable {
+:is(#map, #mmSvg) .obj.tier-impenetrable {
   fill: #8a9a8e;
   stroke: #e6ffee;
 }
-#map .obj.hazard {
+:is(#map, #mmSvg) .obj.hazard {
   fill: #4a3d08;
   stroke: var(--warn);
   stroke-dasharray: none;
 }
-#map .obj.note {
+:is(#map, #mmSvg) .obj.note {
   fill: var(--bright);
   stroke: none;
   stroke-dasharray: none;
@@ -2698,23 +2698,23 @@ label.btn {
   font-size: 17px;
   color: var(--bright);
 }
-#map .movepath {
+:is(#map, #mmSvg) .movepath {
   stroke: var(--warn);
   stroke-width: 2px;
   stroke-dasharray: 5 4;
   vector-effect: non-scaling-stroke;
   pointer-events: none;
 }
-#map .ghost {
+:is(#map, #mmSvg) .ghost {
   fill: rgba(255, 210, 63, 0.55);
   stroke: var(--warn);
   pointer-events: none;
 }
-#map .ghost > * {
+:is(#map, #mmSvg) .ghost > * {
   vector-effect: non-scaling-stroke;
   stroke-width: 1px;
 }
-#map .ghost text {
+:is(#map, #mmSvg) .ghost text {
   fill: #fff;
   stroke: none;
   font-size: 1.5px;
@@ -2749,57 +2749,57 @@ label.btn {
   color: var(--dim);
   margin-right: 4px;
 }
-#map .obj .gly > * {
+:is(#map, #mmSvg) .obj .gly > * {
   vector-effect: non-scaling-stroke;
 }
-#map .obj .gly .d {
+:is(#map, #mmSvg) .obj .gly .d {
   fill: none;
   stroke: rgba(0, 0, 0, 0.75);
   stroke-width: 1px;
   stroke-dasharray: none;
 }
-#map .obj .gly .dot {
+:is(#map, #mmSvg) .obj .gly .dot {
   fill: rgba(0, 0, 0, 0.75);
   stroke: none;
 }
-#map .obj .gly .pale {
+:is(#map, #mmSvg) .obj .gly .pale {
   fill: rgba(190, 255, 215, 0.7);
   stroke: none;
 }
-#map .obj.tier-open,
-#map .obj.tier-concealment,
-#map .obj.tier-soft,
-#map .obj.tier-hard,
-#map .obj.tier-impenetrable {
+:is(#map, #mmSvg) .obj.tier-open,
+:is(#map, #mmSvg) .obj.tier-concealment,
+:is(#map, #mmSvg) .obj.tier-soft,
+:is(#map, #mmSvg) .obj.tier-hard,
+:is(#map, #mmSvg) .obj.tier-impenetrable {
   fill: #6fe08f;
   stroke: #bff5cf;
   stroke-width: 1px;
   stroke-dasharray: none;
 }
-#map .obj.tier-impenetrable {
+:is(#map, #mmSvg) .obj.tier-impenetrable {
   fill: #a8b8ac;
   stroke: #f2fff6;
 }
-#map .obj.sel {
+:is(#map, #mmSvg) .obj.sel {
   stroke: #fff;
   stroke-width: 2px;
 }
-#map .obj.hazard {
+:is(#map, #mmSvg) .obj.hazard {
   fill: #ffb43f;
   stroke: var(--warn);
 }
-#map .obj text {
+:is(#map, #mmSvg) .obj text {
   fill: var(--bright);
   stroke: none;
   text-anchor: middle;
   text-shadow: none;
   pointer-events: none;
 }
-#map .tok text.lab {
+:is(#map, #mmSvg) .tok text.lab {
   font-size: inherit;
 }
-#map .obj .gly.canopy,
-#map .obj .gly.canopy * {
+:is(#map, #mmSvg) .obj .gly.canopy,
+:is(#map, #mmSvg) .obj .gly.canopy * {
   pointer-events: none;
 } /* leaves are only a picture: clicks go through to the ground, a trunk or a person */
 .rotbar {
@@ -2815,14 +2815,14 @@ label.btn {
 }
 
 /* rotate handle, loot menu */
-#map .rotline {
+:is(#map, #mmSvg) .rotline {
   stroke: #fff;
   stroke-width: 1px;
   stroke-dasharray: 3 2;
   vector-effect: non-scaling-stroke;
   pointer-events: none;
 }
-#map .rothandle {
+:is(#map, #mmSvg) .rothandle {
   fill: var(--warn);
   stroke: #000;
   stroke-width: 1px;
@@ -3674,13 +3674,13 @@ html.lt1000 .win > .wt {
   grid-area: rleg;
 }
 /* throwing */
-#map .throwline {
+:is(#map, #mmSvg) .throwline {
   stroke: var(--warn);
   stroke-width: 2;
   stroke-dasharray: 6 5;
   fill: none;
 }
-#map .blastring {
+:is(#map, #mmSvg) .blastring {
   fill: #ff8a3c;
   stroke: #ff8a3c;
   stroke-width: 1;
@@ -3819,7 +3819,7 @@ html.lt1000 .win > .wt {
   fill: var(--ink);
 }
 .ticon .cut,
-#map .tok .cut {
+:is(#map, #mmSvg) .tok .cut {
   fill: #000;
   opacity: 0.7;
 }
@@ -3867,40 +3867,40 @@ html.lt1000 .win > .wt {
   height: 44px;
 }
 /* ---------- bigger tokens: health bar and name */
-#map .tok .hpbg {
+:is(#map, #mmSvg) .tok .hpbg {
   fill: #300;
   stroke: #000;
   stroke-width: 1px;
   vector-effect: non-scaling-stroke;
 }
-#map .tok .hpb {
+:is(#map, #mmSvg) .tok .hpb {
   stroke: none;
 }
-#map .tok text.lab {
+:is(#map, #mmSvg) .tok text.lab {
   font-weight: bold;
   paint-order: stroke;
   stroke: #000;
   stroke-width: 0.07em;
   stroke-linejoin: round;
 }
-#map .accring {
+:is(#map, #mmSvg) .accring {
   pointer-events: none;
 }
 /* ---------- object health and chests */
-#map .obj .ohpbg {
+:is(#map, #mmSvg) .obj .ohpbg {
   fill: #300;
   stroke: none;
 }
-#map .obj .ohpf {
+:is(#map, #mmSvg) .obj .ohpf {
   fill: #ffb000;
   stroke: none;
 }
-#map .obj.lootable .gly {
+:is(#map, #mmSvg) .obj.lootable .gly {
   fill: #6b4a12;
   stroke: #ffcf4d;
   opacity: 1 !important;
 }
-#map .obj.opened .gly {
+:is(#map, #mmSvg) .obj.opened .gly {
   opacity: 0.45 !important;
 }
 /* ---------- status icons on the card */
@@ -4183,7 +4183,7 @@ html.lt1000 .win > .wt {
 .bs-super {
   color: #4da3ff;
 }
-#map .ringedge {
+:is(#map, #mmSvg) .ringedge {
   fill: none;
   stroke: #000;
   stroke-width: 2.5px;
@@ -4250,6 +4250,473 @@ html.lt1000 .win > .wt {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+}
+
+/* ---------- map creator */
+.mmwrap {
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  gap: 8px;
+  height: 100%;
+  min-height: 0;
+}
+.mmside {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow: auto;
+  min-height: 0;
+}
+.mmside .acts {
+  flex-wrap: wrap;
+}
+.mmtools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.mmsel {
+  border: 1px solid var(--line);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.mmcanvas {
+  min-width: 0;
+  min-height: 260px;
+  border: 1px solid var(--line);
+  background: #000;
+}
+#mmSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  user-select: none;
+  cursor: crosshair;
+}
+#mmSvg.tool-select {
+  cursor: default;
+}
+#mmSvg.tool-select .obj[data-mm] {
+  cursor: move;
+}
+#mmSvg .draft {
+  fill: rgba(77, 255, 124, 0.14);
+  stroke: var(--bright);
+  stroke-width: 1px;
+  stroke-dasharray: 4 3;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+:is(#map, #mmSvg) .obj.oob .gly > * {
+  fill: #000;
+  stroke: #16492a;
+  stroke-dasharray: 3 3;
+}
+.mmbtns {
+  align-self: end;
+}
+@media (max-width: 1000px) {
+  .mmwrap {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(260px, 1fr);
+  }
+}
+
+/* ---------- PHONES AND TABLETS: the whole app fits the screen. Nothing runs off an edge and the page itself never scrolls;
+   each panel gets a share of the screen and scrolls inside itself when it holds more than fits. */
+@media (max-width: 1000px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden !important;
+  }
+  body {
+    padding: 0 !important;
+  }
+  /* a border all round, clear of notches, rounded corners and the browser's own bars */
+  .dash {
+    position: fixed;
+    inset: 0;
+    display: flex !important;
+    flex-direction: column;
+    height: auto !important;
+    min-height: 0 !important;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) calc(max(8px, env(safe-area-inset-bottom)) + var(--tabbar, 58px) + 4px)
+      max(8px, env(safe-area-inset-left));
+  }
+  .rail {
+    left: max(8px, env(safe-area-inset-left)) !important;
+    right: max(8px, env(safe-area-inset-right)) !important;
+    bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+    padding: 3px !important;
+    border: 1px solid var(--line2);
+  }
+  .devbar {
+    flex: none;
+  }
+  .board,
+  .board.calm,
+  .board.setup,
+  .board.fight {
+    flex: 1 1 0;
+    min-height: 0 !important;
+    display: block !important;
+    padding: 4px 0 0 !important;
+    overflow: hidden !important;
+  }
+  .stage {
+    height: 100%;
+    min-height: 0 !important;
+    display: grid !important;
+    gap: 4px;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  /* the wrappers step aside so every window is placed straight on the screen grid */
+  .top,
+  .bottom,
+  .arena,
+  .setupgrid,
+  .calm,
+  .calmcol,
+  .rcol {
+    display: contents !important;
+  }
+  .stage .gut {
+    display: none !important;
+  }
+  .stage .win {
+    min-width: 0;
+    min-height: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden !important;
+    resize: none !important;
+  }
+  .stage .win > .wb {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .w-party {
+    grid-area: party;
+  }
+  .w-enemies {
+    grid-area: foes;
+  }
+  .w-enc {
+    grid-area: enc;
+  }
+  .w-check {
+    grid-area: check;
+  }
+  .w-notes {
+    grid-area: notes;
+  }
+  .w-clog {
+    grid-area: log;
+  }
+  .w-recent {
+    grid-area: recent;
+  }
+  .w-map {
+    grid-area: map;
+  }
+  .w-action {
+    grid-area: act;
+  }
+  .turnbar {
+    grid-area: bar;
+    margin: 0 !important;
+  }
+  /* tablet. Between fights: party down the left, the rest stacked on the right */
+  .board.calm .stage {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 36fr) minmax(0, 30fr) minmax(0, 24fr);
+    grid-template-areas: "party enc" "party check" "party recent" "notes log";
+  }
+  .board.setup .stage {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 62fr) minmax(0, 38fr);
+    grid-template-areas: "enc enc enc" "party foes check";
+  }
+  .board.setup .w-notes,
+  .board.setup .w-clog,
+  .board.fight .w-notes,
+  .board.fight .w-clog {
+    display: none !important;
+  }
+  /* a fight takes the whole screen: map on top, what you are aiming at beside or under it, then players and enemies side by side */
+  .board.fight .stage {
+    grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
+    grid-template-rows: auto minmax(0, 58fr) minmax(0, 42fr);
+    grid-template-areas: "bar bar" "map act" "party foes";
+  }
+  .board.fight .stage:has(.arena.solo) {
+    grid-template-areas: "bar bar" "act act" "party foes";
+  }
+  /* the map fills its panel */
+  .w-map .wb {
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  .mapwrap {
+    flex: 1 1 0 !important;
+    min-height: 0;
+    overflow: hidden !important;
+  }
+  #map,
+  .mapwrap #map {
+    flex: 1 1 0 !important;
+    height: 100% !important;
+    max-height: none !important;
+    min-height: 0;
+  }
+  .w-enc .encwb {
+    overflow: auto !important;
+  }
+  .w-enc .mapwrap {
+    flex: 1 0 58% !important;
+    min-height: 180px;
+  }
+  /* in a fight the cards keep to name, HP, AP and statuses; the full sheet is one tap away on the card */
+  .board.fight .w-party .stats7,
+  .board.fight .w-party .card .icons {
+    display: none !important;
+  }
+  /* pop-ups stay inside the border too */
+  .scrim {
+    padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) calc(max(8px, env(safe-area-inset-bottom)) + var(--tabbar, 58px) + 8px)
+      max(8px, env(safe-area-inset-left)) !important;
+  }
+  .dialog,
+  .dialog.big,
+  .dialog.full,
+  .dialog.tiny {
+    max-height: 100% !important;
+  }
+}
+/* phone: one column between fights, and the fight stacks map, aim, then players and enemies */
+@media (max-width: 599px) {
+  .board.calm .stage {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 46fr) auto minmax(0, 28fr) minmax(0, 26fr);
+    grid-template-areas: "party" "enc" "check" "notes";
+  }
+  .board.calm .w-recent,
+  .board.calm .w-clog {
+    display: none !important;
+  }
+  .board.setup .stage {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 58fr) minmax(0, 24fr) minmax(0, 18fr);
+    grid-template-areas: "enc enc" "party foes" "check check";
+  }
+  .board.fight .stage {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 34fr) minmax(0, 36fr) minmax(0, 30fr);
+    grid-template-areas: "bar bar" "map map" "act act" "party foes";
+  }
+  .board.fight .stage:has(.arena.solo) {
+    grid-template-rows: auto minmax(0, 70fr) minmax(0, 30fr);
+    grid-template-areas: "bar bar" "act act" "party foes";
+  }
+  /* during a fight the top bar gives its room to the fight */
+  .dash:has(.board.fight) .devbar {
+    display: none !important;
+  }
+}
+/* tablet keeps the tool column down the right edge, inside the border */
+@media (min-width: 600px) and (max-width: 1000px) {
+  .dash {
+    padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+  }
+  .board,
+  .board.calm,
+  .board.setup,
+  .board.fight {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 48px !important;
+    gap: 4px;
+  }
+  .scrim {
+    padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+  }
+}
+@media (max-width: 599px) {
+  /* slim title bars and controls: on a phone every row counts */
+  .stage .win > .wt {
+    min-height: 0;
+    padding: 1px 3px;
+    flex-wrap: nowrap;
+    gap: 3px;
+  }
+  .stage .win > .wt .foldbtn,
+  .stage .win > .wt .btn {
+    min-height: 30px !important;
+    min-width: 30px !important;
+    padding: 0 6px !important;
+  }
+  .stage .card .cell,
+  .stage .card .btn,
+  .zoombar .btn {
+    min-height: 30px !important;
+    height: 30px;
+  }
+  /* encounter setup: Begin first, then the map, then the settings to scroll through */
+  .w-enc .encwb {
+    display: flex !important;
+    flex-direction: column;
+  }
+  .w-enc .encactions {
+    position: static !important;
+    order: 0;
+    flex: none;
+  }
+  .w-enc .mapwrap {
+    order: 1;
+    flex: 0 0 56% !important;
+  }
+  .w-enc .maphint {
+    order: 2;
+  }
+  .w-enc .enctop {
+    order: 3;
+  }
+  /* in a fight the map is for looking and moving; placing cover belongs to setup */
+  .board.fight .w-map > .wt .btn,
+  .board.fight .maphint {
+    display: none !important;
+  }
+  /* cards in a fight: name, HP and AP. The buttons and tags are on the full card outside the fight. */
+  .board.fight .card .chead .iconbtn,
+  .board.fight .card .chead .btn,
+  .board.fight .card .chead .tag:not(.bad),
+  .board.fight .w-enemies #enemyTier,
+  .board.fight .w-enemies #enemySort {
+    display: none !important;
+  }
+  .board.fight .card .chead {
+    min-height: 0;
+  }
+}
+@media (min-width: 600px) and (max-width: 1000px) {
+  .board,
+  .board.calm,
+  .board.setup,
+  .board.fight {
+    grid-template-rows: minmax(0, 1fr) !important;
+  }
+  .board > .rail {
+    overflow-y: auto;
+  }
+}
+@media (max-width: 1000px) {
+  /* the closed encounter bar is just its button */
+  .stage .w-enc.closed > .wb {
+    flex: none;
+    overflow: visible !important;
+  }
+}
+@media (max-width: 1000px) {
+  /* encounter setup on any small screen: Begin first, then the map, then the settings to scroll through */
+  .w-enc .encwb {
+    display: flex !important;
+    flex-direction: column;
+  }
+  .w-enc .encactions {
+    position: static !important;
+    order: 0;
+    flex: none;
+  }
+  .w-enc .mapwrap {
+    order: 1;
+    flex: 0 0 60% !important;
+  }
+  .w-enc .maphint {
+    order: 2;
+  }
+  .w-enc .enctop {
+    order: 3;
+  }
+  .board.setup .w-check table.t th:nth-child(3),
+  .board.setup .w-check table.t td:nth-child(3) {
+    display: none;
+  }
+}
+/* a folded panel gives its room back to the others */
+@media (max-width: 1000px) {
+  .stage .win.folded {
+    align-self: start;
+  }
+  .stage:has(.w-map.folded) {
+    --r-map: auto;
+  }
+  .stage:has(.w-action.folded) {
+    --r-act: auto;
+  }
+  .stage:has(.w-enc.folded) {
+    --r-enc: auto;
+  }
+  .stage:has(.w-check.folded) {
+    --r-check: auto;
+  }
+  .stage:has(.w-notes.folded) {
+    --r-notes: auto;
+  }
+  .stage:has(.w-party.folded) {
+    --r-party: auto;
+  }
+  .stage:has(.w-party.folded):has(.w-enemies.folded) {
+    --r-pf: auto;
+  }
+  .board.setup .stage {
+    grid-template-rows: var(--r-enc, minmax(0, 62fr)) minmax(0, 38fr);
+  }
+}
+@media (max-width: 599px) {
+  .board.calm .stage {
+    grid-template-rows: var(--r-party, minmax(0, 46fr)) auto var(--r-check, minmax(0, 28fr)) var(--r-notes, minmax(0, 26fr));
+  }
+  .board.setup .stage {
+    grid-template-rows: var(--r-enc, minmax(0, 58fr)) var(--r-pf, minmax(0, 24fr)) var(--r-check, minmax(0, 18fr));
+  }
+  .board.fight .stage {
+    grid-template-rows: auto var(--r-map, minmax(0, 34fr)) var(--r-act, minmax(0, 36fr)) var(--r-pf, minmax(0, 30fr));
+  }
+  .board.fight .stage:has(.arena.solo) {
+    grid-template-rows: auto var(--r-act, minmax(0, 70fr)) var(--r-pf, minmax(0, 30fr));
+  }
+}
+@media (max-width: 599px) {
+  /* setting up on a phone: the map gets most of the screen */
+  .board.setup .stage {
+    grid-template-rows: var(--r-enc, minmax(0, 66fr)) var(--r-pf, minmax(0, 20fr)) var(--r-check, minmax(0, 14fr));
+  }
+  .w-enc .mapwrap {
+    flex: 0 0 62% !important;
+  }
+}
+@media (max-width: 1000px) {
+  /* the opened Dev list is a short strip to scroll, so it never pushes the screen down */
+  .devlist.open {
+    max-height: 84px;
+    overflow-y: auto;
+  }
+}
+#mmSvg:focus {
+  outline: none;
 }
 </style>
 </head>
@@ -4792,7 +5259,7 @@ const DEFAULT_RULES = {
     "Center Mass": [{ fx: { dam: 0.15 }, when: { part: "Body" } }],
   },
   // Maps that count as indoors, for "if indoors".
-  indoorMaps: ["smallRoom", "mediumRoom", "bigRoom", "hallway", "interior", "warehouse"],
+  indoorMaps: ["smallRoom", "mediumRoom", "bigRoom", "hallway", "interior", "warehouse", "shack"],
   // Rows in the Stat Converter table whose reminder note is now a rule. fx adds variables, when adds a condition, and the note goes away.
   // More conditions: moved, notMoved, night, indoors, melee, vsMob, attackerMob, afterCrit, sober, combat, ooc, lightLoad, hpHigher, armorFaction: true or false.
   // hasStatus: list of statuses. hasEffect: an item effect. chemsMin: how many chems are active. weaponStatus: the weapon's status. nameRe: words in the weapon's name. items, cats: for using items.
@@ -5220,6 +5687,54 @@ const DEFAULT_RULES = {
     dresser: { n: "Dresser", cover: "soft", w: 1.4, h: 0.6 },
     stoneWall: { n: "Stone wall", cover: "hard", w: 4, h: 0.6, block: true },
     pillar: { n: "Pillar", cover: "hard", w: 1.2, h: 1.2 },
+    void: { n: "Out of bounds", cover: "impenetrable", w: 4, h: 4, block: true }, // closes off part of a drawn map to give it a shape
+    // added 10 Nov: things for the scrapyard, outpost, saloon, vault, farm, gas station, ruins and cave settings
+    tirePile: { n: "Tire pile", cover: "soft", w: 1.5, h: 1.5, round: true },
+    scrapHeap: { n: "Scrap heap", cover: "hard", w: 3, h: 2.5 },
+    shippingContainer: { n: "Shipping container", cover: "impenetrable", w: 6, h: 2.4, block: true },
+    carStack: { n: "Stacked cars", cover: "hard", w: 4.5, h: 2.2, block: true },
+    engineBlock: { n: "Engine block", cover: "hard", w: 1, h: 0.8 },
+    guardTower: { n: "Guard tower", cover: "hard", w: 3, h: 3, block: true },
+    hesco: { n: "Hesco barrier", cover: "hard", w: 2, h: 1 },
+    ammoCrate: { n: "Ammo crate", cover: "soft", w: 1.2, h: 0.6 },
+    razorWire: { n: "Razor wire", cover: "concealment", w: 4, h: 0.6 },
+    fieldTent: { n: "Field tent", cover: "concealment", w: 4, h: 3 },
+    flagpole: { n: "Flagpole", cover: "open", w: 0.3, h: 0.3, round: true },
+    radioTable: { n: "Radio table", cover: "soft", w: 1.6, h: 0.8 },
+    concreteBlock: { n: "Concrete block", cover: "hard", w: 1, h: 1 },
+    metalSheet: { n: "Sheet metal", cover: "soft", w: 2, h: 0.2 },
+    barCounter: { n: "Bar counter", cover: "hard", w: 5, h: 0.8 },
+    barStool: { n: "Bar stool", cover: "open", w: 0.4, h: 0.4, round: true },
+    pokerTable: { n: "Poker table", cover: "soft", w: 1.8, h: 1.8, round: true },
+    slotMachine: { n: "Slot machine", cover: "hard", w: 0.8, h: 0.7 },
+    jukebox: { n: "Jukebox", cover: "soft", w: 1, h: 0.7 },
+    stage: { n: "Stage", cover: "open", w: 4, h: 2.5 },
+    piano: { n: "Piano", cover: "soft", w: 1.5, h: 1.4 },
+    vaultConsole: { n: "Console", cover: "hard", w: 2, h: 0.8 },
+    bunkBed: { n: "Bunk bed", cover: "soft", w: 2, h: 1 },
+    reactorCore: { n: "Reactor", cover: "hard", w: 3, h: 3, round: true },
+    waterPurifier: { n: "Water purifier", cover: "hard", w: 2, h: 1.5 },
+    hayBale: { n: "Hay bale", cover: "soft", w: 1.4, h: 1.4, round: true },
+    fence: { n: "Wooden fence", cover: "concealment", w: 4, h: 0.2 },
+    waterTrough: { n: "Water trough", cover: "soft", w: 2, h: 0.7 },
+    tractor: { n: "Tractor", cover: "hard", w: 3.5, h: 1.8 },
+    scarecrow: { n: "Scarecrow", cover: "open", w: 0.5, h: 0.5, round: true },
+    cropRow: { n: "Crop row", cover: "concealment", w: 5, h: 0.8 },
+    silo: { n: "Silo", cover: "hard", w: 4, h: 4, round: true },
+    gasPump: { n: "Gas pump", cover: "hard", w: 1, h: 0.6 },
+    vendingMachine: { n: "Vending machine", cover: "hard", w: 1, h: 0.8 },
+    billboard: { n: "Billboard", cover: "concealment", w: 5, h: 0.4 },
+    phoneBooth: { n: "Phone booth", cover: "soft", w: 1, h: 1 },
+    tollBooth: { n: "Toll booth", cover: "hard", w: 2, h: 2 },
+    brokenColumn: { n: "Broken column", cover: "hard", w: 1, h: 1, round: true },
+    collapsedWall: { n: "Collapsed wall", cover: "hard", w: 5, h: 0.8 },
+    statue: { n: "Statue", cover: "hard", w: 1.5, h: 1.5 },
+    crater: { n: "Crater", cover: "open", w: 4, h: 4, round: true },
+    stalagmite: { n: "Stalagmite", cover: "hard", w: 1, h: 1, round: true },
+    mineCart: { n: "Mine cart", cover: "hard", w: 1.6, h: 1 },
+    supportBeam: { n: "Support beam", cover: "soft", w: 0.4, h: 0.4 },
+    oreVein: { n: "Ore vein", cover: "hard", w: 2.5, h: 1.2 },
+    railTrack: { n: "Rail track", cover: "open", w: 6, h: 1 },
   },
   // ROOM THEMES. How many items = map area x density x a random 0.8 to 1.2, kept between min and max.
   // items: how likely each one is. A bigger number comes up more often. city builds concrete blocks first when the map is big enough.
@@ -5269,6 +5784,95 @@ const DEFAULT_RULES = {
       max: 70,
       blocks: true,
       items: { car: 5, bus: 1, dumpster: 3, mailbox: 2, hydrant: 2, lamppost: 3, barricade: 2, rubble: 3, concreteWall: 1 },
+    },
+    // loose settings have no floor plan: their things are spread about with room to walk between them
+    scrapyard: {
+      n: "Scrapyard",
+      density: 0.02,
+      min: 3,
+      max: 60,
+      loose: true,
+      items: { wreck: 4, carStack: 2, scrapHeap: 4, tirePile: 4, shippingContainer: 2, engineBlock: 2, oilDrum: 3, crateStack: 1, metalSheet: 2, rubble: 2 },
+    },
+    military: {
+      n: "Military outpost",
+      density: 0.018,
+      min: 3,
+      max: 60,
+      loose: true,
+      items: {
+        sandbags: 5,
+        hesco: 4,
+        ammoCrate: 3,
+        razorWire: 3,
+        fieldTent: 2,
+        guardTower: 1,
+        radioTable: 1,
+        barricade: 2,
+        crate: 2,
+        flagpole: 1,
+        concreteBlock: 2,
+      },
+    },
+    saloon: {
+      n: "Saloon or casino",
+      density: 0.07,
+      min: 3,
+      max: 60,
+      loose: true,
+      items: { barCounter: 1, barStool: 5, pokerTable: 3, slotMachine: 4, jukebox: 1, stage: 1, piano: 1, kitchenTable: 2, couch: 1, barrels: 1 },
+    },
+    vault: {
+      n: "Vault",
+      density: 0.06,
+      min: 3,
+      max: 60,
+      loose: true,
+      items: { vaultConsole: 3, bunkBed: 3, lockers: 3, waterPurifier: 1, reactorCore: 1, generator: 1, crate: 2, bench: 2, pipeRack: 1, footlocker: 2 },
+    },
+    farm: {
+      n: "Farmstead",
+      density: 0.016,
+      min: 3,
+      max: 60,
+      loose: true,
+      items: { hayBale: 5, fence: 5, cropRow: 5, waterTrough: 2, tractor: 1, scarecrow: 1, silo: 1, crate: 2, barrels: 2, log: 1 },
+    },
+    roadside: {
+      n: "Gas station",
+      density: 0.016,
+      min: 3,
+      max: 60,
+      loose: true,
+      items: {
+        gasPump: 3,
+        vendingMachine: 2,
+        billboard: 1,
+        phoneBooth: 1,
+        tollBooth: 1,
+        car: 4,
+        dumpster: 2,
+        lamppost: 2,
+        barricade: 2,
+        oilDrum: 2,
+        tirePile: 2,
+      },
+    },
+    ruins: {
+      n: "Ruins",
+      density: 0.02,
+      min: 3,
+      max: 60,
+      loose: true,
+      items: { collapsedWall: 5, brokenColumn: 4, ruinWall: 4, rubble: 5, statue: 1, crater: 2, pillar: 2, stoneWall: 2, deadTree: 1 },
+    },
+    cave: {
+      n: "Cave or mine",
+      density: 0.03,
+      min: 3,
+      max: 60,
+      loose: true,
+      items: { stalagmite: 6, rock: 4, boulder: 2, smallRock: 4, oreVein: 3, mineCart: 2, supportBeam: 3, railTrack: 1, crate: 1 },
     },
   },
   // SUBSTANCES. What drugs, drinks and food are, as status effects. [status, tier].
@@ -5891,6 +6495,88 @@ const DEFAULT_RULES = {
       scatter: [
         ["boulder", 12, 3, 6],
         ["rock", 18, 1, 2.5],
+      ],
+    },
+    shack: {
+      n: "Shack",
+      w: 8,
+      h: 6,
+      objs: [
+        ["crate", 2.5, -2, 1, 1],
+        ["bedroll", -2, 2, 1.8, 0.7],
+      ],
+    },
+    courtyard: {
+      n: "Courtyard",
+      w: 20,
+      h: 20,
+      objs: [
+        ["pillar", -5, -5, 1.2, 1.2],
+        ["pillar", 5, -5, 1.2, 1.2],
+        ["pillar", -5, 5, 1.2, 1.2],
+        ["pillar", 5, 5, 1.2, 1.2],
+        ["bench", 0, -8, 1.8, 0.5],
+      ],
+    },
+    parkingLot: {
+      n: "Parking lot",
+      w: 40,
+      h: 30,
+      objs: [
+        ["car", -6, -9, 2, 4.5],
+        ["car", 0, -9, 2, 4.5],
+        ["car", 9, -9, 2, 4.5],
+        ["car", -3, 9, 2, 4.5],
+        ["car", 12, 9, 2, 4.5],
+        ["lamppost", 0, 0, 0.4, 0.4],
+        ["dumpster", 17, 0, 1, 2],
+      ],
+    },
+    road: {
+      n: "Stretch of road",
+      w: 80,
+      h: 24,
+      objs: [
+        ["car", -8, -3, 4.5, 2],
+        ["bus", 14, 4, 9, 2.5],
+        ["barricade", 30, -6, 0.6, 3],
+        ["barricade", 30, 6, 0.6, 3],
+        ["rubble", -24, 8, 3, 2],
+      ],
+    },
+    compound: {
+      n: "Walled compound",
+      w: 70,
+      h: 50,
+      objs: [
+        ["concreteWall", 0, -22, 50, 0.4],
+        ["concreteWall", 0, 22, 50, 0.4],
+        ["concreteWall", 25, 0, 0.4, 44],
+        ["concreteWall", -25, -13, 0.4, 18],
+        ["concreteWall", -25, 13, 0.4, 18],
+        ["building", 12, -8, 16, 14],
+        ["crateStack", -8, 10, 2, 2],
+        ["sandbags", -22, -3, 0.6, 2],
+        ["sandbags", -22, 3, 0.6, 2],
+      ],
+    },
+    cavern: {
+      n: "Cavern",
+      w: 60,
+      h: 40,
+      scatter: [
+        ["boulder", 8, 3, 6],
+        ["rock", 16, 1, 2.5],
+      ],
+    },
+    field: {
+      n: "Open field",
+      w: 150,
+      h: 110,
+      scatter: [
+        ["bush", 20, 1.5, 3],
+        ["rock", 12, 1, 2.5],
+        ["boulder", 4, 3, 5],
       ],
     },
     custom: { n: "Custom size", w: 30, h: 30 },
@@ -8271,7 +8957,31 @@ const E = (() => {
     const indoorMap = (r.indoorMaps || []).includes(map.id) || (map.id === "custom" && map.w * map.h <= 1600);
     const outdoorKind = ["forest", "woods"].includes(map.id) ? "forested" : "desert";
     const building = LAYOUT.indoorThemes.includes(themeId);
-    if (themeId === "city" && indoorMap) {
+    const LT = r.roomThemes[themeId] || {};
+    if (LT.loose) {
+      // No floor plan: pick things by their weights and drop each where it fits, a meter clear of everything else, leaving the way in open.
+      const keys = Object.keys(LT.items).filter((k) => r.mapItems[k]),
+        tot = keys.reduce((t, k) => t + LT.items[k], 0);
+      const want = Math.max(LT.min || 0, Math.min(LT.max || 60, Math.round(map.w * map.h * LT.density * rand(0.8, 1.2))));
+      reserve(B.x0, -2.5, B.x0 + 4.5, 2.5);
+      for (let made = 0, tries = 0; made < want && tries < want * 30; tries++) {
+        let x = rng() * tot,
+          key = keys[0];
+        for (const k of keys) {
+          x -= LT.items[k];
+          if (x <= 0) {
+            key = k;
+            break;
+          }
+        }
+        const c = r.mapItems[key],
+          rot = !c.round && rng() < 0.5;
+        const w = rot ? c.h : c.w,
+          h = rot ? c.w : c.h;
+        if (w > map.w - 2.4 || h > map.h - 2.4) continue;
+        if (add(key, rand(B.x0 + w / 2 + 1, B.x1 - w / 2 - 1), rand(B.y0 + h / 2 + 1, B.y1 - h / 2 - 1), { rot, pad: 1 })) made++;
+      }
+    } else if (themeId === "city" && indoorMap) {
       const F = frame({ x0: B.x0 + 0.05, y0: B.y0 + 0.05, x1: B.x1 - 0.05, y1: B.y1 - 0.05 });
       const bar = [];
       for (let v = 0.5; v + 3 <= F.Lv - 2; v += 3.1) {
@@ -9166,6 +9876,7 @@ function fresh() {
     tables: {},
     tableRev: 0,
     vendor: { tier: 1, barter: 50, stock: null },
+    customMaps: {},
   };
   s.chars = clone(DATA.party).map((x) => initChar(x, { db, rules, scene: s.scene, ov: s.overrides }));
   return s;
@@ -9192,6 +9903,7 @@ function normalize(p) {
   p.seq = p.seq || 1;
   p.notesList = p.notesList || [];
   p.tables = p.tables || {};
+  p.customMaps = p.customMaps || {};
   for (const k of Object.keys(p.tables)) if (Array.isArray(WORKBOOK[k]) && Array.isArray(p.tables[k])) p.tables[k] = shrinkTable(k, p.tables[k]); // older saves held every row
   p.tableRev = p.tableRev || 0;
   if (p.notes) {
@@ -9470,7 +10182,7 @@ const small = () => matchMedia("(max-width: 1000px)").matches || document.docume
 // A size the DM dragged a window to (bottom-right corner) sticks. Double-click the title bar to put it back.
 const winSize = (cls) => {
   const z = (prefs.wsize || {})[cls];
-  return z ? ` style="flex:none;width:${z.w}px;height:${z.h}px;max-width:none;max-height:none"` : "";
+  return z ? ` style="flex:none;width:${Math.round(z.w * kx())}px;height:${Math.round(z.h * ky())}px;max-width:none;max-height:none"` : "";
 };
 const win = (cls, title, key, body, opt = {}) =>
   `<section class="win ${cls} ${opt.act ? "act" : ""} ${(prefs.fold || {})[cls] ? "folded" : ""}" data-wcls="${cls}"${winSize(cls)}><header class="wt" data-fold="${cls}"><button type="button" class="foldbtn" data-a="fold" data-v="${cls}" aria-label="${(prefs.fold || {})[cls] ? "Open" : "Fold"} ${h(String(title).replace(/<[^>]*>/g, ""))}" aria-expanded="${!(prefs.fold || {})[cls]}">${(prefs.fold || {})[cls] ? "+" : "-"}</button>${kbd(key)}<span>${title}</span><span class="spacer"></span>${opt.tools || ""}</header><div class="wb" data-scroll="${cls}">${body}</div></section>`;
@@ -9774,8 +10486,11 @@ function partySpots() {
       S.scene.pos[c.id] = { x: E.fix(-M.w / 2 + gap * (0.8 + (i % 2) * 1.2)), y: E.fix((Math.floor(i / 2) - (rows - 1) / 2) * gap * 1.15) };
   });
 }
+const customMap = (id) => (String(id).startsWith("cm:") && (S.customMaps || {})[String(id).slice(3)]) || null;
+const builtObjects = (cm) => cm.objs.map((o) => ({ ...clone(o), id: "o" + S.seq++ }));
 function applyMap(id, w, h) {
-  const p = S.rules.maps[id] || S.rules.maps.wild;
+  const cm = customMap(id);
+  const p = cm ? { n: cm.n, w: cm.w, h: cm.h } : S.rules.maps[id] || S.rules.maps.wild;
   const sc = S.scene;
   const g = S.rules.gridM || 2;
   const fit = (x) => Math.max(g, Math.ceil(x / g) * g); // whole grid squares only
@@ -9798,7 +10513,9 @@ function applyMap(id, w, h) {
     }
     return o;
   };
-  sc.objects = (p.objs || []).map(([kind, x, y, ow, oh, label]) => make(kind, x, y, ow, oh, label));
+  sc.objects = cm ? builtObjects(cm) : (p.objs || []).map(([kind, x, y, ow, oh, label]) => make(kind, x, y, ow, oh, label));
+  if (cm) sc.theme = "asBuilt";
+  else if (sc.theme === "asBuilt") sc.theme = S.rules.sceneDefaults.theme;
   for (const [kind, count, lo, hi] of p.scatter || [])
     for (let i = 0; i < count; i++) {
       const size = E.fix(lo + Math.random() * (hi - lo));
@@ -10162,6 +10879,10 @@ function fire() {
     a.err = "Pick a target first (T).";
     return render();
   }
+  if (!p.slot) {
+    a.err = `${p.A.name} has no weapon to attack with.`;
+    return render();
+  }
   if (p.slot.jammed) {
     a.err = `Jammed. Press J to clear for ${p.v.clearJam} AP first.`;
     return render();
@@ -10500,15 +11221,24 @@ function pix(name) {
 }
 
 // ---------- the dashboard
+// Panel sizes are kept as they would be on a 1440 x 900 screen and scaled to the screen in use, so a layout carries over to any size.
+const BASE_W = 1440,
+  BASE_H = 900;
+const kx = () => innerWidth / (prefs.uiScale || 1) / BASE_W;
+const ky = () => innerHeight / (prefs.uiScale || 1) / BASE_H;
+function applySizes() {
+  const st = document.documentElement.style;
+  st.setProperty("--left", Math.max(200, Math.round(prefs.partyW * kx())) + "px");
+  st.setProperty("--right", Math.max(150, Math.round(prefs.enemyW * kx())) + "px");
+  st.setProperty("--bottomh", Math.max(70, Math.round((K() ? prefs.bottomFight : prefs.bottomH) * ky())) + "px");
+  st.setProperty("--mapw", prefs.mapW ? Math.round(prefs.mapW * kx()) + "px" : "46%");
+}
 function view() {
   ensureMap();
   partySpots();
   const k = K();
   const st = document.documentElement.style;
-  st.setProperty("--left", prefs.partyW + "px");
-  st.setProperty("--right", prefs.enemyW + "px");
-  st.setProperty("--bottomh", (k ? prefs.bottomFight : prefs.bottomH) + "px");
-  st.setProperty("--mapw", prefs.mapW ? prefs.mapW + "px" : "46%");
+  applySizes();
   const mode = k ? "fight" : setupOpen() ? "setup" : "calm";
   const center =
     mode === "fight"
@@ -11396,7 +12126,10 @@ function consoleWin() {
   });
 }
 function mapOptions() {
-  return Object.entries(S.rules.maps).map(([id, m]) => [id, id === "custom" ? m.n : `${m.n} ${m.w}x${m.h}m`]);
+  return [
+    ...Object.entries(S.rules.maps).map(([id, m]) => [id, id === "custom" ? m.n : `${m.n} ${m.w}x${m.h}m`]),
+    ...Object.entries(S.customMaps || {}).map(([id, m]) => ["cm:" + id, `${m.n} ${m.w}x${m.h}m (yours)`]),
+  ];
 }
 function encounterWin(open) {
   if (!open)
@@ -11422,11 +12155,15 @@ function encounterWin(open) {
     "g-room",
     "Room",
     `<label class="f">Style<select id="themeId" data-c="setTheme">${options(
-      Object.entries(S.rules.roomThemes).map(([id, t]) => [id, t.n]),
+      [...(customMap(M.id) ? [["asBuilt", "As built"]] : []), ...Object.entries(S.rules.roomThemes).map(([id, t]) => [id, t.n])],
       sc.theme,
     )}</select></label><div class="egbtns"><button class="btn primary" data-a="randomRoom" data-v="" title="New furniture for this location and style">Randomize room</button><label class="chk s" title="Add a chest of ammo near the party. It opens for whoever is within R1 on their turn."><input type="checkbox" id="roomChest" data-u="roomChest"${ui.roomChest ? " checked" : ""}> Chest</label>${btn("clearRoom", "", "Clear room", "", "", "Remove all objects")}</div>`,
   );
-  const place = group("g-place", "Place on map", `<div class="egbtns">${mapTools()}</div><div class="s dim">Pick one, then tap the map.</div>`);
+  const place = group(
+    "g-place",
+    "Place on map",
+    `<div class="egbtns">${mapTools()}</div><div class="s dim">Pick one, then tap the map.</div><div class="egbtns mmbtns">${btn("mmOpen", "", "Create map", "", "", "Draw a location of your own and keep it with the campaign")}${customMap(M.id) ? btn("mmOpen", String(M.id).slice(3), "Edit this map") : ""}</div>`,
+  );
   const foesG = group(
     "g-foes",
     "Enemy positions",
@@ -11565,10 +12302,30 @@ function enemyCard(e) {
     <div class="hpline"><span>HP</span>${bindNum(e.id, "hp", e.hp, `id="rh-${e.id}"`, "cell")}<span>/${d.hp}</span><span class="grow">${hpBar(e.hp, d.hp)}</span></div>
     <div class="hpline"><span>AP</span>${bindNum(e.id, "ap", e.ap, `id="ra-${e.id}"`, "cell")}<span>/${d.ap}</span><span>DT ${fmt(d.dt)}</span><span class="grow"></span>${rangeBox ? `<span class="bright">R</span>${rangeBox}` : ""}</div>${chips(e)}</article>`;
 }
+// The name under a token: an enemy's nickname if it has one ("Fiend - Zed" reads Zed), otherwise the whole name.
 function tokenLabel(e) {
-  const w = String(e.name).split(/\s+/);
-  const num_ = /^\d+$/.test(w[w.length - 1]) ? w.pop() : "";
-  return (w.length > 1 && !num_ ? w[0][0] + w[1][0] : w[0].slice(0, num_ ? 1 : 2)).toUpperCase() + num_;
+  const n = String(e.name);
+  return e.kind !== "pc" && / - /.test(n) ? n.split(" - ").slice(1).join(" - ") : n;
+}
+// A long name is cut in two near its middle, so it sits under its own token and not under the neighbour's.
+function labelLines(e, tail = "") {
+  const n = tokenLabel(e),
+    w = n.split(" ");
+  let lines = [n];
+  if (n.length > 10 && w.length > 1) {
+    let best = 1,
+      gap = Infinity;
+    for (let i = 1; i < w.length; i++) {
+      const d = Math.abs(w.slice(0, i).join(" ").length - w.slice(i).join(" ").length);
+      if (d < gap) {
+        gap = d;
+        best = i;
+      }
+    }
+    lines = [w.slice(0, best).join(" "), w.slice(best).join(" ")];
+  }
+  lines[lines.length - 1] += tail;
+  return lines;
 }
 // PEOPLE ON THE MAP. Zoomed out they keep a steady size on screen, about 2% of the view, so you can always find them.
 // As you zoom in they stop shrinking at real life size, so up close they look like a person next to a real-size table.
@@ -11883,6 +12640,53 @@ const ITEM_GLYPH = {
   dresser: "shelves",
   stoneWall: "stoneWall",
   pillar: "plainWall",
+  void: "building",
+  tirePile: "barrel",
+  scrapHeap: "rubble",
+  shippingContainer: "crate",
+  carStack: "car",
+  engineBlock: "machine",
+  guardTower: "crate",
+  hesco: "sandbags",
+  ammoCrate: "crate",
+  razorWire: "bars",
+  fieldTent: "sheet",
+  flagpole: "dot",
+  radioTable: "table",
+  concreteBlock: "plainWall",
+  metalSheet: "sheet",
+  barCounter: "table",
+  barStool: "dot",
+  pokerTable: "barrel",
+  slotMachine: "machine",
+  jukebox: "machine",
+  stage: "pallet",
+  piano: "desk",
+  vaultConsole: "machine",
+  bunkBed: "bed",
+  reactorCore: "barrel",
+  waterPurifier: "machine",
+  hayBale: "barrel",
+  fence: "plainWall",
+  waterTrough: "bathtub",
+  tractor: "forklift",
+  scarecrow: "dot",
+  cropRow: "sheet",
+  silo: "barrel",
+  gasPump: "machine",
+  vendingMachine: "fridge",
+  billboard: "plainWall",
+  phoneBooth: "crate",
+  tollBooth: "crate",
+  brokenColumn: "stump",
+  collapsedWall: "stoneWall",
+  statue: "plainWall",
+  crater: "dune",
+  stalagmite: "rock",
+  mineCart: "crate",
+  supportBeam: "dot",
+  oreVein: "rock",
+  railTrack: "conveyor",
 };
 const KIND_GLYPH = { cover: "crate", hard: "plainWall", wall: "plainWall", tree: "tree", hazard: null, note: "dot" };
 const MAP_OBJ = { cover: ["Cover", 1], hard: ["Hard cover", 1], hazard: ["Hazard", 1], note: ["Marker", 1], wall: ["Wall", 0], tree: ["Tree", 0] };
@@ -12030,7 +12834,7 @@ function mapSvg() {
         hpMax && o.dmg
           ? `<g class="ohp"><rect class="ohpbg" x="${-w / 2}" y="${-ht / 2 - label * 0.7}" width="${w}" height="${label * 0.4}"/><rect class="ohpf" x="${-w / 2}" y="${-ht / 2 - label * 0.7}" width="${E.fix(w * clamp(1 - o.dmg / hpMax, 0, 1))}" height="${label * 0.4}"/></g>`
           : "";
-      return `<g class="obj ${o.kind} tier-${tier} ${o.loot ? (o.opened ? "opened" : "lootable") : ""} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${hpMax ? `, ${fmt(hpMax - (o.dmg || 0))}/${hpMax} HP` : ""}${o.loot ? (o.opened ? ", opened" : ", opens for whoever is within R1 on their turn") : ""}${trunk ? ", only the trunk stops shots" : ""}${o.block ? ", blocks movement" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle></g>` : ""}${hpBar_}${showName || o.loot ? `<text style="font-size:${label}px" y="${ht / 2 + label}">${h(name)}${o.loot && o.opened ? " (open)" : ""}</text>` : ""}</g>`;
+      return `<g class="obj ${o.kind} tier-${tier} ${o.voidBlock ? "oob" : ""} ${o.loot ? (o.opened ? "opened" : "lootable") : ""} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${hpMax ? `, ${fmt(hpMax - (o.dmg || 0))}/${hpMax} HP` : ""}${o.loot ? (o.opened ? ", opened" : ", opens for whoever is within R1 on their turn") : ""}${trunk ? ", only the trunk stops shots" : ""}${o.block ? ", blocks movement" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle></g>` : ""}${hpBar_}${showName || o.loot ? `<text style="font-size:${label}px" y="${ht / 2 + label}">${h(name)}${o.loot && o.opened ? " (open)" : ""}</text>` : ""}</g>`;
     })
     .join("");
   const me = k ? (fightPhase() ? actorId() : null) : ui.sel;
@@ -12054,7 +12858,12 @@ function mapSvg() {
         e.dbno ? "dbno" : "",
       ].join(" ");
       const showR = me && me !== e.id && !gone && (k ? true : e.kind === "npc");
-      return `<g class="tok ${cls}" data-tok="${e.id}" transform="translate(${p.x} ${p.y}) scale(${k2})"><title>${h(e.name)}: ${fmt(e.hp)}/${d.hp} HP</title><circle class="hit" r="${Math.max(0.75, (v.w * 0.014) / k2)}"/>${(TOKEN_ICONS[iconOf(e)] || TOKEN_ICONS.person)[1]}${gone ? `<path class="x" d="M-.4 -.4 L.4 .4 M.4 -.4 L-.4 .4"/>` : `<rect class="hpbg" x="-.55" y=".48" width="1.1" height=".24"/><rect class="hpb" x="-.55" y=".48" width="${(1.1 * pct).toFixed(2)}" height=".24"/>`}<text class="lab" style="font-size:${labU * 2.2}px" y="${0.8 + labU * 2.2}">${h(tokenLabel(e))}${showR ? ` R${rangeOf(me, e.id)}` : ""}</text><text class="drg" style="font-size:${labU * 1.2}px" y="-.85"></text></g>`;
+      return `<g class="tok ${cls}" data-tok="${e.id}" transform="translate(${p.x} ${p.y}) scale(${k2})"><title>${h(e.name)}: ${fmt(e.hp)}/${d.hp} HP</title><circle class="hit" r="${Math.max(0.75, (v.w * 0.014) / k2)}"/>${(TOKEN_ICONS[iconOf(e)] || TOKEN_ICONS.person)[1]}${gone ? `<path class="x" d="M-.4 -.4 L.4 .4 M.4 -.4 L-.4 .4"/>` : `<rect class="hpbg" x="-.55" y=".48" width="1.1" height=".24"/><rect class="hpb" x="-.55" y=".48" width="${(1.1 * pct).toFixed(2)}" height=".24"/>`}<text class="lab" style="font-size:${labU * 1.8}px" y="${0.8 + labU * 1.8}">${labelLines(
+        e,
+        showR ? ` R${rangeOf(me, e.id)}` : "",
+      )
+        .map((t, i) => `<tspan x="0" dy="${i ? "1.05em" : 0}">${h(t)}</tspan>`)
+        .join("")}</text><text class="drg" style="font-size:${labU * 1.2}px" y="-.85"></text></g>`;
     })
     .join("");
   let extra = "";
@@ -12636,11 +13445,16 @@ function applyScale() {
   root.classList.toggle("lt1000", z > 1 && w <= 1000);
   root.classList.toggle("lt600", z > 1 && w < 600);
 }
+// Sizes follow the screen, so a turned phone or a resized window redraws.
+let resizeQueued = false;
 addEventListener("resize", () => {
-  if ((prefs.uiScale || 1) !== 1) {
+  if (resizeQueued) return;
+  resizeQueued = true;
+  requestAnimationFrame(() => {
+    resizeQueued = false;
     applyScale();
     render();
-  }
+  });
 });
 function scaleBody() {
   const cur = prefs.uiScale || 1;
@@ -13471,11 +14285,12 @@ function renderModal() {
     icon: [`${h((ce || {}).name)}: map icon`, iconModal],
     vendor: ["Vendor", vendorWin],
     tree: ["Perk trees", treeModal],
+    mapmaker: [ui.mm && ui.mm.id ? "Map creator: edit" : "Map creator: new map", mapMakerBody],
   };
   const [title, body] = defs[m.type];
   const key = m.type === "dev" ? "dev" : m.type;
   const size =
-    m.type === "dev"
+    m.type === "dev" || m.type === "mapmaker"
       ? "full"
       : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard", "vendor", "tree"].includes(m.type)
         ? "big"
@@ -13493,6 +14308,151 @@ function iconModal() {
         `<button class="iconpick ${(e.icon || "person") === id ? "on" : ""}" data-a="iconSet" data-v="${e.id}|${id}" aria-pressed="${(e.icon || "person") === id}">${iconSvg(id, "big")}<span>${h(n)}</span></button>`,
     )
     .join("")}</div>`;
+}
+// ---------- MAP CREATOR: draw a location once, keep it with the campaign, pick it under Location like any other.
+const MM_SHAPES = [
+  ["rect", "Rectangle"],
+  ["L", "L-shape"],
+  ["U", "U-shape"],
+  ["T", "T-shape"],
+  ["plus", "Cross"],
+  ["oct", "Cut corners"],
+];
+const MM_TOOLS = [
+  ["select", "Select / move", "Click a thing to select it, drag to move it."],
+  ["building", "Building", "Drag on the map to draw a building of any size. Nobody can walk or shoot through it."],
+  ["wall", "Wall", "Drag to draw a wall. It runs along the longer side of your drag."],
+  ["item", "Cover / item", "Pick from the menu, then click the map to place it."],
+];
+// The playable area is always a W x H box. Any other shape is that box with parts closed off by out-of-bounds blocks.
+function mmVoids(shape, w, h) {
+  const g = S.rules.gridM || 2;
+  const snap = (x) => Math.max(g, Math.round(x / g) * g);
+  const W = w / 2,
+    H = h / 2,
+    a = snap(w / 2),
+    b = snap(h / 2),
+    cw = snap(w / 3),
+    ch = snap(h / 3);
+  const box = (x0, y0, x1, y1, angle) => {
+    const o = {
+      item: "void",
+      kind: "cover",
+      cover: "impenetrable",
+      block: true,
+      voidBlock: true,
+      x: E.fix((x0 + x1) / 2),
+      y: E.fix((y0 + y1) / 2),
+      w: E.fix(x1 - x0),
+      h: E.fix(y1 - y0),
+      label: "",
+    };
+    if (angle) o.angle = angle;
+    return o;
+  };
+  if (shape === "L") return [box(W - a, -H, W, -H + b)];
+  if (shape === "U") return [box(-cw / 2, -H, cw / 2, -H + b)];
+  if (shape === "T") return [box(-W, H - b, -cw / 2, H), box(cw / 2, H - b, W, H)];
+  if (shape === "plus") return [box(-W, -H, -cw / 2, -ch / 2), box(cw / 2, -H, W, -ch / 2), box(-W, ch / 2, -cw / 2, H), box(cw / 2, ch / 2, W, H)];
+  if (shape === "oct") {
+    const s = (Math.min(w, h) / 4) * Math.SQRT2; // a square turned 45 degrees on each corner cuts it off
+    return [
+      [-W, -H],
+      [W, -H],
+      [-W, H],
+      [W, H],
+    ].map(([x, y]) => box(x - s / 2, y - s / 2, x + s / 2, y + s / 2, 45));
+  }
+  return [];
+}
+function mmNew(id) {
+  const src = id && (S.customMaps || {})[id];
+  ui.mm = src
+    ? {
+        id,
+        name: src.n,
+        w: src.w,
+        h: src.h,
+        shape: src.shape || "rect",
+        objects: clone(src.objs)
+          .filter((o) => !o.voidBlock)
+          .map((o, i) => ({ ...o, id: "m" + i })),
+        tool: "select",
+        item: "crate",
+        sel: null,
+        seq: src.objs.length,
+      }
+    : { id: null, name: "", w: 30, h: 20, shape: "rect", objects: [], tool: "building", item: "crate", sel: null, seq: 0 };
+}
+const mmAll = () => [...mmVoids(ui.mm.shape, ui.mm.w, ui.mm.h), ...ui.mm.objects];
+function mmItem(key, x, y, w, h) {
+  const c = S.rules.mapItems[key];
+  const o = {
+    id: "m" + ui.mm.seq++,
+    item: key,
+    kind: c.round ? "tree" : "cover",
+    x: E.fix(x),
+    y: E.fix(y),
+    w: E.fix(w || c.w),
+    h: E.fix(h || c.h),
+    cover: c.cover,
+    label: "",
+  };
+  if (c.block) o.block = true;
+  if (c.round) o.round = true;
+  return o;
+}
+function mapMakerBody() {
+  const m = ui.mm;
+  if (!m) return "";
+  const g = S.rules.gridM || 2,
+    pad = Math.max(m.w, m.h) * 0.04 + 1;
+  let grid = "";
+  for (let x = -m.w / 2 + g; x < m.w / 2 - 0.01; x += g) grid += `M${x} ${-m.h / 2}V${m.h / 2}`;
+  for (let y = -m.h / 2 + g; y < m.h / 2 - 0.01; y += g) grid += `M${-m.w / 2} ${y}H${m.w / 2}`;
+  const sel = m.objects.find((o) => o.id === m.sel);
+  const nameOf = (o) => (S.rules.mapItems[o.item] || {}).n || o.item;
+  const draw = (o) => {
+    const tier = E.coverTier(o, S.rules);
+    const gl = GLYPH[ITEM_GLYPH[o.item] || KIND_GLYPH[o.kind] || "crate"];
+    const turn = o.angle ? `rotate(${o.angle}) ` : "";
+    const art = turn + (o.rot ? `rotate(90) scale(${o.h} ${o.w})` : `scale(${o.w} ${o.h})`);
+    return `<g class="obj ${o.kind} tier-${tier} ${o.voidBlock ? "oob" : ""} ${m.sel === o.id ? "sel" : ""}"${o.voidBlock ? "" : ` data-mm="${o.id}"`} transform="translate(${o.x} ${o.y})"><title>${h(nameOf(o))}: ${h((S.rules.cover[tier] || {}).n || "")}, ${fmt(o.w)} x ${fmt(o.h)} m</title><g class="gly" transform="${art}">${gl}</g></g>`;
+  };
+  const tiers = [
+    ["impenetrable", "Walls and buildings"],
+    ["hard", "Hard cover"],
+    ["soft", "Soft cover"],
+    ["concealment", "Concealment"],
+    ["open", "Open ground and props"],
+  ];
+  const menu = tiers
+    .map(
+      ([t, label]) =>
+        `<optgroup label="${label}">${Object.entries(S.rules.mapItems)
+          .filter(([k, c]) => c.cover === t && k !== "void")
+          .sort((a, b) => a[1].n.localeCompare(b[1].n))
+          .map(([k, c]) => `<option value="${k}"${m.item === k ? " selected" : ""}>${h(c.n)} ${c.w}x${c.h}m</option>`)
+          .join("")}</optgroup>`,
+    )
+    .join("");
+  const tool = MM_TOOLS.find(([id]) => id === m.tool);
+  const selBox = sel
+    ? `<div class="mmsel"><div class="bright">${h(nameOf(sel))}</div><div class="grid" style="grid-template-columns:1fr 1fr">${field("Width (m)", numBox(`id="mmOW" data-c="mmObjSize" data-k="w"`, sel.w))}${field("Depth (m)", numBox(`id="mmOH" data-c="mmObjSize" data-k="h"`, sel.h))}</div><div class="acts">${btn("mmTurn", "", "Turn 90°", "", "tiny")}${btn("mmDel", "", "Remove", "", "tiny danger", "Or press Delete")}</div></div>`
+    : "";
+  const side = `<div class="mmside">
+    ${field("Name", `<input type="text" id="mmName" autocomplete="off" placeholder="e.g. Raider gas station" data-u="mm.name" value="${h(m.name)}">`)}
+    <div class="grid" style="grid-template-columns:1.4fr 1fr 1fr">${field("Shape", `<select id="mmShape" data-c="mmShape">${options(MM_SHAPES, m.shape)}</select>`)}${field("Width (m)", numBox(`id="mmW" data-c="mmSize" data-k="w"`, m.w))}${field("Height (m)", numBox(`id="mmH" data-c="mmSize" data-k="h"`, m.h))}</div>
+    <h3>Add to the map</h3>
+    <div class="opts mmtools">${MM_TOOLS.map(([id, n]) => `<button class="opt ${m.tool === id ? "on" : ""}" data-a="mmTool" data-v="${id}" aria-pressed="${m.tool === id}">${n}</button>`).join("")}</div>
+    ${field("Cover and items", `<select id="mmItem" data-c="mmPick">${menu}</select>`)}
+    <div class="s dim" id="mmHint">${h(tool[2])} Hold Shift to place off the half-meter steps.</div>
+    ${selBox}
+    <div class="s dim">${m.w} x ${m.h} m, ${m.objects.length} thing${m.objects.length === 1 ? "" : "s"} placed. The party starts at the middle of the left edge.</div>
+    <div class="acts">${primary("mmSave", "", m.id ? "Save changes" : "Save map")}${btn("mmClear", "", "Clear")}${m.id ? btn("mmRemove", "", "Delete map", "", "danger") : ""}${btn("closeModal", "", "Cancel")}</div>
+  </div>`;
+  const svg = `<div class="mmcanvas"><svg id="mmSvg" tabindex="-1" class="tool-${m.tool}" viewBox="${-m.w / 2 - pad} ${-m.h / 2 - pad} ${m.w + 2 * pad} ${m.h + 2 * pad}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map being drawn, ${m.w} by ${m.h} meters"><rect class="floor" x="${-m.w / 2}" y="${-m.h / 2}" width="${m.w}" height="${m.h}"/><path class="grid" d="${grid}"/>${mmAll().map(draw).join("")}<rect id="mmDraft" class="draft" width="0" height="0"/></svg></div>`;
+  return `<div class="mmwrap">${side}${svg}</div>`;
 }
 // PERK TREES: a folder tab per player. Skill perks grow in three ranks per skill (Proficiency, Expertise, Mastery); level perks by level.
 function treeModal() {
@@ -13965,7 +14925,9 @@ function detailModal() {
           Array.isArray(v)
             ? v
                 .filter((x) => x != null && x !== "")
-                .map((x) => (typeof x === "number" && k === "hit" ? E.pct(x) : Array.isArray(x) ? x.join(" x ") : x))
+                .map((x) =>
+                  typeof x === "number" && k === "hit" ? E.pct(x) : Array.isArray(x) ? x.join(" x ") : x && typeof x === "object" ? JSON.stringify(x) : x,
+                )
                 .join(" | ")
             : typeof v === "object"
               ? JSON.stringify(v)
@@ -14729,19 +15691,43 @@ const ACT = {
   setTheme(val) {
     act("Room setting", () => {
       S.scene.theme = val;
+      const cm = customMap(mapOf().id);
+      if (val === "asBuilt" && cm) S.scene.objects = builtObjects(cm); // back to the map as it was drawn
     });
   },
   randomRoom() {
     act("Randomize room", () => {
       const party = S.chars.map((c) => posOf(c.id));
       const foesAt = foes().map((e) => posOf(e.id));
-      S.scene.objects = E.generateRoom(mapOf(), S.scene.theme, S.rules, Math.random, [...party, ...foesAt], () => "o" + S.seq++);
+      const cm = customMap(mapOf().id);
+      if (cm && S.scene.theme === "asBuilt") S.scene.objects = builtObjects(cm);
+      else {
+        // on a drawn map the out-of-bounds blocks stay, and nothing new lands on them
+        const keep = cm ? builtObjects(cm).filter((o) => o.voidBlock) : [];
+        const made = E.generateRoom(
+          cm ? { ...mapOf(), id: "custom" } : mapOf(),
+          S.scene.theme,
+          S.rules,
+          Math.random,
+          [...party, ...foesAt],
+          () => "o" + S.seq++,
+        );
+        const corners = (o) =>
+          [
+            [0, 0],
+            [-1, -1],
+            [1, -1],
+            [-1, 1],
+            [1, 1],
+          ].map(([a, b]) => ({ x: o.x + (a * o.w) / 2, y: o.y + (b * o.h) / 2 }));
+        S.scene.objects = [...keep, ...made.filter((o) => !keep.some((v) => corners(o).some((q) => E.inside(q, v))))];
+      }
       if (ui.roomChest) {
         const ch = makeChest();
         S.scene.objects = S.scene.objects.filter((o) => dist(o, ch) > 1.5);
         S.scene.objects.push(ch);
       }
-      log("status", `Room: ${mapOf().n}, ${S.rules.roomThemes[S.scene.theme].n}, ${S.scene.objects.length} objects.`);
+      log("status", `Room: ${mapOf().n}, ${(S.rules.roomThemes[S.scene.theme] || { n: "as built" }).n}, ${S.scene.objects.length} objects.`);
     });
   },
   clearRoom() {
@@ -14792,6 +15778,91 @@ const ACT = {
     act("Remove from map", () => {
       S.scene.objects = S.scene.objects.filter((o) => o.id !== v);
       ui.mapSel = null;
+    });
+  },
+  mmOpen(v) {
+    mmNew(v || null);
+    ui.modal = { type: "mapmaker" };
+    ui.focus = "#mmName";
+    render();
+  },
+  mmTool(v) {
+    ui.mm.tool = v;
+    if (v !== "select") ui.mm.sel = null;
+    render();
+  },
+  mmPick(val) {
+    ui.mm.item = val;
+    ui.mm.tool = "item";
+    scheduleRender();
+  },
+  mmShape(val) {
+    ui.mm.shape = val;
+    scheduleRender();
+  },
+  mmSize(val, el) {
+    const t = num(val),
+      g = S.rules.gridM || 2,
+      m = ui.mm;
+    if (t == null || t < 4) return scheduleRender();
+    m[el.dataset.k] = Math.min(400, Math.ceil(t / g) * g); // whole grid squares, like every other location
+    m.objects = m.objects.filter((o) => Math.abs(o.x) <= m.w / 2 && Math.abs(o.y) <= m.h / 2); // anything left outside the new edge goes
+    scheduleRender();
+  },
+  mmObjSize(val, el) {
+    const o = ui.mm.objects.find((x) => x.id === ui.mm.sel),
+      t = num(val);
+    if (o && t > 0) o[el.dataset.k] = E.fix(Math.min(t, 400));
+    scheduleRender();
+  },
+  mmTurn() {
+    const o = ui.mm.objects.find((x) => x.id === ui.mm.sel);
+    if (!o) return;
+    [o.w, o.h] = [o.h, o.w];
+    if (o.rot) delete o.rot;
+    else o.rot = 90;
+    render();
+  },
+  mmDel() {
+    const m = ui.mm;
+    if (!m || !m.sel) return;
+    m.objects = m.objects.filter((o) => o.id !== m.sel);
+    m.sel = null;
+    render();
+  },
+  mmClear() {
+    ui.mm.objects = [];
+    ui.mm.sel = null;
+    render();
+  },
+  mmSave() {
+    const m = ui.mm,
+      name = String(m.name).trim();
+    if (!name) {
+      ui.focus = "#mmName";
+      render();
+      return toast("Name the map first.");
+    }
+    const id = m.id || "m" + Date.now().toString(36);
+    const objs = mmAll().map(({ id: _drop, ...o }) => o);
+    act(`Save map: ${name}`, () => {
+      S.customMaps = S.customMaps || {};
+      S.customMaps[id] = { n: name, w: m.w, h: m.h, shape: m.shape, objs };
+      if (!S.combat) {
+        applyMap("cm:" + id);
+        ui.setup = true;
+      }
+      ui.modal = null;
+    });
+    toast(`${name} saved, ${m.w} x ${m.h} m. It is under Location from now on.`);
+  },
+  mmRemove() {
+    const m = ui.mm;
+    if (!m.id || !confirm(`Delete the map "${m.name}"? Undo brings it back.`)) return;
+    act(`Delete map: ${m.name}`, () => {
+      delete S.customMaps[m.id];
+      if (!S.combat && mapOf().id === "cm:" + m.id) applyMap(S.rules.sceneDefaults.map);
+      ui.modal = null;
     });
   },
   setSpawn(val) {
@@ -15707,7 +16778,7 @@ const ACT = {
         const d = der(c);
         const heal = num(u.heal[c.id], Math.round(d.hp * (c.dbno ? S.rules.downWinHeal || 0 : S.rules.passiveHealPct)));
         c.xp = E.fix((c.xp || 0) + x);
-        if (!c.dbno) c.hp = Math.min(d.hp, c.hp + heal + Math.floor(d.hp * (d.m.endHeal || 0)));
+        if (!c.dbno) c.hp = Math.max(0, Math.min(d.hp, c.hp + heal + Math.floor(d.hp * (d.m.endHeal || 0))));
         else if (heal > 0) {
           // down when the party won: back on their feet with a share of max HP
           c.dbno = false;
@@ -16343,6 +17414,10 @@ document.addEventListener("keydown", (e) => {
       if (pick) ACT.itemPick(pick.i);
       return;
     }
+    if (m.type === "mapmaker" && (k === "delete" || k === "backspace")) {
+      e.preventDefault();
+      return ACT.mmDel();
+    }
     if (m.type === "help") {
       e.preventDefault();
       ACT.closeModal();
@@ -16473,19 +17548,16 @@ document.addEventListener("pointermove", (ev) => {
   if (!drag) return;
   if (drag.kind === "gut") {
     const right = drag.box.right - 47; // the rail
-    if (drag.which === "left") prefs.partyW = clamp(ev.clientX - drag.box.left, 210, drag.box.width - 500);
-    if (drag.which === "right") prefs.enemyW = clamp(right - ev.clientX, 160, 500);
+    if (drag.which === "left") prefs.partyW = clamp(ev.clientX - drag.box.left, 210, drag.box.width - 500) / kx();
+    if (drag.which === "right") prefs.enemyW = clamp(right - ev.clientX, 160, 500) / kx();
     if (drag.which === "bottom") {
       const v = clamp(drag.stage.bottom - ev.clientY, 70, drag.stage.height - 200);
-      if (K()) prefs.bottomFight = v;
-      else prefs.bottomH = v;
+      if (K()) prefs.bottomFight = v / ky();
+      else prefs.bottomH = v / ky();
     }
-    if (drag.which === "map") prefs.mapW = clamp(ev.clientX - drag.arena.left, 200, drag.arena.width - 260);
+    if (drag.which === "map") prefs.mapW = clamp(ev.clientX - drag.arena.left, 200, drag.arena.width - 260) / kx();
     const st = document.documentElement.style;
-    st.setProperty("--left", prefs.partyW + "px");
-    st.setProperty("--right", prefs.enemyW + "px");
-    st.setProperty("--bottomh", (K() ? prefs.bottomFight : prefs.bottomH) + "px");
-    if (prefs.mapW) st.setProperty("--mapw", prefs.mapW + "px");
+    applySizes();
   } else if (drag.kind === "win") {
     const w = drag.w;
     const r = w.getBoundingClientRect();
@@ -16559,7 +17631,7 @@ document.addEventListener("pointerup", (ev) => {
   if (d.kind === "wsize") {
     const r = d.w.getBoundingClientRect();
     if (Math.abs(r.width - d.w0) > 2 || Math.abs(r.height - d.h0) > 2) {
-      prefs.wsize = { ...(prefs.wsize || {}), [d.w.dataset.wcls]: { w: Math.round(r.width), h: Math.round(r.height) } };
+      prefs.wsize = { ...(prefs.wsize || {}), [d.w.dataset.wcls]: { w: Math.round(r.width / kx()), h: Math.round(r.height / ky()) } };
       savePrefs();
       render();
     }
@@ -16677,6 +17749,93 @@ document.addEventListener("pointerup", (ev) => {
       log("status", `DM moves ${e.name}.`);
     });
   }
+});
+// ---------- mouse and touch in the map creator: drag to draw buildings and walls, click to place, drag to move
+let mmDrag = null;
+const mmSnap = (v, ev) => (ev.shiftKey ? E.fix(v) : Math.round(v * 2) / 2);
+const mmIn = (p) => ({ x: clamp(p.x, -ui.mm.w / 2, ui.mm.w / 2), y: clamp(p.y, -ui.mm.h / 2, ui.mm.h / 2) });
+document.addEventListener("pointerdown", (ev) => {
+  if (!(ev.target.closest && ev.target.closest("#mmSvg")) || ev.button !== 0 || !ui.mm) return;
+  ev.preventDefault();
+  // A box still being typed in (name, width) is finished first. That redraws the window, so everything is looked up again after it.
+  if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+  const svg = document.getElementById("mmSvg");
+  if (!svg) return;
+  const under = document.elementFromPoint(ev.clientX, ev.clientY);
+  const m = ui.mm,
+    p = mmIn(svgPoint(svg, ev)),
+    g = under && under.closest && under.closest("[data-mm]");
+  if (m.tool === "item") {
+    if (!S.rules.mapItems[m.item]) return;
+    const o = mmItem(m.item, mmSnap(p.x, ev), mmSnap(p.y, ev));
+    m.objects.push(o);
+    m.sel = o.id;
+    ui.focus = "#mmSvg";
+    return render();
+  }
+  if (m.tool === "select") {
+    const o = g && m.objects.find((x) => x.id === g.dataset.mm);
+    m.sel = o ? o.id : null;
+    ui.focus = "#mmSvg";
+    render();
+    if (o) mmDrag = { kind: "move", o, dx: p.x - o.x, dy: p.y - o.y };
+    return;
+  }
+  const x = mmSnap(p.x, ev),
+    y = mmSnap(p.y, ev);
+  mmDrag = { kind: "draw", tool: m.tool, x0: x, y0: y, x1: x, y1: y };
+});
+// What a drag with the Building or Wall tool makes: the box itself, or a thin wall along its longer side.
+function mmBox(d) {
+  let w = Math.abs(d.x1 - d.x0),
+    h = Math.abs(d.y1 - d.y0);
+  const x = (d.x0 + d.x1) / 2,
+    y = (d.y0 + d.y1) / 2;
+  if (d.tool === "wall") {
+    if (w >= h) h = 0.4;
+    else w = 0.4;
+  }
+  return { x, y, w, h };
+}
+document.addEventListener("pointermove", (ev) => {
+  if (!mmDrag) return;
+  const svg = document.getElementById("mmSvg");
+  if (!svg || !ui.mm) return void (mmDrag = null);
+  const p = mmIn(svgPoint(svg, ev)),
+    d = mmDrag;
+  if (d.kind === "move") {
+    d.o.x = mmSnap(p.x - d.dx, ev);
+    d.o.y = mmSnap(p.y - d.dy, ev);
+    const el = svg.querySelector(`[data-mm="${d.o.id}"]`);
+    if (el) el.setAttribute("transform", `translate(${d.o.x} ${d.o.y})`);
+    return;
+  }
+  d.x1 = mmSnap(p.x, ev);
+  d.y1 = mmSnap(p.y, ev);
+  const b = mmBox(d),
+    r = svg.querySelector("#mmDraft");
+  if (r) {
+    r.setAttribute("x", b.x - b.w / 2);
+    r.setAttribute("y", b.y - b.h / 2);
+    r.setAttribute("width", b.w);
+    r.setAttribute("height", b.h);
+  }
+});
+document.addEventListener("pointerup", () => {
+  const d = mmDrag;
+  mmDrag = null;
+  if (!d || !ui.mm) return;
+  if (d.kind === "draw") {
+    let b = mmBox(d);
+    // a click with no drag still makes something sensible: a small building, or a short wall
+    if (Math.max(b.w, b.h) < 1) b = d.tool === "wall" ? { x: d.x0, y: d.y0, w: 6, h: 0.4 } : { x: d.x0, y: d.y0, w: 8, h: 6 };
+    else if (d.tool === "building") b = { ...b, w: Math.max(b.w, 1), h: Math.max(b.h, 1) };
+    const o = mmItem(d.tool === "wall" ? "concreteWall" : "building", b.x, b.y, b.w, b.h);
+    ui.mm.objects.push(o);
+    ui.mm.sel = o.id;
+  }
+  ui.focus = "#mmSvg";
+  render();
 });
 // Scroll over the map to zoom in on what's under the pointer.
 let wheelQueued = false;

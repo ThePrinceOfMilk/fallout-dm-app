@@ -2047,7 +2047,31 @@ const E = (() => {
     const indoorMap = (r.indoorMaps || []).includes(map.id) || (map.id === "custom" && map.w * map.h <= 1600);
     const outdoorKind = ["forest", "woods"].includes(map.id) ? "forested" : "desert";
     const building = LAYOUT.indoorThemes.includes(themeId);
-    if (themeId === "city" && indoorMap) {
+    const LT = r.roomThemes[themeId] || {};
+    if (LT.loose) {
+      // No floor plan: pick things by their weights and drop each where it fits, a meter clear of everything else, leaving the way in open.
+      const keys = Object.keys(LT.items).filter((k) => r.mapItems[k]),
+        tot = keys.reduce((t, k) => t + LT.items[k], 0);
+      const want = Math.max(LT.min || 0, Math.min(LT.max || 60, Math.round(map.w * map.h * LT.density * rand(0.8, 1.2))));
+      reserve(B.x0, -2.5, B.x0 + 4.5, 2.5);
+      for (let made = 0, tries = 0; made < want && tries < want * 30; tries++) {
+        let x = rng() * tot,
+          key = keys[0];
+        for (const k of keys) {
+          x -= LT.items[k];
+          if (x <= 0) {
+            key = k;
+            break;
+          }
+        }
+        const c = r.mapItems[key],
+          rot = !c.round && rng() < 0.5;
+        const w = rot ? c.h : c.w,
+          h = rot ? c.w : c.h;
+        if (w > map.w - 2.4 || h > map.h - 2.4) continue;
+        if (add(key, rand(B.x0 + w / 2 + 1, B.x1 - w / 2 - 1), rand(B.y0 + h / 2 + 1, B.y1 - h / 2 - 1), { rot, pad: 1 })) made++;
+      }
+    } else if (themeId === "city" && indoorMap) {
       const F = frame({ x0: B.x0 + 0.05, y0: B.y0 + 0.05, x1: B.x1 - 0.05, y1: B.y1 - 0.05 });
       const bar = [];
       for (let v = 0.5; v + 3 <= F.Lv - 2; v += 3.1) {

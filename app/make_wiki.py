@@ -291,6 +291,16 @@ upd(12, D10, "Enemy map icons", "Was: every enemy was the same person shape. Now
     "Anything else is matched by what it is: robot, eyebot, ant, scorpion, cazador, deathclaw, gecko, horned beast, rat, dog, ghoul, spore plant. An unknown animal gets a paw print.",
     "An unaligned human stays a plain person. Players still pick their own icon, and every new icon is on their list."))
 upd(11, D10, "Giant is not an ant", "Was: any enemy whose name had a word ending in 'ant' counted as an insect, so Giant Rats, Spore Plants and the Giant Evolved Centaur took bonus damage from perks against insects. Now: only ants, cazadores, bloatflies, scorpions, mantises and roaches are insects.")
+upd(12, D10, "Map creator", "New.", bl(
+    "Create map, in encounter setup, opens a window to draw a location: its name, its size in meters and its shape (rectangle, L, U, T, cross or cut corners).",
+    "Buildings and walls are drawn by dragging, so they can be any size. Cover and other things are picked from a menu and placed with a click.",
+    "A saved map is kept with the campaign and listed under Location. Its setting reads As built. Any other setting can still be rolled on it, inside the same shape, and As built brings the drawing back.",
+    "A shape other than a rectangle is the rectangle with parts closed off as out of bounds: nobody can stand, walk or shoot there."))
+upd(12, D10, "More settings, objects and locations", "Was: 9 settings, 72 objects and 12 locations. Now: 17 settings, 118 objects and 19 locations.", bl(
+    "New settings: scrapyard, military outpost, saloon or casino, vault, farmstead, gas station, ruins, cave or mine. Their things are spread about with at least a meter to walk between them.",
+    "New locations: shack, courtyard, parking lot, stretch of road, walled compound, cavern and open field.",
+    "Each new object has a cover tier like the old ones: a hesco barrier is hard cover, a hay bale is soft, a crop row is concealment."))
+upd(12, D10, "Names on the map", "Was: a token showed two letters, such as CC. Now: it shows the whole name, or the nickname when the enemy has one, on two lines when it is long.")
 upd(7, D10, "Passing a check pays XP", "Was: the DM typed an XP amount for the players who passed. Now: a pass pays XP by itself, by difficulty.", bl(
     f"XP = the check's target x {R['checkXpMul']}, then the INT bonus on top (the same bonus as enemy XP). Trivial 10 pays {round(10 * R['checkXpMul'], 2)}, Average 40 pays {round(40 * R['checkXpMul'], 2)}, Extreme 100 pays {round(100 * R['checkXpMul'], 2)}.",
     "Revive checks pay nothing. The old box for extra XP to everyone who passed is still there.",

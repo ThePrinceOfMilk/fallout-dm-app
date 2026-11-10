@@ -98,6 +98,7 @@ function fresh() {
     tables: {},
     tableRev: 0,
     vendor: { tier: 1, barter: 50, stock: null },
+    customMaps: {},
   };
   s.chars = clone(DATA.party).map((x) => initChar(x, { db, rules, scene: s.scene, ov: s.overrides }));
   return s;
@@ -124,6 +125,7 @@ function normalize(p) {
   p.seq = p.seq || 1;
   p.notesList = p.notesList || [];
   p.tables = p.tables || {};
+  p.customMaps = p.customMaps || {};
   for (const k of Object.keys(p.tables)) if (Array.isArray(WORKBOOK[k]) && Array.isArray(p.tables[k])) p.tables[k] = shrinkTable(k, p.tables[k]); // older saves held every row
   p.tableRev = p.tableRev || 0;
   if (p.notes) {
@@ -402,7 +404,7 @@ const small = () => matchMedia("(max-width: 1000px)").matches || document.docume
 // A size the DM dragged a window to (bottom-right corner) sticks. Double-click the title bar to put it back.
 const winSize = (cls) => {
   const z = (prefs.wsize || {})[cls];
-  return z ? ` style="flex:none;width:${z.w}px;height:${z.h}px;max-width:none;max-height:none"` : "";
+  return z ? ` style="flex:none;width:${Math.round(z.w * kx())}px;height:${Math.round(z.h * ky())}px;max-width:none;max-height:none"` : "";
 };
 const win = (cls, title, key, body, opt = {}) =>
   `<section class="win ${cls} ${opt.act ? "act" : ""} ${(prefs.fold || {})[cls] ? "folded" : ""}" data-wcls="${cls}"${winSize(cls)}><header class="wt" data-fold="${cls}"><button type="button" class="foldbtn" data-a="fold" data-v="${cls}" aria-label="${(prefs.fold || {})[cls] ? "Open" : "Fold"} ${h(String(title).replace(/<[^>]*>/g, ""))}" aria-expanded="${!(prefs.fold || {})[cls]}">${(prefs.fold || {})[cls] ? "+" : "-"}</button>${kbd(key)}<span>${title}</span><span class="spacer"></span>${opt.tools || ""}</header><div class="wb" data-scroll="${cls}">${body}</div></section>`;
@@ -706,8 +708,11 @@ function partySpots() {
       S.scene.pos[c.id] = { x: E.fix(-M.w / 2 + gap * (0.8 + (i % 2) * 1.2)), y: E.fix((Math.floor(i / 2) - (rows - 1) / 2) * gap * 1.15) };
   });
 }
+const customMap = (id) => (String(id).startsWith("cm:") && (S.customMaps || {})[String(id).slice(3)]) || null;
+const builtObjects = (cm) => cm.objs.map((o) => ({ ...clone(o), id: "o" + S.seq++ }));
 function applyMap(id, w, h) {
-  const p = S.rules.maps[id] || S.rules.maps.wild;
+  const cm = customMap(id);
+  const p = cm ? { n: cm.n, w: cm.w, h: cm.h } : S.rules.maps[id] || S.rules.maps.wild;
   const sc = S.scene;
   const g = S.rules.gridM || 2;
   const fit = (x) => Math.max(g, Math.ceil(x / g) * g); // whole grid squares only
@@ -730,7 +735,9 @@ function applyMap(id, w, h) {
     }
     return o;
   };
-  sc.objects = (p.objs || []).map(([kind, x, y, ow, oh, label]) => make(kind, x, y, ow, oh, label));
+  sc.objects = cm ? builtObjects(cm) : (p.objs || []).map(([kind, x, y, ow, oh, label]) => make(kind, x, y, ow, oh, label));
+  if (cm) sc.theme = "asBuilt";
+  else if (sc.theme === "asBuilt") sc.theme = S.rules.sceneDefaults.theme;
   for (const [kind, count, lo, hi] of p.scatter || [])
     for (let i = 0; i < count; i++) {
       const size = E.fix(lo + Math.random() * (hi - lo));
@@ -1094,6 +1101,10 @@ function fire() {
     a.err = "Pick a target first (T).";
     return render();
   }
+  if (!p.slot) {
+    a.err = `${p.A.name} has no weapon to attack with.`;
+    return render();
+  }
   if (p.slot.jammed) {
     a.err = `Jammed. Press J to clear for ${p.v.clearJam} AP first.`;
     return render();
@@ -1432,15 +1443,24 @@ function pix(name) {
 }
 
 // ---------- the dashboard
+// Panel sizes are kept as they would be on a 1440 x 900 screen and scaled to the screen in use, so a layout carries over to any size.
+const BASE_W = 1440,
+  BASE_H = 900;
+const kx = () => innerWidth / (prefs.uiScale || 1) / BASE_W;
+const ky = () => innerHeight / (prefs.uiScale || 1) / BASE_H;
+function applySizes() {
+  const st = document.documentElement.style;
+  st.setProperty("--left", Math.max(200, Math.round(prefs.partyW * kx())) + "px");
+  st.setProperty("--right", Math.max(150, Math.round(prefs.enemyW * kx())) + "px");
+  st.setProperty("--bottomh", Math.max(70, Math.round((K() ? prefs.bottomFight : prefs.bottomH) * ky())) + "px");
+  st.setProperty("--mapw", prefs.mapW ? Math.round(prefs.mapW * kx()) + "px" : "46%");
+}
 function view() {
   ensureMap();
   partySpots();
   const k = K();
   const st = document.documentElement.style;
-  st.setProperty("--left", prefs.partyW + "px");
-  st.setProperty("--right", prefs.enemyW + "px");
-  st.setProperty("--bottomh", (k ? prefs.bottomFight : prefs.bottomH) + "px");
-  st.setProperty("--mapw", prefs.mapW ? prefs.mapW + "px" : "46%");
+  applySizes();
   const mode = k ? "fight" : setupOpen() ? "setup" : "calm";
   const center =
     mode === "fight"
@@ -2328,7 +2348,10 @@ function consoleWin() {
   });
 }
 function mapOptions() {
-  return Object.entries(S.rules.maps).map(([id, m]) => [id, id === "custom" ? m.n : `${m.n} ${m.w}x${m.h}m`]);
+  return [
+    ...Object.entries(S.rules.maps).map(([id, m]) => [id, id === "custom" ? m.n : `${m.n} ${m.w}x${m.h}m`]),
+    ...Object.entries(S.customMaps || {}).map(([id, m]) => ["cm:" + id, `${m.n} ${m.w}x${m.h}m (yours)`]),
+  ];
 }
 function encounterWin(open) {
   if (!open)
@@ -2354,11 +2377,15 @@ function encounterWin(open) {
     "g-room",
     "Room",
     `<label class="f">Style<select id="themeId" data-c="setTheme">${options(
-      Object.entries(S.rules.roomThemes).map(([id, t]) => [id, t.n]),
+      [...(customMap(M.id) ? [["asBuilt", "As built"]] : []), ...Object.entries(S.rules.roomThemes).map(([id, t]) => [id, t.n])],
       sc.theme,
     )}</select></label><div class="egbtns"><button class="btn primary" data-a="randomRoom" data-v="" title="New furniture for this location and style">Randomize room</button><label class="chk s" title="Add a chest of ammo near the party. It opens for whoever is within R1 on their turn."><input type="checkbox" id="roomChest" data-u="roomChest"${ui.roomChest ? " checked" : ""}> Chest</label>${btn("clearRoom", "", "Clear room", "", "", "Remove all objects")}</div>`,
   );
-  const place = group("g-place", "Place on map", `<div class="egbtns">${mapTools()}</div><div class="s dim">Pick one, then tap the map.</div>`);
+  const place = group(
+    "g-place",
+    "Place on map",
+    `<div class="egbtns">${mapTools()}</div><div class="s dim">Pick one, then tap the map.</div><div class="egbtns mmbtns">${btn("mmOpen", "", "Create map", "", "", "Draw a location of your own and keep it with the campaign")}${customMap(M.id) ? btn("mmOpen", String(M.id).slice(3), "Edit this map") : ""}</div>`,
+  );
   const foesG = group(
     "g-foes",
     "Enemy positions",
@@ -2497,10 +2524,30 @@ function enemyCard(e) {
     <div class="hpline"><span>HP</span>${bindNum(e.id, "hp", e.hp, `id="rh-${e.id}"`, "cell")}<span>/${d.hp}</span><span class="grow">${hpBar(e.hp, d.hp)}</span></div>
     <div class="hpline"><span>AP</span>${bindNum(e.id, "ap", e.ap, `id="ra-${e.id}"`, "cell")}<span>/${d.ap}</span><span>DT ${fmt(d.dt)}</span><span class="grow"></span>${rangeBox ? `<span class="bright">R</span>${rangeBox}` : ""}</div>${chips(e)}</article>`;
 }
+// The name under a token: an enemy's nickname if it has one ("Fiend - Zed" reads Zed), otherwise the whole name.
 function tokenLabel(e) {
-  const w = String(e.name).split(/\s+/);
-  const num_ = /^\d+$/.test(w[w.length - 1]) ? w.pop() : "";
-  return (w.length > 1 && !num_ ? w[0][0] + w[1][0] : w[0].slice(0, num_ ? 1 : 2)).toUpperCase() + num_;
+  const n = String(e.name);
+  return e.kind !== "pc" && / - /.test(n) ? n.split(" - ").slice(1).join(" - ") : n;
+}
+// A long name is cut in two near its middle, so it sits under its own token and not under the neighbour's.
+function labelLines(e, tail = "") {
+  const n = tokenLabel(e),
+    w = n.split(" ");
+  let lines = [n];
+  if (n.length > 10 && w.length > 1) {
+    let best = 1,
+      gap = Infinity;
+    for (let i = 1; i < w.length; i++) {
+      const d = Math.abs(w.slice(0, i).join(" ").length - w.slice(i).join(" ").length);
+      if (d < gap) {
+        gap = d;
+        best = i;
+      }
+    }
+    lines = [w.slice(0, best).join(" "), w.slice(best).join(" ")];
+  }
+  lines[lines.length - 1] += tail;
+  return lines;
 }
 // PEOPLE ON THE MAP. Zoomed out they keep a steady size on screen, about 2% of the view, so you can always find them.
 // As you zoom in they stop shrinking at real life size, so up close they look like a person next to a real-size table.
@@ -2815,6 +2862,53 @@ const ITEM_GLYPH = {
   dresser: "shelves",
   stoneWall: "stoneWall",
   pillar: "plainWall",
+  void: "building",
+  tirePile: "barrel",
+  scrapHeap: "rubble",
+  shippingContainer: "crate",
+  carStack: "car",
+  engineBlock: "machine",
+  guardTower: "crate",
+  hesco: "sandbags",
+  ammoCrate: "crate",
+  razorWire: "bars",
+  fieldTent: "sheet",
+  flagpole: "dot",
+  radioTable: "table",
+  concreteBlock: "plainWall",
+  metalSheet: "sheet",
+  barCounter: "table",
+  barStool: "dot",
+  pokerTable: "barrel",
+  slotMachine: "machine",
+  jukebox: "machine",
+  stage: "pallet",
+  piano: "desk",
+  vaultConsole: "machine",
+  bunkBed: "bed",
+  reactorCore: "barrel",
+  waterPurifier: "machine",
+  hayBale: "barrel",
+  fence: "plainWall",
+  waterTrough: "bathtub",
+  tractor: "forklift",
+  scarecrow: "dot",
+  cropRow: "sheet",
+  silo: "barrel",
+  gasPump: "machine",
+  vendingMachine: "fridge",
+  billboard: "plainWall",
+  phoneBooth: "crate",
+  tollBooth: "crate",
+  brokenColumn: "stump",
+  collapsedWall: "stoneWall",
+  statue: "plainWall",
+  crater: "dune",
+  stalagmite: "rock",
+  mineCart: "crate",
+  supportBeam: "dot",
+  oreVein: "rock",
+  railTrack: "conveyor",
 };
 const KIND_GLYPH = { cover: "crate", hard: "plainWall", wall: "plainWall", tree: "tree", hazard: null, note: "dot" };
 const MAP_OBJ = { cover: ["Cover", 1], hard: ["Hard cover", 1], hazard: ["Hazard", 1], note: ["Marker", 1], wall: ["Wall", 0], tree: ["Tree", 0] };
@@ -2962,7 +3056,7 @@ function mapSvg() {
         hpMax && o.dmg
           ? `<g class="ohp"><rect class="ohpbg" x="${-w / 2}" y="${-ht / 2 - label * 0.7}" width="${w}" height="${label * 0.4}"/><rect class="ohpf" x="${-w / 2}" y="${-ht / 2 - label * 0.7}" width="${E.fix(w * clamp(1 - o.dmg / hpMax, 0, 1))}" height="${label * 0.4}"/></g>`
           : "";
-      return `<g class="obj ${o.kind} tier-${tier} ${o.loot ? (o.opened ? "opened" : "lootable") : ""} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${hpMax ? `, ${fmt(hpMax - (o.dmg || 0))}/${hpMax} HP` : ""}${o.loot ? (o.opened ? ", opened" : ", opens for whoever is within R1 on their turn") : ""}${trunk ? ", only the trunk stops shots" : ""}${o.block ? ", blocks movement" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle></g>` : ""}${hpBar_}${showName || o.loot ? `<text style="font-size:${label}px" y="${ht / 2 + label}">${h(name)}${o.loot && o.opened ? " (open)" : ""}</text>` : ""}</g>`;
+      return `<g class="obj ${o.kind} tier-${tier} ${o.voidBlock ? "oob" : ""} ${o.loot ? (o.opened ? "opened" : "lootable") : ""} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${hpMax ? `, ${fmt(hpMax - (o.dmg || 0))}/${hpMax} HP` : ""}${o.loot ? (o.opened ? ", opened" : ", opens for whoever is within R1 on their turn") : ""}${trunk ? ", only the trunk stops shots" : ""}${o.block ? ", blocks movement" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle></g>` : ""}${hpBar_}${showName || o.loot ? `<text style="font-size:${label}px" y="${ht / 2 + label}">${h(name)}${o.loot && o.opened ? " (open)" : ""}</text>` : ""}</g>`;
     })
     .join("");
   const me = k ? (fightPhase() ? actorId() : null) : ui.sel;
@@ -2986,7 +3080,12 @@ function mapSvg() {
         e.dbno ? "dbno" : "",
       ].join(" ");
       const showR = me && me !== e.id && !gone && (k ? true : e.kind === "npc");
-      return `<g class="tok ${cls}" data-tok="${e.id}" transform="translate(${p.x} ${p.y}) scale(${k2})"><title>${h(e.name)}: ${fmt(e.hp)}/${d.hp} HP</title><circle class="hit" r="${Math.max(0.75, (v.w * 0.014) / k2)}"/>${(TOKEN_ICONS[iconOf(e)] || TOKEN_ICONS.person)[1]}${gone ? `<path class="x" d="M-.4 -.4 L.4 .4 M.4 -.4 L-.4 .4"/>` : `<rect class="hpbg" x="-.55" y=".48" width="1.1" height=".24"/><rect class="hpb" x="-.55" y=".48" width="${(1.1 * pct).toFixed(2)}" height=".24"/>`}<text class="lab" style="font-size:${labU * 2.2}px" y="${0.8 + labU * 2.2}">${h(tokenLabel(e))}${showR ? ` R${rangeOf(me, e.id)}` : ""}</text><text class="drg" style="font-size:${labU * 1.2}px" y="-.85"></text></g>`;
+      return `<g class="tok ${cls}" data-tok="${e.id}" transform="translate(${p.x} ${p.y}) scale(${k2})"><title>${h(e.name)}: ${fmt(e.hp)}/${d.hp} HP</title><circle class="hit" r="${Math.max(0.75, (v.w * 0.014) / k2)}"/>${(TOKEN_ICONS[iconOf(e)] || TOKEN_ICONS.person)[1]}${gone ? `<path class="x" d="M-.4 -.4 L.4 .4 M.4 -.4 L-.4 .4"/>` : `<rect class="hpbg" x="-.55" y=".48" width="1.1" height=".24"/><rect class="hpb" x="-.55" y=".48" width="${(1.1 * pct).toFixed(2)}" height=".24"/>`}<text class="lab" style="font-size:${labU * 1.8}px" y="${0.8 + labU * 1.8}">${labelLines(
+        e,
+        showR ? ` R${rangeOf(me, e.id)}` : "",
+      )
+        .map((t, i) => `<tspan x="0" dy="${i ? "1.05em" : 0}">${h(t)}</tspan>`)
+        .join("")}</text><text class="drg" style="font-size:${labU * 1.2}px" y="-.85"></text></g>`;
     })
     .join("");
   let extra = "";
@@ -3568,11 +3667,16 @@ function applyScale() {
   root.classList.toggle("lt1000", z > 1 && w <= 1000);
   root.classList.toggle("lt600", z > 1 && w < 600);
 }
+// Sizes follow the screen, so a turned phone or a resized window redraws.
+let resizeQueued = false;
 addEventListener("resize", () => {
-  if ((prefs.uiScale || 1) !== 1) {
+  if (resizeQueued) return;
+  resizeQueued = true;
+  requestAnimationFrame(() => {
+    resizeQueued = false;
     applyScale();
     render();
-  }
+  });
 });
 function scaleBody() {
   const cur = prefs.uiScale || 1;
@@ -4403,11 +4507,12 @@ function renderModal() {
     icon: [`${h((ce || {}).name)}: map icon`, iconModal],
     vendor: ["Vendor", vendorWin],
     tree: ["Perk trees", treeModal],
+    mapmaker: [ui.mm && ui.mm.id ? "Map creator: edit" : "Map creator: new map", mapMakerBody],
   };
   const [title, body] = defs[m.type];
   const key = m.type === "dev" ? "dev" : m.type;
   const size =
-    m.type === "dev"
+    m.type === "dev" || m.type === "mapmaker"
       ? "full"
       : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard", "vendor", "tree"].includes(m.type)
         ? "big"
@@ -4425,6 +4530,151 @@ function iconModal() {
         `<button class="iconpick ${(e.icon || "person") === id ? "on" : ""}" data-a="iconSet" data-v="${e.id}|${id}" aria-pressed="${(e.icon || "person") === id}">${iconSvg(id, "big")}<span>${h(n)}</span></button>`,
     )
     .join("")}</div>`;
+}
+// ---------- MAP CREATOR: draw a location once, keep it with the campaign, pick it under Location like any other.
+const MM_SHAPES = [
+  ["rect", "Rectangle"],
+  ["L", "L-shape"],
+  ["U", "U-shape"],
+  ["T", "T-shape"],
+  ["plus", "Cross"],
+  ["oct", "Cut corners"],
+];
+const MM_TOOLS = [
+  ["select", "Select / move", "Click a thing to select it, drag to move it."],
+  ["building", "Building", "Drag on the map to draw a building of any size. Nobody can walk or shoot through it."],
+  ["wall", "Wall", "Drag to draw a wall. It runs along the longer side of your drag."],
+  ["item", "Cover / item", "Pick from the menu, then click the map to place it."],
+];
+// The playable area is always a W x H box. Any other shape is that box with parts closed off by out-of-bounds blocks.
+function mmVoids(shape, w, h) {
+  const g = S.rules.gridM || 2;
+  const snap = (x) => Math.max(g, Math.round(x / g) * g);
+  const W = w / 2,
+    H = h / 2,
+    a = snap(w / 2),
+    b = snap(h / 2),
+    cw = snap(w / 3),
+    ch = snap(h / 3);
+  const box = (x0, y0, x1, y1, angle) => {
+    const o = {
+      item: "void",
+      kind: "cover",
+      cover: "impenetrable",
+      block: true,
+      voidBlock: true,
+      x: E.fix((x0 + x1) / 2),
+      y: E.fix((y0 + y1) / 2),
+      w: E.fix(x1 - x0),
+      h: E.fix(y1 - y0),
+      label: "",
+    };
+    if (angle) o.angle = angle;
+    return o;
+  };
+  if (shape === "L") return [box(W - a, -H, W, -H + b)];
+  if (shape === "U") return [box(-cw / 2, -H, cw / 2, -H + b)];
+  if (shape === "T") return [box(-W, H - b, -cw / 2, H), box(cw / 2, H - b, W, H)];
+  if (shape === "plus") return [box(-W, -H, -cw / 2, -ch / 2), box(cw / 2, -H, W, -ch / 2), box(-W, ch / 2, -cw / 2, H), box(cw / 2, ch / 2, W, H)];
+  if (shape === "oct") {
+    const s = (Math.min(w, h) / 4) * Math.SQRT2; // a square turned 45 degrees on each corner cuts it off
+    return [
+      [-W, -H],
+      [W, -H],
+      [-W, H],
+      [W, H],
+    ].map(([x, y]) => box(x - s / 2, y - s / 2, x + s / 2, y + s / 2, 45));
+  }
+  return [];
+}
+function mmNew(id) {
+  const src = id && (S.customMaps || {})[id];
+  ui.mm = src
+    ? {
+        id,
+        name: src.n,
+        w: src.w,
+        h: src.h,
+        shape: src.shape || "rect",
+        objects: clone(src.objs)
+          .filter((o) => !o.voidBlock)
+          .map((o, i) => ({ ...o, id: "m" + i })),
+        tool: "select",
+        item: "crate",
+        sel: null,
+        seq: src.objs.length,
+      }
+    : { id: null, name: "", w: 30, h: 20, shape: "rect", objects: [], tool: "building", item: "crate", sel: null, seq: 0 };
+}
+const mmAll = () => [...mmVoids(ui.mm.shape, ui.mm.w, ui.mm.h), ...ui.mm.objects];
+function mmItem(key, x, y, w, h) {
+  const c = S.rules.mapItems[key];
+  const o = {
+    id: "m" + ui.mm.seq++,
+    item: key,
+    kind: c.round ? "tree" : "cover",
+    x: E.fix(x),
+    y: E.fix(y),
+    w: E.fix(w || c.w),
+    h: E.fix(h || c.h),
+    cover: c.cover,
+    label: "",
+  };
+  if (c.block) o.block = true;
+  if (c.round) o.round = true;
+  return o;
+}
+function mapMakerBody() {
+  const m = ui.mm;
+  if (!m) return "";
+  const g = S.rules.gridM || 2,
+    pad = Math.max(m.w, m.h) * 0.04 + 1;
+  let grid = "";
+  for (let x = -m.w / 2 + g; x < m.w / 2 - 0.01; x += g) grid += `M${x} ${-m.h / 2}V${m.h / 2}`;
+  for (let y = -m.h / 2 + g; y < m.h / 2 - 0.01; y += g) grid += `M${-m.w / 2} ${y}H${m.w / 2}`;
+  const sel = m.objects.find((o) => o.id === m.sel);
+  const nameOf = (o) => (S.rules.mapItems[o.item] || {}).n || o.item;
+  const draw = (o) => {
+    const tier = E.coverTier(o, S.rules);
+    const gl = GLYPH[ITEM_GLYPH[o.item] || KIND_GLYPH[o.kind] || "crate"];
+    const turn = o.angle ? `rotate(${o.angle}) ` : "";
+    const art = turn + (o.rot ? `rotate(90) scale(${o.h} ${o.w})` : `scale(${o.w} ${o.h})`);
+    return `<g class="obj ${o.kind} tier-${tier} ${o.voidBlock ? "oob" : ""} ${m.sel === o.id ? "sel" : ""}"${o.voidBlock ? "" : ` data-mm="${o.id}"`} transform="translate(${o.x} ${o.y})"><title>${h(nameOf(o))}: ${h((S.rules.cover[tier] || {}).n || "")}, ${fmt(o.w)} x ${fmt(o.h)} m</title><g class="gly" transform="${art}">${gl}</g></g>`;
+  };
+  const tiers = [
+    ["impenetrable", "Walls and buildings"],
+    ["hard", "Hard cover"],
+    ["soft", "Soft cover"],
+    ["concealment", "Concealment"],
+    ["open", "Open ground and props"],
+  ];
+  const menu = tiers
+    .map(
+      ([t, label]) =>
+        `<optgroup label="${label}">${Object.entries(S.rules.mapItems)
+          .filter(([k, c]) => c.cover === t && k !== "void")
+          .sort((a, b) => a[1].n.localeCompare(b[1].n))
+          .map(([k, c]) => `<option value="${k}"${m.item === k ? " selected" : ""}>${h(c.n)} ${c.w}x${c.h}m</option>`)
+          .join("")}</optgroup>`,
+    )
+    .join("");
+  const tool = MM_TOOLS.find(([id]) => id === m.tool);
+  const selBox = sel
+    ? `<div class="mmsel"><div class="bright">${h(nameOf(sel))}</div><div class="grid" style="grid-template-columns:1fr 1fr">${field("Width (m)", numBox(`id="mmOW" data-c="mmObjSize" data-k="w"`, sel.w))}${field("Depth (m)", numBox(`id="mmOH" data-c="mmObjSize" data-k="h"`, sel.h))}</div><div class="acts">${btn("mmTurn", "", "Turn 90°", "", "tiny")}${btn("mmDel", "", "Remove", "", "tiny danger", "Or press Delete")}</div></div>`
+    : "";
+  const side = `<div class="mmside">
+    ${field("Name", `<input type="text" id="mmName" autocomplete="off" placeholder="e.g. Raider gas station" data-u="mm.name" value="${h(m.name)}">`)}
+    <div class="grid" style="grid-template-columns:1.4fr 1fr 1fr">${field("Shape", `<select id="mmShape" data-c="mmShape">${options(MM_SHAPES, m.shape)}</select>`)}${field("Width (m)", numBox(`id="mmW" data-c="mmSize" data-k="w"`, m.w))}${field("Height (m)", numBox(`id="mmH" data-c="mmSize" data-k="h"`, m.h))}</div>
+    <h3>Add to the map</h3>
+    <div class="opts mmtools">${MM_TOOLS.map(([id, n]) => `<button class="opt ${m.tool === id ? "on" : ""}" data-a="mmTool" data-v="${id}" aria-pressed="${m.tool === id}">${n}</button>`).join("")}</div>
+    ${field("Cover and items", `<select id="mmItem" data-c="mmPick">${menu}</select>`)}
+    <div class="s dim" id="mmHint">${h(tool[2])} Hold Shift to place off the half-meter steps.</div>
+    ${selBox}
+    <div class="s dim">${m.w} x ${m.h} m, ${m.objects.length} thing${m.objects.length === 1 ? "" : "s"} placed. The party starts at the middle of the left edge.</div>
+    <div class="acts">${primary("mmSave", "", m.id ? "Save changes" : "Save map")}${btn("mmClear", "", "Clear")}${m.id ? btn("mmRemove", "", "Delete map", "", "danger") : ""}${btn("closeModal", "", "Cancel")}</div>
+  </div>`;
+  const svg = `<div class="mmcanvas"><svg id="mmSvg" tabindex="-1" class="tool-${m.tool}" viewBox="${-m.w / 2 - pad} ${-m.h / 2 - pad} ${m.w + 2 * pad} ${m.h + 2 * pad}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map being drawn, ${m.w} by ${m.h} meters"><rect class="floor" x="${-m.w / 2}" y="${-m.h / 2}" width="${m.w}" height="${m.h}"/><path class="grid" d="${grid}"/>${mmAll().map(draw).join("")}<rect id="mmDraft" class="draft" width="0" height="0"/></svg></div>`;
+  return `<div class="mmwrap">${side}${svg}</div>`;
 }
 // PERK TREES: a folder tab per player. Skill perks grow in three ranks per skill (Proficiency, Expertise, Mastery); level perks by level.
 function treeModal() {
@@ -4897,7 +5147,9 @@ function detailModal() {
           Array.isArray(v)
             ? v
                 .filter((x) => x != null && x !== "")
-                .map((x) => (typeof x === "number" && k === "hit" ? E.pct(x) : Array.isArray(x) ? x.join(" x ") : x))
+                .map((x) =>
+                  typeof x === "number" && k === "hit" ? E.pct(x) : Array.isArray(x) ? x.join(" x ") : x && typeof x === "object" ? JSON.stringify(x) : x,
+                )
                 .join(" | ")
             : typeof v === "object"
               ? JSON.stringify(v)
@@ -5661,19 +5913,43 @@ const ACT = {
   setTheme(val) {
     act("Room setting", () => {
       S.scene.theme = val;
+      const cm = customMap(mapOf().id);
+      if (val === "asBuilt" && cm) S.scene.objects = builtObjects(cm); // back to the map as it was drawn
     });
   },
   randomRoom() {
     act("Randomize room", () => {
       const party = S.chars.map((c) => posOf(c.id));
       const foesAt = foes().map((e) => posOf(e.id));
-      S.scene.objects = E.generateRoom(mapOf(), S.scene.theme, S.rules, Math.random, [...party, ...foesAt], () => "o" + S.seq++);
+      const cm = customMap(mapOf().id);
+      if (cm && S.scene.theme === "asBuilt") S.scene.objects = builtObjects(cm);
+      else {
+        // on a drawn map the out-of-bounds blocks stay, and nothing new lands on them
+        const keep = cm ? builtObjects(cm).filter((o) => o.voidBlock) : [];
+        const made = E.generateRoom(
+          cm ? { ...mapOf(), id: "custom" } : mapOf(),
+          S.scene.theme,
+          S.rules,
+          Math.random,
+          [...party, ...foesAt],
+          () => "o" + S.seq++,
+        );
+        const corners = (o) =>
+          [
+            [0, 0],
+            [-1, -1],
+            [1, -1],
+            [-1, 1],
+            [1, 1],
+          ].map(([a, b]) => ({ x: o.x + (a * o.w) / 2, y: o.y + (b * o.h) / 2 }));
+        S.scene.objects = [...keep, ...made.filter((o) => !keep.some((v) => corners(o).some((q) => E.inside(q, v))))];
+      }
       if (ui.roomChest) {
         const ch = makeChest();
         S.scene.objects = S.scene.objects.filter((o) => dist(o, ch) > 1.5);
         S.scene.objects.push(ch);
       }
-      log("status", `Room: ${mapOf().n}, ${S.rules.roomThemes[S.scene.theme].n}, ${S.scene.objects.length} objects.`);
+      log("status", `Room: ${mapOf().n}, ${(S.rules.roomThemes[S.scene.theme] || { n: "as built" }).n}, ${S.scene.objects.length} objects.`);
     });
   },
   clearRoom() {
@@ -5724,6 +6000,91 @@ const ACT = {
     act("Remove from map", () => {
       S.scene.objects = S.scene.objects.filter((o) => o.id !== v);
       ui.mapSel = null;
+    });
+  },
+  mmOpen(v) {
+    mmNew(v || null);
+    ui.modal = { type: "mapmaker" };
+    ui.focus = "#mmName";
+    render();
+  },
+  mmTool(v) {
+    ui.mm.tool = v;
+    if (v !== "select") ui.mm.sel = null;
+    render();
+  },
+  mmPick(val) {
+    ui.mm.item = val;
+    ui.mm.tool = "item";
+    scheduleRender();
+  },
+  mmShape(val) {
+    ui.mm.shape = val;
+    scheduleRender();
+  },
+  mmSize(val, el) {
+    const t = num(val),
+      g = S.rules.gridM || 2,
+      m = ui.mm;
+    if (t == null || t < 4) return scheduleRender();
+    m[el.dataset.k] = Math.min(400, Math.ceil(t / g) * g); // whole grid squares, like every other location
+    m.objects = m.objects.filter((o) => Math.abs(o.x) <= m.w / 2 && Math.abs(o.y) <= m.h / 2); // anything left outside the new edge goes
+    scheduleRender();
+  },
+  mmObjSize(val, el) {
+    const o = ui.mm.objects.find((x) => x.id === ui.mm.sel),
+      t = num(val);
+    if (o && t > 0) o[el.dataset.k] = E.fix(Math.min(t, 400));
+    scheduleRender();
+  },
+  mmTurn() {
+    const o = ui.mm.objects.find((x) => x.id === ui.mm.sel);
+    if (!o) return;
+    [o.w, o.h] = [o.h, o.w];
+    if (o.rot) delete o.rot;
+    else o.rot = 90;
+    render();
+  },
+  mmDel() {
+    const m = ui.mm;
+    if (!m || !m.sel) return;
+    m.objects = m.objects.filter((o) => o.id !== m.sel);
+    m.sel = null;
+    render();
+  },
+  mmClear() {
+    ui.mm.objects = [];
+    ui.mm.sel = null;
+    render();
+  },
+  mmSave() {
+    const m = ui.mm,
+      name = String(m.name).trim();
+    if (!name) {
+      ui.focus = "#mmName";
+      render();
+      return toast("Name the map first.");
+    }
+    const id = m.id || "m" + Date.now().toString(36);
+    const objs = mmAll().map(({ id: _drop, ...o }) => o);
+    act(`Save map: ${name}`, () => {
+      S.customMaps = S.customMaps || {};
+      S.customMaps[id] = { n: name, w: m.w, h: m.h, shape: m.shape, objs };
+      if (!S.combat) {
+        applyMap("cm:" + id);
+        ui.setup = true;
+      }
+      ui.modal = null;
+    });
+    toast(`${name} saved, ${m.w} x ${m.h} m. It is under Location from now on.`);
+  },
+  mmRemove() {
+    const m = ui.mm;
+    if (!m.id || !confirm(`Delete the map "${m.name}"? Undo brings it back.`)) return;
+    act(`Delete map: ${m.name}`, () => {
+      delete S.customMaps[m.id];
+      if (!S.combat && mapOf().id === "cm:" + m.id) applyMap(S.rules.sceneDefaults.map);
+      ui.modal = null;
     });
   },
   setSpawn(val) {
@@ -6639,7 +7000,7 @@ const ACT = {
         const d = der(c);
         const heal = num(u.heal[c.id], Math.round(d.hp * (c.dbno ? S.rules.downWinHeal || 0 : S.rules.passiveHealPct)));
         c.xp = E.fix((c.xp || 0) + x);
-        if (!c.dbno) c.hp = Math.min(d.hp, c.hp + heal + Math.floor(d.hp * (d.m.endHeal || 0)));
+        if (!c.dbno) c.hp = Math.max(0, Math.min(d.hp, c.hp + heal + Math.floor(d.hp * (d.m.endHeal || 0))));
         else if (heal > 0) {
           // down when the party won: back on their feet with a share of max HP
           c.dbno = false;
@@ -7275,6 +7636,10 @@ document.addEventListener("keydown", (e) => {
       if (pick) ACT.itemPick(pick.i);
       return;
     }
+    if (m.type === "mapmaker" && (k === "delete" || k === "backspace")) {
+      e.preventDefault();
+      return ACT.mmDel();
+    }
     if (m.type === "help") {
       e.preventDefault();
       ACT.closeModal();
@@ -7405,19 +7770,16 @@ document.addEventListener("pointermove", (ev) => {
   if (!drag) return;
   if (drag.kind === "gut") {
     const right = drag.box.right - 47; // the rail
-    if (drag.which === "left") prefs.partyW = clamp(ev.clientX - drag.box.left, 210, drag.box.width - 500);
-    if (drag.which === "right") prefs.enemyW = clamp(right - ev.clientX, 160, 500);
+    if (drag.which === "left") prefs.partyW = clamp(ev.clientX - drag.box.left, 210, drag.box.width - 500) / kx();
+    if (drag.which === "right") prefs.enemyW = clamp(right - ev.clientX, 160, 500) / kx();
     if (drag.which === "bottom") {
       const v = clamp(drag.stage.bottom - ev.clientY, 70, drag.stage.height - 200);
-      if (K()) prefs.bottomFight = v;
-      else prefs.bottomH = v;
+      if (K()) prefs.bottomFight = v / ky();
+      else prefs.bottomH = v / ky();
     }
-    if (drag.which === "map") prefs.mapW = clamp(ev.clientX - drag.arena.left, 200, drag.arena.width - 260);
+    if (drag.which === "map") prefs.mapW = clamp(ev.clientX - drag.arena.left, 200, drag.arena.width - 260) / kx();
     const st = document.documentElement.style;
-    st.setProperty("--left", prefs.partyW + "px");
-    st.setProperty("--right", prefs.enemyW + "px");
-    st.setProperty("--bottomh", (K() ? prefs.bottomFight : prefs.bottomH) + "px");
-    if (prefs.mapW) st.setProperty("--mapw", prefs.mapW + "px");
+    applySizes();
   } else if (drag.kind === "win") {
     const w = drag.w;
     const r = w.getBoundingClientRect();
@@ -7491,7 +7853,7 @@ document.addEventListener("pointerup", (ev) => {
   if (d.kind === "wsize") {
     const r = d.w.getBoundingClientRect();
     if (Math.abs(r.width - d.w0) > 2 || Math.abs(r.height - d.h0) > 2) {
-      prefs.wsize = { ...(prefs.wsize || {}), [d.w.dataset.wcls]: { w: Math.round(r.width), h: Math.round(r.height) } };
+      prefs.wsize = { ...(prefs.wsize || {}), [d.w.dataset.wcls]: { w: Math.round(r.width / kx()), h: Math.round(r.height / ky()) } };
       savePrefs();
       render();
     }
@@ -7609,6 +7971,93 @@ document.addEventListener("pointerup", (ev) => {
       log("status", `DM moves ${e.name}.`);
     });
   }
+});
+// ---------- mouse and touch in the map creator: drag to draw buildings and walls, click to place, drag to move
+let mmDrag = null;
+const mmSnap = (v, ev) => (ev.shiftKey ? E.fix(v) : Math.round(v * 2) / 2);
+const mmIn = (p) => ({ x: clamp(p.x, -ui.mm.w / 2, ui.mm.w / 2), y: clamp(p.y, -ui.mm.h / 2, ui.mm.h / 2) });
+document.addEventListener("pointerdown", (ev) => {
+  if (!(ev.target.closest && ev.target.closest("#mmSvg")) || ev.button !== 0 || !ui.mm) return;
+  ev.preventDefault();
+  // A box still being typed in (name, width) is finished first. That redraws the window, so everything is looked up again after it.
+  if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+  const svg = document.getElementById("mmSvg");
+  if (!svg) return;
+  const under = document.elementFromPoint(ev.clientX, ev.clientY);
+  const m = ui.mm,
+    p = mmIn(svgPoint(svg, ev)),
+    g = under && under.closest && under.closest("[data-mm]");
+  if (m.tool === "item") {
+    if (!S.rules.mapItems[m.item]) return;
+    const o = mmItem(m.item, mmSnap(p.x, ev), mmSnap(p.y, ev));
+    m.objects.push(o);
+    m.sel = o.id;
+    ui.focus = "#mmSvg";
+    return render();
+  }
+  if (m.tool === "select") {
+    const o = g && m.objects.find((x) => x.id === g.dataset.mm);
+    m.sel = o ? o.id : null;
+    ui.focus = "#mmSvg";
+    render();
+    if (o) mmDrag = { kind: "move", o, dx: p.x - o.x, dy: p.y - o.y };
+    return;
+  }
+  const x = mmSnap(p.x, ev),
+    y = mmSnap(p.y, ev);
+  mmDrag = { kind: "draw", tool: m.tool, x0: x, y0: y, x1: x, y1: y };
+});
+// What a drag with the Building or Wall tool makes: the box itself, or a thin wall along its longer side.
+function mmBox(d) {
+  let w = Math.abs(d.x1 - d.x0),
+    h = Math.abs(d.y1 - d.y0);
+  const x = (d.x0 + d.x1) / 2,
+    y = (d.y0 + d.y1) / 2;
+  if (d.tool === "wall") {
+    if (w >= h) h = 0.4;
+    else w = 0.4;
+  }
+  return { x, y, w, h };
+}
+document.addEventListener("pointermove", (ev) => {
+  if (!mmDrag) return;
+  const svg = document.getElementById("mmSvg");
+  if (!svg || !ui.mm) return void (mmDrag = null);
+  const p = mmIn(svgPoint(svg, ev)),
+    d = mmDrag;
+  if (d.kind === "move") {
+    d.o.x = mmSnap(p.x - d.dx, ev);
+    d.o.y = mmSnap(p.y - d.dy, ev);
+    const el = svg.querySelector(`[data-mm="${d.o.id}"]`);
+    if (el) el.setAttribute("transform", `translate(${d.o.x} ${d.o.y})`);
+    return;
+  }
+  d.x1 = mmSnap(p.x, ev);
+  d.y1 = mmSnap(p.y, ev);
+  const b = mmBox(d),
+    r = svg.querySelector("#mmDraft");
+  if (r) {
+    r.setAttribute("x", b.x - b.w / 2);
+    r.setAttribute("y", b.y - b.h / 2);
+    r.setAttribute("width", b.w);
+    r.setAttribute("height", b.h);
+  }
+});
+document.addEventListener("pointerup", () => {
+  const d = mmDrag;
+  mmDrag = null;
+  if (!d || !ui.mm) return;
+  if (d.kind === "draw") {
+    let b = mmBox(d);
+    // a click with no drag still makes something sensible: a small building, or a short wall
+    if (Math.max(b.w, b.h) < 1) b = d.tool === "wall" ? { x: d.x0, y: d.y0, w: 6, h: 0.4 } : { x: d.x0, y: d.y0, w: 8, h: 6 };
+    else if (d.tool === "building") b = { ...b, w: Math.max(b.w, 1), h: Math.max(b.h, 1) };
+    const o = mmItem(d.tool === "wall" ? "concreteWall" : "building", b.x, b.y, b.w, b.h);
+    ui.mm.objects.push(o);
+    ui.mm.sel = o.id;
+  }
+  ui.focus = "#mmSvg";
+  render();
 });
 // Scroll over the map to zoom in on what's under the pointer.
 let wheelQueued = false;
