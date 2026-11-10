@@ -286,6 +286,11 @@ upd(18, D10, "Down when the fight ends", "Was: a character who was down when the
     "The DM can type a different heal on the end screen. Both shares are in Settings, under Downed and revive."))
 upd(19, D10, "No resting in a fight", "Was: Rest could be pressed during a fight, which healed the party and refilled everyone's AP. Now: Rest is only offered between fights.")
 upd(12, D10, "Enemy starting distance", "New.", p("When setting up an encounter the DM can place enemies close to the party, at mid range or far, or leave it at any distance. The three are shares of the map's longer side, measured from the middle of the party: close 8-20%, mid range 25-45%, far 55-90%. So close is a few meters in a room and a few dozen in the wilderness."))
+upd(12, D10, "Enemy map icons", "Was: every enemy was the same person shape. Now: an enemy's icon is chosen for it.", bl(
+    "A human gets the icon of its faction: a skull hat for raiders, a brimmed helmet for the NCR, a crested helmet for the Legion, power armor for the Brotherhood, and so on.",
+    "Anything else is matched by what it is: robot, eyebot, ant, scorpion, cazador, deathclaw, gecko, horned beast, rat, dog, ghoul, spore plant. An unknown animal gets a paw print.",
+    "An unaligned human stays a plain person. Players still pick their own icon, and every new icon is on their list."))
+upd(11, D10, "Giant is not an ant", "Was: any enemy whose name had a word ending in 'ant' counted as an insect, so Giant Rats, Spore Plants and the Giant Evolved Centaur took bonus damage from perks against insects. Now: only ants, cazadores, bloatflies, scorpions, mantises and roaches are insects.")
 upd(7, D10, "Passing a check pays XP", "Was: the DM typed an XP amount for the players who passed. Now: a pass pays XP by itself, by difficulty.", bl(
     f"XP = the check's target x {R['checkXpMul']}, then the INT bonus on top (the same bonus as enemy XP). Trivial 10 pays {round(10 * R['checkXpMul'], 2)}, Average 40 pays {round(40 * R['checkXpMul'], 2)}, Extreme 100 pays {round(100 * R['checkXpMul'], 2)}.",
     "Revive checks pay nothing. The old box for extra XP to everyone who passed is still there.",

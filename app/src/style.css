@@ -1750,7 +1750,7 @@ pre.rep {
 }
 .setupgrid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 4px;
   min-height: 0;
   min-width: 0;
@@ -4212,4 +4212,36 @@ html.lt1000 .win > .wt {
   overflow: visible;
   text-overflow: clip;
   flex: 1 1 100%;
+}
+
+/* ---------- encounter setup: enemies on the right with the skill check under them */
+.rcol {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+  min-width: 0;
+}
+.rcol .w-enemies {
+  flex: 1 1 0;
+}
+.rcol .w-check {
+  flex: none;
+  max-height: 42%;
+}
+/* in a narrow column the long "fail 1-16 / pass 17-20" text gives way; the odds and the roll box stay. Widen the column to see it. */
+.rcol {
+  container-type: inline-size;
+}
+@container (max-width: 330px) {
+  .rcol .w-check table.t th:nth-child(3),
+  .rcol .w-check table.t td:nth-child(3) {
+    display: none;
+  }
+  .rcol .w-check table.t td:first-child {
+    max-width: 84px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

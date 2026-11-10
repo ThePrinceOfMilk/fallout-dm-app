@@ -250,7 +250,7 @@ async function launch() {
     await page.selectOption("#mapId", "wild"); await page.waitForTimeout(30);
     assert.ok(await farthest() === 10, "the wilderness reaches R10");
     const box = await page.locator("#map").boundingBox();
-    assert.ok(box.width <= 600, `map stays a modest size: ${box.width}`);
+    assert.ok(box.width > 600, `the map uses the wider encounter panel: ${box.width}`);
     await page.locator('.w-enc [data-a="setupOpen"][data-v=""]').click();
     assert.strictEqual(await page.locator("#map").count(), 0, "Close hides the map");
     await blur();
@@ -353,7 +353,7 @@ async function launch() {
     await page.keyboard.press("Escape"); await blur();
     { const o = (await state()).scene.objects.slice(-1)[0]; const q = await onMap(o.x, o.y); await page.mouse.click(q.x, q.y); await page.waitForTimeout(30);
       assert.strictEqual(await page.locator(`[data-obj="${o.id}"] .rothandle`).count(), 1, "selected objects show a turn handle");
-      { const hb = await page.locator(`[data-obj="${o.id}"] .rothandle`).boundingBox(); await dragTo({ x: hb.x + hb.width / 2, y: hb.y + hb.height / 2 }, { x: q.x + 60, y: q.y }); assert.strictEqual((await state()).scene.objects.slice(-1)[0].angle, 90, "dragging the handle turns it"); await page.fill("#objAngle", "0"); await press("Tab"); await page.waitForTimeout(30); }
+      { const hb = await page.locator(`[data-obj="${o.id}"] .rothandle`).boundingBox(); const q2 = await onMap(o.x, o.y); /* selecting can resize the map a little, so measure again */ await dragTo({ x: hb.x + hb.width / 2, y: hb.y + hb.height / 2 }, { x: q2.x + 60, y: q2.y }); assert.strictEqual((await state()).scene.objects.slice(-1)[0].angle, 90, "dragging the handle turns it"); await page.fill("#objAngle", "0"); await press("Tab"); await page.waitForTimeout(30); }
       await click("objRotate", "15"); await click("objRotate", "15");
       assert.strictEqual((await state()).scene.objects.slice(-1)[0].angle, 30, "the buttons turn it");
       assert.match(await page.locator(`[data-obj="${o.id}"] .gly`).first().getAttribute("transform"), /rotate\(30\)/, "the drawing turns");
@@ -1190,6 +1190,31 @@ async function launch() {
     assert.deepStrictEqual(r.bible, [2, true, true], "opening the bible twice uses the same copy");
     const hosted = fs.readFileSync(path.resolve(__dirname, "../../index.html"), "utf8");
     assert.ok(/id="wiki"><\/script>/.test(hosted) && hosted.length < 1.6e6, "the hosted page carries no copy of the bible");
+  });
+  await ok("Enemy map icons follow faction and creature, and setup gives the encounter the middle", async () => {
+    const r = await page.evaluate(() => {
+      S = fresh(); Object.assign(ui, { atk: null, modal: null, end: null, def: null, sel: S.chars[0].id, setup: null }); applyData(); render();
+      const out = {}; const pick = (n) => iconOf(E.spawn(template(n), "x", ctx(), Math.random));
+      out.icons = ["Raider", "Fiend", "Soldier", "Legion Soldier", "PA Knight", "Powder Ganger 1", "Great Khan Raider", "Mercenary", "Supermutant", "Protectron", "Military Eyebot", "Giant Soldier Ant", "Radscorpion", "Cazador", "Deathclaw", "Gecko", "Bighorner", "Giant Rat", "Spore Plant", "Dog", "Feral Ghoul"].map(pick);
+      const every = allTemplates().map((t) => iconOf(E.spawn(t, "x", ctx(), Math.random)));
+      out.unknown = every.filter((id) => !TOKEN_ICONS[id]); out.mapped = Object.values(S.rules.factionIcons).concat(S.rules.creatureIcons.map((x) => x[1])).filter((id) => !TOKEN_ICONS[id]);
+      out.types = ["Giant Rat", "Spore Plant", "Giant Evolved Centaur", "Giant Soldier Ant"].map((n) => E.enemyType({ tmpl: n, mob: true, kind: "npc" }, S.rules));
+      const pc = S.chars[0]; pc.icon = "legion"; out.pc = iconOf(pc); out.choices = Object.keys(TOKEN_ICONS).length;
+      ACT.setupOpen("1"); ACT.addPick("Raider"); render();
+      const tok = document.querySelector(`#map [data-tok="${S.scene.npcs[0].id}"]`); out.drawn = tok.querySelectorAll(".cut").length > 0; /* the plain person shape has no cut-outs, the skull hat does */
+      out.layout = [!!document.querySelector(".rcol .w-enemies"), !!document.querySelector(".rcol .w-check"), !!document.querySelector(".setupgrid .w-check"), document.querySelector(".w-enc").dataset.wcls];
+      const enc = document.querySelector(".w-enc").getBoundingClientRect(), chk = document.querySelector(".w-check").getBoundingClientRect(), en = document.querySelector(".w-enemies").getBoundingClientRect();
+      out.geo = [enc.width > 800, chk.top >= en.bottom - 1, chk.height < en.height + 200];
+      S.scene.npcs = []; ACT.setupOpen(""); S = fresh(); applyData(); render(); save();
+      return out;
+    });
+    assert.deepStrictEqual(r.icons, ["raider", "fiend", "ncr", "legion", "power", "convict", "khan", "person", "mutant", "robot", "eyebot", "ant", "scorpion", "wasp", "deathclaw", "lizard", "beast", "rat", "plant", "dog", "ghoul"]);
+    assert.deepStrictEqual([r.unknown, r.mapped], [[], []], "every enemy and every mapping points at an icon that exists");
+    assert.deepStrictEqual(r.types, ["animal", "animal", "animal", "insect"], "a Giant Rat is not an insect just because 'giant' ends in 'ant'");
+    assert.ok(r.pc === "legion" && r.choices >= 40, "players can pick any icon, the new ones included");
+    assert.ok(r.drawn, "the enemy's token on the map is drawn with its faction icon");
+    assert.deepStrictEqual(r.layout, [true, true, false, "w-enc"], "skill check sits under the enemy list; the encounter panel can be resized");
+    assert.deepStrictEqual(r.geo, [true, true, true], "the encounter panel has the middle to itself");
   });
   await browser.close();
   for (const r of results) console.log(r.join("  "));

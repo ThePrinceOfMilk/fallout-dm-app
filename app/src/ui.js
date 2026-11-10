@@ -1448,9 +1448,9 @@ function view() {
         ? `<div class="arena solo">${consoleWin()}</div>`
         : `<div class="arena">${fightMap()}<div class="gut" data-gut="map" title="Drag to resize"></div>${consoleWin()}</div>`
       : mode === "setup"
-        ? `<div class="setupgrid">${encounterWin(true)}${skillWin()}</div>`
+        ? `<div class="setupgrid">${encounterWin(true)}</div>`
         : `<div class="calm"><div class="calmcol">${encounterWin(false)}${skillWin()}</div>${recentWin()}${combatLogWin()}</div>`;
-  const top = `<div class="top">${partyWin()}<div class="gut" data-gut="left" title="Drag to resize"></div>${center}${mode === "calm" ? "" : `<div class="gut" data-gut="right" title="Drag to resize"></div>${enemyWin()}`}</div>`;
+  const top = `<div class="top">${partyWin()}<div class="gut" data-gut="left" title="Drag to resize"></div>${center}${mode === "calm" ? "" : `<div class="gut" data-gut="right" title="Drag to resize"></div>${mode === "setup" ? `<div class="rcol">${enemyWin()}${skillWin()}</div>` : enemyWin()}`}</div>`;
   const bottom = `<div class="bottom">${notesWin()}${mode === "calm" ? "" : combatLogWin()}</div>`;
   const initBar = mode === "fight" && !["init", "stealth", "end", "defeat"].includes(k.phase) ? turnBar() : "";
   return `<div class="dash">${devBar()}<div class="board ${mode}"><div class="stage">${initBar}${top}<div class="gut h" data-gut="bottom" title="Drag to resize"></div>${bottom}</div>${rail()}</div><footer class="foot">${hints()
@@ -2059,7 +2059,7 @@ function turnBar() {
     .map((c) => {
       const e = ent(c.id);
       const d = der(e);
-      return `<button role="listitem" class="tbi ${c.id === k.turnId ? "on" : ""} ${e.kind === "pc" ? "pc" : e.ally ? "ally" : "foe"} ${k.acted[c.id] && c.id !== k.turnId ? "done" : ""} ${e.dbno ? "down" : ""}" data-a="select" data-v="${c.id}" title="${h(e.name)}: initiative ${fmt(c.init)}, ${fmt(e.hp)}/${d.hp} HP">${iconSvg(e.icon)}<span class="tbn">${h(e.name)}</span><span class="tbh">${hpBar(e.hp, d.hp)}</span><span class="tbi0">${fmt(c.init)}</span></button>`;
+      return `<button role="listitem" class="tbi ${c.id === k.turnId ? "on" : ""} ${e.kind === "pc" ? "pc" : e.ally ? "ally" : "foe"} ${k.acted[c.id] && c.id !== k.turnId ? "done" : ""} ${e.dbno ? "down" : ""}" data-a="select" data-v="${c.id}" title="${h(e.name)}: initiative ${fmt(c.init)}, ${fmt(e.hp)}/${d.hp} HP">${iconSvg(iconOf(e))}<span class="tbn">${h(e.name)}</span><span class="tbh">${hpBar(e.hp, d.hp)}</span><span class="tbi0">${fmt(c.init)}</span></button>`;
     })
     .join("")}</div>`;
 }
@@ -2386,7 +2386,7 @@ function encounterWin(open) {
     { open: false, badge: nFx ? `${nFx} active` : "" },
   );
   const folded = (prefs.fold || {})["w-enc"];
-  return `<section class="win w-enc ${folded ? "folded" : ""}"><header class="wt" data-fold="w-enc"><button type="button" class="foldbtn" data-a="fold" data-v="w-enc" aria-label="${folded ? "Open" : "Fold"} Encounter setup" aria-expanded="${!folded}">${folded ? "+" : "-"}</button><span>Encounter setup</span></header><div class="wb encwb">${actions}<div class="enctop">${scene}<div class="egrow">${room}${place}${foesG}</div>${mods}</div>${mapExtras()}${mapSvg()}</div></section>`;
+  return `<section class="win w-enc ${folded ? "folded" : ""}" data-wcls="w-enc"${winSize("w-enc")}><header class="wt" data-fold="w-enc"><button type="button" class="foldbtn" data-a="fold" data-v="w-enc" aria-label="${folded ? "Open" : "Fold"} Encounter setup" aria-expanded="${!folded}">${folded ? "+" : "-"}</button><span>Encounter setup</span></header><div class="wb encwb">${actions}<div class="enctop">${scene}<div class="egrow">${room}${place}${foesG}</div>${mods}</div>${mapExtras()}${mapSvg()}</div></section>`;
 }
 function fightMap() {
   const k = K();
@@ -2556,7 +2556,7 @@ const TOKEN_ICONS = {
   ],
   raider: [
     "Raider",
-    `${HEAD}<path class="b" d="M-.06 -.68 L0 -.86 L.06 -.68Z M-.16 -.64 L-.12 -.8 L-.04 -.66Z M.16 -.64 L.12 -.8 L.04 -.66Z"/>${BODY}<path class="b" d="M-.52 .06 L-.66 -.06 L-.44 -.02Z M.52 .06 L.66 -.06 L.44 -.02Z"/><path class="cut" d="M-.16 -.44 H.16 V-.38 H-.16Z"/>`,
+    `${HEAD}<path class="b" d="M-.3 -.5 Q-.34 -1 0 -1 Q.34 -1 .3 -.5 L.2 -.46 V-.38 H-.2 V-.46Z"/><path class="cut" d="M-.2 -.8 H-.05 V-.66 H-.2Z M.05 -.8 H.2 V-.66 H.05Z M-.03 -.6 H.03 V-.52 H-.03Z M-.12 -.46 H-.08 V-.38 H-.12Z M-.02 -.46 H.02 V-.38 H-.02Z M.08 -.46 H.12 V-.38 H.08Z"/>${BODY}<path class="b" d="M-.52 .06 L-.68 -.08 L-.44 -.02Z M0.52 0.06 L0.68 -0.08 L0.44 -0.02 Z"/>`,
   ],
   cowboy: [
     "Cowboy",
@@ -2607,11 +2607,97 @@ const TOKEN_ICONS = {
     "Dog",
     `<path class="b" d="M-.5 .1 Q-.5 -.12 -.2 -.12 H.22 L.3 -.34 L.52 -.36 L.58 -.22 L.42 -.1 V.1 L.36 .38 H.28 L.26 .14 H-.3 L-.32 .38 H-.4Z"/><path class="b" d="M.36 -.36 L.4 -.5 L.46 -.36Z"/>`,
   ],
+  fiend: [
+    "Fiend",
+    `${HEAD}<path class="b" d="M-.2 -.54 Q-.62 -.56 -.56 -1 Q-.44 -.74 -.12 -.68Z M0.2 -0.54 Q0.62 -0.56 0.56 -1 Q0.44 -0.74 0.12 -0.68 Z"/><path class="cut" d="M-.17 -.5 H-.05 V-.41 H-.17Z M.05 -.5 H.17 V-.41 H.05Z"/>${BODY}<path class="cut" d="M-.3 .0 L-.2 .12 L-.1 0 L0 .12 L.1 0 L.2 .12 L.3 0 L.3 .06 L.2 .18 L.1 .06 L0 .18 L-.1 .06 L-.2 .18 L-.3 .06Z"/>`,
+  ],
+  khan: [
+    "Great Khan",
+    `${HEAD}<path class="b" d="M-.32 -.44 Q-.32 -.8 0 -.8 Q.32 -.8 .32 -.44Z M-.05 -.78 L0 -1.02 L.05 -.78Z"/><path class="b" d="M-.3 -.6 L-.56 -.82 L-.3 -.48Z M0.3 -0.6 L0.56 -0.82 L0.3 -0.48 Z"/>${BODY}<path class="cut" d="M-.12 -.16 L0 .32 L.12 -.16 L.05 -.16 L0 .08 L-.05 -.16Z"/>`,
+  ],
+  convict: [
+    "Powder Ganger",
+    `${HEAD}${BODY}<path class="cut" d="M-.34 -.04 H.34 V.03 H-.34Z M-.42 .12 H.42 V.19 H-.42Z M-.44 .28 H.44 V.35 H-.44Z"/><path class="b" d="M.5 -.3 H.58 V.1 H.5Z"/><path class="b" d="M.52 -.3 L.6 -.44 L.62 -.42 L.56 -.3Z"/>`,
+  ],
+  bandit: [
+    "Bandit",
+    `${HEAD}<path class="b" d="M-.46 -.6 H.46 V-.53 H-.46Z M-.24 -.6 V-.84 H.24 V-.6Z"/><path class="cut" d="M-.25 -.4 H.25 V-.26 Q0 -.12 -.25 -.26Z"/>${BODY}`,
+  ],
+  ncr: [
+    "NCR trooper",
+    `${HEAD}<path class="b" d="M-.54 -.5 H.54 V-.57 Q.38 -.62 .3 -.66 Q.26 -.88 0 -.88 Q-.26 -.88 -.3 -.66 Q-.38 -.62 -.54 -.57Z"/>${BODY}<path class="cut" d="M-.22 -.02 H-.08 V.1 H-.22Z M.08 -.02 H.22 V.1 H.08Z"/>`,
+  ],
+  legion: [
+    "Legionary",
+    `${HEAD}<path class="b" d="M-.3 -.42 Q-.3 -.74 0 -.74 Q.3 -.74 .3 -.42Z"/><path class="b" d="M-.4 -.7 Q0 -1.16 .4 -.7 L.28 -.66 Q0 -.9 -.28 -.66Z"/><path class="b" d="M-.3 -.44 V-.22 H-.22 V-.44Z M0.3 -0.44 V-0.22 H0.22 V-0.44 Z"/>${BODY}<path class="cut" d="M-.34 -.06 L.3 .38 L.36 .32 L-.28 -.12Z M0.34 -0.06 L-0.3 0.38 L-0.36 0.32 L0.28 -0.12 Z"/>`,
+  ],
+  mobster: [
+    "Mobster",
+    `${HEAD}<path class="b" d="M-.48 -.58 Q0 -.5 .48 -.58 L.46 -.66 Q0 -.6 -.46 -.66Z M-.27 -.64 L-.22 -.9 Q0 -.96 .22 -.9 L.27 -.64Z"/><path class="cut" d="M-.25 -.72 H.25 V-.67 H-.25Z"/>${BODY}<path class="cut" d="M-.05 -.16 H.05 L.09 .2 L0 .32 L-.09 .2Z"/>`,
+  ],
+  greaser: [
+    "Greaser",
+    `${HEAD}<path class="b" d="M-.3 -.5 Q-.4 -.94 .1 -.92 Q.5 -.9 .34 -.54 Q.16 -.74 -.3 -.5Z"/>${BODY}<path class="cut" d="M-.22 -.18 L0 .06 L.22 -.18 L.13 -.18 L0 -.04 L-.13 -.18Z"/>`,
+  ],
+  pilot: [
+    "Boomer",
+    `${HEAD}<path class="b" d="M-.3 -.42 Q-.3 -.74 0 -.74 Q.3 -.74 .3 -.42Z"/><path class="b" d="M-.33 -.46 V-.2 H-.23 V-.46Z M0.33 -0.46 V-0.2 H0.23 V-0.46 Z"/><path class="cut" d="M-.25 -.62 H-.04 V-.5 H-.25Z M.04 -.62 H.25 V-.5 H.04Z"/>${BODY}`,
+  ],
+  eyebot: [
+    "Eyebot",
+    `<ellipse class="b" cx="0" cy="-0.32" rx="0.36" ry="0.36"/><ellipse class="cut" cx="0" cy="-0.32" rx="0.13" ry="0.13"/><path class="b" d="M-.2 -.62 L-.42 -1 L-.36 -1.02 L-.13 -.66Z M0.2 -0.62 L0.42 -1 L0.36 -1.02 L0.13 -0.66 Z"/><path class="b" d="M-.025 -.68 H.025 V-.94 H-.025Z"/><path class="b" d="M-.2 0 L-.28 .32 L-.21 .32 L-.11 .03Z M0.2 0 L0.28 0.32 L0.21 0.32 L0.11 0.03 Z"/>`,
+  ],
+  ant: [
+    "Ant",
+    `<ellipse class="b" cx="0" cy="-0.64" rx="0.14" ry="0.13"/><ellipse class="b" cx="0" cy="-0.34" rx="0.13" ry="0.18"/><ellipse class="b" cx="0" cy="0.1" rx="0.24" ry="0.3"/><path class="b" d="M-.1 -.74 L-.3 -1 L-.26 -1.02 L-.05 -.76Z M0.1 -0.74 L0.3 -1 L0.26 -1.02 L0.05 -0.76 Z"/><path class="b" d="M-.1 -.42 L-.5 -.62 L-.53 -.56 L-.1 -.35Z M0.1 -0.42 L0.5 -0.62 L0.53 -0.56 L0.1 -0.35 Z"/><path class="b" d="M-.12 -.3 L-.58 -.26 L-.58 -.19 L-.12 -.23Z M0.12 -0.3 L0.58 -0.26 L0.58 -0.19 L0.12 -0.23 Z"/><path class="b" d="M-.12 -.2 L-.52 .1 L-.48 .15 L-.1 -.13Z M0.12 -0.2 L0.52 0.1 L0.48 0.15 L0.1 -0.13 Z"/>`,
+  ],
+  scorpion: [
+    "Scorpion",
+    `<ellipse class="b" cx="0" cy="0.02" rx="0.2" ry="0.3"/><path class="b" d="M-.12 -.2 L-.44 -.42 L-.52 -.74 L-.38 -.6 L-.4 -.8 L-.26 -.58 L-.33 -.44 L-.08 -.27Z M0.12 -0.2 L0.44 -0.42 L0.52 -0.74 L0.38 -0.6 L0.4 -0.8 L0.26 -0.58 L0.33 -0.44 L0.08 -0.27 Z"/><path class="b" d="M-.18 -.04 L-.48 -.1 L-.49 -.04 L-.18 .03Z M0.18 -0.04 L0.48 -0.1 L0.49 -0.04 L0.18 0.03 Z"/><path class="b" d="M-.18 .1 L-.5 .16 L-.48 .22 L-.17 .17Z M0.18 0.1 L0.5 0.16 L0.48 0.22 L0.17 0.17 Z"/><path class="b" d="M-.05 .28 Q-.06 .44 .2 .44 Q.56 .44 .56 .1 L.66 .04 L.46 -.06 L.46 .12 Q.46 .34 .2 .34 Q.06 .34 .05 .28Z"/>`,
+  ],
+  wasp: [
+    "Cazador",
+    `<ellipse class="b" cx="0" cy="-0.6" rx="0.14" ry="0.13"/><ellipse class="b" cx="0" cy="-0.1" rx="0.16" ry="0.34"/><path class="b" d="M-.1 -.32 Q-.74 -.78 -.7 -.12 Q-.42 .02 -.1 -.16Z M0.1 -0.32 Q0.74 -0.78 0.7 -0.12 Q0.42 0.02 0.1 -0.16 Z"/><path class="b" d="M-.05 .22 L0 .45 L.05 .22Z"/><path class="cut" d="M-.15 -.04 H.15 V.03 H-.15Z M-.13 .1 H.13 V.17 H-.13Z"/>`,
+  ],
+  deathclaw: [
+    "Deathclaw",
+    `<path class="b" d="M-.3 .4 Q-.36 -.3 -.16 -.42 H.16 Q.36 -.3 .3 .4Z"/><path class="b" d="M-.19 -.48 Q-.19 -.8 0 -.8 Q.19 -.8 .19 -.48 L.08 -.3 H-.08Z"/><path class="b" d="M-.14 -.7 Q-.48 -.78 -.44 -1.02 Q-.32 -.86 -.05 -.78Z M0.14 -0.7 Q0.48 -0.78 0.44 -1.02 Q0.32 -0.86 0.05 -0.78 Z"/><path class="b" d="M-.28 -.36 L-.62 -.1 L-.74 .2 L-.73 .45 L-.66 .26 L-.62 .45 L-.57 .26 L-.52 .42 L-.5 .16 L-.42 -.02 L-.3 -.1Z M.28 -.36 L.62 -.1 L.74 .2 L.73 .45 L.66 .26 L.62 .45 L.57 .26 L.52 .42 L.5 .16 L.42 -.02 L.3 -.1Z"/><path class="cut" d="M-.11 -.62 H-.03 V-.56 H-.11Z M.03 -.62 H.11 V-.56 H.03Z"/>`,
+  ],
+  lizard: [
+    "Gecko",
+    `<path class="b" d="M-.72 .2 Q-.4 0 -.1 -.02 Q.1 -.2 .3 -.2 L.34 -.44 L.46 -.24 Q.68 -.2 .7 -.06 Q.5 .06 .34 .02 L.3 .14 L.36 .38 H.26 L.2 .16 H-.1 L-.14 .38 H-.24 L-.22 .14 Q-.46 .16 -.72 .2Z"/><path class="cut" d="M.48 -.15 H.55 V-.09 H.48Z"/>`,
+  ],
+  beast: [
+    "Horned beast",
+    `<path class="b" d="M-.27 -.5 H.27 L.2 .12 Q0 .34 -.2 .12Z"/><path class="b" d="M-.24 -.46 Q-.66 -.5 -.62 -.94 Q-.5 -.64 -.18 -.62Z M0.24 -0.46 Q0.66 -0.5 0.62 -0.94 Q0.5 -0.64 0.18 -0.62 Z"/><path class="b" d="M-.26 -.36 L-.5 -.28 L-.25 -.22Z M0.26 -0.36 L0.5 -0.28 L0.25 -0.22 Z"/><path class="cut" d="M-.17 -.3 H-.08 V-.22 H-.17Z M.08 -.3 H.17 V-.22 H.08Z M-.1 .06 H-.04 V.13 H-.1Z M.04 .06 H.1 V.13 H.04Z"/>`,
+  ],
+  rat: [
+    "Rat",
+    `<ellipse class="b" cx="-0.06" cy="0.1" rx="0.36" ry="0.2"/><path class="b" d="M.2 -.04 L.66 .14 L.2 .28Z"/><ellipse class="b" cx="0.2" cy="-0.12" rx="0.11" ry="0.11"/><path class="b" d="M-.38 .12 Q-.72 .1 -.72 -.24 L-.65 -.24 Q-.65 .04 -.38 .05Z"/><path class="b" d="M-.22 .26 H-.13 V.4 H-.22Z M.08 .26 H.17 V.4 H.08Z"/><path class="cut" d="M.4 .06 H.46 V.12 H.4Z"/>`,
+  ],
+  plant: [
+    "Spore plant",
+    `<path class="b" d="M-.035 .42 V-.14 H.035 V.42Z"/><path class="b" d="M0 .22 Q-.44 .12 -.54 -.1 Q-.2 -.08 0 .1Z M-0 0.22 Q0.44 0.12 0.54 -0.1 Q0.2 -0.08 -0 0.1 Z"/><ellipse class="b" cx="0" cy="-0.44" rx="0.3" ry="0.28"/><path class="cut" d="M-.22 -.44 L-.11 -.35 L0 -.44 L.11 -.35 L.22 -.44 L.22 -.37 L.11 -.28 L0 -.37 L-.11 -.28 L-.22 -.37Z"/>`,
+  ],
+  paw: [
+    "Animal",
+    `<ellipse class="b" cx="0" cy="0.1" rx="0.27" ry="0.21"/><ellipse class="b" cx="-0.32" cy="-0.18" rx="0.1" ry="0.12"/><ellipse class="b" cx="-0.12" cy="-0.38" rx="0.1" ry="0.12"/><ellipse class="b" cx="0.12" cy="-0.38" rx="0.1" ry="0.12"/><ellipse class="b" cx="0.32" cy="-0.18" rx="0.1" ry="0.12"/>`,
+  ],
   skull: [
     "Skull",
     `<path class="b" d="M-.34 -.36 Q-.34 -.78 0 -.78 Q.34 -.78 .34 -.36 Q.34 -.2 .2 -.16 V-.04 H-.2 V-.16 Q-.34 -.2 -.34 -.36Z"/><path class="cut" d="M-.2 -.46 h.14 v.12 h-.14Z M.06 -.46 h.14 v.12 h-.14Z"/>${BODY}`,
   ],
 };
+function iconOf(e) {
+  if (!e) return "person";
+  if (e.kind === "pc" || e.icon) return e.icon || "person";
+  const r = S.rules;
+  const byFaction = !e.mob && (r.factionIcons || {})[e.faction];
+  if (byFaction) return byFaction;
+  const name = E.low(e.tmpl || e.name);
+  for (const [pattern, icon] of r.creatureIcons || []) if (new RegExp(pattern, "i").test(name)) return icon;
+  return { robot: "robot", insect: "ant", ghoul: "ghoul", animal: "paw" }[E.enemyType(e, r)] || "person";
+}
 const iconSvg = (id, cls = "") =>
   `<svg class="ticon ${cls}" viewBox="-.75 -1.05 1.5 1.5" aria-hidden="true">${(TOKEN_ICONS[id] || TOKEN_ICONS.person)[1]}</svg>`;
 const GLYPH = {
@@ -2900,7 +2986,7 @@ function mapSvg() {
         e.dbno ? "dbno" : "",
       ].join(" ");
       const showR = me && me !== e.id && !gone && (k ? true : e.kind === "npc");
-      return `<g class="tok ${cls}" data-tok="${e.id}" transform="translate(${p.x} ${p.y}) scale(${k2})"><title>${h(e.name)}: ${fmt(e.hp)}/${d.hp} HP</title><circle class="hit" r="${Math.max(0.75, (v.w * 0.014) / k2)}"/>${(TOKEN_ICONS[e.icon] || TOKEN_ICONS.person)[1]}${gone ? `<path class="x" d="M-.4 -.4 L.4 .4 M.4 -.4 L-.4 .4"/>` : `<rect class="hpbg" x="-.55" y=".48" width="1.1" height=".24"/><rect class="hpb" x="-.55" y=".48" width="${(1.1 * pct).toFixed(2)}" height=".24"/>`}<text class="lab" style="font-size:${labU * 2.2}px" y="${0.8 + labU * 2.2}">${h(tokenLabel(e))}${showR ? ` R${rangeOf(me, e.id)}` : ""}</text><text class="drg" style="font-size:${labU * 1.2}px" y="-.85"></text></g>`;
+      return `<g class="tok ${cls}" data-tok="${e.id}" transform="translate(${p.x} ${p.y}) scale(${k2})"><title>${h(e.name)}: ${fmt(e.hp)}/${d.hp} HP</title><circle class="hit" r="${Math.max(0.75, (v.w * 0.014) / k2)}"/>${(TOKEN_ICONS[iconOf(e)] || TOKEN_ICONS.person)[1]}${gone ? `<path class="x" d="M-.4 -.4 L.4 .4 M.4 -.4 L-.4 .4"/>` : `<rect class="hpbg" x="-.55" y=".48" width="1.1" height=".24"/><rect class="hpb" x="-.55" y=".48" width="${(1.1 * pct).toFixed(2)}" height=".24"/>`}<text class="lab" style="font-size:${labU * 2.2}px" y="${0.8 + labU * 2.2}">${h(tokenLabel(e))}${showR ? ` R${rangeOf(me, e.id)}` : ""}</text><text class="drg" style="font-size:${labU * 1.2}px" y="-.85"></text></g>`;
     })
     .join("");
   let extra = "";
