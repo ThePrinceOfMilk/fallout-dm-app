@@ -398,6 +398,7 @@ test("combat stories: every token filled, players only go down, robots never ble
   for (const w of weapons) for (const part of parts) for (const outcome of outs) for (const kind of ["flesh", "robot", "insect"]) for (const end of ["", "killed", "downed"]) {
     const s = E.story({ a: "Albert", t: "Raider 1", w, ammo: w.ammo ? w.ammo + " - Hollow Point" : "", d: 23, n: 3, part, outcome, kind, statuses: ["Bleeding", "Poisoned", "Burned"], killed: end === "killed", downed: end === "downed" }, COMBAT_TEXT, rng);
     assert.ok(s.length > 5 && !/[{}]/.test(s), "unfilled: " + s);
+    assert.strictEqual((s.split(w.n).join("").match(/[.!?](\s|$)/g) || []).length, 1, "one sentence, no commentary: " + s);
     if (outcome !== "miss" && outcome !== "jam") assert.ok(s.includes("23 DMG"), "damage shown as DMG: " + s);
     if (kind === "robot" && end !== "killed") assert.ok(!/b(blood|lungs?|skin|bones?|venom|femur)b/i.test(s.split(w.n).join("")), "robot read as flesh: " + s);
   }

@@ -1749,8 +1749,8 @@ const ACT = {
       for (const x of hits) { x.e.hp = Math.max(0, (x.e.hp || 0) - x.dmg); syncDown(x.e, A.id); log("hit", `${x.e.name} ${x.e.hp}/${der(x.e).hp} HP after the blast`); }
       if (S.rules.storyLog) {
         const nm = (e) => (e.kind !== "pc" && / - /.test(e.name) ? e.name.split(" - ").slice(1).join(" - ") : e.name);
-        const list = hits.map((x) => `${nm(x.e)} for ${x.dmg} DMG`); const tail = hits.filter((x) => x.e.hp <= 0).map((x) => (x.e.kind === "pc" ? `${nm(x.e)} goes down.` : `${nm(x.e)} is torn apart.`));
-        const story = hits.length ? `${nm(A)} throws a ${T.item}. The blast hits ${list.length > 1 ? list.slice(0, -1).join(", ") + " and " + list[list.length - 1] : list[0]}.${tail.length ? " " + tail.join(" ") : ""}` : `${nm(A)} throws a ${T.item}, but the blast catches nobody.`;
+        const list = hits.map((x) => `${nm(x.e)} for ${x.dmg} DMG`); const tail = hits.filter((x) => x.e.hp <= 0).map((x) => `${nm(x.e)} ${x.e.kind === "pc" ? "goes down" : "is torn apart"}`);
+        const story = hits.length ? `${nm(A)}'s ${T.item} hits ${list.length > 1 ? list.slice(0, -1).join(", ") + " and " + list[list.length - 1] : list[0]}${tail.length ? `, and ${tail.join(" and ")}` : ""}.` : `${nm(A)} throws a ${T.item}, but the blast catches nobody.`;
         const more = S.log.splice(start).map((l) => l.x); S.log.push({ k: `story o-${hits.length ? "hit" : "miss"}`, x: story, r: k ? k.round : 0, id: S.seq++, more });
       }
     });

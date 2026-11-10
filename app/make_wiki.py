@@ -109,6 +109,8 @@ upd(9, D9, "The combat log", "Was: a block of numbers for every attack. Now: one
     "The verb follows the weapon: shotguns blast, long-range rifles snipe, blades stab and slash. A crit names the body part. Player characters never get the gory death lines.",
     "The roll bar shows the bands before the roll, and the band the roll lands in gets a thick border."))
 
+upd(9, D9, "One sentence per attack", "Was: a story line could add extra sentences, such as a wound description, a remark about the ammo, a status, or an opener. Now: each attack is exactly one sentence with the damage, and nothing else.",
+    p("Kills fold the outcome into that sentence, for example <i>Spike shoots Aquilius through the eye for 9 DMG, blowing their brains out the back</i>. A player who drops reads <i>..., and Spike goes down</i>. Grenades are one sentence too. The numbers and statuses are still in the details under each line."))
 upd(11, D8, "AP costs and refresh", "Was: the Action AP tab had no costs (UF-07), and nothing said when AP comes back (US-10). Now:",
     tbl(["Action", "AP"], [["Attack", "the weapon's AP"], ["Aim at a limb / the head", f"+{R['targetAP']['Limb']} / +{R['targetAP']['Head']}"], ["Swap weapon", R["swapAP"]], ["Use an item", "the item's AP column"],
         ["Revive an ally", R["reviveAP"]], ["Clear a jam", "by weapon type (chapter 9)"], ["Throw a Frag Grenade", R["throwables"]["Frag Grenade"]["ap"]], ["Move", "by distance (below)"]], [3, 3]),

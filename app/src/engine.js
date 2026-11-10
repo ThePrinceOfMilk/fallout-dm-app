@@ -643,7 +643,6 @@ const E = (() => {
     if (o.outcome === "miss") { const k = ["blunt", "blade", "pierce", "unarmed"].includes(fam) ? "missMelee" : fam === "explosive" ? "missBlast" : "missRanged"; return fill(storyPick(k, text[k], rng)); }
     if (o.outcome === "jam") return fill(storyPick("jam", text.jam, rng));
     const crit = o.outcome === "crit" || o.outcome === "super", sup = o.outcome === "super";
-    const out = [];
     if (o.killed) {
       const K = text.kills; let key;
       if (o.kind === "robot" || o.kind === "insect") key = o.kind;
@@ -651,8 +650,7 @@ const E = (() => {
       else if (crit) key = "crit" + group;
       else key = ["burn", "blast", "shock"].includes(F.nature) && rng() < 0.6 ? F.nature : "plain";
       if (crit && o.kind === "flesh" && ["burn", "blast"].includes(F.nature) && rng() < 0.35) key = F.nature;
-      out.push(fill(storyPick(`kill:${key}`, K[key] || K.plain, rng)));
-      return out.join(" ");
+      return cap(fill(storyPick(`kill:${key}`, K[key] || K.plain, rng)));
     }
     const generic = crit ? ["{a} {verb} {t} in the {part} for {d}{with}.", "Critical hit: {a} {verb} {t} in the {part} for {d}.", "{a} finds a gap and {verb} {t} in the {part} for {d}."]
       : ["{a} {verb} {t} for {d}{with}.", "{a} {verb} {t} in the {part} for {d}."];
@@ -661,26 +659,8 @@ const E = (() => {
     else if (crit || rng() < 0.4) main = storyPick(`gen:${crit}`, generic, rng);
     else main = storyPick(`hit:${fam}`, F.hit, rng);
     main = fill(main);
-    if (main.startsWith(o.a) && rng() < 0.15) main = `${storyPick("open", text.openers, rng)} ${main}`;
-    out.push(main);
-    if (crit) {
-      const kind = text.wounds[o.kind] ? o.kind : "flesh";
-      const fits = (row) => (!row[1] || row[1].split(" ").includes(F.nature)) && (!row[2] || row[2] === limb);
-      const pool = (text.wounds[kind][group] || []).filter(fits).map((r) => r[0]);
-      const strong = ((text.superWounds[kind] || {})[group]) || [];
-      const line = sup && strong.length && rng() < 0.7 ? storyPick(`sw:${kind}:${group}`, strong, rng) : storyPick(`w:${kind}:${group}:${F.nature}:${limb}`, pool, rng);
-      if (line) out.push(fill(line));
-    }
-    const ammoKey = Object.keys(text.ammo).find((k) => new RegExp(k, "i").test(String(o.ammo || "").split(" - ").slice(1).join(" - ")));
-    if (ammoKey && rng() < 0.35) out.push(fill(storyPick(`ammo:${ammoKey}`, text.ammo[ammoKey], rng)));
-    for (const st of o.statuses || []) {
-      const S = text.status[st] || text.status[Object.keys(text.status).find((k) => st.toLowerCase().startsWith(k.toLowerCase().slice(0, 6)))];
-      if (!S) continue;
-      const list = o.kind === "robot" ? S.robot : (o.kind === "flesh" && S[group]) || S.any || S[group];
-      if (list) out.push(fill(storyPick(`st:${st}:${group}`, list, rng)));
-    }
-    if (o.downed) out.push(fill(storyPick("down", text.downed, rng)));
-    return out.map(cap).join(" ");
+    if (o.downed) main = main.replace(/[.!]$/, `, and ${o.t} goes down.`);
+    return cap(main);
   }
   /** Boost a copy in place. Returns the rolled percentages for the log. */
   function makeBoss(e, ctx, rng = Math.random) {
