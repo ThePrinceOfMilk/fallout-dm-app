@@ -19,8 +19,8 @@ PDF = os.path.join(ROOT, "Fallout TTRPG Game Bible.pdf"); BASE = os.path.join(HE
 if not os.path.exists(BASE): shutil.copy(PDF, BASE)
 D = json.load(open(os.path.join(HERE, "tests", "wiki.json"), encoding="utf8"))
 R = D["rules"]
-D8, D9 = "8 Nov 2026", "9 Nov 2026"
-LATEST = "9 November 2026"
+D8, D9, D10 = "8 Nov 2026", "9 Nov 2026", "10 Nov 2026"
+LATEST = "10 November 2026"
 
 # ---- the bible's own look: Segoe UI when Windows has it, else Helvetica
 FONTS = "C:/Windows/Fonts"
@@ -279,6 +279,42 @@ upd(47, D9, "Saving to a file", "Was: Save wrote to the browser only. Now: Save 
 
 # ---------------------------------------------------------------- where each chapter sits in the original book
 base = fitz.open(BASE)
+# ---------------------------------------------------------------- 10 Nov 2026
+upd(7, D10, "Passing a check pays XP", "Was: the DM typed an XP amount for the players who passed. Now: a pass pays XP by itself, by difficulty.", bl(
+    f"XP = the check's target x {R['checkXpMul']}, then the INT bonus on top (the same bonus as enemy XP). Trivial 10 pays {round(10 * R['checkXpMul'], 2)}, Average 40 pays {round(40 * R['checkXpMul'], 2)}, Extreme 100 pays {round(100 * R['checkXpMul'], 2)}.",
+    "Revive checks pay nothing. The old box for extra XP to everyone who passed is still there.",
+    "Settings > XP and healing > Skill check XP per point of difficulty."))
+upd(9, D10, "Weapon familiarity", "New.", bl(
+    "Each player counts the rounds they have fired with each weapon. A melee swing or a throw counts as 1. A jam counts nothing.",
+    f"A crit or super crit counts {R['famCritMul']} times the rounds fired.",
+    "The count shows as one word on the weapon, in the inventory and on the weapon slot: " + ", ".join(f"{w} from {n}" for n, w in R['famBands']) + ".",
+    "The DM can type a new count next to the word. For now familiarity is a label only: it changes no numbers."))
+upd(11, D10, "Fists never cost a swap", "Was: after shooting, the first punch cost 1 AP more, the weapon swap. Now: punching never pays to swap, because fists are always ready.")
+upd(12, D10, "Cover has health", "New.", bl(
+    "When a shot goes through cover, the cover takes the damage it stopped. Soft cover stops 10% of a hit, so it takes that 10%; hard cover stops half.",
+    f"Each tier lasts a set number of 5.56 Standard rounds ({R['coverRound']} damage each): soft {R['coverRounds']['soft']}, hard {R['coverRounds']['hard']}, impenetrable {R['coverRounds']['impenetrable']}. Its health is that many rounds of the damage it stops, so soft cover has {round(R['coverRounds']['soft'] * R['coverRound'] * 0.1)} HP and hard cover {round(R['coverRounds']['hard'] * R['coverRound'] * 0.5)}.",
+    "Open ground and concealment stop no damage, so they never break.",
+    f"Explosives hit objects for {R['objBlastMul']}x their blast damage at that distance.",
+    "Damaged cover shows a small health bar. At 0 it is destroyed and taken off the map. Settings > Cover health and familiarity."))
+upd(12, D10, "Square or hex grid", "Was: a 2m square grid. Now: the map can show 2m squares, hexes 12.5m across, or no grid.", p("The buttons are next to the zoom. The grid is only a picture: ranges are still measured in meters."))
+upd(12, D10, "Chests", "New, for testing.", bl(
+    "Tick Chest next to Randomize room and a chest of ammo for the party's guns is placed a few meters in front of them.",
+    "A chest opens for whoever starts a turn, or finishes a move, within R1 of it. Its loot goes into their pack and the log says what was inside."))
+upd(12, D10, "Range ring and range snapping", "New.", bl(
+    "On anyone's turn a ring around them shows their hit chance with the weapon in hand at every range band: clear where they can't hit, light red at low odds through yellow, green only above 65%, brighter as it rises.",
+    "The ring leaves out the target's own modifiers and cover.",
+    "Hold Ctrl while dragging on a turn and the token snaps to the middle of the range band from the target (or the nearest enemy)."))
+upd(19, D10, "Survival and Luck decide loot", "Was: every item on a body was looted. Now: how much the party finds depends on its best looter.", bl(
+    f"Looting score = Survival + {R['lootLuck']} x Luck, from the best player still standing. Survival 100 with Luck 1 scores the same as Survival 10 with Luck 10.",
+    "Weapons, the ammo loaded for them and worn armor always come off the body.",
+    f"Everything else, caps included, comes off in proportion to the score: all of it at {R['lootFull']} or more.",
+    f"Each body also gives extra finds: about {R['lootFind']} per score point, at most {R['lootFindMax']}. They are mostly consumables and ammo for the party's guns, with some junk. A higher score finds better things and reaches a tier higher for every 100 points.",
+    "Fists and natural attacks are no longer listed as loot. Settings > Looting."))
+upd(29, D10, "Unique weapons stay out of shops, gear and loot", "Was: only weapons with no Value on the Small Guns and Melee tabs were treated as unique. Now: 140 named one-offs are flagged unique too.", bl(
+    "A unique weapon never appears on a vendor's shelf, in an enemy's generated gear or in found loot. An enemy whose sheet names a unique weapon still carries it.",
+    "Named means a proper name or an odd, specific name, such as Lucky, Ratslayer, That Gun, Big Boomer or Mjolnir. Generic descriptors stay ordinary even with brackets, such as Service 9mm Pistol (Beretta). Homemade weapons stay ordinary.",
+    "The list is uniques in rules.js, so the DM can add or remove names."))
+
 starts, parts, titles = {}, [], {}
 for b in base[1].get_text("dict")["blocks"]:
     for l in b.get("lines", []):
@@ -327,7 +363,7 @@ def put(page, x, y, text, size, bold=False, color=GREEN, right=False):  # y is t
     if right: x -= tlen(text, size, bold)
     page.insert_text((x, y), text, fontsize=size, fontname=name, fontfile=ff, color=tuple(int(color[i:i + 2], 16) / 255 for i in (1, 3, 5)))
 
-newest = lambda ch: max((u[0] for u in U[ch]), key=[D8, D9].index)
+newest = lambda ch: max((u[0] for u in U[ch]), key=[D8, D9, D10].index)
 put(base[0], 54, 570.5, f"Updated {LATEST}. Changes sit in the chapters they affect, on lettered pages such as {labels[12][0]}.", 8.2, color=GREY)
 for ch in U:
     pg = base[first[ch] - 1]

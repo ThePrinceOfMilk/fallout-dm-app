@@ -47,15 +47,15 @@ async function launch() {
 
   await page.goto(APP);
   await ok("Everything is on one screen with no page scroll", async () => {
-    for (const n of ["Character 1", "Character 2", "Character 3", "Character 4", "Encounter", "Vendor", "Skill check", "Recent events", "Combat log", "Notes", "Loot tables", "Weapons"]) await has(n);
+    for (const n of ["Character 1", "Character 2", "Character 3", "Character 4", "Encounter", "Skill check", "Recent events", "Combat log", "Notes", "Loot tables", "Weapons"]) await has(n);
     assert.strictEqual(await page.locator(".w-items").count(), 0, "items are not left out");
     assert.strictEqual(await page.locator("#map").count(), 0, "no map until an encounter is being set up");
     assert.strictEqual(await page.locator(".w-enemies").count(), 0, "no enemy column with no fight");
     const party = await page.locator(".w-party").boundingBox(), notes = await page.locator(".w-notes").boundingBox();
     assert.ok(party.width <= 275, `thin party ${party.width}`); assert.ok(notes.y > party.y && notes.x < 20, "notes bottom left");
-    const ven = await page.locator(".w-vendor").boundingBox(), rec = await page.locator(".w-recent").boundingBox(), clog = await page.locator(".w-clog").boundingBox();
-    assert.ok(notes.width > 500, `notes are wide: ${notes.width}`);
-    assert.ok(ven.x > notes.x + notes.width - 5 && Math.abs(ven.y - notes.y) < 3 && ven.x + ven.width > 1380, "vendor is in the bottom right corner");
+    const rec = await page.locator(".w-recent").boundingBox(), clog = await page.locator(".w-clog").boundingBox();
+    assert.ok(notes.width > 1000, `notes take the bottom row: ${notes.width}`);
+    assert.strictEqual(await page.locator(".w-vendor").count(), 0, "the vendor is a pop-up from the right column, not on the main screen");
     assert.ok(Math.abs(rec.y - clog.y) < 3 && clog.x > rec.x && clog.width < rec.width, "recent events and a small combat log side by side");
     const ys = await page.locator(".w-party .card").evaluateAll((l) => l.map((c) => [c.getBoundingClientRect().x, c.getBoundingClientRect().y]));
     assert.ok(ys.every(([x], i) => x === ys[0][0] && (!i || ys[i][1] > ys[i - 1][1])), "cards stack vertically");
@@ -136,7 +136,7 @@ async function launch() {
     await press("Escape");
     await page.evaluate(() => { S.chars[0].statuses = []; S.chars[0].ap = der(S.chars[0]).ap; ui.sel = "c1"; render(); });
   });
-  await ok("Inventory opens over the main view, grouped with a symbol per category", async () => {
+  await ok("Inventory opens over the main view, in folder tabs with a symbol per item", async () => {
     await page.locator('[data-a="openChar"][data-v="c1|inv"]').click();
     await has("Adhesive", ".dialog"); await has("TOTAL DT", ".dialog");
     assert.strictEqual(await page.locator(".dialog .gfig .gbox").count(), 3, "helmet, clothing, armor on the body");
@@ -144,12 +144,19 @@ async function launch() {
     assert.ok(await page.locator(".dialog .gearmenu > .gcol").first().locator(".wbox").count() >= 2, "weapon boxes");
     const w0 = await text(".dialog .wbox");
     for (const x of ["AP", "Best", "Value", "Skill", "Crit", "Mag", "In pack"]) assert.ok(w0.includes(x), `weapon box shows ${x}: ${w0}`);
-    const heads = await page.locator(".dialog .igroup").count(); assert.ok(heads >= 2, `${heads} groups`);
-    assert.strictEqual(await page.locator(".dialog .igroup svg").count(), heads);
+    assert.deepStrictEqual(await page.locator(".dialog .ftab").evaluateAll((l) => l.map((b) => b.dataset.v)), ["all", "active", "weapons", "armor", "ammo", "consumables", "misc"], "folder tabs");
+    assert.strictEqual(await page.locator(".dialog .irow").count(), await page.locator(".dialog .irow svg.pix").count(), "a symbol on every row");
     const n0 = (await state()).chars[0].inv.length;
     await page.fill("#addItem-c1", "Stimpak"); await press("Enter");
     assert.strictEqual((await state()).chars[0].inv.length, n0 + 1);
-    await has("Healing", ".dialog");
+    await click("invTab", "consumables"); await has("Stimpak", ".dialog .fpane");
+    assert.strictEqual(await page.locator('.dialog .ftab.on').getAttribute("data-v"), "consumables", "the open tab is highlighted");
+    await click("invTab", "active"); assert.strictEqual(await page.locator(".dialog .irow").count(), (await state()).chars[0].inv.filter((l) => l.active).length, "Active shows what is on hand");
+    await click("invTab", "all"); await click("invSort", "n");
+    const names = await page.locator(".dialog .irow .grow").evaluateAll((l) => l.map((x) => x.textContent.trim().toLowerCase()));
+    assert.deepStrictEqual(names, [...names].sort(), "A-Z sorts by name");
+    await click("invDir"); const back = await page.locator(".dialog .irow .grow").evaluateAll((l) => l.map((x) => x.textContent.trim().toLowerCase()));
+    assert.deepStrictEqual(back, [...names].reverse(), "the arrow flips it"); await click("invDir"); await click("invSort", "recent");
     await page.fill("#invQ", "stimp"); await page.waitForTimeout(30);
     assert.strictEqual(await page.locator(".dialog .irow").count(), 1, "filter narrows it");
     await press("Escape");
@@ -204,7 +211,8 @@ async function launch() {
     assert.ok(await page.locator(".w-check tr").count() >= 5, "a row per player");
     await page.focus("#chk-c1"); await type("15"); await press("Enter");
     await has("PASS", ".w-check");
-    assert.match((await state()).log.slice(-1)[0].x, /Character 1: .*SUCCESS/);
+    const lg = (await state()).log; assert.match(lg.slice(-2)[0].x, /Character 1: .*SUCCESS/);
+    assert.match(lg.slice(-1)[0].x, /Character 1 gains [\d.]+ XP for passing a 20 check/, "a pass pays XP by difficulty");
     assert.strictEqual(await page.evaluate(() => document.activeElement.id), "chk-c2", "moves to the next player");
     await page.locator('[data-a="chkGen"]').click();
     const m = await page.evaluate(() => ui.chk);
@@ -318,7 +326,7 @@ async function launch() {
     await page.waitForTimeout(30);
     const t1 = await size(treeSel), p1 = await size('[data-tok="c1"] path.b');
     assert.ok(t1 > t0 * 2, `objects grow with zoom: ${t0} to ${t1}`); assert.ok(p1 < t1, "people stay smaller");
-    assert.strictEqual(await page.evaluate(() => tokenScale(1000) > tokenScale(40)), true); assert.strictEqual(await page.evaluate(() => tokenScale(3)), 0.62, "life size up close");
+    assert.strictEqual(await page.evaluate(() => tokenScale(1000) > tokenScale(40)), true); assert.strictEqual(await page.evaluate(() => tokenScale(3)), 1, "life size up close");
     const box = await page.locator("#map").boundingBox(); await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.wheel(0, -300); await page.waitForTimeout(80);
     const zk = await page.evaluate(() => ui.zoom.k); assert.ok(zk > 2.25, "scrolling zooms in");
     await page.evaluate(() => { S.scene.objects = S.scene.objects.filter((o) => E.trunkOf(o, S.rules)); S.scene.objects.forEach((o) => { if (Math.hypot(o.x, o.y) < 8) o.x += 12; }); render(); });  // leaves are click-through, so only a trunk could catch this drag
@@ -685,8 +693,9 @@ async function launch() {
     assert.strictEqual(await page.locator(".w-enc.closed").count(), 1, "back to the normal screen with no map");
     assert.deepStrictEqual(s.scene.npcs, []);
   });
-  await ok("Vendor: tier, barter, buy and sell, no unique weapons", async () => {
+  await ok("Vendor: a pop-up from the right column; tier, barter, buy and sell, no unique weapons", async () => {
     await page.evaluate(() => { S.chars[0].caps = 1000; S.chars[0].level = 1; ui.sel = "c1"; render(); });
+    await rail("vendor"); assert.strictEqual(await page.locator(".dialog .w-vendor").count(), 1, "opens as a window");
     assert.strictEqual(await page.locator('.w-vendor [data-a="venBarter"]').count(), 8, "eight barter levels");
     await click("venTier", "3");
     let v = (await state()).vendor; assert.strictEqual(v.tier, 3);
@@ -703,7 +712,7 @@ async function launch() {
     await page.locator('[data-a="venSell"]').first().click();
     s = await state(); assert.strictEqual(s.chars[0].inv.reduce((t, l) => t + l.q, 0), invN - 1); assert.ok(s.chars[0].caps >= caps0 - cheap, "caps come back");
     await click("venTab", "buy"); await click("venRoll");
-    await page.evaluate(() => undo());
+    await page.evaluate(() => undo()); if (await page.locator(".dialog").count()) await press("Escape");
   });
   await ok("Level up from the queue", async () => {
     await page.evaluate(() => { S.chars[0].xp = 100; render(); });
@@ -1040,6 +1049,44 @@ async function launch() {
     });
     assert.deepStrictEqual(r.kept, [2000, false, true, "line 2499"]);
     assert.ok(r.chars <= 25e6 && r.n <= 300 && r.n >= Math.min(300, Math.floor(25e6 / r.fat)), JSON.stringify(r));
+  });
+  await ok("10 Nov: uniques, familiarity, cover health, chests, looting, punches, grids, icons, perk trees", async () => {
+    const r = await page.evaluate(() => {
+      S = fresh(); ui.modal = null; ui.atk = null; render();
+      const out = {};
+      out.uniques = DATA.weapons.filter((w) => w.unique).length;
+      let shop = 0; for (let i = 0; i < 20; i++) shop += E.vendorStock(ctx(), 1 + (i % 6)).filter((l) => (E.get(ctx(), l.n) || { o: {} }).o.unique).length; out.shop = shop;
+      ACT.setupOpen("1"); ui.roomChest = true; ACT.randomRoom(); const chest = S.scene.objects.find((o) => o.loot); out.chestLoot = chest.loot.length;
+      ACT.addPick(allTemplates()[0].n); ACT.beginC(""); beginRounds();
+      const pc = S.chars[0], cb = cbOf(pc.id), T = K().cbs.find((c) => sideOf(c.id) === "npc");
+      cb.x = chest.x + 0.6; cb.y = chest.y; startTurn(pc.id); out.opened = chest.opened && pc.inv.some((l) => l.n === chest.loot[0].n);
+      out.ring = /accring/.test(document.getElementById("map").innerHTML);
+      // a soft crate between shooter and target takes the damage it stops
+      cb.x = 0; cb.y = 0; T.x = 6; T.y = 0; K().ranges = {}; S.scene.objects = S.scene.objects.filter((o) => dist(o, { x: 3, y: 0 }) > 4);
+      const crate = { id: "o" + S.seq++, kind: "cover", item: "crate", cover: "soft", x: 3, y: 0, w: 1, h: 1, label: "" }; S.scene.objects.push(crate);
+      ACT.attack(); ui.atk.tgt = T.id; const gun = pc.weapons[ui.atk.w]; gun.mag = 2; pc.ap = 99; ent(T.id).hp = 99; ui.atk.roll = "50"; ui.atk.ov.hit = "95"; ACT.fire();
+      out.crate = [objHp(crate), crate.dmg > 0]; out.fam = famOf(pc, gun.n).n;
+      // punching right after a gunshot costs no swap
+      ACT.attack(); ui.atk.w = pc.weapons.findIndex((w) => w.n === "Basic Fighting"); out.punch = atkView().cost;
+      // looting score: Survival + 10 x Luck
+      out.score = lootScore().score; const d = der(lootScore().who); out.scoreMath = (d.skills.SUR || 0) + 10 * d.sp.L;
+      const snap = snapRange(pc.id, { x: 0.3, y: 0.1 }); out.snap = snap.band != null;
+      ACT.setGrid("hex"); out.hex = S.rules.gridMode; out.turnbar = document.querySelectorAll(".turnbar .tbi").length;
+      ACT.endCombat();
+      return out;
+    });
+    assert.ok(r.uniques >= 140, "named weapons flagged unique"); assert.strictEqual(r.shop, 0, "no uniques on shelves");
+    assert.ok(r.chestLoot > 0 && r.opened, "the chest opens for whoever starts a turn within R1 and its ammo goes to them");
+    assert.ok(r.ring, "the accuracy ring is drawn on a turn");
+    assert.deepStrictEqual(r.crate, [17, true], "soft cover has 15 rounds of what it stops, and the shot through it hurts it");
+    assert.ok(r.fam >= 1, "rounds fired count toward familiarity");
+    assert.strictEqual(r.punch, 1, "a punch after a gunshot costs 1 AP, no swap");
+    assert.strictEqual(r.score, r.scoreMath, "loot score is Survival + 10 x Luck");
+    assert.ok(r.snap && r.hex === "hex" && r.turnbar >= 2, "snap, hex grid and the turn bar");
+    await page.evaluate(() => ACT.iconPick("c1")); await page.locator('[data-a="iconSet"][data-v="c1|cowboy"]').click();
+    assert.strictEqual((await state()).chars[0].icon, "cowboy", "pick a map icon from the card");
+    await rail("tree"); assert.ok(await page.locator(".dialog .ftab").count() >= 2, "a folder tab per player"); assert.ok(await page.locator(".dialog .pnode").count() > 30, "skill and level perk trees");
+    await press("Escape");
   });
   await browser.close();
   for (const r of results) console.log(r.join("  "));

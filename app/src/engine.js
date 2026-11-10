@@ -440,7 +440,7 @@ const E = (() => {
   // ---- enemies
   const pick = (list, rng) => list[Math.floor(rng() * list.length)];
   // Blank Value marks the one-offs on the tabs that price their weapons (GLT's Unique column is empty).
-  const isUnique = (w) => /unique/i.test(w.n) || (w.val == null && ["SG", "MW"].includes(w.tab));
+  const isUnique = (w) => !!w.unique || /unique/i.test(w.n) || (w.val == null && ["SG", "MW"].includes(w.tab));
   function poolFor(ctx, tabs, tier) {
     const all = ctx.db.data.weapons.filter((w) => tabs.includes(w.tab) && w.ok && w.tier > 0 && !ctx.rules.genExclude.includes(w.n) && !isUnique(w) && !w.thrown && (!["SG", "BG"].includes(w.tab) || loadsFor(ctx, w.ammo).length));
     for (let t = tier; t >= 1; t--) { const p = all.filter((w) => w.tier === t); if (p.length) return p; }
@@ -712,7 +712,7 @@ const E = (() => {
   function lineCover(a, b, objects, r) {
     const rank = Object.keys(r.cover); let best = "open", by = null;
     for (const o of objects || []) { const t = coverTier(o, r); const box = shotBox(o, r); if (rank.indexOf(t) > rank.indexOf(best) && !inside(a, box) && crosses(a, b, box)) { best = t; by = o; } }
-    return { tier: best, n: r.cover[best].n, hit: r.cover[best].hit, dam: r.cover[best].dam, by: by ? (by.label || (r.mapItems[by.item] || {}).n || "") : "" };
+    return { tier: best, n: r.cover[best].n, hit: r.cover[best].hit, dam: r.cover[best].dam, by: by ? (by.label || (r.mapItems[by.item] || {}).n || "") : "", id: by ? by.id : null };
   }
   /** Does walking this path hit something solid, like a building? */
   const pathBlocked = (a, b, objects) => (objects || []).some((o) => o.block && crosses(a, b, o));
@@ -1190,6 +1190,7 @@ const E = (() => {
     const worth = (o) => Object.keys(o).filter((k) => k !== "turns").length > 0;
     // ---- statuses: one set of variables per tier. Cover moved to the rules (Settings) since the map handles it now.
     data.statuses = data.statuses.filter((s) => s.n !== "Cover");
+    const uniq = new Set((r.uniques || []).map(low)); for (const w of data.weapons) if (uniq.has(low(w.n))) w.unique = true;  // named one-offs stay out of gear, shops and loot
     for (const s of data.statuses) {
       const src = JSON.stringify(s.tiers || []);
       if (!s.fx || s.fxFrom !== src) s.fx = (s.tiers || []).map((t) => {

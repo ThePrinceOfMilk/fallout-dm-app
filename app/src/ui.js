@@ -136,7 +136,9 @@ const SHOWN_KEYS = new Set(["A", "R", "M", "I", "N", "B", "Enter", "Esc", "/", "
 const btn = (a, v, label, key = "", cls = "", title = "") => `<button class="btn ${cls}" data-a="${a}" data-v="${h(v)}"${title ? ` title="${h(title)}"` : ""}>${SHOWN_KEYS.has(key) ? kbd(key) : ""}${label}</button>`;
 const primary = (a, v, label, key = "") => `<button class="btn primary" data-primary="1" data-a="${a}" data-v="${h(v)}">${kbd(key)}${label}</button>`;
 const small = () => matchMedia("(max-width: 1000px)").matches || document.documentElement.classList.contains("lt1000");
-const win = (cls, title, key, body, opt = {}) => `<section class="win ${cls} ${opt.act ? "act" : ""} ${(prefs.fold || {})[cls] ? "folded" : ""}"><header class="wt" data-fold="${cls}"><button type="button" class="foldbtn" data-a="fold" data-v="${cls}" aria-label="${(prefs.fold || {})[cls] ? "Open" : "Fold"} ${h(String(title).replace(/<[^>]*>/g, ""))}" aria-expanded="${!(prefs.fold || {})[cls]}">${(prefs.fold || {})[cls] ? "+" : "-"}</button>${kbd(key)}<span>${title}</span><span class="spacer"></span>${opt.tools || ""}</header><div class="wb" data-scroll="${cls}">${body}</div></section>`;
+// A size the DM dragged a window to (bottom-right corner) sticks. Double-click the title bar to put it back.
+const winSize = (cls) => { const z = (prefs.wsize || {})[cls]; return z ? ` style="flex:none;width:${z.w}px;height:${z.h}px;max-width:none;max-height:none"` : ""; };
+const win = (cls, title, key, body, opt = {}) => `<section class="win ${cls} ${opt.act ? "act" : ""} ${(prefs.fold || {})[cls] ? "folded" : ""}" data-wcls="${cls}"${winSize(cls)}><header class="wt" data-fold="${cls}"><button type="button" class="foldbtn" data-a="fold" data-v="${cls}" aria-label="${(prefs.fold || {})[cls] ? "Open" : "Fold"} ${h(String(title).replace(/<[^>]*>/g, ""))}" aria-expanded="${!(prefs.fold || {})[cls]}">${(prefs.fold || {})[cls] ? "+" : "-"}</button>${kbd(key)}<span>${title}</span><span class="spacer"></span>${opt.tools || ""}</header><div class="wb" data-scroll="${cls}">${body}</div></section>`;
 function fold(k, title, body, opt = {}) {
   const open = ui.open[k] != null ? ui.open[k] : !!opt.open;
   return `<details class="fold" data-k="${h(k)}"${open ? " open" : ""}><summary>${kbd(opt.key)}<span>${title}</span>${opt.badge != null && opt.badge !== "" ? `<span class="fb">${opt.badge}</span>` : ""}</summary><div class="fbody">${open ? body : ""}</div></details>`;
@@ -148,9 +150,9 @@ const bindNum = (id, path, val, attrs = "", cls = "") => numBox(`data-t="num" da
 const bindText = (id, path, val, list = "", attrs = "") => `<input type="text" autocomplete="off" data-bind="${id}:${path}" value="${h(val == null ? "" : val)}"${list ? ` list="${list}"` : ""} ${attrs}>`;
 const ovCell = (e, k, val, title) => numBox(`data-c="setOv" data-id="${e.id}" data-k="${k}" id="ov-${e.id}-${k}" title="${h(title)}. Type to override, clear to go back to automatic."`, val, `cell ${(e.ov || {})[k] != null && (e.ov || {})[k] !== "" ? "ovr" : ""}`);
 const options = (list, cur) => list.map((o) => { const [v, l] = Array.isArray(o) ? o : [o, o]; return `<option value="${h(v)}"${String(v) === String(cur) ? " selected" : ""}>${h(l)}</option>`; }).join("");
-function chips(e) {
+function chips(e, icons) {
   const out = [];
-  for (const st of e.statuses || []) { const i = E.statusInfo(ctx(), st); const tone = i.def && i.def.tone === "Positive" ? "pos" : i.def && i.def.tone === "Neutral" ? "neu" : ""; out.push(`<span class="chip ${tone}" title="${h(i.text)}">${h(st.n)}${st.tier > 1 ? " " + st.tier : ""}${st.parts ? ": " + st.parts.map((p) => PARTS[p][0]).join(", ") : ""}${st.turns != null ? ` (${st.turns})` : ""}</span>`); }
+  for (const st of icons ? [] : e.statuses || []) { const i = E.statusInfo(ctx(), st); const tone = i.def && i.def.tone === "Positive" ? "pos" : i.def && i.def.tone === "Neutral" ? "neu" : ""; out.push(`<span class="chip ${tone}" title="${h(i.text)}">${h(st.n)}${st.tier > 1 ? " " + st.tier : ""}${st.parts ? ": " + st.parts.map((p) => PARTS[p][0]).join(", ") : ""}${st.turns != null ? ` (${st.turns})` : ""}</span>`); }
   for (const fx of e.effects || []) out.push(`<span class="chip neu" title="${h(fx.text || "")}">${h(fx.label)}${fx.turns != null ? ` (${fx.turns})` : ""}</span>`);
   return out.length ? `<div class="chips">${out.join("")}</div>` : "";
 }
@@ -371,6 +373,7 @@ function startTurn(id) {
   const me = cbOf(id); if (me) { me.still = me.moved ? 0 : (me.still || 0) + (k.round > 1 ? 1 : 0); me.moved = false; }  // Turtle counts rounds spent still
   k.turnId = id; k.acted[id] = true; e.ap = der(e).ap; e.punches = 0; ui.rowSel = id; ui.atk = null; ui.pendingMove = null; ui.focus = "#roll"; if (e.kind === "pc") ui.sel = id;
   log("turn", `Round ${k.round}: ${e.name}'s turn, ${e.ap} AP.`);
+  touchObjects(id);
 }
 function nextTurn() { act("End turn", () => { const k = K(); const nx = order().find((c) => canAct(c) && !k.acted[c.id]); if (nx) startTurn(nx.id); else enterRoundEnd(); }); }
 const setTimeout0 = [];  // after-effects to add once a status list has finished updating
@@ -446,7 +449,7 @@ function atkView() {
   const b = E.bands(hit, v.jam, v.crit, dA.superCrit, { rules: S.rules, lck: dA.sp.L == null ? 5 : dA.sp.L, cond: slot && slot.cond != null ? slot.cond : 10 });
   // Super Crit Roll and Super Fail Roll widen those bands by that many numbers on the dice.
   if (dA.m.superRoll) b.superAt = E.fix(b.superAt - dA.m.superRoll); if (dA.m.failRoll) b.jamAt = E.fix(b.jamAt + dA.m.failRoll);
-  const swap = a.w !== (A.activeW || 0) ? S.rules.swapAP : 0;
+  const swap = a.w !== (A.activeW || 0) && !v.punch ? S.rules.swapAP : 0;  // fists are always ready, so punching never pays to swap
   const extra = dA.m.targetFree ? 0 : S.rules.targetAP[a.loc] || 0;
   const cost = v.ap + extra + swap;
   const warn = [];
@@ -476,8 +479,15 @@ function fire() {
   const roll = Number(raw);
   act(`Attack: ${p.A.name} → ${p.T.name}`, () => {
     const { A, T, v, slot, b, dT } = p;
-    const res = E.resolve({ v, b, roll, dt: dT.dt, floor: E.floorOf(T, ctx()), loc: a.loc, rules: S.rules, available: v.usesAmmo ? Math.floor((slot.mag || 0) / (v.perShot || 1)) : null, bulletsOv: num(a.ov.bullets), damageOv: num(a.ov.dmg), mult: Math.max(0, (1 + (p.cov.dam || 0)) * (1 + (dT.m.dmgTaken || 0))), shot: p.dA.m, taken: dT.m });
+    const args = { v, b, roll, dt: dT.dt, floor: E.floorOf(T, ctx()), loc: a.loc, rules: S.rules, available: v.usesAmmo ? Math.floor((slot.mag || 0) / (v.perShot || 1)) : null, bulletsOv: num(a.ov.bullets), damageOv: num(a.ov.dmg), mult: Math.max(0, (1 + (p.cov.dam || 0)) * (1 + (dT.m.dmgTaken || 0))), shot: p.dA.m, taken: dT.m };
+    const res = E.resolve(args);
     const jammed = res.outcome === "jam";
+    const crit = res.outcome === "crit" || res.outcome === "super";
+    // Familiarity: rounds fired with this weapon (a swing is 1), a crit counts famCritMul times.
+    const fired = jammed ? 0 : v.usesAmmo ? v.count * (v.perShot || 1) : 1;
+    if (fired) { A.fam = A.fam || {}; const fk = E.low(v.n); A.fam[fk] = (A.fam[fk] || 0) + fired * (crit ? S.rules.famCritMul || 1 : 1); }
+    // The cover in the way takes the damage it stopped.
+    if (p.cov.id && res.total != null && !jammed) { const open = E.resolve({ ...args, mult: Math.max(0, 1 + (dT.m.dmgTaken || 0)) }); hurtObj(S.scene.objects.find((o) => o.id === p.cov.id), (open.total || 0) - (res.total || 0), `${A.name}'s shot`); }
     if (!a.ov.free) A.ap = Math.max(0, (A.ap || 0) - (jammed && !S.rules.jamSpendsAP ? p.swap : p.cost));
     A.activeW = a.w;
     if (v.punch) A.punches = (A.punches || 0) + 1;  // each punch this turn costs more
@@ -640,8 +650,9 @@ function view() {
     : mode === "setup" ? `<div class="setupgrid">${encounterWin(true)}${skillWin()}</div>`
     : `<div class="calm"><div class="calmcol">${encounterWin(false)}${skillWin()}</div>${recentWin()}${combatLogWin()}</div>`;
   const top = `<div class="top">${partyWin()}<div class="gut" data-gut="left" title="Drag to resize"></div>${center}${mode === "calm" ? "" : `<div class="gut" data-gut="right" title="Drag to resize"></div>${enemyWin()}`}</div>`;
-  const bottom = `<div class="bottom">${notesWin()}${mode === "calm" ? vendorWin() : combatLogWin()}</div>`;
-  return `<div class="dash">${devBar()}<div class="board ${mode}"><div class="stage">${top}<div class="gut h" data-gut="bottom" title="Drag to resize"></div>${bottom}</div>${rail()}</div><footer class="foot">${hints().map(([a, b]) => `<span>${kbd(a)}${h(b)}</span>`).join("")}</footer>${ui.logOpen ? logFloat() : ""}${ui.modal ? renderModal() : ""}</div>`;
+  const bottom = `<div class="bottom">${notesWin()}${mode === "calm" ? "" : combatLogWin()}</div>`;
+  const initBar = mode === "fight" && !["init", "stealth", "end", "defeat"].includes(k.phase) ? turnBar() : "";
+  return `<div class="dash">${devBar()}<div class="board ${mode}"><div class="stage">${initBar}${top}<div class="gut h" data-gut="bottom" title="Drag to resize"></div>${bottom}</div>${rail()}</div><footer class="foot">${hints().map(([a, b]) => `<span>${kbd(a)}${h(b)}</span>`).join("")}</footer>${ui.logOpen ? logFloat() : ""}${ui.modal ? renderModal() : ""}</div>`;
 }
 const setupOpen = () => (ui.setup != null ? ui.setup : S.scene.npcs.length > 0);
 const logRow = (l) => (l.more && l.more.length
@@ -694,13 +705,13 @@ function charCard(c) {
   const due = (c.ptsBank || 0) > 0 || (c.perkDue || 0) > 0;
   const enc = [d.enc.activeTier, d.enc.totalTier].filter(Boolean);
   return `<article class="card ${sel ? "sel" : ""} ${c.dbno ? "down" : ""} ${K() && K().turnId === c.id ? "cur" : ""} ${ui.atk && ui.atk.tgt === c.id ? "tgt" : ""}" data-a="pick" data-v="${c.id}" data-card="${c.id}">
-    <header class="chead">${cb && cb.init != null ? numBox(`data-c="setInit" data-id="${c.id}" id="in-${c.id}" title="Initiative"`, fmt(cb.init), "cell init") : ""}<span class="nm grow" title="${h(c.background)} ${h(c.spec)}">${h(c.name)}</span><span class="tag">LV${c.level}</span>${c.dbno ? `<span class="tag bad">DBNO</span>` : ""}${cb && cb.caught ? `<span class="tag bad">CAUGHT</span>` : ""}${btn("edit", c.id, "E", "", "tiny", "Edit")}</header>
-    <div class="hpline"><span>HP</span>${bindNum(c.id, "hp", c.hp, `id="rh-${c.id}" title="Current HP"`, "cell")}<span>/</span>${ovCell(c, "hp", d.hp, "Max HP")}<span class="grow">${hpBar(c.hp, d.hp)}</span><span>AP</span>${bindNum(c.id, "ap", c.ap, `id="ra-${c.id}" title="AP now"`, "cell")}<span>/</span>${ovCell(c, "ap", d.ap, "Action Points after modifiers")}${me && me !== c.id ? `<span>R</span>${numBox(`data-c="setRange" data-id="${c.id}" id="rr-${c.id}" title="Range from ${h((ent(me) || {}).name)}"`, rangeOf(me, c.id), "cell")}` : ""}</div>
+    <header class="chead"><button class="iconbtn" data-a="iconPick" data-v="${c.id}" title="Map icon: ${h((TOKEN_ICONS[c.icon] || TOKEN_ICONS.person)[0])}. Click to change.">${iconSvg(c.icon)}</button>${cb && cb.init != null ? numBox(`data-c="setInit" data-id="${c.id}" id="in-${c.id}" title="Initiative"`, fmt(cb.init), "cell init") : ""}<span class="nm grow" title="${h(c.background)} ${h(c.spec)}">${h(c.name)}</span><span class="tag">LV${c.level}</span>${c.dbno ? `<span class="tag bad">DBNO</span>` : ""}${cb && cb.caught ? `<span class="tag bad">CAUGHT</span>` : ""}${btn("edit", c.id, "E", "", "tiny", "Edit")}</header>
+    <div class="hpline"><span>HP</span>${bindNum(c.id, "hp", c.hp, `id="rh-${c.id}" title="Current HP"`, "cell")}<span>/</span>${ovCell(c, "hp", d.hp, "Max HP")}<span class="grow">${hpBar(c.hp, d.hp)}</span><span>AP</span>${bindNum(c.id, "ap", c.ap, `id="ra-${c.id}" title="AP now"`, "cell")}<span>/</span>${ovCell(c, "ap", d.ap, "Action Points after modifiers")}${me && me !== c.id ? `<span>R</span>${numBox(`data-c="setRange" data-id="${c.id}" id="rr-${c.id}" title="Range from ${h((ent(me) || {}).name)}"`, rangeOf(me, c.id), "cell")}` : ""}</div>${statusIcons(c)}
     <div class="stats7 spc">${sp}</div><div class="stats7">${sk}</div>
     ${canLevel(c) ? `<div class="banner s">${btn("levelUp", c.id, `Level up to ${c.level + 1}`, "", "primary tiny")}</div>` : ""}
     ${due ? `<div class="banner s">${btn("spendPts", c.id, `Assign: ${c.ptsBank ? `${c.ptsBank} skill points` : ""}${c.ptsBank && c.perkDue ? " + " : ""}${c.perkDue ? `${c.perkDue} perk` : ""}`, "", "primary tiny")}</div>` : ""}
     ${c.dbno ? `<div class="banner s">${btn("reviveChk", c.id, "Revive: Medicine check", "", "primary tiny")}</div>` : ""}
-    ${enc.length ? `<div class="chips">${enc.map((x) => `<span class="chip">${x}</span>`).join("")}</div>` : ""}${chips(c)}
+    ${enc.length ? `<div class="chips">${enc.map((x) => `<span class="chip">${x}</span>`).join("")}</div>` : ""}${chips(c, true)}
     <div class="icons">${menus}</div></article>`;
 }
 // ----- the inventory window: gear on a rough body, then what's carried
@@ -721,7 +732,7 @@ function weaponBox(c, d, i) {
   const v = E.weaponView(slot, c, d, ctx()); const o = (E.get(ctx(), slot.n) || { o: {} }).o; const loads = loadsHeld(c, v, slot);
   const ammo = v.usesAmmo ? `<div class="wrow"><span>Mag <b>${slot.mag || 0}/${v.cap}</b></span><span>In pack <b>${v.reserve ? ammoHeld(c, v.reserve) : 0}</b></span>${btn("reloadSlot", `${c.id}|${i}`, "Reload", "", "tiny")}</div>${v.caliber ? `<select id="gl-${c.id}-${i}" class="wsel" data-c="setLoad" data-id="${c.id}" data-i="${i}" title="Loaded ammo">${loads.length ? `<option value="">No ammo loaded</option>${options(loads.map((a) => [a.n, `${a.n} (Dam ${a.pellets ? a.dam + "x" + a.pellets : a.dam ?? "?"} Pen ${a.pen ?? 0})`]), slot.ammo)}` : `<option value="">No ${h(v.caliber)} in inventory</option>`}</select>` : `<div class="s dim">Uses ${h(v.reserve)}</div>`}` : `<div class="s dim">${v.melee ? "Melee" : "No ammo"}</div>`;
   return `<div class="wbox ${(c.activeW || 0) === i ? "act" : ""}"><button class="whead ${ui.modal.pick === "w" + i ? "on" : ""}" data-a="gearSlot" data-v="w${i}"><span class="gl">Weapon ${i + 1}${(c.activeW || 0) === i ? " · in hand" : ""}</span><span class="gn">${h(slot.n)}</span></button>
-    <div class="wrow"><span>AP <b>${fmt(v.ap)}</b></span><span>Best <b>R${E.optimalRange(o)}</b></span><span>Value <b>${o.val != null ? fmt(o.val) : "-"}</b></span><span>Skill <b>${fmt(v.req)}</b></span><span>Crit <b>${fmt(E.pct(v.crit))}%</b></span>${slot.jammed ? `<span class="bad">JAMMED</span>${btn("clearSlot", `${c.id}|${i}`, "Clear", "", "tiny")}` : ""}</div>${ammo}</div>`;
+    <div class="wrow"><span>AP <b>${fmt(v.ap)}</b></span><span>Best <b>R${E.optimalRange(o)}</b></span><span>Value <b>${o.val != null ? fmt(o.val) : "-"}</b></span><span>Skill <b>${fmt(v.req)}</b></span><span>Crit <b>${fmt(E.pct(v.crit))}%</b></span>${c.kind === "pc" && o.tier ? `<span>${famTag(c, slot.n)} <span class="famedit" title="Rounds fired: the DM can set it">${numBox(`data-c="setFam" data-id="${c.id}" data-n="${h(slot.n)}" id="famw-${c.id}-${i}"`, fmt(famOf(c, slot.n).n), "cell")}</span></span>` : ""}${slot.jammed ? `<span class="bad">JAMMED</span>${btn("clearSlot", `${c.id}|${i}`, "Clear", "", "tiny")}` : ""}</div>${ammo}</div>`;
 }
 function gearPicker(c, s) {
   const m = ui.modal; const isW = s[0] === "w"; const fits = isW ? (it) => it.cat === "weapon" : (it) => it.cat === "armor" && GEAR_SLOTS[s][1](it.o);
@@ -757,6 +768,84 @@ const DIE_SVG = `<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.
 // skill checks read as the d20 faces that fail and pass: a natural 1 always fails, a natural 20 always passes
 function checkRange(need) { const n = Math.min(20, Math.max(2, need)); return n === 20 ? "fail 1-19 / pass 20" : `fail 1-${n - 1} / pass ${n}-20`; }
 // ---- throwing
+// Cover health: soft, hard and impenetrable pieces last coverRounds 5.56 rounds' worth of the damage they stop. Open and concealment never break.
+function objHp(o) { if (!o) return 0; const t = E.coverTier(o, S.rules); const stop = -((S.rules.cover[t] || {}).dam || 0); const n = (S.rules.coverRounds || {})[t]; return stop > 0 && n ? Math.round(n * (S.rules.coverRound || 11) * stop) : 0; }
+function hurtObj(o, amount, by) {
+  const max = objHp(o); if (!max || !(amount > 0)) return;
+  o.dmg = E.fix((o.dmg || 0) + amount);
+  const name = o.label || (S.rules.mapItems[o.item] || {}).n || (MAP_OBJ[o.kind] || [o.kind])[0];
+  if (o.dmg >= max) { S.scene.objects = S.scene.objects.filter((x) => x !== o); log("status", `${name} is destroyed by ${by}.`); }
+  else log("status", `${name} takes ${fmt(amount)} damage from ${by}: ${fmt(max - o.dmg)}/${max} left.`);
+}
+// Interactive objects. A chest opens for whoever starts a turn or finishes a move within R1 of it, and its loot goes to them.
+function touchObjects(id) {
+  const e = ent(id); if (!e || !K()) return; const p = posOf(id); const r1 = S.rules.bandMeters[0];
+  for (const o of S.scene.objects) {
+    if (!o.loot || o.opened) continue;
+    if (Math.max(0, dist(p, o) - Math.max(o.w || 1, o.h || 1) / 2) > r1) continue;
+    o.opened = true; const name = o.label || (S.rules.mapItems[o.item] || {}).n || "chest";
+    for (const l of o.loot) keepFull(e, () => addInv(e, l.n, l.q));
+    log("status", `${e.name} opens the ${name}: ${o.loot.map((l) => `${l.q} x ${l.n}`).join(", ") || "it's empty"}.`);
+  }
+}
+// A test chest: ammo for the guns the party carries, placed a few meters in front of them.
+function makeChest() {
+  const ammo = [...new Set(S.chars.flatMap((c) => (c.weapons || []).map((sl) => sl.ammo || ((E.get(ctx(), sl.n) || { o: {} }).o.ammo)).filter((n) => n && n !== "N/A" && E.get(ctx(), n))))];
+  const loot = ammo.slice(0, 3).map((n) => ({ n, q: 10 + Math.floor(Math.random() * 21) }));
+  const party = S.chars.map((c) => posOf(c.id)); const cx = party.reduce((t, q) => t + q.x, 0) / (party.length || 1), cy = party.reduce((t, q) => t + q.y, 0) / (party.length || 1);
+  let at = null; for (let i = 0; i < 12 && !at; i++) { const q = inMap({ x: E.fix(cx + 3 + i * 0.7), y: E.fix(cy + (i % 2 ? 1 : -1) * i * 0.4) }); if (!standBlocked(q)) at = q; }
+  at = at || freeSpot();
+  return { id: "o" + S.seq++, kind: "cover", item: "chest", cover: "soft", x: at.x, y: at.y, w: 1, h: 0.6, label: "", loot };
+}
+// STATUS ICONS: one small picture per status, drawn in a 16 by 16 box with lines. The number up top is the tier.
+const SI = {
+  face: "M8 2a6 6 0 1 1 0 12a6 6 0 1 1 0-12Z", heart: "M8 13.5L2.6 8.2A3.2 3.2 0 0 1 8 4.2A3.2 3.2 0 0 1 13.4 8.2Z", drop: "M8 2C8 2 3.5 7.5 3.5 10a4.5 4.5 0 0 0 9 0C12.5 7.5 8 2 8 2Z",
+  bolt: "M9.5 1.5L4 9H8L6.5 14.5L12 7H8Z", flame: "M8 14.5c-3 0-4.5-2-4.5-4.5C3.5 7 6 5.5 6.5 2.5C8.5 4 9 5.5 9 7C10 6.5 10.5 5.5 10.5 4.5C12 6 12.5 8 12.5 10c0 2.5-1.5 4.5-4.5 4.5Z",
+  skull: "M3.5 7.5a4.5 4.5 0 1 1 9 0V10H11V12.5H5V10H3.5ZM5.5 7.2h1.6v1.6H5.5ZM8.9 7.2h1.6v1.6H8.9Z", eye: "M1.5 8C3.5 4.5 12.5 4.5 14.5 8C12.5 11.5 3.5 11.5 1.5 8Z M8 6.2a1.8 1.8 0 1 1 0 3.6a1.8 1.8 0 1 1 0-3.6Z",
+  pill: "M3.3 9.7L9.7 3.3a2.6 2.6 0 0 1 3.7 3.7L7 13.4A2.6 2.6 0 0 1 3.3 9.7Z M6.5 6.5L9.5 9.5", shield: "M8 1.5L13.5 3.5V8c0 3.2-2.5 5.4-5.5 6.5C5 13.4 2.5 11.2 2.5 8V3.5Z",
+  bottle: "M6.5 1.5h3V4l1.5 2V14.5h-6V6L6.5 4Z", cup: "M3 6h8v5a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3Z M11 7.5h1.5a1.5 1.5 0 0 1 0 3H11", arm: "M2.5 13.5V9.5l3-3l1.5-3.5h3l-1 3.5l3.5 1.5v3l-4 2.5Z",
+  bone: "M3 5.5a1.5 1.5 0 1 1 2-2l6 6a1.5 1.5 0 1 1 2 2a1.5 1.5 0 1 1-2 2l-6-6a1.5 1.5 0 1 1-2-2Z", snow: "M8 1.5V14.5M2.4 4.8L13.6 11.2M2.4 11.2L13.6 4.8M6.5 2.5L8 4L9.5 2.5M6.5 13.5L8 12L9.5 13.5",
+  spiral: "M8 8m-1 0a1 1 0 1 1 2 0a2 2 0 1 1-4 0a3 3 0 1 1 6 0a4 4 0 1 1-8 0a5 5 0 1 1 10 0", cloud: "M4 12.5a2.5 2.5 0 0 1 0-5a3.5 3.5 0 0 1 6.8-1A2.8 2.8 0 0 1 12 12.5Z",
+  die: "M3 3h10v10H3Z", star: "M8 1.5l1.9 4.3l4.6.4l-3.5 3l1.1 4.6L8 11.4l-4.1 2.4l1.1-4.6l-3.5-3l4.6-.4Z", z: "M3 4h4L3 8h4M9 7h3l-3 3h3M12 2.5h2l-2 2h2",
+};
+const ST_ICON = {
+  Afraid: [SI.face, "M5.5 6.5h1M9.5 6.5h1M5 11l1.5-1l1.5 1l1.5-1l1.5 1"], Calm: [SI.face, "M5 7q1-1 2 0M9 7q1-1 2 0M5.5 10q2.5 2 5 0"], Hopeless: [SI.heart, "M8 4.5L7 8l2 1.5l-1 4"], Hope: [SI.heart, "M13 1.5v3M11.5 3h3"],
+  Hunger: ["M10.5 2a3.5 3.5 0 0 1 3.5 3.5c0 2-1.5 3-3.5 3.5L6 13.5", "M2 14L14 2"], "Well Fed": ["M10.5 2a3.5 3.5 0 0 1 3.5 3.5c0 2-1.5 3-3.5 3.5L6 13.5L4.5 12L9 7.5C9.5 5.5 9 3 10.5 2Z", "M4.5 12L3 13.5M2.5 12.5l1 1"],
+  Thirst: [SI.drop, "M2 14L14 2"], Hydrated: [SI.drop, "M6 10.5q0 2 2 2"],
+  Irradiated: ["M8 8m-1.3 0a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0-2.6 0", "M8 6.2L5.5 1.9A6.5 6.5 0 0 1 10.5 1.9ZM6.4 8.9L1.5 9.7A6.5 6.5 0 0 0 4 14ZM9.6 8.9L14.5 9.7A6.5 6.5 0 0 1 12 14Z"],
+  "Iradiated (Ghoul)": ["M8 8m-1.3 0a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0-2.6 0", "M8 6.2L5.5 1.9A6.5 6.5 0 0 1 10.5 1.9ZM6.4 8.9L1.5 9.7A6.5 6.5 0 0 0 4 14ZM9.6 8.9L14.5 9.7A6.5 6.5 0 0 1 12 14Z", "M13 1v4M11 3h4"],
+  Disoriented: ["M8 5a4 4 0 1 1 0 8a4 4 0 1 1 0-8Z", "M6 9l1 1M7 9l-1 1M9 9l1 1M10 9l-1 1", "M3 3.5q2-2 4 0t4 0q1.5-1.5 3 0"], Focused: ["M8 2a6 6 0 1 1 0 12a6 6 0 1 1 0-12Z", "M8 0.5V4M8 12v3.5M0.5 8H4M12 8h3.5M8 7.5v1"],
+  Damnation: [SI.flame, "M5 2L6 4M11 2L10 4"], Prayer: ["M8 2v12M4.5 5.5h7"], Horny: [SI.heart, "M1.5 14.5L14.5 1.5M12 1.5h2.5V4"], "Got Some": [SI.heart, "M11 2.5a1.5 1.5 0 0 1 2.5 1.5L12 5.5L10.5 4A1.5 1.5 0 0 1 11 2.5Z"],
+  Drunk: ["M6.5 1.5h3V4l1.5 2V14.5h-6V6L6.5 4Z", "M1.5 9q1-1 2 0M12.5 9q1-1 2 0"], Loose: [SI.bottle, "M2 3q1 1 0 2t0 2M14 3q-1 1 0 2t0 2"], "Spun Out": [SI.spiral], Stimulated: [SI.bolt], "Roid Rage": [SI.arm, "M12 1.5l1 1.5l1.5-1M13 4.5l1.5 1"],
+  Roided: [SI.arm], Narcotized: [SI.pill], Painless: [SI.pill, "M11 11l1.5 1.5L15 10"], "Blinded by Rage": [SI.eye, "M2 2l3 2M14 2l-3 2"], Rage: ["M2 2l3 3M14 2l-3 3M2 14l3-3M14 14l-3-3M6 8h4"],
+  Tranquilized: ["M2 14L9 7M8 5l3 3l3.5-3.5l-3-3Z"], Sedated: [SI.z], Bleeding: ["M2 2L10 10", "M11 10.5c0 0-1.5 1.8-1.5 2.6a1.5 1.5 0 0 0 3 0c0-.8-1.5-2.6-1.5-2.6Z M5 9c0 0-1 1.2-1 1.8a1 1 0 0 0 2 0C6 10.2 5 9 5 9Z"],
+  Blinded: [SI.eye, "M2 14L14 2"], Burned: [SI.flame], "Cloud Poison": [SI.cloud, "M6.5 9.5h1M8.5 9.5h1M7 11.5h2"], Electrocuted: ["M8 2a6 6 0 1 1 0 12a6 6 0 1 1 0-12Z", "M9 3.5L5.5 8.5h3L7 12.5l3.5-5h-3Z"],
+  Fatigue: ["M2 5h10v6H2ZM12 7h2v2h-2Z", "M3.5 6.5h2v3h-2Z"], "FEV Infection": ["M5 1.5q6 3.25 0 6.5t0 6.5M11 1.5q-6 3.25 0 6.5t0 6.5M6 4.5h4M6 11.5h4"], Frozen: [SI.snow], Halucinating: [SI.eye, "M12 1.5a1.5 1.5 0 1 1 0 3"], High: [SI.cloud, "M8 5V1M6.5 2.5L8 1l1.5 1.5"],
+  "Hologram Glare": ["M8 1.5L14 8L8 14.5L2 8Z", "M5 6l6 4M5 10l6-4"], "Injured Limb (Leg/Arm)": [SI.bone, "M7 7L9 9"], "Laser Scorch": ["M1.5 14.5L9 7", "M11 5m-2.5 0l2.5-3.5l2.5 3.5l-2.5 3.5Z"], "Plasma Melt": ["M3 8a5 5 0 0 1 10 0v2q0 1-1 1t-1 1.5t-1.5 1.5t-1.5-1.5t-1.5-1t-1.5-1Z"],
+  Poisoned: [SI.skull, "M13 1.5c0 0-1.5 1.8-1.5 2.6a1.5 1.5 0 0 0 3 0c0-.8-1.5-2.6-1.5-2.6Z"], Shock: [SI.star, "M8 5.5v3M8 10v.5"], Sick: ["M6.5 2a1.5 1.5 0 0 1 3 0v7.5a3 3 0 1 1-3 0Z", "M8 5v6"], "Undignified (Lack of Pride)": ["M2 12h12L13 5l-2.5 3L8 3.5L5.5 8L3 5Z", "M7 4l2 8"],
+  Weak: [SI.arm, "M13 9v5M11.5 12.5L13 14l1.5-1.5"], Cover: [SI.shield], Acuity: [SI.eye, "M13 1v3M11.5 2.5h3"], Agile: ["M3 13Q4 5 13 2.5Q9 7 9.5 9.5Q7 9 5.5 12Z", "M3 13L9 6.5"], Amped: [SI.bolt, "M12 1.5v3M10.5 3h3"],
+  Anaesthetised: ["M2 14l3-3M4 10l2 2l7-7l-2-2ZM11 3l2-2M12 1l3 3"], Assertive: ["M2 6.5h3l6-4v11l-6-4H2Z", "M13 6l2-1M13 8h2M13 10l2 1"], Caffenated: [SI.cup, "M5 1.5q1 1 0 2.5M8 1.5q1 1 0 2.5"], Bliss: [SI.face, "M5 6.5q1 1 2 0M9 6.5q1 1 2 0M5 9.5q3 3 6 0"],
+  Hardened: [SI.shield, "M5 8l2 2l4-4"], "Lucky Streak": ["M8 8a2.5 2.5 0 1 1-2.5-2.5a2.5 2.5 0 1 1 5 0a2.5 2.5 0 1 1-2.5 2.5a2.5 2.5 0 1 1-2.5 2.5a2.5 2.5 0 1 1 5 0Z", "M8 8l2 6.5"], Sociable: ["M2 3h8v5H5l-3 2.5Z", "M7 9.5v2h4l2.5 2V9.5H14V6"],
+  Strengthened: ["M1.5 6v4M3.5 4.5v7M3.5 8h9M12.5 4.5v7M14.5 6v4"], "Third Eye Open": ["M8 1.5L14.5 13.5H1.5Z", "M5 10q3-3 6 0q-3 3-6 0Z"], "Knocked Out": [SI.face, "M5 5.5l2 2M7 5.5l-2 2M9 5.5l2 2M11 5.5l-2 2M6 11h4"],
+  "Flesh Craving": ["M3 3h10l-1.5 4.5L10 5l-2 6l-2-6l-1.5 2.5Z"], "Craving Satisfaction": ["M3 3h10l-1.5 4.5L10 5l-2 6l-2-6l-1.5 2.5Z", "M10 12l1.5 1.5L15 10"], "Gambler's High": [SI.die, "M6 6h.5M9.5 9.5h.5M14 6V1M12.5 2.5L14 1l1.5 1.5"],
+  "Gambler's Slump": [SI.die, "M6 6h.5M9.5 9.5h.5M14 10v5M12.5 13.5L14 15l1.5-1.5"], Clairvoyance: ["M8 1.5a5 5 0 1 1 0 10a5 5 0 1 1 0-10Z", "M4 13.5h8l-1-2H5Z", "M6 5q1-1.5 2.5-1"], "Shell Shocked": ["M2.5 9a5.5 5.5 0 0 1 11 0Z M1.5 9h13", "M8 11v3M5 12l-1 2M11 12l1 2"],
+  "Fire Craving": [SI.flame, "M2 2l2 2"], Psychosis: ["M8 2a6 6 0 1 1 0 12a6 6 0 1 1 0-12Z", "M8 2v12", "M5 6l1.5 1M10 7.5l1.5-1"], "Got Away With Lie": ["M2 5q6-3 12 0q0 6-6 8q-6-2-6-8Z", "M4.5 7h2.5M9 7h2.5M6 10q2 1 4 0"],
+  Flagelate: ["M2 14L6 10q4-1 4-5t3-3", "M10 5l2 2M8 7l2 2"], Mania: [SI.star, "M8 8m-1 0a1 1 0 1 1 2 0"], Hangover: [SI.bottle, "M2 2l3 3M5 2L2 5"], Fixer: ["M10.5 1.5a3.5 3.5 0 0 0-3.3 4.6L1.8 11.5a1.6 1.6 0 0 0 2.3 2.3l5.4-5.4A3.5 3.5 0 0 0 14 5l-2 2l-2-.5L9.5 4.5l2-2Z"],
+  "System Flushed": [SI.drop, "M8 6v5M6 9l2 2l2-2"], Immunity: [SI.shield, "M8 5v6M5 8h6"], Concussed: ["M8 5a4 4 0 1 1 0 8a4 4 0 1 1 0-8Z", "M3 3.5q2-2 4 0t4 0q1.5-1.5 3 0"],
+};
+const LIMB_ICON = { arm: ["M2 13l4-4l1.2 1.2l1.6-3.5L10 8l4-5", "M7.5 6.5l1.5 1.5"], leg: ["M6 1.5v6l-1 1.5v5h4", "M5 8.5l3 1.5"] };
+function statusIcon(e, st) {
+  const inf = E.statusInfo(ctx(), st); const tone = inf.def && inf.def.tone === "Positive" ? "pos" : inf.def && inf.def.tone === "Neutral" ? "neu" : "neg";
+  const limb = st.n === "Injured Limb (Leg/Arm)" && st.parts ? (st.parts.some((p) => /Leg/.test(p)) ? "leg" : "arm") : null;
+  const paths = limb ? LIMB_ICON[limb] : ST_ICON[st.n];
+  const pic = paths ? paths.map((d) => `<path d="${d}"/>`).join("") : `<circle cx="8" cy="8" r="6"/><text x="8" y="11" text-anchor="middle">${h(st.n.slice(0, 2))}</text>`;
+  return `<span class="sti ${tone}" title="${h(st.n)}${st.tier > 1 ? " " + st.tier : ""}${st.turns != null ? `, ${st.turns} turns` : ""}: ${h(inf.text)}"><svg viewBox="0 0 16 16" aria-hidden="true">${pic}</svg>${st.tier ? `<sup>${st.tier}</sup>` : ""}</span>`;
+}
+const statusIcons = (e) => ((e.statuses || []).length ? `<div class="stirow">${e.statuses.map((st) => statusIcon(e, st)).join("")}</div>` : "");
+// FAMILIARITY with a weapon, from rounds fired. Each band has a word and a color.
+const FAM_COLOR = { Unfamiliar: "#8b0000", Novice: "#ff8fc7", Familiar: "#ffffff", Proficient: "#4da3ff", Expert: "#000000", Master: "#39ff14" };
+function famOf(e, name) { const n = ((e && e.fam) || {})[E.low(name)] || 0; let word = "Unfamiliar"; for (const [at, w] of S.rules.famBands || []) if (n >= at) word = w; return { n, word }; }
+const famTag = (e, name) => { const f = famOf(e, name); return `<span class="fam fam-${f.word.toLowerCase()}" style="color:${FAM_COLOR[f.word] || "inherit"}" title="${fmt(f.n)} rounds fired with this weapon">${f.word}</span>`; };
 function blastHits(at, t) {
   const who = K() ? K().cbs.filter((c) => alive(c)).map((c) => ent(c.id)) : [...S.chars, ...S.scene.npcs];
   return who.filter(Boolean).map((e) => { const d = dist(posOf(e.id), at); return { e, d, dmg: E.blastDamage(t, d) }; }).filter((x) => x.dmg > 0).sort((p, q) => p.d - q.d);
@@ -813,6 +902,11 @@ function healthBody() {
 // ----- vendor
 // Barter sets the base. Perks with buy or sell variables move it from there.
 function priceFactors(e, vendor) { const d = e ? der(e) : null; const f = E.barterFactors(d ? d.skills.BAR : 0, vendor); return { buy: f.buy * (1 + ((d && d.m.buy) || 0)), sell: f.sell * (1 + ((d && d.m.sell) || 0)) }; }
+// THE TURN BAR: everyone in initiative order across the top of the fight. Click a name to select them.
+function turnBar() {
+  const k = K();
+  return `<div class="turnbar" role="list" aria-label="Turn order"><span class="tblabel">ROUND ${k.round}</span>${order().filter(alive).map((c) => { const e = ent(c.id); const d = der(e); return `<button role="listitem" class="tbi ${c.id === k.turnId ? "on" : ""} ${e.kind === "pc" ? "pc" : e.ally ? "ally" : "foe"} ${k.acted[c.id] && c.id !== k.turnId ? "done" : ""} ${e.dbno ? "down" : ""}" data-a="select" data-v="${c.id}" title="${h(e.name)}: initiative ${fmt(c.init)}, ${fmt(e.hp)}/${d.hp} HP">${iconSvg(e.icon)}<span class="tbn">${h(e.name)}</span><span class="tbh">${hpBar(e.hp, d.hp)}</span><span class="tbi0">${fmt(c.init)}</span></button>`; }).join("")}</div>`;
+}
 function vendorWin() {
   const v = S.vendor; if (!v.stock) v.stock = E.vendorStock(ctx(), v.tier);
   const c = ent(ui.sel); const bar = c ? der(c).skills.BAR : 0; const f = priceFactors(c, v.barter);
@@ -821,7 +915,7 @@ function vendorWin() {
   const body = !c ? `<div class="dim">Pick a character.</div>` : ui.venTab === "buy"
     ? v.stock.map((l, i) => { const p = E.valueOf(ctx(), l.n); return line(l.n, l.q, Math.max(1, Math.ceil(p.val * f.buy)), p.est, "venBuy", i, "Buy"); }).join("")
     : (c.inv || []).map((l, i) => { const p = E.valueOf(ctx(), l.n); return line(l.n, l.q, Math.floor(p.val * f.sell), p.est, "venSell", i, "Sell"); }).join("");
-  return win("w-vendor", "Vendor", "", `<div class="row wrap"><span class="s dim">TIER</span>${chipsRow("venTier", [1, 2, 3, 4, 5, 6], v.tier)}<span class="s dim" style="margin-left:6px">BARTER</span>${chipsRow("venBarter", S.rules.vendorBarter, v.barter)}</div>
+  return (ui.modal && ui.modal.type === "vendor" ? (b, o) => `<div class="w-vendor">${o.tools}${b}</div>` : (b, o) => win("w-vendor", "Vendor", "", b, o))(`<div class="row wrap"><span class="s dim">TIER</span>${chipsRow("venTier", [1, 2, 3, 4, 5, 6], v.tier)}<span class="s dim" style="margin-left:6px">BARTER</span>${chipsRow("venBarter", S.rules.vendorBarter, v.barter)}</div>
     <div class="row wrap" style="margin:3px 0"><button class="opt ${ui.venTab === "buy" ? "on" : ""}" data-a="venTab" data-v="buy">Buy</button><button class="opt ${ui.venTab === "sell" ? "on" : ""}" data-a="venTab" data-v="sell">Sell</button><select id="venWho" data-u="sel" title="Who is trading">${options(S.chars.map((x) => [x.id, x.name]), ui.sel)}</select><span class="bright">${c ? fmt(c.caps) : 0} caps</span><span class="s dim">Barter ${fmt(bar)} · Buy x${fmt(Math.round(f.buy * 100) / 100)} · Sell x${fmt(Math.round(f.sell * 100) / 100)}</span></div>
     <table class="t"><tr><th></th><th>Item</th><th>Qty</th><th>Caps</th><th></th></tr>${body || `<tr><td colspan="5" class="dim">Nothing here.</td></tr>`}</table>`, { tools: btn("venRoll", "", "Restock", "", "tiny", "New stock at this tier") });
 }
@@ -840,9 +934,12 @@ function traitsSect(c) {
   return (c.traits || []).filter(Boolean).map((code) => {
     const t = traitV(db.traitByCode.get(code)); if (!t) return `<div class="txt bad">Unknown trait ${h(code)}</div>`;
     const variants = DATA.sc.filter((r) => E.low(r.n).startsWith(E.low(t.n) + " ("));
+    const st = (c.evolved || {})[code];
+    if (st === "E" || st === "R") return `<div class="txt"><span class="bright">${h(code)} ${h(st === "E" ? t.evo : t.rep)}</span> <span class="tag ${st === "E" ? "" : "warn"}">${st === "E" ? "EVOLVED" : "REPRESSED"}</span> <span class="s dim">from ${h(t.n)}</span><br>${h(st === "E" ? t.evoDesc || "" : t.repDesc || "")}<br>+ ${h(st === "E" ? t.evoBonus || "" : t.repBonus || "")}
+      <div class="row wrap"><select data-bind="${c.id}:evolved.${code}" title="Trait state">${options([["", "Back to " + t.n], ...(t.evo ? [["E", "Evolved: " + t.evo]] : []), ...(t.rep ? [["R", "Repressed: " + t.rep]] : [])], st)}</select></div></div>`;
     return `<div class="txt"><span class="bright">${h(code)} ${h(t.n)}</span> <span class="s dim">${h(t.cat)}</span><br>+ ${h(t.ben)}<br>- ${h(t.draw)}
       ${t.evo || t.rep ? `<div class="s dim">${t.evo ? `Evolves: ${h(t.evo)}${t.evoBonus ? `: ${h(t.evoBonus)}` : ""}${t.evoTrig ? ` (when: ${h(t.evoTrig)})` : ""}` : ""}${t.rep ? ` · Represses: ${h(t.rep)}${t.repBonus ? `: ${h(t.repBonus)}` : ""}` : ""}${t.fail ? ` (fail: ${h(t.fail)})` : ""}</div>` : ""}
-      <div class="row wrap"><select data-bind="${c.id}:evolved.${code}" title="Trait state">${options([["", "Base"], ...(t.evo ? [["E", "Evolved"]] : []), ...(t.rep ? [["R", "Repressed"]] : [])], (c.evolved || {})[code] || "")}</select>
+      <div class="row wrap"><select data-bind="${c.id}:evolved.${code}" title="Trait state">${options([["", "Base"], ...(t.evo ? [["E", "Evolve: " + t.evo]] : []), ...(t.rep ? [["R", "Repress: " + t.rep]] : [])], (c.evolved || {})[code] || "")}</select>
       ${variants.map((r) => `<label class="chk s"><input type="checkbox" data-a="toggleVariant" data-v="${c.id}|${h(r.n)}"${(c.variants || []).includes(r.n) ? " checked" : ""}>${h(r.n.replace(t.n, "").trim())}</label>`).join(" ")}</div></div>`;
   }).join("") || `<div class="dim">No traits. Press E to pick them.</div>`;
 }
@@ -862,19 +959,34 @@ function itemKind(name) {
   if (it.cat === "item") return [o.cat || "Items", ITEM_ICON[o.cat] || "dot"];
   return ["Other", "dot"];
 }
+// Inventory folders: each item kind sorts into one tab. Active is everything ticked as on hand.
+const INV_TABS = [["all", "All"], ["active", "Active"], ["weapons", "Weapons"], ["armor", "Armor"], ["ammo", "Ammo"], ["consumables", "Consumables"], ["misc", "Misc"]];
+function invTab(name) {
+  const it = E.get(ctx(), name); if (!it) return "misc";
+  if (it.cat === "weapon") return "weapons"; if (it.cat === "armor") return "armor"; if (it.cat === "ammo") return "ammo";
+  if (it.cat === "item" && ["Healing", "Chem/Drug", "Alcohol", "Drink", "Food", "Tobacco", "Poison", "Resistance"].includes(it.o.cat)) return "consumables";
+  return "misc";
+}
+const INV_SORTS = [["recent", "Recent"], ["n", "A-Z"], ["lb", "Weight"], ["val", "Value"], ["tier", "Tier"]];
 function invSect(c, d) {
-  const q = E.low(ui.modal.q || "");
-  const groups = new Map();
-  (c.inv || []).forEach((l, i) => { if (q && !E.low(l.n).includes(q)) return; const [g, ic] = itemKind(l.n); if (!groups.has(g)) groups.set(g, { ic, rows: [] }); groups.get(g).rows.push([l, i]); });
-  const body = [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([g, x]) => `<h3 class="igroup">${pix(x.ic)}${h(g)}</h3>${x.rows.map(([l, i]) => { const it = E.get(ctx(), l.n); const canUse = it && it.cat === "item" && usable(it.o); return `<div class="irow"><span class="iq">${numBox(`data-c="setQty" data-id="${c.id}" data-i="${i}" id="q-${c.id}-${i}" title="How many"`, fmt(l.q), "cell")}</span><span class="grow" title="${h(it && it.o.effect ? it.o.effect : "")}">${h(l.n)}${it && it.o.effect ? ` <span class="s dim">${h(it.o.effect)}</span>` : ""}</span><span class="s faint">${fmt(E.weightOf(ctx(), l.n) * l.q)}lb</span><label class="chk s" title="Active: on hand during combat"><input type="checkbox" data-a="invActive" data-v="${c.id}|${i}"${l.active ? " checked" : ""}>ACTIVE</label>${canUse ? `<button class="btn tiny" data-a="useItemFrom" data-v="${c.id}|${i}">Use</button>` : ""}<button class="btn tiny" data-a="invDel" data-v="${c.id}|${i}" title="Remove">X</button></div>`; }).join("")}`).join("");
-  return `${gearMenu(c, d)}<div class="row wrap" style="margin:4px 0"><input id="addItem-${c.id}" class="grow" autocomplete="off" list="dl-all" placeholder="Add item: type, Enter" data-enter="addItem" data-id="${c.id}"><input id="invQ" autocomplete="off" style="width:110px" placeholder="Filter" data-u="modal.q" value="${h(ui.modal.q || "")}"></div>${body || `<div class="dim">Nothing here.</div>`}`;
+  const q = E.low(ui.modal.q || ""); const tab = ui.invTab || "all"; const sort = ui.invSort || "recent"; const dir = ui.invDir || 1;
+  const all = (c.inv || []).map((l, i) => [l, i]);
+  const inTab = (l) => tab === "all" || (tab === "active" ? l.active : invTab(l.n) === tab);
+  const count = Object.fromEntries(INV_TABS.map(([id]) => [id, all.filter(([l]) => id === "all" || (id === "active" ? l.active : invTab(l.n) === id)).length]));
+  const key = { recent: ([, i]) => i, n: ([l]) => E.low(l.n), lb: ([l]) => E.weightOf(ctx(), l.n) * l.q, val: ([l]) => E.valueOf(ctx(), l.n).val, tier: ([l]) => Number((E.get(ctx(), l.n) || { o: {} }).o.tier) || 0 }[sort];
+  const rowsIn = all.filter(([l]) => inTab(l) && (!q || E.low(l.n).includes(q))).sort((a, b) => { const x = key(a), y = key(b); return (x < y ? -1 : x > y ? 1 : 0) * dir; });
+  const groups = new Map([["", { ic: "dot", rows: rowsIn }]]);
+  const tabs = `<div class="ftabs">${INV_TABS.map(([id, n]) => `<button class="ftab ${tab === id ? "on" : ""}" data-a="invTab" data-v="${id}" aria-pressed="${tab === id}">${h(n)}<b>${count[id]}</b></button>`).join("")}</div>`;
+  const sorter = `<div class="row wrap isort"><span class="s dim">Sort</span>${INV_SORTS.map(([id, n]) => `<button class="opt ${sort === id ? "on" : ""}" data-a="invSort" data-v="${id}">${n}</button>`).join("")}<button class="btn tiny" data-a="invDir" data-v="" title="${dir > 0 ? "Ascending" : "Descending"}: click to flip">${dir > 0 ? "&#9650; Asc" : "&#9660; Desc"}</button></div>`;
+  const body = [...groups.entries()].map(([g, x]) => `${x.rows.map(([l, i]) => { const it = E.get(ctx(), l.n); const canUse = it && it.cat === "item" && usable(it.o); return `<div class="irow"><span class="iq">${numBox(`data-c="setQty" data-id="${c.id}" data-i="${i}" id="q-${c.id}-${i}" title="How many"`, fmt(l.q), "cell")}</span>${pix(itemKind(l.n)[1])}<span class="grow" title="${h(it && it.o.effect ? it.o.effect : "")}">${h(l.n)}${it && it.o.effect ? ` <span class="s dim">${h(it.o.effect)}</span>` : ""}${it && it.cat === "weapon" && c.kind === "pc" ? ` ${famTag(c, l.n)} <span class="famedit" title="Rounds fired: the DM can set it">${numBox(`data-c="setFam" data-id="${c.id}" data-n="${h(l.n)}" id="fam-${c.id}-${i}"`, fmt(famOf(c, l.n).n), "cell")}</span>` : ""}</span><span class="s faint">${fmt(E.weightOf(ctx(), l.n) * l.q)}lb</span><label class="chk s" title="Active: on hand during combat"><input type="checkbox" data-a="invActive" data-v="${c.id}|${i}"${l.active ? " checked" : ""}>ACTIVE</label>${canUse ? `<button class="btn tiny" data-a="useItemFrom" data-v="${c.id}|${i}">Use</button>` : ""}<button class="btn tiny" data-a="invDel" data-v="${c.id}|${i}" title="Remove">X</button></div>`; }).join("")}`).join("");
+  return `${gearMenu(c, d)}<div class="row wrap" style="margin:4px 0"><input id="addItem-${c.id}" class="grow" autocomplete="off" list="dl-all" placeholder="Add item: type, Enter" data-enter="addItem" data-id="${c.id}"><input id="invQ" autocomplete="off" style="width:110px" placeholder="Filter" data-u="modal.q" value="${h(ui.modal.q || "")}"></div>${tabs}<div class="fpane">${sorter}${body || `<div class="dim">Nothing here.</div>`}</div>`;
 }
 function weaponRows(e, d) {
   return (e.weapons || []).map((s, i) => {
     const v = E.weaponView(s, e, d, ctx());
     const loads = v.caliber ? E.loadsFor(ctx(), v.caliber) : [];
     return `<div class="line t"><div class="grow"><input style="width:100%" autocomplete="off" data-c="setWeapon" data-id="${e.id}" data-i="${i}" id="w-${e.id}-${i}" list="dl-weapons" value="${h(s.n)}">
-      <div class="s dim">${v.missing ? "unknown weapon" : `${v.melee ? "melee" : h(v.type)} · ${fmt(v.ap)} AP · ${v.count > 1 ? `burst ${v.count} · ` : ""}Dam ${fmt(v.base)} Pen ${fmt(v.pen)}${v.ok ? "" : ` · <span class="warn">blank stats</span>`}${s.jammed ? ` · <span class="bad">JAMMED</span>` : ""}`}</div>
+      <div class="s dim">${e.kind === "pc" ? famTag(e, s.n) + " · " : ""}${v.missing ? "unknown weapon" : `${v.melee ? "melee" : h(v.type)} · ${fmt(v.ap)} AP · ${v.count > 1 ? `burst ${v.count} · ` : ""}Dam ${fmt(v.base)} Pen ${fmt(v.pen)}${v.ok ? "" : ` · <span class="warn">blank stats</span>`}${s.jammed ? ` · <span class="bad">JAMMED</span>` : ""}`}</div>
       ${loads.length ? `<select style="width:100%" data-c="setLoad" data-id="${e.id}" data-i="${i}" id="l-${e.id}-${i}"><option value="">Choose ammo</option>${options(loads.map((a) => [a.n, `${a.load}: Dam ${a.pellets ? a.dam + "x" + a.pellets : a.dam ?? "?"} Pen ${a.pen ?? 0}`]), s.ammo)}</select>` : ""}</div>
       ${v.usesAmmo ? `<label class="f" style="width:48px">Mag/${v.cap}${bindNum(e.id, `weapons.${i}.mag`, s.mag)}</label>${btn("reloadSlot", `${e.id}|${i}`, "Reload", "", "tiny")}` : ""}${s.jammed ? btn("clearSlot", `${e.id}|${i}`, "Clear", "", "tiny") : ""}<button class="btn tiny" data-a="delWeapon" data-v="${e.id}|${i}" title="Remove">X</button></div>`;
   }).join("") + `<div class="line"><input class="grow" id="addW-${e.id}" list="dl-weapons" placeholder="Add weapon: type, Enter" data-enter="addWeapon" data-id="${e.id}"></div>`;
@@ -914,7 +1026,7 @@ function encounterWin(open) {
   const group = (cls, label, body) => `<div class="egrp ${cls}"><div class="eglabel">${label}</div><div class="egbody">${body}</div></div>`;
   const actions = `<div class="encactions">${btn("setupOpen", "", "Close", "", "", "Hide the map. Enemies you added stay in the list.")}<span class="spacer"></span>${btn("beginC", "1", "Sneak in", "H", "", "Start with a stealth phase")}<button class="btn primary big" data-a="beginC" data-v="">${kbd("B")}Begin combat</button></div>`;
   const scene = group("g-scene", "Scene", `<label class="f loc">Location<select id="mapId" data-c="setMapId">${options(mapOptions(), M.id)}</select></label>${M.id === "custom" ? `<label class="f sz">W (m)${numBox(`id="mapW" data-c="setMapSize" data-k="w"`, M.w)}</label><label class="f sz">H (m)${numBox(`id="mapH" data-c="setMapSize" data-k="h"`, M.h)}</label>` : ""}<label class="f">Time<select data-scene="time" id="scT">${options(SITES("Time/Light"), sc.time)}</select></label><label class="f">Weather<select data-scene="weather" id="scW">${options(SITES("Weather"), sc.weather)}</select></label><label class="f">Terrain<select data-scene="env" id="scE">${options(SITES("Environment"), sc.env)}</select></label>`);
-  const room = group("g-room", "Room", `<label class="f">Style<select id="themeId" data-c="setTheme">${options(Object.entries(S.rules.roomThemes).map(([id, t]) => [id, t.n]), sc.theme)}</select></label><div class="egbtns"><button class="btn primary" data-a="randomRoom" data-v="" title="New furniture for this location and style">Randomize room</button>${btn("clearRoom", "", "Clear room", "", "", "Remove all objects")}</div>`);
+  const room = group("g-room", "Room", `<label class="f">Style<select id="themeId" data-c="setTheme">${options(Object.entries(S.rules.roomThemes).map(([id, t]) => [id, t.n]), sc.theme)}</select></label><div class="egbtns"><button class="btn primary" data-a="randomRoom" data-v="" title="New furniture for this location and style">Randomize room</button><label class="chk s" title="Add a chest of ammo near the party. It opens for whoever is within R1 on their turn."><input type="checkbox" id="roomChest" data-u="roomChest"${ui.roomChest ? " checked" : ""}> Chest</label>${btn("clearRoom", "", "Clear room", "", "", "Remove all objects")}</div>`);
   const place = group("g-place", "Place on map", `<div class="egbtns">${mapTools()}</div><div class="s dim">Pick one, then tap the map.</div>`);
   const foesG = group("g-foes", "Enemy positions", `<div class="egbtns">${btn("scatter", "", "Random spots", "", "", "Random spots for every enemy")}${btn("surround", "", "Surround party", "", "", "Space enemies evenly around the party")}</div>`);
   const mods = fold("encfx", "Scene modifiers", `<div class="row wrap">${fx || `<span class="s dim">None yet. Results of checks before the fight go here.</span>`}</div><div class="fxadd"><input id="fxLabel" autocomplete="off" placeholder="What happened (e.g. Distraction)" data-u="fxLabel" value="${h(ui.fxLabel)}" data-enter="addFx"><select data-u="fxWho" id="fxWho" title="Whose attacks change">${options([["enemies", "Enemy hit"], ["party", "Party hit"], ["all", "Everyone's hit"]], ui.fxWho)}</select><input type="text" inputmode="decimal" id="fxHit" placeholder="+/- %" data-u="fxHit" value="${h(ui.fxHit)}" data-enter="addFx">${btn("addFx", "", "Add", "", "")}${btn("fxDark", "", "Darkness -10", "", "", "Darkness: enemies -10 to hit")}</div>`, { open: false, badge: nFx ? `${nFx} active` : "" });
@@ -923,7 +1035,7 @@ function encounterWin(open) {
 }
 function fightMap() {
   const k = K(); const M = mapOf();
-  const strip = k.phase === "init" || k.phase === "stealth" ? "" : `<div class="strip">${order().filter(alive).map((c) => { const e = ent(c.id); return `<button class="chipb ${c.id === k.turnId ? "on" : ""} ${e.kind === "pc" ? "" : e.ally ? "ally" : "foe"} ${k.acted[c.id] && c.id !== k.turnId ? "done" : ""}" data-a="select" data-v="${c.id}" title="${h(e.name)}: initiative ${fmt(c.init)}">${fmt(c.init)} ${h(tokenLabel(e))}</button>`; }).join("")}</div>`;
+  const strip = "";  // the turn order lives in the turn bar across the top now
   return `<section class="win w-map"><header class="wt"><span>${h(M.n)} <span class="dim">${M.w}x${M.h}m</span></span><span class="spacer"></span>${mapTools()}</header><div class="wb" style="padding:0">${strip}${mapExtras()}${mapSvg()}</div></section>`;
 }
 const mapTools = () => Object.entries(MAP_OBJ).filter(([, x]) => x[1]).map(([id, [n]]) => `<button class="btn tiny ${ui.place === id ? "on" : ""}" data-a="mapPlace" data-v="${id}" title="Then click the map to place ${h(n.toLowerCase())}">+${h(n.split(" ")[0])}</button>`).join("");
@@ -967,7 +1079,7 @@ function tokenLabel(e) {
 }
 // PEOPLE ON THE MAP. Zoomed out they keep a steady size on screen, about 2% of the view, so you can always find them.
 // As you zoom in they stop shrinking at real life size, so up close they look like a person next to a real-size table.
-const TOKEN_VIEW = 0.021, TOKEN_REAL = 0.62;
+const TOKEN_VIEW = 0.05, TOKEN_REAL = 1;
 const tokenScale = (viewW) => Math.max(TOKEN_REAL, viewW * TOKEN_VIEW);
 const ZOOM_MIN_VIEW = 5;  // the closest zoom: 5 meters across
 // What part of the map is on screen. No zoom means the whole map with a small margin.
@@ -986,7 +1098,35 @@ const lobes = (r, n, cx = 0, cy = 0) => { let p = ""; for (let i = 0; i <= n; i+
 const box = (x, y, w, h, c = "") => `<rect x="${x}" y="${y}" width="${w}" height="${h}"${c ? ` class="${c}"` : ""}/>`;
 const dline = (d) => `<path class="d" d="${d}"/>`;
 const CIRC = (r, x = 0, y = 0, c = "") => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r}"${c ? ` class="${c}"` : ""}/>`;
+// TOKEN ICONS: how a character shows on the map. Same box as the default person: head at the top, shoulders at the bottom.
+// "b" parts take the side's color, "cut" parts are dark details. Pick one by clicking the icon on the top left of a player card.
+const HEAD = `<circle class="b" cy="-.42" r=".27"/>`, BODY = `<path class="b" d="M-.46 .4 A.46 .62 0 0 1 .46 .4 Z"/>`;
+const TOKEN_ICONS = {
+  person: ["Person", HEAD + BODY],
+  armored: ["Armored", `${HEAD}<path class="b" d="M-.5 .4 V.02 Q-.5 -.12 -.3 -.12 H.3 Q.5 -.12 .5 .02 V.4 Z"/><path class="cut" d="M-.5 -.02 H-.24 V.08 H-.5Z M.24 -.02 H.5 V.08 H.24Z M-.1 .02 H.1 V.36 H-.1Z"/>`],
+  power: ["Power armor", `<path class="b" d="M-.3 -.72 H.3 Q.36 -.72 .36 -.62 V-.2 H-.36 V-.62 Q-.36 -.72 -.3 -.72Z"/><path class="cut" d="M-.26 -.5 H.26 V-.4 H-.26Z"/><path class="b" d="M-.56 .4 V-.04 Q-.56 -.16 -.42 -.16 H.42 Q.56 -.16 .56 -.04 V.4 Z"/><path class="cut" d="M-.18 -.06 H.18 V.18 H-.18Z"/>`],
+  raider: ["Raider", `${HEAD}<path class="b" d="M-.06 -.68 L0 -.86 L.06 -.68Z M-.16 -.64 L-.12 -.8 L-.04 -.66Z M.16 -.64 L.12 -.8 L.04 -.66Z"/>${BODY}<path class="b" d="M-.52 .06 L-.66 -.06 L-.44 -.02Z M.52 .06 L.66 -.06 L.44 -.02Z"/><path class="cut" d="M-.16 -.44 H.16 V-.38 H-.16Z"/>`],
+  cowboy: ["Cowboy", `${HEAD}<path class="b" d="M-.48 -.56 Q0 -.48 .48 -.56 Q.34 -.62 .2 -.62 Q.2 -.86 0 -.86 Q-.2 -.86 -.2 -.62 Q-.34 -.62 -.48 -.56Z"/>${BODY}<path class="cut" d="M-.08 -.12 L0 .02 L.08 -.12Z"/>`],
+  soldier: ["Soldier", `${HEAD}<path class="b" d="M-.34 -.46 Q-.34 -.82 0 -.82 Q.34 -.82 .34 -.46 H.4 V-.42 H-.4 V-.46Z"/>${BODY}<path class="cut" d="M-.38 .02 L.28 .36 L.32 .3 L-.34 -.04Z"/>`],
+  king: ["King", `${HEAD}<path class="b" d="M-.26 -.6 L-.3 -.86 L-.14 -.72 L0 -.9 L.14 -.72 L.3 -.86 L.26 -.6Z"/>${BODY}<path class="cut" d="M-.06 -.08 H.06 V.3 H-.06Z"/>`],
+  ninja: ["Ninja", `${HEAD}<path class="cut" d="M-.25 -.48 H.25 V-.38 H-.25Z"/><path class="b" d="M.22 -.56 L.46 -.66 L.44 -.6 L.24 -.52Z"/>${BODY}<path class="b" d="M-.5 -.4 L.44 .3 L.4 .34 L-.54 -.36Z"/>`],
+  muscle: ["Muscle", `<circle class="b" cy="-.48" r=".22"/><path class="b" d="M-.62 .4 Q-.66 -.06 -.42 -.2 Q-.2 -.26 0 -.18 Q.2 -.26 .42 -.2 Q.66 -.06 .62 .4 Z"/><path class="cut" d="M-.02 -.14 V.16 M-.3 -.04 Q-.16 .04 -.04 -.02 M.3 -.04 Q.16 .04 .04 -.02" style="fill:none;stroke:#000;stroke-width:.05"/>`],
+  sniper: ["Sniper", `${HEAD}${BODY}<path class="b" d="M-.6 -.1 L.66 -.34 L.68 -.28 L-.58 -.04Z"/><path class="b" d="M.0 -.28 H.22 V-.2 H0Z"/>`],
+  medic: ["Medic", `${HEAD}${BODY}<path class="cut" d="M-.05 -.02 H.05 V.08 H.15 V.18 H.05 V.28 H-.05 V.18 H-.15 V.08 H-.05Z"/>`],
+  scientist: ["Scientist", `${HEAD}<path class="cut" d="M-.22 -.47 a.08 .08 0 1 0 .16 0 a.08 .08 0 1 0 -.16 0 M.06 -.47 a.08 .08 0 1 0 .16 0 a.08 .08 0 1 0 -.16 0"/>${BODY}<path class="cut" d="M-.04 -.12 L-.16 .4 H-.08 L0 0 L.08 .4 H.16 L.04 -.12Z"/>`],
+  hood: ["Hooded", `<path class="b" d="M-.32 -.3 Q-.34 -.78 0 -.8 Q.34 -.78 .32 -.3 Q0 -.2 -.32 -.3Z"/><path class="cut" d="M-.18 -.34 Q-.18 -.58 0 -.6 Q.18 -.58 .18 -.34 Q0 -.28 -.18 -.34Z"/>${BODY}`],
+  tribal: ["Tribal", `${HEAD}<path class="b" d="M.16 -.62 Q.36 -.9 .3 -1 Q.18 -.86 .1 -.66Z"/>${BODY}<path class="cut" d="M-.3 .04 L.3 .04 M-.3 .14 L.3 .14" style="fill:none;stroke:#000;stroke-width:.04"/>`],
+  mutant: ["Mutant", `<circle class="b" cy="-.5" r=".2"/><path class="b" d="M-.66 .4 Q-.7 -.24 -.24 -.3 H.24 Q.7 -.24 .66 .4Z"/>`],
+  ghoul: ["Ghoul", `${HEAD}<path class="cut" d="M-.14 -.5 h.08 v.08 h-.08Z M.06 -.5 h.08 v.08 h-.08Z M-.1 -.32 h.2 v.04 h-.2Z"/>${BODY}<path class="cut" d="M-.3 .1 l.08 .1 l.06 -.08 M.12 .2 l.1 -.06 l.06 .1" style="fill:none;stroke:#000;stroke-width:.04"/>`],
+  robot: ["Robot", `<path class="b" d="M-.24 -.68 H.24 V-.22 H-.24Z"/><path class="b" d="M-.02 -.86 H.02 V-.68 H-.02Z"/><path class="cut" d="M-.16 -.52 h.1 v.08 h-.1Z M.06 -.52 h.1 v.08 h-.1Z"/><path class="b" d="M-.42 .4 V-.14 H.42 V.4Z"/><path class="cut" d="M-.16 -.02 h.32 v.16 h-.32Z"/>`],
+  gunslinger: ["Gunslinger", `${HEAD}${BODY}<path class="b" d="M.3 .02 H.66 V.1 H.42 L.36 .26 H.28Z M-.3 .02 H-.66 V.1 H-.42 L-.36 .26 H-.28Z"/>`],
+  heavy: ["Heavy gunner", `${HEAD}${BODY}<path class="b" d="M-.2 -.02 H.7 V.16 H-.2Z"/><path class="cut" d="M.4 .02 H.68 V.06 H.4Z M.4 .1 H.68 V.14 H.4Z"/>`],
+  dog: ["Dog", `<path class="b" d="M-.5 .1 Q-.5 -.12 -.2 -.12 H.22 L.3 -.34 L.52 -.36 L.58 -.22 L.42 -.1 V.1 L.36 .38 H.28 L.26 .14 H-.3 L-.32 .38 H-.4Z"/><path class="b" d="M.36 -.36 L.4 -.5 L.46 -.36Z"/>`],
+  skull: ["Skull", `<path class="b" d="M-.34 -.36 Q-.34 -.78 0 -.78 Q.34 -.78 .34 -.36 Q.34 -.2 .2 -.16 V-.04 H-.2 V-.16 Q-.34 -.2 -.34 -.36Z"/><path class="cut" d="M-.2 -.46 h.14 v.12 h-.14Z M.06 -.46 h.14 v.12 h-.14Z"/>${BODY}`],
+};
+const iconSvg = (id, cls = "") => `<svg class="ticon ${cls}" viewBox="-.75 -1.05 1.5 1.5" aria-hidden="true">${(TOKEN_ICONS[id] || TOKEN_ICONS.person)[1]}</svg>`;
 const GLYPH = {
+  chest: `${box(-0.5, -0.5, 1, 1, "")}${dline("M-.5 -.12H.5M-.08 -.12V.12H.08V-.12")}`,
   tree: `<path d="${lobes(0.4, 9)}"/>${dline(lobes(0.22, 7))}`,
   bush: `<path d="${lobes(0.3, 6, -0.12, -0.08)}"/><path d="${lobes(0.26, 6, 0.16, 0.12)}"/>`,
   rock: `<path d="M-.46 -.1L-.2 -.46L.26 -.42L.48 -.04L.3 .42L-.24 .46Z"/>${dline("M-.2 -.2L.05 .05L.28 -.1M.05 .05L-.05 .3")}`,
@@ -1027,7 +1167,7 @@ const GLYPH = {
   sheet: `${box(-0.5, -0.5, 1, 1)}${dline("M-.5 0H.5")}`,
   forklift: `${box(-0.2, -0.5, 0.7, 1)}${box(-0.5, -0.36, 0.3, 0.14)}${box(-0.5, 0.22, 0.3, 0.14)}${box(0, -0.3, 0.26, 0.6, "pale")}`,
 };
-const ITEM_GLYPH = { desk: "desk", officeChair: "chair", cabinet: "crate", bookshelf: "shelves", copier: "machine", cooler: "barrel", pottedPlant: "bush", partition: "plainWall", couch: "couch", officeSafe: "machine", conveyor: "conveyor", pressMachine: "machine", boiler: "barrel", workbench: "table", oilDrum: "barrel", pipeRack: "bars", generator: "machine", toolCart: "table", shelves: "shelves", crate: "crate", crateStack: "crate", pallet: "pallet", forklift: "forklift", barrels: "barrels", cellBars: "bars", lockers: "shelves", sandbags: "sandbags", bench: "table", frontCounter: "table", armoryCage: "bars", bedroll: "bedroll", cot: "bed", footlocker: "crate", campfire: "fire", tarpWall: "sheet", tentPole: "dot", smallRock: "rock", rock: "rock", boulder: "rock", dune: "dune", cactus: "cactus", deadTree: "tree", wreck: "car", ruinWall: "stoneWall", bush: "bush", tree: "tree", bigTree: "tree", log: "log", thicket: "bush", stump: "stump", car: "car", bus: "bus", dumpster: "crate", mailbox: "plainWall", hydrant: "dot", lamppost: "dot", barricade: "plainWall", rubble: "rubble", building: "building", concreteWall: "plainWall", lDesk: "lDesk", kitchenTable: "kitchenTable", bed: "bed", toilet: "toilet", bathtub: "bathtub", sink: "sink", stove: "stove", fridge: "fridge", dresser: "shelves", stoneWall: "stoneWall", pillar: "plainWall" };
+const ITEM_GLYPH = { chest: "chest", desk: "desk", officeChair: "chair", cabinet: "crate", bookshelf: "shelves", copier: "machine", cooler: "barrel", pottedPlant: "bush", partition: "plainWall", couch: "couch", officeSafe: "machine", conveyor: "conveyor", pressMachine: "machine", boiler: "barrel", workbench: "table", oilDrum: "barrel", pipeRack: "bars", generator: "machine", toolCart: "table", shelves: "shelves", crate: "crate", crateStack: "crate", pallet: "pallet", forklift: "forklift", barrels: "barrels", cellBars: "bars", lockers: "shelves", sandbags: "sandbags", bench: "table", frontCounter: "table", armoryCage: "bars", bedroll: "bedroll", cot: "bed", footlocker: "crate", campfire: "fire", tarpWall: "sheet", tentPole: "dot", smallRock: "rock", rock: "rock", boulder: "rock", dune: "dune", cactus: "cactus", deadTree: "tree", wreck: "car", ruinWall: "stoneWall", bush: "bush", tree: "tree", bigTree: "tree", log: "log", thicket: "bush", stump: "stump", car: "car", bus: "bus", dumpster: "crate", mailbox: "plainWall", hydrant: "dot", lamppost: "dot", barricade: "plainWall", rubble: "rubble", building: "building", concreteWall: "plainWall", lDesk: "lDesk", kitchenTable: "kitchenTable", bed: "bed", toilet: "toilet", bathtub: "bathtub", sink: "sink", stove: "stove", fridge: "fridge", dresser: "shelves", stoneWall: "stoneWall", pillar: "plainWall" };
 const KIND_GLYPH = { cover: "crate", hard: "plainWall", wall: "plainWall", tree: "tree", hazard: null, note: "dot" };
 const MAP_OBJ = { cover: ["Cover", 1], hard: ["Hard cover", 1], hazard: ["Hazard", 1], note: ["Marker", 1], wall: ["Wall", 0], tree: ["Tree", 0] };
 // The aiming line is colored by the selected weapon's accuracy at each range band. Red is its worst band, green its best.
@@ -1043,14 +1183,48 @@ function aimLine(a, b) {
   stops += `<stop offset="1" stop-color="${color(hits[bandFor(d) - 1])}"/>`;
   return `<defs><linearGradient id="aimg" gradientUnits="userSpaceOnUse" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}">${stops}</linearGradient></defs><line class="aimbg" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/><line class="aim" style="stroke:url(#aimg)" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
 }
+// THE ACCURACY RING. On someone's turn, a halo around them shows their real hit chance with the weapon in hand at every range band:
+// clear where they can't hit, light red at low odds through yellow, green only above 65%, brighter as it climbs.
+const ringColor = (x) => (x < 0.65 ? `hsl(${Math.round((55 * x) / 0.65)},100%,${Math.round(72 - (14 * x) / 0.65)}%)` : `hsl(${Math.round(85 + (50 * (x - 0.65)) / 0.35)},100%,${Math.round(42 + (28 * (x - 0.65)) / 0.35)}%)`);
+function ringHits(id) {
+  const A = ent(id); const c = ctx(); const wi = ui.atk && ui.atk.att === id ? ui.atk.w : A.activeW || 0; const slot = (A.weapons || [])[wi]; if (!slot) return null;
+  const o = (E.get(c, slot.n) || { o: {} }).o; const d0 = der(A); const open = { tier: "open", n: "Open", hit: 0, dam: 0 };
+  // shortcut: odds are against a target with no modifiers of its own (the shooter's own stats stand in), so dodge perks and cover aren't in the ring.
+  return S.rules.bandMeters.map((_, i) => { try { const r = i + 1; const dA = E.forShot(d0, A, { o, range: r, round: K() ? K().round : 1 }, c); const v = E.weaponView(slot, A, dA, c, ui.atk && ui.atk.att === id ? ui.atk.mode : "pr"); if (v.melee && r > 1 && !dA.m.lunge) return 0; const hc = E.hitChance(A, dA, A, d0, v, r, c, open); return hc.noData ? 0 : Math.max(0, hc.hit); } catch (e) { return 0; } });
+}
+function accRing(id) {
+  const hits = ringHits(id); if (!hits || !hits.some((x) => x > 0)) return "";
+  const m = S.rules.bandMeters; const R = m[m.length - 1]; const a = posOf(id); let stops = "";
+  hits.forEach((x, i) => {
+    const lo = (i ? m[i - 1] : 0) / R, hi = m[i] / R;
+    if (x <= 0) stops += `<stop offset="${lo.toFixed(4)}" stop-color="#000" stop-opacity="0"/><stop offset="${hi.toFixed(4)}" stop-color="#000" stop-opacity="0"/>`;
+    else stops += `<stop offset="${((lo + hi) / 2).toFixed(4)}" stop-color="${ringColor(x)}" stop-opacity="${(0.16 + 0.3 * x).toFixed(2)}"/>`;
+  });
+  return `<defs><radialGradient id="accg" gradientUnits="userSpaceOnUse" cx="${a.x}" cy="${a.y}" r="${R}">${stops}</radialGradient></defs><circle class="accring" cx="${a.x}" cy="${a.y}" r="${R}" fill="url(#accg)"><title>Hit chance by range: ${hits.map((x, i) => `R${i + 1} ${Math.round(x * 100)}%`).join(", ")}</title></circle>`;
+}
+// Ctrl while dragging on a turn: the token snaps to the middle of the range band it's in, measured from the target (or the nearest foe).
+function snapRange(id, p) {
+  const tid = ui.atk && ui.atk.att === id && ui.atk.tgt ? ui.atk.tgt : (K() ? K().cbs : []).filter((c) => c.id !== id && alive(c) && sideOf(c.id) !== sideOf(id)).map((c) => c.id).sort((x, y) => dist(posOf(x), posOf(id)) - dist(posOf(y), posOf(id)))[0];
+  if (!tid) return { p, band: null };
+  const t = posOf(tid); const d = dist(t, p) || 0.01; const m = S.rules.bandMeters; const b = bandFor(d); const r = ((b > 1 ? m[b - 2] : 0) + m[b - 1]) / 2;
+  return { p: inMap({ x: E.fix(t.x + ((p.x - t.x) / d) * r), y: E.fix(t.y + ((p.y - t.y) / d) * r) }), band: b, tgt: tid };
+}
 function mapSvg() {
   const k = K(); const M = mapOf(); const v = mapView(); ui.viewW = v.w;
   const label = v.w * 0.0125;  // text stays the same size on screen at any zoom
   const step = S.rules.gridM || 2;
   // The grid counts out from the top-left corner, so every square is the same size and the map ends on a whole square.
-  let grid = "";
-  for (let x = -M.w / 2 + step; x < M.w / 2 - 0.01; x += step) grid += `M${x} ${-M.h / 2}V${M.h / 2}`;
-  for (let y = -M.h / 2 + step; y < M.h / 2 - 0.01; y += step) grid += `M${-M.w / 2} ${y}H${M.w / 2}`;
+  let grid = ""; const hex = S.rules.gridMode === "hex";
+  if (hex) {
+    // Flat-topped hexes, hexM meters across the corners, laid from the top-left corner and cut off at the map's edge.
+    const R = (S.rules.hexM || 12.5) / 2, H = Math.sqrt(3) * R;
+    for (let c = 0, x = -M.w / 2; x - R < M.w / 2; c++, x += 1.5 * R) for (let y = -M.h / 2 + (c % 2 ? H / 2 : 0); y - H / 2 < M.h / 2; y += H) {
+      grid += `M${E.fix(x + R)} ${E.fix(y)}`; for (let i = 1; i <= 6; i++) { const a = (Math.PI / 3) * i; grid += `L${E.fix(x + R * Math.cos(a))} ${E.fix(y + R * Math.sin(a))}`; }
+    }
+  } else if (S.rules.gridMode !== "none") {
+    for (let x = -M.w / 2 + step; x < M.w / 2 - 0.01; x += step) grid += `M${x} ${-M.h / 2}V${M.h / 2}`;
+    for (let y = -M.h / 2 + step; y < M.h / 2 - 0.01; y += step) grid += `M${-M.w / 2} ${y}H${M.w / 2}`;
+  }
   const objs = S.scene.objects.map((o) => {
     const w = o.w || 1, ht = o.h || 1; const tier = E.coverTier(o, S.rules); const cv = S.rules.cover[tier] || {};
     const name = o.label || (S.rules.mapItems[o.item] || {}).n || MAP_OBJ[o.kind][0];
@@ -1062,16 +1236,18 @@ function mapSvg() {
     // Trees: a faint circle for the trunk, which is what stops shots, under a fainter picture of the leaves.
     const trunk = E.trunkOf(o, S.rules);
     const art = trunk ? `<g class="gly trunk" style="opacity:${S.rules.trunkOpacity}" transform="scale(${w * trunk} ${ht * trunk})"><ellipse rx=".5" ry=".5"/></g><g class="gly canopy" style="opacity:${S.rules.canopyOpacity}" transform="${draw}">${gl}</g>` : `<g class="gly" style="opacity:${cv.opacity != null ? cv.opacity : 1}" transform="${draw}">${gl}</g>`;
-    return `<g class="obj ${o.kind} tier-${tier} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${trunk ? ", only the trunk stops shots" : ""}${o.block ? ", blocks movement" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle></g>` : ""}${showName ? `<text style="font-size:${label}px" y="${ht / 2 + label}">${h(name)}</text>` : ""}</g>`;
+    const hpMax = objHp(o); const hpBar_ = hpMax && o.dmg ? `<g class="ohp"><rect class="ohpbg" x="${-w / 2}" y="${-ht / 2 - label * 0.7}" width="${w}" height="${label * 0.4}"/><rect class="ohpf" x="${-w / 2}" y="${-ht / 2 - label * 0.7}" width="${E.fix(w * clamp(1 - o.dmg / hpMax, 0, 1))}" height="${label * 0.4}"/></g>` : "";
+    return `<g class="obj ${o.kind} tier-${tier} ${o.loot ? (o.opened ? "opened" : "lootable") : ""} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${hpMax ? `, ${fmt(hpMax - (o.dmg || 0))}/${hpMax} HP` : ""}${o.loot ? (o.opened ? ", opened" : ", opens for whoever is within R1 on their turn") : ""}${trunk ? ", only the trunk stops shots" : ""}${o.block ? ", blocks movement" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle></g>` : ""}${hpBar_}${showName || o.loot ? `<text style="font-size:${label}px" y="${ht / 2 + label}">${h(name)}${o.loot && o.opened ? " (open)" : ""}</text>` : ""}</g>`;
   }).join("");
   const me = k ? (fightPhase() ? actorId() : null) : ui.sel;
+  const ring = k && fightPhase() && actorId() ? accRing(actorId()) : "";
   const k2 = tokenScale(v.w); ui.tokK = k2; const labU = label / k2;
   const people = [...S.chars, ...foes()].map((e) => {
     const c = cbOf(e.id); const p = posOf(e.id); const d = der(e); const pct = d.hp > 0 ? clamp(e.hp / d.hp, 0, 1) : 0;
     const gone = c && (c.dead || c.fled);
     const cls = [e.kind === "pc" ? "pc" : e.ally ? "ally" : "npc", k && k.turnId === e.id ? "cur" : "", ui.rowSel === e.id || (!k && ui.sel === e.id) ? "sel" : "", ui.atk && ui.atk.tgt === e.id ? "tgt" : "", gone ? "gone" : "", e.dbno ? "dbno" : ""].join(" ");
     const showR = me && me !== e.id && !gone && (k ? true : e.kind === "npc");
-    return `<g class="tok ${cls}" data-tok="${e.id}" transform="translate(${p.x} ${p.y}) scale(${k2})"><title>${h(e.name)}: ${fmt(e.hp)}/${d.hp} HP</title><circle class="hit" r="${Math.max(1.3, (v.w * 0.02) / k2)}"/><circle class="b" cy="-.42" r=".27"/><path class="b" d="M-.46 .4 A.46 .62 0 0 1 .46 .4 Z"/>${gone ? `<path class="x" d="M-.4 -.4 L.4 .4 M.4 -.4 L-.4 .4"/>` : `<rect class="hpb" x="-.46" y=".46" width="${(0.92 * pct).toFixed(2)}" height=".14"/>`}<text class="lab" style="font-size:${labU}px" y="${0.65 + labU}">${h(tokenLabel(e))}${showR ? ` R${rangeOf(me, e.id)}` : ""}</text><text class="drg" style="font-size:${labU * 1.2}px" y="-.85"></text></g>`;
+    return `<g class="tok ${cls}" data-tok="${e.id}" transform="translate(${p.x} ${p.y}) scale(${k2})"><title>${h(e.name)}: ${fmt(e.hp)}/${d.hp} HP</title><circle class="hit" r="${Math.max(0.75, (v.w * 0.014) / k2)}"/>${(TOKEN_ICONS[e.icon] || TOKEN_ICONS.person)[1]}${gone ? `<path class="x" d="M-.4 -.4 L.4 .4 M.4 -.4 L-.4 .4"/>` : `<rect class="hpbg" x="-.55" y=".48" width="1.1" height=".24"/><rect class="hpb" x="-.55" y=".48" width="${(1.1 * pct).toFixed(2)}" height=".24"/>`}<text class="lab" style="font-size:${labU * 2.2}px" y="${0.8 + labU * 2.2}">${h(tokenLabel(e))}${showR ? ` R${rangeOf(me, e.id)}` : ""}</text><text class="drg" style="font-size:${labU * 1.2}px" y="-.85"></text></g>`;
   }).join("");
   let extra = "";
   // The move you're previewing: a dashed path and a ghost at the far end, with the price on it.
@@ -1079,7 +1255,7 @@ function mapSvg() {
   if (k && fightPhase() && actorId()) { const a = posOf(actorId()); const r = reachOf(ent(actorId())); if (r) extra += `<circle class="reach" cx="${a.x}" cy="${a.y}" r="${r}"/>`; }
   if (ui.atk && ui.atk.tgt && ent(ui.atk.tgt)) { const a = posOf(ui.atk.att), b = posOf(ui.atk.tgt); extra += aimLine(a, b); }
   const zoomed = ui.zoom ? ui.zoom.k : 1;
-  return `<div class="mapwrap"><svg id="map" class="${ui.place ? "placing" : ""}" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of ${h(M.n)}, ${M.w} by ${M.h} meters"><rect class="floor" x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/><path class="grid" d="${grid}" style="stroke-opacity:${v.w > 120 ? 0.35 : v.w > 60 ? 0.6 : 1}"/>${objs}${extra}${throwOverlay()}${people}</svg><div class="zoombar"><span class="scale s">${step}m grid · ${Math.round(v.w)}m across</span><button class="btn tiny" data-a="mapZoom" data-v="1.5" title="Zoom in (or scroll)">+</button><button class="btn tiny" data-a="mapZoom" data-v="0.667" title="Zoom out (or scroll)">-</button><button class="btn tiny ${zoomed > 1 ? "on" : ""}" data-a="mapZoom" data-v="0" title="Show the whole map">Fit</button></div></div>`;
+  return `<div class="mapwrap"><svg id="map" class="${ui.place ? "placing" : ""}" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of ${h(M.n)}, ${M.w} by ${M.h} meters"><rect class="floor" x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/><defs><clipPath id="floorclip"><rect x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/></clipPath></defs><path class="grid" clip-path="url(#floorclip)" d="${grid}" style="stroke-opacity:${hex ? 0.8 : v.w > 120 ? 0.35 : v.w > 60 ? 0.6 : 1}"/>${ring}${objs}${extra}${throwOverlay()}${people}</svg><div class="zoombar"><span class="scale s">${hex ? `${S.rules.hexM}m hexes` : S.rules.gridMode === "none" ? "No grid" : `${step}m grid`} · ${Math.round(v.w)}m across</span><button class="btn tiny ${!hex && S.rules.gridMode !== "none" ? "on" : ""}" data-a="setGrid" data-v="square" title="${step}m squares">&#9633;</button><button class="btn tiny ${hex ? "on" : ""}" data-a="setGrid" data-v="hex" title="Hexes ${S.rules.hexM}m across">Hex</button><button class="btn tiny ${S.rules.gridMode === "none" ? "on" : ""}" data-a="setGrid" data-v="none" title="No grid">Off</button><button class="btn tiny" data-a="mapZoom" data-v="1.5" title="Zoom in (or scroll)">+</button><button class="btn tiny" data-a="mapZoom" data-v="0.667" title="Zoom out (or scroll)">-</button><button class="btn tiny ${zoomed > 1 ? "on" : ""}" data-a="mapZoom" data-v="0" title="Show the whole map">Fit</button></div></div>`;
 }
 function checkValue(e, use) { const d = der(e); return E.SPECIAL.includes(use) ? { v: (d.sp[use] || 0) * S.rules.specialAsSkill, label: `${SP_LABEL[use]} ${d.sp[use]} x ${S.rules.specialAsSkill}` } : { v: d.skills[use] || 0, label: `${SKILL_NAME[use]} ${d.skills[use] || 0}` }; }
 function checkBody() {
@@ -1090,7 +1266,7 @@ function checkBody() {
   const rows = who.map((e) => {
     const { v } = checkValue(e, m.use); const need = E.checkNeeded(v, num(m.target, 0), S.rules); const r = m.res[e.id];
     const used = S.scene.checks[e.id] || 0;
-    return `<tr class="${e.dbno ? "faint" : ""}"><td class="${r ? "" : "bright"}">${h(e.name)}${!k && used >= S.rules.checksPerPlayer ? ` <span class="tag warn" title="Pre-combat checks used">${used}/${S.rules.checksPerPlayer}</span>` : ""}</td><td>${fmt(v)}</td><td class="bright nowrap">${checkRange(need)}</td><td class="faint">${E.checkOdds(need)}%</td><td style="width:74px" class="nowrap">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.roll}</span>` : numBox(`id="chk-${e.id}" maxlength="2" data-enter="chkRoll" data-id="${e.id}" placeholder="d20" aria-label="d20 for ${h(e.name)}"`, "", "cell")}${diceBtn(`chk-${e.id}`, "d20")}</td><td style="width:48px">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.pass ? "PASS" : "FAIL"}</span>` : ""}</td></tr>`;
+    return `<tr class="${e.dbno ? "faint" : ""}"><td class="${r ? "" : "bright"}">${h(e.name)}${!k && used >= S.rules.checksPerPlayer ? ` <span class="tag warn" title="Pre-combat checks used">${used}/${S.rules.checksPerPlayer}</span>` : ""}</td><td>${fmt(v)}</td><td class="bright nowrap">${checkRange(need)}</td><td class="faint">${E.checkOdds(need)}%</td><td style="width:74px" class="nowrap">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.roll}</span>` : numBox(`id="chk-${e.id}" maxlength="2" data-enter="chkRoll" data-id="${e.id}" placeholder="d20" aria-label="d20 for ${h(e.name)}"`, "", "cell")}${diceBtn(`chk-${e.id}`, "d20")}</td><td style="width:48px">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.pass ? "PASS" : "FAIL"}</span>${r.xp ? ` <span class="s dim" title="XP for passing">+${r.xp}</span>` : ""}` : ""}</td></tr>`;
   }).join("");
   const any = Object.keys(m.res).length;
   return `${m.revive && ent(m.revive) ? `<div class="banner s">Reviving ${h(ent(m.revive).name)}: type the medic's roll</div>` : ""}<div class="row wrap" style="margin-bottom:2px"><select id="chkUse" data-u="chk.use" title="Skill or SPECIAL">${options(uses, m.use)}</select><span class="s dim">VS</span><span style="width:34px">${numBox(`id="chkTarget" data-u="chk.target" title="NPC skill or difficulty"`, m.target, "cell")}</span>${Object.entries(S.rules.difficulty).map(([n, x]) => `<button class="opt ${num(m.target) === x ? "on" : ""}" data-a="chkPreset" data-v="${x}" title="${h(n)}">${h(n[0] === "V" ? "VH" : n[0] === "E" && n[1] === "x" ? "X" : n[0])}${x}</button>`).join("")}</div>
@@ -1182,14 +1358,41 @@ function xpFor(pc) {
   const base = S.rules.xpAward === "each" ? total : S.rules.xpAward === "split" ? total / Math.max(1, S.chars.length) : dead.filter((x) => x.c.killer === pc.id).reduce((t, x) => t + (x.e.xp || 0), 0);
   return E.fix(E.xpGain(base, der(pc).sp.I, S.rules) * (1 + (der(pc).m.xpMul || 0)));
 }
+// Looting skill: Survival + lootLuck x Luck, from the best looter still standing. 100 Survival and 1 Luck equals 10 and 10.
+function lootScore() {
+  let best = { score: 0, who: null };
+  for (const c of S.chars.filter((x) => !x.dbno)) { const d = der(c); const sc = (d.skills.SUR || 0) + (S.rules.lootLuck || 0) * (d.sp.L || 0); if (sc > best.score) best = { score: sc, who: c }; }
+  return best;
+}
+// Same body, same numbers every time the screen redraws.
+const seeded = (str) => { let x = 2166136261; for (const ch of String(str)) x = Math.imul(x ^ ch.charCodeAt(0), 16777619); return () => { x = Math.imul(x ^ (x >>> 15), 2246822507); x = Math.imul(x ^ (x >>> 13), 3266489909); return ((x ^= x >>> 16) >>> 0) / 4294967296; }; };
 function lootRows() {
-  const rows = [];
+  const rows = []; const score = lootScore().score; const share = clamp(score / (S.rules.lootFull || 1), 0, 1);
+  const partyAmmo = [...new Set(S.chars.flatMap((c) => (c.weapons || []).map((sl) => sl.ammo || ((E.get(ctx(), sl.n) || { o: {} }).o.ammo)).filter((n) => n && n !== "N/A" && E.get(ctx(), n))))];
   for (const c of K().cbs.filter((x) => x.dead)) {
     const e = ent(c.id); if (!e || e.kind !== "npc" || e.mob || e.ally) continue;
-    (e.weapons || []).forEach((s, i) => rows.push({ key: `${e.id}:w${i}`, n: s.n, q: 1, from: e.name }));
+    const rng = seeded(e.id);
+    // Weapons, the ammo they load and worn armor always come off the body.
+    (e.weapons || []).forEach((s, i) => (E.get(ctx(), s.n) || { o: {} }).o.tier && rows.push({ key: `${e.id}:w${i}`, n: s.n, q: 1, from: e.name }));
     for (const g of ["head", "armor", "vanity"]) if (e.gear && e.gear[g]) rows.push({ key: `${e.id}:${g}`, n: e.gear[g], q: 1, from: e.name });
-    (e.inv || []).forEach((l, i) => rows.push({ key: `${e.id}:i${i}`, n: l.n, q: l.q, from: e.name }));
-    if (e.caps) rows.push({ key: `${e.id}:caps`, n: "Caps", q: Math.round(e.caps * (1 + Math.max(0, ...S.chars.map((c) => der(c).m.capsMul || 0)))), from: e.name, caps: true });
+    const loaded = new Set((e.weapons || []).map((s) => E.low(s.ammo || ((E.get(ctx(), s.n) || { o: {} }).o.ammo))));
+    // Everything else depends on how well the party searches.
+    (e.inv || []).forEach((l, i) => { const q = loaded.has(E.low(l.n)) ? l.q : Math.floor(l.q * share + rng()); if (q > 0) rows.push({ key: `${e.id}:i${i}`, n: l.n, q, from: e.name }); });
+    const caps = Math.round((e.caps || 0) * share * (1 + Math.max(0, ...S.chars.map((x) => der(x).m.capsMul || 0))));
+    if (caps) rows.push({ key: `${e.id}:caps`, n: "Caps", q: caps, from: e.name, caps: true });
+    // Extra finds: mostly consumables and ammo, some junk. A higher score finds more, and better things.
+    const n = Math.min(S.rules.lootFindMax || 0, Math.floor(score * (S.rules.lootFind || 0) * (0.5 + rng() * 0.5)));
+    const cap = (e.tier || 1) + Math.floor(score / 100); const tries = 1 + Math.floor(score / 80);
+    const best = (pool) => { let pick = null; for (let t = 0; t < tries && pool.length; t++) { const o = pool[Math.floor(rng() * pool.length)]; if (!pick || E.valueOf(ctx(), o.n).val > E.valueOf(ctx(), pick.n).val) pick = o; } return pick; };
+    const cons = DATA.items.filter((i) => i.effect && Number(i.tier) && Number(i.tier) <= cap && ["Healing", "Chem/Drug", "Drink", "Food", "Alcohol"].includes(i.cat));
+    const junk = DATA.materials.filter((m) => !m.tier || Number(m.tier) <= cap);
+    for (let i = 0; i < n; i++) {
+      const r = rng(); let it = null, q = 1;
+      if (r < 0.45) it = best(cons);
+      else if (r < 0.8 && partyAmmo.length) { it = { n: partyAmmo[Math.floor(rng() * partyAmmo.length)] }; q = 3 + Math.floor(rng() * (score / 10)); }
+      else it = best(junk);
+      if (it) rows.push({ key: `${e.id}:f${i}`, n: it.n, q, from: `${e.name}, found` });
+    }
   }
   return rows;
 }
@@ -1201,7 +1404,8 @@ function endStage() {
   const who = S.chars.map((c) => [c.id, c.name]);
   const extras = u.extra.map((l, i) => `<tr><td class="bright">${pix(itemKind(l.n)[1])} ${h(l.n)}</td><td>${fmt(l.q)}</td><td class="dim">Added by DM</td><td><select id="exTo-${i}" data-u="end.extra.${i}.to">${options([["", "Leave"], ...who], l.to || "")}</select> <button class="btn tiny" data-a="endExDel" data-v="${i}" title="Remove">X</button></td></tr>`).join("");
   const dropRows = loot.map((l) => `<tr><td class="bright">${pix(l.caps ? "dot" : itemKind(l.n)[1])} ${h(l.n)}</td><td>${l.q}</td><td class="dim">${h(l.from)}</td><td><select id="loot-${h(l.key.replace(":", "-"))}" data-u="end.loot.${h(l.key)}">${options([["", "Leave"], ...who], u.loot[l.key] || "")}</select></td></tr>`).join("");
-  const lootBody = `<div class="row wrap" style="margin-bottom:3px"><label class="chk s">Give all to <select data-c="lootAll" id="lootAll" style="margin-left:4px"><option value="">Choose</option>${options(who, "")}</select></label><span class="spacer"></span><span class="s dim">Loot roll d20</span><span style="width:40px">${numBox(`id="lootRoll" data-u="end.lootRoll"`, u.lootRoll, "cell")}${diceBtn("lootRoll", "d20")}${""}</span>${shift != null ? `<span class="bright s">average tier ${shift >= 0 ? "+" : ""}${shift}</span>` : ""}</div>${dropRows || extras ? `<table class="t"><tr><th>Item</th><th>Qty</th><th>From</th><th>Goes to</th></tr>${dropRows}${extras}</table>` : `<div class="s dim">Nothing dropped.</div>`}
+  const ls = lootScore(); const lootNote = `<div class="s dim" style="margin-bottom:3px" title="Survival + ${S.rules.lootLuck} x Luck. Weapons, their ammo and armor always drop; the rest and extra finds depend on this.">Looting: ${ls.who ? h(ls.who.name) : "nobody"} scores ${fmt(ls.score)} of ${S.rules.lootFull}: ${Math.round(clamp(ls.score / (S.rules.lootFull || 1), 0, 1) * 100)}% of the rest on each body</div>`;
+  const lootBody = lootNote + `<div class="row wrap" style="margin-bottom:3px"><label class="chk s">Give all to <select data-c="lootAll" id="lootAll" style="margin-left:4px"><option value="">Choose</option>${options(who, "")}</select></label><span class="spacer"></span><span class="s dim">Loot roll d20</span><span style="width:40px">${numBox(`id="lootRoll" data-u="end.lootRoll"`, u.lootRoll, "cell")}${diceBtn("lootRoll", "d20")}${""}</span>${shift != null ? `<span class="bright s">average tier ${shift >= 0 ? "+" : ""}${shift}</span>` : ""}</div>${dropRows || extras ? `<table class="t"><tr><th>Item</th><th>Qty</th><th>From</th><th>Goes to</th></tr>${dropRows}${extras}</table>` : `<div class="s dim">Nothing dropped.</div>`}
     <div class="row wrap lootadd"><input id="exN" class="grow" autocomplete="off" list="dl-all" placeholder="Add an item to the loot: type a name" data-u="end.exN" value="${h(u.exN)}" data-enter="endExAdd"><span style="width:40px">${numBox(`id="exQ" data-u="end.exQ" title="How many"`, u.exQ, "cell")}</span><select id="exTo" data-u="end.exTo" title="Goes to">${options(who, u.exTo)}</select>${btn("endExAdd", "", "Add", "", "tiny")}</div>`;
   const banner = `<div class="turnhead"><div class="turnwho"><span class="turnlabel">COMBAT OVER // ${k.round} ROUND${k.round === 1 ? "" : "S"}</span><span class="actname">After Action</span></div><span></span><button class="btn primary endturn" data-a="finishCombat" data-v="">Finish and apply</button></div>`;
   return `${banner}<div class="segs">${seg("XP and healing", `<table class="t"><tr><th>Who</th><th>HP</th><th title="Passive heal has no number in the sheet. Set it in Settings.">Heal</th><th title="Who earns enemy XP is not decided. Change it in Settings.">XP: ${h(S.rules.xpAward)}</th></tr>${pcs}</table>`)}${seg("Loot", lootBody)}${k.used.length ? seg("Addiction rolls", k.used.map((x, i) => `<div class="line"><span class="grow">${h(ent(x.who) ? ent(x.who).name : "")} used ${h(x.n)}: d100 at or under ${E.pct(x.addict)} = addicted</span><span style="width:44px">${numBox(`id="add-${i}" data-u="end.add.${i}" aria-label="d100"`, u.add[i], "cell")}${diceBtn(`add-${i}`, "d100")}${""}</span></div>`).join("")) : ""}</div>`;
@@ -1269,12 +1473,12 @@ function settingsBody() {
   const disp = fold("rule:display", "Display", `<label class="rr"><span>Font</span><select id="pFont" data-pref="face">${options([["term", "Terminal (readable)"], ["pixel", "Pixel (VT323)"], ["code", "Code (Consolas)"]], prefs.face)}</select></label><label class="rr"><span>CRT shimmer and scanlines</span><input type="checkbox" id="pScan" data-pref="scan"${prefs.scan ? " checked" : ""}></label>`);
   return `${groups}${jam}${move}${diff}${disp}<div class="row wrap" style="margin-top:4px">${btn("resetRules", "", "Reset rules", "", "tiny")}</div><div class="s dim" style="margin-top:3px"><span class="warn">*</span> placeholder picked for the draft. Data: ${h(DATA.builtFrom)}, ${h(DATA.builtAt)}.</div>`;
 }
-const RAIL = [["newc", "New", "dot"], ["settings", "Set", "gear"], ["saveNow", "Save", "floppy"], ["loadWin", "Load", "folder"], ["uiScale", "Size", "sliders"], ["autoWin", "Auto", "clock"], ["wiki", "Wiki", "book"], ["log", "Log", "log"], ["items", "Item", "box"], ["notes", "Note", "pencil"], ["guide", "Help", "star"]];
+const RAIL = [["newc", "New", "dot"], ["settings", "Set", "gear"], ["saveNow", "Save", "floppy"], ["loadWin", "Load", "folder"], ["uiScale", "Size", "sliders"], ["autoWin", "Auto", "clock"], ["wiki", "Wiki", "book"], ["log", "Log", "log"], ["items", "Item", "box"], ["notes", "Note", "pencil"], ["vendor", "Shop", "box"], ["tree", "Perks", "star"], ["guide", "Help", "star"]];
 function rail() {
   return `<nav class="rail ${ui.railMore ? "more" : ""}">${RAIL.map(([id, n, ic]) => `<button class="railb ${RAIL_MAIN.includes(id) ? "" : "sec"} ${id === "saveNow" && dirty ? "dirty" : ""} ${id === "autoWin" && !prefs.autosave ? "off" : ""} ${(ui.modal && ui.modal.type === id) || (id === "log" && ui.logOpen) ? "on" : ""}" ${id === "saveNow" ? 'id="railSave"' : ""} data-a="railGo" data-v="${id}" title="${h(RAIL_TITLE[id])}">${pix(ic)}<span>${id === "autoWin" ? (prefs.autosave ? "ON" : "OFF") : n}</span></button>`).join("")}<button class="railb railmore ${ui.railMore ? "on" : ""}" data-a="railMore" data-v="" aria-expanded="${!!ui.railMore}" title="More">${pix("dot")}<span>${ui.railMore ? "Less" : "More"}</span></button></nav>`;
 }
 const RAIL_MAIN = ["saveNow", "loadWin", "log", "notes", "items"];  // the phone tab bar's five; the rest sit behind More
-const RAIL_TITLE = { uiScale: "UI size: make everything bigger or smaller", newc: "New campaign", guide: "How to use this: tutorial", settings: "Settings: game rules", saveNow: "Save", loadWin: "Load save", autoWin: "Autosave", wiki: "Wiki: the game bible", log: "Log", items: "Item browser", notes: "Old notes" };
+const RAIL_TITLE = { uiScale: "UI size: make everything bigger or smaller", newc: "New campaign", guide: "How to use this: tutorial", settings: "Settings: game rules", saveNow: "Save", loadWin: "Load save", autoWin: "Autosave", wiki: "Wiki: the game bible", log: "Log", items: "Item browser", notes: "Old notes", vendor: "Vendor: buy and sell", tree: "Perk trees: skill, level and mastery perks" };
 const UI_SCALES = [2, 1.5, 1, 0.75, 0.5, 0.25];
 // Zooming in makes the page narrower in CSS pixels, but breakpoints only see the real screen.
 // So the narrow-screen rules are copied under html.lt1000 / html.lt600 and switched on from the zoomed width.
@@ -1527,11 +1731,32 @@ function renderModal() {
     move: [`Move: ${h((ent(m.att) || {}).name)}`, moveModal], item: [`Use item: ${h((ent(m.who) || {}).name)}`, itemModal], status: [`Status: ${h((ce || {}).name)}`, statusModal], edit: [`Edit: ${h((ce || {}).name)}`, editModal], level: [`${h((ce || {}).name)}: now level ${(ce || {}).level}`, levelModal], help: ["Keys", helpModal], search: ["Search", searchModal], detail: [m.hit ? `${h(m.hit[1].n)} [${h(m.hit[0])}]` : "", detailModal], dev: [m.cat ? h((DEV.find(([id]) => id === m.cat) || [])[1]) : "", devWin],
     settings: ["Settings: game rules", settingsBody], items: ["Item browser", itemsBody], loadWin: ["Load save", loadBody], autoWin: ["Autosave", autoBody], uiScale: ["UI size", scaleBody], saveTo: ["Save", saveToBody], notes: ["Old notes", notesBody], check: ["Skill check", checkBody], sheet: [`${h((ce || {}).name)}: Character`, sheetBody], health: [`${h((ce || {}).name)}: Health`, healthBody], guide: ["How to use this", guideBody], wizard: ["New character", wizardBody], newc: ["New campaign", newcBody], pwide: [m.side === "enemies" ? "All enemies" : "Party-wide", pwBody],
     char: [`${h((ce || {}).name)}: Inventory`, () => (ce ? invSect(ce, der(ce)) : "")],
+    icon: [`${h((ce || {}).name)}: map icon`, iconModal], vendor: ["Vendor", vendorWin], tree: ["Perk trees", treeModal],
   };
   const [title, body] = defs[m.type];
   const key = m.type === "dev" ? "dev" : m.type;
-  const size = m.type === "dev" ? "full" : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard"].includes(m.type) ? "big" : ["autoWin", "move", "uiScale", "saveTo"].includes(m.type) ? "tiny" : "";
+  const size = m.type === "dev" ? "full" : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard", "vendor", "tree"].includes(m.type) ? "big" : ["autoWin", "move", "uiScale", "saveTo"].includes(m.type) ? "tiny" : "";
   return `<div class="scrim" data-a="closeModal"><div class="dialog float ${size}" data-a="noop" data-dlg="${key}" style="${dlgStyle(key)}" role="dialog" aria-modal="true"><header class="wt"><span>${title}</span><span class="spacer"></span><button class="btn tiny" data-a="closeModal" data-v="">${kbd("Esc")}Close</button></header><div class="wb" data-scroll="modal-${key}">${body()}</div></div></div>`;
+}
+function iconModal() {
+  const e = ent(ui.modal.id); if (!e) return "";
+  return `<div class="s dim" style="margin-bottom:4px">How ${h(e.name)} shows on the map.</div><div class="icongrid">${Object.entries(TOKEN_ICONS).map(([id, [n]]) => `<button class="iconpick ${(e.icon || "person") === id ? "on" : ""}" data-a="iconSet" data-v="${e.id}|${id}" aria-pressed="${(e.icon || "person") === id}">${iconSvg(id, "big")}<span>${h(n)}</span></button>`).join("")}</div>`;
+}
+// PERK TREES: a folder tab per player. Skill perks grow in three ranks per skill (Proficiency, Expertise, Mastery); level perks by level.
+function treeModal() {
+  const pcs = S.chars; if (!pcs.length) return `<div class="dim">No characters yet.</div>`;
+  const e = ent(ui.treeId) || pcs[0]; ui.treeId = e.id; const d = der(e); const owned = new Set((e.perks || []).map(E.low));
+  const tabs = `<div class="ftabs">${pcs.map((c) => `<button class="ftab ${c.id === e.id ? "on" : ""}" data-a="treeTab" data-v="${c.id}" aria-pressed="${c.id === e.id}">${iconSvg(c.icon)}${h(c.name)}${c.perkDue ? `<b>${c.perkDue}</b>` : ""}</button>`).join("")}</div>`;
+  const node = (p, state, sub, kind) => `<button class="pnode ${state}" ${state === "can" ? `data-a="levelPerk" data-v="${e.id}|${h(p.n)}|${kind}"` : `data-a="noop" data-v=""`} title="${h(p.effect || "No effect written.")}${state === "can" ? " Click to take it." : state === "lock" ? " Not yet." : ""}"><span class="pn">${h(p.n)}</span><span class="s dim">${h(sub)}</span></button>`;
+  const skills = E.SKILLS.map(([k, n]) => {
+    const ranks = DATA.skillPerks.filter((p) => p.group === n).sort((a, b) => a.need - b.need); if (!ranks.length) return "";
+    const val = d.skills[k] || 0;
+    const tiers = [...new Set(ranks.map((p) => p.need))];
+    return `<div class="trow"><div class="tlabel"><span class="bright">${h(n)}</span><span class="s dim">${val}</span></div><div class="tranks">${tiers.map((need, i) => `${i ? `<span class="tlink">&#9654;</span>` : ""}<div class="tcol">${ranks.filter((p) => p.need === need).map((p) => node(p, owned.has(E.low(p.n)) ? "have" : val > p.need ? "can" : "lock", "", "skill")).join("")}</div>`).join("")}</div></div>`;
+  }).join("");
+  const levels = [...new Set(DATA.levelPerks.map((p) => num(p.level)).filter((x) => x != null))].sort((a, b) => a - b);
+  const lv = levels.map((L) => `<div class="trow"><div class="tlabel"><span class="bright">Level ${L}</span></div><div class="tchain wrap">${DATA.levelPerks.filter((p) => num(p.level) === L).map((p0) => { const p = perkInfo(p0.n) || p0; return node(p, owned.has(E.low(p.n)) ? "have" : L <= e.level && reqMet(p.req, d) ? "can" : "lock", p.req || p.group || "", "level"); }).join("")}</div></div>`).join("");
+  return `${tabs}<div class="fpane"><div class="s dim" style="margin-bottom:4px">${h(e.name)} · level ${e.level}${e.perkDue ? ` · <span class="warn">${e.perkDue} level perk${e.perkDue === 1 ? "" : "s"} to pick</span>` : ""}. Bright: taken. Outlined: open to take. Faint: locked.</div><h3>Skill perks and mastery</h3><div class="trow thead"><div></div><div class="tranks"><div class="tcol s dim">PROFICIENCY · over 60</div><span class="tlink"></span><div class="tcol s dim">EXPERTISE · over 80</div><span class="tlink"></span><div class="tcol s dim">MASTERY · over 100</div></div></div>${skills}<h3>Level perks</h3>${lv}</div>`;
 }
 function moveSpot(att, tgt, r) {
   const a = posOf(att), t = posOf(tgt); const d = dist(a, t); const m = S.rules.bandMeters[r - 1];
@@ -1633,8 +1858,15 @@ function kitText(a) {
   const plain = (n) => n.replace(/\s+-\s+/g, " ");
   return [a.w + (a.ammo ? ` (${a.ammo[1]} rounds)` : ""), ...(a.wear || []), ...(a.items || []).map(([n, q]) => plain(n) + (q > 1 ? ` x${q}` : "")), a.caps ? `${a.caps} caps` : ""].filter(Boolean).join(", ");
 }
+// Custom gear turns into an archetype on the fly: the first weapon is drawn, worn things are worn, the rest is carried.
+function customArch(k) {
+  const a = { n: k.bg.trim() || "Custom", d: "Custom gear", w: "", wear: [], items: [], caps: Math.max(0, num(k.caps, 0)), extraW: [] };
+  for (const [n, q] of k.items) { const it = E.get(ctx(), n); if (!it) continue; if (it.cat === "weapon" && !it.o.thrown) { if (!a.w) a.w = n; else a.extraW.push(n); if (q > 1) a.items.push([n, q - 1]); } else if (it.cat === "armor" && !a.wear.some((x) => (E.get(ctx(), x) || { o: {} }).o.loc === it.o.loc && it.o.loc !== "Accessory")) { a.wear.push(n); if (q > 1) a.items.push([n, q - 1]); } else a.items.push([n, q]); }
+  return a;
+}
+const wizArchOf = (w) => (w.custom ? customArch(w.custom) : S.rules.archetypes[w.arch]);
 function buildChar(w) {
-  const a = S.rules.archetypes[w.arch];
+  const a = wizArchOf(w);
   const c = { id: "c" + Date.now().toString(36) + S.seq++, name: w.name.trim() || a.n, background: a.n, spec: "", special: [...w.special], traits: [w.rolled, ...w.pick], tags: [...w.tags], inv: [], caps: a.caps || 0, weapons: [], gear: {} };
   for (const n of a.wear || []) { const it = E.get(ctx(), n); if (!it) continue; if (it.o.loc === "Accessory") { c.gear.acc = [...(c.gear.acc || []), it.o.n].slice(0, 3); continue; } const slot = /head/i.test(it.o.loc) ? "head" : it.o.loc === "Vanity" ? "vanity" : "armor"; c.gear[slot] = it.o.n; }
   for (const [n, q] of a.items || []) addInv(c, n, q, true);
@@ -1644,8 +1876,16 @@ function buildChar(w) {
     if (a.ammo) { if (["SG", "BG"].includes(wp.o.tab)) slot.ammo = a.ammo[0]; slot.mag = Math.min(wp.o.mag || 0, a.ammo[1]); if (a.ammo[1] > slot.mag) addInv(c, a.ammo[0], a.ammo[1] - slot.mag, true); }
     c.weapons.push(slot);
   }
+  for (const n of a.extraW || []) { const it = E.get(ctx(), n); if (it) c.weapons.push({ n: it.o.n, mag: 0 }); }
   c.weapons.push({ n: "Basic Fighting" });
   return initChar(c, ctx());
+}
+function wizCustom(w) {
+  const k = w.custom; const a = customArch(k);
+  const list = k.items.map(([n, q], i) => `<div class="irow">${pix(itemKind(n)[1])}<span class="grow bright">${h(n)}</span><span class="s dim">x${q}</span><span class="s dim">${h(itemKind(n)[0])}</span><button class="btn tiny" data-a="wizKitDel" data-v="${i}" title="Remove">X</button></div>`).join("");
+  return `<h3>Custom starting gear <span class="s dim">pick anything from the item lists</span></h3><div class="row wrap" style="margin-bottom:4px"><label class="f grow">Background<input id="wizBg" autocomplete="off" data-u="wiz.custom.bg" value="${h(k.bg)}" placeholder="e.g. Wasteland drifter"></label><label class="f" style="width:80px">Caps${numBox(`id="wizCaps" data-u="wiz.custom.caps"`, k.caps)}</label></div>
+    <div class="row wrap"><input id="wizKitN" class="grow" autocomplete="off" list="dl-all" placeholder="Add an item: type a name, Enter" data-u="wiz.custom.n" value="${h(k.n)}" data-enter="wizKitAdd"><span style="width:44px">${numBox(`id="wizKitQ" data-u="wiz.custom.q" title="How many"`, k.q, "cell")}</span>${btn("wizKitAdd", "", "Add", "", "tiny")}</div>
+    <div class="kitlist">${list || `<div class="dim">Nothing yet. The first weapon you add is the one in hand, armor is worn, and everything else goes in the pack.</div>`}</div>${k.items.length ? `<div class="s dim">Kit: ${h(kitText(a))}</div>` : ""}`;
 }
 function wizardBody() {
   const w = ui.wiz; const pool = S.rules.startPool; const used = w.special.reduce((t, x) => t + x, 0);
@@ -1653,12 +1893,12 @@ function wizardBody() {
   const nav = (next, label = "Next") => `<div class="acts wiznav">${w.step > 0 ? btn("wizGo", w.step - 1, "Back") : ""}<span class="spacer"></span>${primary(next, next === "wizGo" ? w.step + 1 : "", label, "Enter")}</div>`;
   const trait = (code) => { const t = db.traitByCode.get(code); return t ? `<div class="txt"><span class="bright">${h(t.code)} ${h(t.n)}</span> <span class="s dim">${h(t.cat)}</span><br>+ ${h(t.ben)}<br>- ${h(t.draw)}</div>` : ""; };
   if (w.step === 5) return `<div class="wizsteps"><span class="on">Party so far: ${S.chars.length}</span></div>${S.chars.map((c) => `<div class="line"><span class="bright grow">${h(c.name)}</span><span class="s dim">${h(c.background)}</span></div>`).join("")}<div class="acts wiznav">${btn("wizAnother", "", "Create another character")}<span class="spacer"></span>${primary("closeModal", "", "Start the campaign", "Enter")}</div>`;
-  if (w.step === 0) return `${steps}<div class="row" style="margin-bottom:4px"><label class="f grow">Name<input id="wizName" autocomplete="off" data-u="wiz.name" value="${h(w.name)}" placeholder="Character name"></label></div><h3>Archetype <span class="s dim">who they were, and what they carry</span></h3><div class="archgrid">${S.rules.archetypes.map((a, i) => `<button class="arch ${w.arch === i ? "on" : ""}" data-a="wizArch" data-v="${i}"><span class="bright">${h(a.n)}</span><span class="s">${h(a.d)}</span><span class="s dim">${h(kitText(a))}</span></button>`).join("")}</div>${nav("wizGo")}${S.chars.length ? "" : `<div class="s dim" style="margin-top:6px">Testing? ${btn("wizSample", "", "Load the workbook's sample party", "", "tiny")}</div>`}`;
+  if (w.step === 0) return `${steps}<div class="row" style="margin-bottom:4px"><label class="f grow">Name<input id="wizName" autocomplete="off" data-u="wiz.name" value="${h(w.name)}" placeholder="Character name"></label></div><div class="ftabs"><button class="ftab ${w.custom ? "" : "on"}" data-a="wizMode" data-v="">Archetype</button><button class="ftab ${w.custom ? "on" : ""}" data-a="wizMode" data-v="1">Custom gear</button></div>${w.custom ? wizCustom(w) : `<h3>Archetype <span class="s dim">who they were, and what they carry</span></h3><div class="archgrid">${S.rules.archetypes.map((a, i) => `<button class="arch ${w.arch === i ? "on" : ""}" data-a="wizArch" data-v="${i}"><span class="bright">${h(a.n)}</span><span class="s">${h(a.d)}</span><span class="s dim">${h(kitText(a))}</span></button>`).join("")}</div>`}${nav("wizGo")}${S.chars.length ? "" : `<div class="s dim" style="margin-top:6px">Testing? ${btn("wizSample", "", "Load the workbook's sample party", "", "tiny")}</div>`}`;
   if (w.step === 1) return `${steps}<div class="geartop"><div class="bigdt"><b>${pool - used}</b><span>POINTS LEFT</span></div><div class="s dim">Everyone starts at ${S.rules.startSpecial} in each. The total can't go over ${pool}. Lower one to raise another. Each stat is 1 to 10.</div></div>${E.SPECIAL.map((k, i) => `<div class="line wizstat"><span class="grow">${E.SPECIAL_NAMES[k]}</span><button class="btn" data-a="wizStat" data-v="${i}|-1" aria-label="Lower ${E.SPECIAL_NAMES[k]}">-</button><b>${w.special[i]}</b><button class="btn" data-a="wizStat" data-v="${i}|1" aria-label="Raise ${E.SPECIAL_NAMES[k]}">+</button></div>`).join("")}${nav("wizGo")}`;
   if (w.step === 2) { const opts = (cur, other) => `<option value="">Choose a trait</option>${options(DATA.traits.filter((t) => t.code !== w.rolled && t.code !== other).map((t) => [t.code, `${t.code} ${t.n}`]), cur)}`; return `${steps}<h3>Rolled for you</h3>${trait(w.rolled)}<div style="margin:3px 0 6px">${w.rerolled ? `<span class="s dim">Reroll used.</span>` : btn("wizReroll", "", "Reroll (once only)", "", "tiny")}</div><h3>Pick two</h3><div class="grid wide"><label class="f">First<select id="wizP0" data-u="wiz.pick.0">${opts(w.pick[0], w.pick[1])}</select></label><label class="f">Second<select id="wizP1" data-u="wiz.pick.1">${opts(w.pick[1], w.pick[0])}</select></label></div>${trait(w.pick[0])}${trait(w.pick[1])}${nav("wizGo")}`; }
   const preview = E.derive({ kind: "pc", special: w.special, traits: [w.rolled, ...w.pick], tags: w.tags, gear: {}, inv: [], weapons: [], statuses: [], effects: [], level: 1 }, ctx());
   if (w.step === 3) return `${steps}<h3>Tag three skills <span class="tag ${w.tags.length === 3 ? "" : "warn"}">${w.tags.length} OF 3</span></h3><div class="s dim" style="margin-bottom:4px">Tagged skills gain 2 per point you spend on them.</div><div class="archgrid tags">${E.SKILLS.map(([k, n]) => `<button class="arch ${w.tags.includes(k) ? "on" : ""}" data-a="wizTag" data-v="${k}"><span class="bright">${n}</span><span class="s dim">${preview.skills[k]}</span></button>`).join("")}</div>${nav("wizGo")}`;
-  const a = S.rules.archetypes[w.arch];
+  const a = wizArchOf(w);
   return `${steps}<h3>${h(w.name.trim() || a.n)} <span class="s dim">${h(a.n)}</span></h3><div class="geartop"><div class="bigdt"><b>${preview.hp}</b><span>HP</span></div><div class="bigdt"><b>${preview.ap}</b><span>AP</span></div><div class="grow s">${E.SPECIAL.map((k, i) => `${k} ${preview.sp[k]}`).join("  ")}<br><span class="dim">Tags: ${h(w.tags.map((k) => SKILL_NAME[k]).join(", "))}</span></div></div><h3>Starting kit</h3><div class="txt">${h(kitText(a))}</div><h3>Traits</h3>${trait(w.rolled)}${trait(w.pick[0])}${trait(w.pick[1])}${nav("wizAdd", "Add to party")}`;
 }
 function newcBody() {
@@ -1761,6 +2001,7 @@ const ACT = {
       const start = S.log.length;
       log("hit o-hit", `${A.name} throws ${T.item} ${thrown.toFixed(1)}m · ${t.ap} AP · ${hits.map((x) => `${x.e.name} ${fmt(x.d)}m: ${x.dmg}`).join(", ") || "nobody in the blast"}`);
       for (const x of hits) { x.e.hp = Math.max(0, (x.e.hp || 0) - x.dmg); syncDown(x.e, A.id); log("hit", `${x.e.name} ${x.e.hp}/${der(x.e).hp} HP after the blast`); }
+      for (const o of [...S.scene.objects]) { const d = Math.max(0, dist(o, T.at) - Math.max(o.w || 1, o.h || 1) / 2); hurtObj(o, E.blastDamage(t, d) * (S.rules.objBlastMul || 1), `the ${T.item}`); }  // explosives wreck cover
       if (S.rules.storyLog) {
         const nm = (e) => (e.kind !== "pc" && / - /.test(e.name) ? e.name.split(" - ").slice(1).join(" - ") : e.name);
         const list = hits.map((x) => `${nm(x.e)} for ${x.dmg} DMG`); const tail = hits.filter((x) => x.e.hp <= 0).map((x) => `${nm(x.e)} ${x.e.kind === "pc" ? "goes down" : "is torn apart"}`);
@@ -1817,14 +2058,14 @@ const ACT = {
   wizGo(v) {
     const w = ui.wiz; const to = Number(v);
     if (to > w.step) {
-      if (w.step === 0 && w.arch == null) return toast("Pick an archetype.");
+      if (w.step === 0 && w.arch == null && !w.custom) return toast("Pick an archetype, or build custom gear.");
       if (w.step === 1 && w.special.reduce((t, x) => t + x, 0) > S.rules.startPool) return toast(`SPECIAL can't total more than ${S.rules.startPool}.`);
       if (w.step === 2 && (!w.pick[0] || !w.pick[1])) return toast("Pick two traits.");
       if (w.step === 3 && w.tags.length !== 3) return toast("Tag exactly three skills.");
     }
     w.step = to; ui.focus = to === 0 ? "#wizName" : null; render();
   },
-  wizArch(v) { ui.wiz.arch = Number(v); render(); },
+  wizArch(v) { ui.wiz.arch = Number(v); ui.wiz.custom = null; render(); },
   wizStat(v) {
     const [i, d] = splitV(v); const w = ui.wiz; const next = w.special[i] + Number(d);
     if (next < 1 || next > 10) return;
@@ -1876,6 +2117,17 @@ const ACT = {
   },
   noteOpen(v) { ui.noteId = v; ui.focus = "#noteText"; render(); },
   noteDel(v) { act("Delete note", () => { S.notesList = S.notesList.filter((n) => n.id !== v); ui.noteId = null; }); },
+  setGrid(v) { act("Map grid", () => { S.rules.gridMode = v; }); },
+  iconPick(v) { ui.modal = { type: "icon", id: v }; render(); },
+  iconSet(v) { const [id, ic] = splitV(v); const e = ent(id); if (!e) return; act(`Icon: ${e.name}`, () => { e.icon = ic === "person" ? undefined : ic; }); ui.modal = null; render(); },
+  invTab(v) { ui.invTab = v; render(); },
+  invSort(v) { ui.invSort = v; render(); },
+  invDir() { ui.invDir = -(ui.invDir || 1); render(); },
+  setFam(val, el) { const e = ent(el.dataset.id); const t = num(val); if (!e || t == null || t < 0) return render(); act("Familiarity", () => { e.fam = { ...(e.fam || {}), [E.low(el.dataset.n)]: t }; }); },
+  treeTab(v) { ui.treeId = v; render(); },
+  wizMode(v) { ui.wiz.custom = v ? ui.wiz.custom || { bg: "", items: [], caps: 0, n: "", q: 1 } : null; if (v) ui.wiz.arch = null; render(); },
+  wizKitAdd() { const k = ui.wiz.custom; const n = String(k.n || "").trim(); const it = E.get(ctx(), n); if (!it) { ui.focus = "#wizKitN"; render(); return toast("No item by that name. Pick one from the list."); } const q = Math.max(1, num(k.q, 1)); const had = k.items.find((x) => x[0] === it.o.n); if (had) had[1] += q; else k.items.push([it.o.n, q]); k.n = ""; k.q = 1; ui.focus = "#wizKitN"; render(); },
+  wizKitDel(v) { ui.wiz.custom.items.splice(Number(v), 1); render(); },
   railGo(v) {
     ui.railMore = false;
     if (v === "wiki") return ACT.wiki();
@@ -1930,6 +2182,7 @@ const ACT = {
       for (const key of Object.keys(k.ranges)) if (key.split("|").includes(m.id)) delete k.ranges[key];
       e.ap = Math.max(0, (e.ap || 0) - m.cost); c.moved = true; if (k.phase === "stealth") k.stealthDue = e.id;
       log("status", `${e.name} moves ${fmt(m.cost)} AP. ${e.ap} left.`);
+      touchObjects(e.id);
       ui.focus = "#roll";
     });
   },
@@ -1941,6 +2194,7 @@ const ACT = {
     act("Randomize room", () => {
       const party = S.chars.map((c) => posOf(c.id)); const foesAt = foes().map((e) => posOf(e.id));
       S.scene.objects = E.generateRoom(mapOf(), S.scene.theme, S.rules, Math.random, [...party, ...foesAt], () => "o" + S.seq++);
+      if (ui.roomChest) { const ch = makeChest(); S.scene.objects = S.scene.objects.filter((o) => dist(o, ch) > 1.5); S.scene.objects.push(ch); }
       log("status", `Room: ${mapOf().n}, ${S.rules.roomThemes[S.scene.theme].n}, ${S.scene.objects.length} objects.`);
     });
   },
@@ -2033,6 +2287,9 @@ const ACT = {
     act(`Check: ${e.name}`, () => {
       log("check", `${e.name}: ${label} vs ${m.target} needs ${need}+, rolled ${r}${res.why ? ` (${res.why})` : ""}: ${res.pass ? "SUCCESS" : "FAILURE"}.`);
       m.res[id] = { ...res, roll: r };
+      // A pass pays XP by difficulty: the target times checkXpMul, plus the INT bonus.
+      const base = Math.round(num(m.target, 0) * (S.rules.checkXpMul || 0));
+      if (res.pass && e.kind === "pc" && !m.revive && base > 0) { const g = E.xpGain(base, der(e).sp.I, S.rules); e.xp = E.fix((e.xp || 0) + g); m.res[id].xp = g; log("check", `${e.name} gains ${g} XP for passing a ${m.target} check.`); }
       if (!S.combat && e.kind === "pc") S.scene.checks[e.id] = (S.scene.checks[e.id] || 0) + 1;
       if (m.revive) {
         if (S.combat && K().turnId === e.id) e.ap = Math.max(0, (e.ap || 0) - S.rules.reviveAP);
@@ -2461,12 +2718,14 @@ document.addEventListener("keydown", (e) => {
 // ---------- mouse: map tokens, resize bars, and moving and sizing context windows
 let drag = null, downOnScrim = false;
 function svgPoint(svg, ev) { const m = svg.getScreenCTM(); return m ? new DOMPoint(ev.clientX, ev.clientY).matrixTransform(m.inverse()) : { x: 0, y: 0 }; }
+document.addEventListener("dblclick", (ev) => { const t = ev.target.closest && ev.target.closest(".win[data-wcls] > .wt"); if (!t || ev.target.closest("button,input,select")) return; const c = t.parentElement.dataset.wcls; if ((prefs.wsize || {})[c]) { prefs.wsize = { ...prefs.wsize }; delete prefs.wsize[c]; savePrefs(); render(); } });
 document.addEventListener("pointerdown", (ev) => {
   downOnScrim = ev.target.classList && ev.target.classList.contains("scrim");
   const gut = ev.target.closest("[data-gut]");
   if (gut) { ev.preventDefault(); const box = (q) => { const el = document.querySelector(q); return el ? el.getBoundingClientRect() : null; }; drag = { kind: "gut", which: gut.dataset.gut, box: box(".board"), stage: box(".stage"), arena: box(".arena") }; document.body.classList.add("dragging"); return; }
   const title = ev.target.closest(".float > .wt");
   if (title && !ev.target.closest("button,input,select")) { const w = title.parentElement; const r = w.getBoundingClientRect(); drag = { kind: "win", w, dx: ev.clientX - r.left, dy: ev.clientY - r.top }; ev.preventDefault(); return; }
+  if (ev.target.matches && ev.target.matches(".win[data-wcls]")) { const r = ev.target.getBoundingClientRect(); drag = { kind: "wsize", w: ev.target, w0: r.width, h0: r.height }; return; }
   const fl = ev.target.closest(".float");
   if (fl) { const r = fl.getBoundingClientRect(); drag = { kind: "size", w: fl, w0: r.width, h0: r.height }; return; }
   const svg = ev.target.closest && ev.target.closest("#map");
@@ -2506,10 +2765,12 @@ document.addEventListener("pointermove", (ev) => {
     const p = svgPoint(drag.svg, ev);
     if (Math.hypot(p.x - drag.x0, p.y - drag.y0) > (ui.viewW || 20) * 0.012) drag.moved = true;
     if (drag.moved) {
-      drag.p = inMap(p); drag.g.setAttribute("transform", `translate(${drag.p.x} ${drag.p.y})${drag.tok ? ` scale(${ui.tokK || 1})` : ""}`); drag.g.classList.add("lift");
+      drag.p = inMap(p); let snap = null;
+      if (ev.ctrlKey && drag.tok && K()) { snap = snapRange(drag.tok, drag.p); drag.p = snap.p; }
+      drag.g.setAttribute("transform", `translate(${drag.p.x} ${drag.p.y})${drag.tok ? ` scale(${ui.tokK || 1})` : ""}`); drag.g.classList.add("lift");
       if (drag.tok && K() && fightPhase() && drag.tok === actorId() && !ev.shiftKey) {
         const e = ent(drag.tok); const cost = moveCost(posOf(drag.tok), drag.p, e); const tip = drag.g.querySelector(".drg");
-        if (tip) { tip.textContent = cost === Infinity ? "CAN'T" : `${cost} AP`; tip.classList.toggle("bad", cost > (e.ap || 0)); }
+        if (tip) { tip.textContent = (cost === Infinity ? "CAN'T" : `${cost} AP`) + (snap && snap.band ? ` · R${snap.band}` : ""); tip.classList.toggle("bad", cost > (e.ap || 0)); }
       }
     }
   }
@@ -2520,6 +2781,7 @@ document.addEventListener("pointerup", (ev) => {
   document.body.classList.remove("dragging");
   if (d.kind === "gut") { savePrefs(); return; }
   if (d.kind === "win") return keepDialog(d.w);
+  if (d.kind === "wsize") { const r = d.w.getBoundingClientRect(); if (Math.abs(r.width - d.w0) > 2 || Math.abs(r.height - d.h0) > 2) { prefs.wsize = { ...(prefs.wsize || {}), [d.w.dataset.wcls]: { w: Math.round(r.width), h: Math.round(r.height) } }; savePrefs(); render(); } return; }
   if (d.kind === "size") { const r = d.w.getBoundingClientRect(); if (Math.abs(r.width - d.w0) > 2 || Math.abs(r.height - d.h0) > 2) keepDialog(d.w); return; }
   if (d.kind === "rot") { if (d.angle != null) act("Rotate", () => { d.o.angle = d.angle; }); return; }
   if (d.kind === "mapbg") {
