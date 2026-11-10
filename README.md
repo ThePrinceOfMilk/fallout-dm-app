@@ -1,5 +1,7 @@
 # Fallout DM App
 
+**DISCLOSURE: I made the UI and HTML with Claude Code, but all the elements with balancing, content and mechanics, are by myself and my friend's hands.**
+
 A campaign manager for the DM of a homebrew Fallout tabletop game. It runs in one HTML file with nothing to install. Keeping the unfun complexity in this and streamlining the DM experience: map and range bands, cover, hit chance, damage, AP, ammo, status effects, XP, level-ups, loot and vendors.
 
 This is a fan project and isn't affiliated with Bethesda or Obsidian.
