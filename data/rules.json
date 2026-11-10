@@ -1421,6 +1421,8 @@
  "revivePenalty": 4,
  "reviveAP": 3,
  "reviveHP": 1,
+ "downWinHeal": 0.5,
+ "downLossHeal": 0.1,
  "reviveShockTier": 1,
  "checkXpMul": 0.25,
  "famCritMul": 5,

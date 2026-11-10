@@ -280,6 +280,12 @@ upd(47, D9, "Saving to a file", "Was: Save wrote to the browser only. Now: Save 
 # ---------------------------------------------------------------- where each chapter sits in the original book
 base = fitz.open(BASE)
 # ---------------------------------------------------------------- 10 Nov 2026
+upd(18, D10, "Down when the fight ends", "Was: a character who was down when the party won stayed down at 0 HP, and after a defeat everyone came back up at the revive HP. Now: it depends on who won.", bl(
+    f"The party wins: anyone down gets back up on {round(R['downWinHeal'] * 100)}% of their max HP.",
+    f"The party loses: anyone down gets back up on {round(R['downLossHeal'] * 100)}% of their max HP, and never less than the revive HP.",
+    "The DM can type a different heal on the end screen. Both shares are in Settings, under Downed and revive."))
+upd(19, D10, "No resting in a fight", "Was: Rest could be pressed during a fight, which healed the party and refilled everyone's AP. Now: Rest is only offered between fights.")
+upd(12, D10, "Enemy starting distance", "New.", p("When setting up an encounter the DM can place enemies close to the party, at mid range or far, or leave it at any distance. The three are shares of the map's longer side, measured from the middle of the party: close 8-20%, mid range 25-45%, far 55-90%. So close is a few meters in a room and a few dozen in the wilderness."))
 upd(7, D10, "Passing a check pays XP", "Was: the DM typed an XP amount for the players who passed. Now: a pass pays XP by itself, by difficulty.", bl(
     f"XP = the check's target x {R['checkXpMul']}, then the INT bonus on top (the same bonus as enemy XP). Trivial 10 pays {round(10 * R['checkXpMul'], 2)}, Average 40 pays {round(40 * R['checkXpMul'], 2)}, Extreme 100 pays {round(100 * R['checkXpMul'], 2)}.",
     "Revive checks pay nothing. The old box for extra XP to everyone who passed is still there.",

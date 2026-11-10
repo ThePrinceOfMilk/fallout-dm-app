@@ -281,11 +281,13 @@ if os.path.exists(os.path.join(HERE, "src", "shell.html")):
     blob = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/").replace("<!--", "<\\u0021--")
     html = src("shell.html").replace("/*STYLE*/", src("style.css")).replace("/*FONT*/", b64(os.path.join(HERE, "src", "fonts", "vt323.woff2"))).replace("/*FONT2*/", b64(os.path.join(HERE, "src", "fonts", "sharetech.woff2")))
     html = html.replace("/*RULES*/", src("combat_text.js") + "\n" + src("rules.js")).replace("/*ENGINE*/", src("engine.js")).replace("/*UI*/", src("ui.js"))
-    html = html.replace("/*DATA*/", blob).replace("/*WIKI*/", b64(os.path.join(ROOT, "Fallout TTRPG Game Bible.pdf")))
+    html = html.replace("/*DATA*/", blob)
+    hosted = html.replace("/*WIKI*/", "")  # the hosted page opens the PDF that sits beside it, so it doesn't carry a copy
+    html = html.replace("/*WIKI*/", b64(os.path.join(ROOT, "Fallout TTRPG Game Bible.pdf")))
     out = os.path.join(ROOT, "Fallout DM App.html")
     open(out, "w", encoding="utf8").write(html)
     print("wrote", out, round(len(html) / 1e6, 2), "MB")
     # index.html is the same app, but it opens on a fresh campaign. This is the copy GitHub Pages serves.
-    assert "/*FRESH*/false" in html
-    open(os.path.join(ROOT, "index.html"), "w", encoding="utf8").write(html.replace("/*FRESH*/false", "true"))
+    assert "/*FRESH*/false" in hosted
+    open(os.path.join(ROOT, "index.html"), "w", encoding="utf8").write(hosted.replace("/*FRESH*/false", "true"))
 print("weapons", len(weapons), "with stats", sum(1 for w in weapons if w.get("ok")), "issues", {k: len(v) for k, v in issues.items()})

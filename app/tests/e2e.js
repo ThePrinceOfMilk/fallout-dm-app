@@ -301,10 +301,7 @@ async function launch() {
     await page.evaluate(() => { ui.modal = null; render(); }); await page.locator(".devbar [data-a=refresh]").click(); assert.strictEqual(await page.locator("#toast").textContent(), "Lists refreshed");
     let n = await page.evaluate(() => { const e = addEnemy("Fiend"); S.scene.npcs = S.scene.npcs.filter((x) => x !== e); delete S.scene.pos[e.id]; return e.name; });
     assert.strictEqual(n, "Fiend - Zed");
-    const err = await page.evaluate(() => importTable("enemies", { enemies: DATA.enemies, namePools: { ...S.rules.namePools, raider: "Yorick" }, nameStyles: S.rules.nameStyles }));
-    assert.strictEqual(err, ""); n = await page.evaluate(() => { const e = addEnemy("Fiend"); S.scene.npcs = S.scene.npcs.filter((x) => x !== e); delete S.scene.pos[e.id]; return e.name; });
-    assert.strictEqual(n, "Fiend - Yorick", "an enemies JSON brings its names");
-    await click("undo"); await click("undo"); await click("undo"); await page.evaluate(() => { ui.modal = null; render(); });
+    await click("undo"); await page.evaluate(() => { ui.modal = null; render(); });
     assert.match(await page.evaluate(() => S.rules.namePools.raider), /Razor/, "undo puts the names back: " + await page.evaluate(() => S.rules.namePools.raider.slice(0, 30) + " | " + undoStack.slice(-5).map((u) => u.label || u[0] || typeof u).join(";")));
   });
   await ok("Rooms: 2m grid everywhere, settings, randomize, city blocks stop walking", async () => {
@@ -1133,6 +1130,66 @@ async function launch() {
     assert.ok(after.drawn && after.chars > 0 && after.kept && /set aside/.test(after.toast), "an autosave that cannot be drawn is set aside and a fresh campaign opens");
     errors.length = 0;  // the reload above is expected to hit the broken save once
     await page.evaluate(() => { prefs.autosave = true; savePrefs(); localStorage.removeItem(SAVE_KEY + "-unreadable"); });
+  });
+  await ok("Open items: table differences, storage meter, downed heal, no rest in a fight, CSV only, built-in unzip, ranges, spawn distance", async () => {
+    const r = await page.evaluate(async () => {
+      const out = {}; const reset = () => { S = fresh(); Object.assign(ui, { atk: null, modal: null, end: null, def: null, sel: S.chars[0].id }); applyData(); render(); };
+      const raider = DATA.enemies.find((e) => !e.mob && !e.test).n;
+      const fightNow = () => { ACT.addPick(raider); ACT.beginC(""); beginRounds(); };
+      // an imported table is saved as its differences from the workbook
+      reset(); const before = JSON.stringify(DATA.weapons); const size0 = JSON.stringify(S).length;
+      const rows = clone(tableRows("weapons")); rows[3].val = 4321; importTable("weapons", rows); render();
+      out.tableKB = Math.round((JSON.stringify(S).length - size0) / 1024); out.kept = S.tables.weapons.filter((x) => typeof x !== "string").length;
+      out.edit = DATA.weapons[3].val; DATA.weapons[3].val = JSON.parse(before)[3].val; out.restSame = JSON.stringify(DATA.weapons) === before;
+      // a save from before this change, holding every row, shrinks on load and reads the same
+      const old = clone(S); old.tables.weapons = rows; const back = normalize(old); out.oldShrinks = back.tables.weapons.filter((x) => typeof x !== "string").length;
+      // the Load window says how full the browser's storage is
+      reset(); ui.modal = { type: "loadWin" }; render(); out.meter = (document.getElementById("storeUse") || {}).textContent || ""; ui.modal = null;
+      // down when the party wins: back up on half of max HP. Down when it loses: a tenth.
+      reset(); fightNow(); let c = S.chars[0]; c.hp = 0; syncDown(c); for (const n of K().npcs) { n.hp = 0; syncDown(n, S.chars[1].id); } ACT.endCombat(); render(); ACT.finishCombat(); c = S.chars[0]; out.win = [c.dbno, c.hp, Math.round(der(c).hp * 0.5)];
+      reset(); fightNow(); c = S.chars[0]; c.hp = 0; syncDown(c); ACT.defeat(); render(); out.defeatText = /10% of their HP/.test(app.textContent); ACT.finishDefeat(); c = S.chars[0]; out.loss = [c.dbno, c.hp, Math.max(1, Math.round(der(c).hp * 0.1))];
+      // no resting in a fight
+      reset(); out.restIdle = !!document.querySelector('[data-a="rest"]'); fightNow(); render(); S.chars[0].ap = 1; ACT.rest(); out.restFight = [!!document.querySelector('[data-a="rest"]'), S.chars[0].ap];
+      // tables: CSV only, and Excel's dates are put back
+      reset(); ACT.dev("enemies"); out.io = [!!document.querySelector('[data-a="tableExport"][data-v="enemies|csv"]'), !!document.querySelector('[data-a="tableExport"][data-v="enemies|json"]'), document.getElementById("tableFile").accept]; ui.modal = null;
+      const en = tableRows("enemies"); const withCaps = en.findIndex((e) => /^\d+-\d+$/.test(e.caps || "")); const csv = toCsv(en.map((e, i) => (i === withCaps ? { ...e, caps: "15-May" } : e)));
+      out.date = fromCsv(csv, en)[withCaps].caps;
+      // the built-in unpacker reads what a zip tool writes
+      const pack = async (text, level) => new Uint8Array(await new Response(new Blob([text]).stream().pipeThrough(new CompressionStream("deflate-raw"))).arrayBuffer());
+      const texts = ["a", "", "abcabcabcabcabcabcabcabc".repeat(50), JSON.stringify(S, null, 1), toCsv(tableRows("weapons")), Array.from({ length: 5000 }, (_, i) => String.fromCharCode(32 + ((i * 7919) % 90))).join("")];
+      out.inflate = []; for (const t of texts) out.inflate.push(new TextDecoder().decode(inflate(await pack(t))) === t);
+      // recommended ranges are shown and never enforced
+      reset(); ui.modal = { type: "settings" }; ui.open["rule:Checks and stealth"] = true; S.rules.checkStep = 0; render(); const lab = document.getElementById("r-checkStep").closest("label");
+      out.range = [/1 to 20/.test(lab.textContent), !!lab.querySelector(".warn"), S.rules.checkStep]; ui.modal = null;
+      // the damage line applies cover before it adds up the burst
+      out.math = E.resolve({ v: { base: 8, pen: 4, count: 3 }, b: { jamAt: 5, hitAt: 40, critAt: 90, superAt: 99 }, roll: 95, dt: 0, loc: "Body", rules: S.rules, mult: 0.5 }).math;
+      // enemies appear close, mid range or far, by the size of the map
+      reset(); ACT.setupOpen("1"); out.spawn = {}; const L = Math.max(mapOf().w, mapOf().h); const party = S.chars.map((x) => posOf(x.id)); const mid = { x: party.reduce((t, q) => t + q.x, 0) / party.length, y: party.reduce((t, q) => t + q.y, 0) / party.length };
+      out.spawnUi = !!document.getElementById("spawnAt");
+      for (const k of ["close", "mid", "far"]) { ACT.setSpawn(k); for (let i = 0; i < 8; i++) ACT.addPick(raider); const ds = S.scene.npcs.map((n) => dist(posOf(n.id), mid) / L); out.spawn[k] = [Math.min(...ds), Math.max(...ds)]; S.scene.npcs = []; }
+      // guards, and one bible link for the whole session
+      reset(); const pc = S.chars[0]; ui.sel = pc.id; addInv(pc, "Stimpak", 1); S.vendor.stock = null; ACT.venSell(pc.inv.length - 1); pc.spent = { SG: 2 }; pc.ptsBank = 0; ACT.spend(`${pc.id}|SG|-5`); out.guards = [Array.isArray(S.vendor.stock), S.chars[0].spent.SG, S.chars[0].ptsBank];
+      const opened = []; const realOpen = window.open; window.open = (u) => { opened.push(u); return null; }; ACT.wiki(); ACT.wiki(); window.open = realOpen; out.bible = [opened.length, opened[0] === opened[1], /^blob:/.test(opened[0] || "")];
+      reset(); save();
+      return out;
+    });
+    assert.ok(r.tableKB < 20 && r.kept < 20 && r.edit === 4321 && r.restSame, `an imported table costs only its changed rows: ${r.tableKB} KB, ${r.kept} rows kept in full`);
+    assert.ok(r.oldShrinks < 20, "an older save that held every row shrinks on load");
+    assert.match(r.meter, /Browser storage: \d+\.\d of about 5 MB used/);
+    assert.deepStrictEqual(r.win.slice(0, 2), [false, r.win[2]], "down in a won fight: up on 50% of max HP");
+    assert.ok(r.defeatText, "the defeat screen states the 10%"); assert.deepStrictEqual(r.loss.slice(0, 2), [false, r.loss[2]], "down in a lost fight: up on 10% of max HP");
+    assert.ok(r.restIdle, "Rest is offered between fights"); assert.deepStrictEqual(r.restFight, [false, 1], "no Rest button in a fight, and resting does nothing there");
+    assert.deepStrictEqual(r.io, [true, false, ".csv"], "tables export and import as CSV only");
+    assert.match(r.date, /^5-15$/, "Excel's 15-May reads as 5-15 again");
+    assert.ok(r.inflate.every(Boolean), "the built-in unpacker matches the browser's packer: " + r.inflate.join(","));
+    assert.deepStrictEqual(r.range, [true, true, 0], "a recommended range is shown, flagged when left, and not enforced");
+    assert.match(r.math, /→ 16 × 0\.5 \(cover, resistances\) = 8 first bullet, \+ \d more at 4 = \d+$/, "cover comes before the burst sum: " + r.math);
+    assert.ok(r.spawnUi, "the distance choice is on the encounter panel");
+    assert.ok(r.spawn.close[1] <= 0.2001 && r.spawn.mid[0] >= 0.22 && r.spawn.mid[1] <= 0.4501 && r.spawn.far[0] >= 0.49, "close, mid range and far are bands of the map's size: " + JSON.stringify(r.spawn));
+    assert.deepStrictEqual(r.guards, [true, 0, 2], "selling with no stock and taking back unspent points are both safe");
+    assert.deepStrictEqual(r.bible, [2, true, true], "opening the bible twice uses the same copy");
+    const hosted = fs.readFileSync(path.resolve(__dirname, "../../index.html"), "utf8");
+    assert.ok(/id="wiki"><\/script>/.test(hosted) && hosted.length < 1.6e6, "the hosted page carries no copy of the bible");
   });
   await browser.close();
   for (const r of results) console.log(r.join("  "));
