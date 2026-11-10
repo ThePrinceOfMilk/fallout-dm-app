@@ -28,7 +28,7 @@ async function launch() {
   page.on("dialog", (d) => d.accept());
   const ok = async (name, fn) => {
     step++;
-    try { await fn(); results.push(["PASS", name]); } catch (e) { results.push(["FAIL", name, e.message.split("\n")[0]]); }
+    try { await fn(); results.push(["PASS", name]); } catch (e) { results.push(["FAIL", name, e.message.split("\n").filter(Boolean).slice(0, 6).join(" ")]); }
     assert.ok(errors.length === 0, `Script error during "${name}": ${errors.join(" | ")}`);
     if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `${String(step).padStart(2, "0")}-${name.replace(/[^a-z0-9]+/gi, "-").slice(0, 40)}.png`) });
   };
@@ -63,7 +63,7 @@ async function launch() {
     assert.strictEqual(await page.locator('[data-card="c1"] .stats7:not(.spc) label').first().locator("span").innerText(), "BA", "skills by two letters");
     const s = await state();
     assert.strictEqual(s.chars.length, 4);
-    assert.strictEqual(s.chars[0].hp, 19); assert.strictEqual(s.chars[0].ap, 18);
+    assert.strictEqual(s.chars[0].hp, 22, "(15 + END 2 x 2) x 1.2"); assert.strictEqual(s.chars[0].ap, 18);
     const over = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
     assert.ok(over <= 0, `page overflows by ${over}px`);
   });
@@ -196,8 +196,8 @@ async function launch() {
     await page.evaluate(() => undo());
     await click("pwOpen", "party");
     await page.selectOption("#pwAct", "hp"); await page.fill("#pwVal", "-3"); await page.locator('[data-a="pwApply"]').click();
-    s = await state(); assert.strictEqual(s.chars[0].hp, 16); await page.evaluate(() => undo());
-    assert.strictEqual((await state()).chars[0].hp, 19);
+    s = await state(); assert.strictEqual(s.chars[0].hp, 19); await page.evaluate(() => undo());
+    assert.strictEqual((await state()).chars[0].hp, 22);
   });
   await ok("Check gen: every player's roll, typed in place, random check", async () => {
     await page.focus("#chkTarget"); await page.keyboard.press("Control+a"); await type("20"); await page.selectOption("#chkUse", "SNK");

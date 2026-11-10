@@ -65,6 +65,13 @@ upd(2, D9, "How changes are recorded", "Was: a separate Current Rules section at
     "A flag that has been decided reads RESOLVED, in its chapter and in the Open Items Register, with the page that decides it.",
     "Tables on lettered pages are generated from the app's own data, so they match what the app does."))
 
+upd(6, D9, "Player and enemy HP", "Was: players gained 1 HP a level and enemy humans 6 a tier. Now:", bl(
+    f"Players: HP = (15 + END x 2 + (level - 1) x {R['pcHpPerLevel']}) x {R['pcHpMul']}, rounded down. A level 1 character with END 5 has {int((15 + 10) * R['pcHpMul'])} HP.",
+    f"Enemy humans: HP = 15 + END x 2 + (tier - 1) x {R['npcHpPerTier']}. Creatures keep their listed HP."))
+_fl = R["armorFloors"]
+upd(10, D9, "Armor sets the damage floor", "Was: a hit below DT always kept at least 20% of its damage. Now: the target's body armor sets that floor.",
+    tbl(["Wearing", "Damage floor"], [["Clothing or nothing", f"{round(_fl['clothing'] * 100)}%"], ["Light armor", f"{round(_fl['light'] * 100)}%"], ["Medium armor", f"{round(_fl['medium'] * 100)}%"], ["Heavy armor", f"{round(_fl['heavy'] * 100)}%"], ["Power armor", f"{round(_fl['power'] * 100)}%"], ["Creatures", f"{round(R['damageFloor'] * 100)}%"]], [2.4, 1.2]),
+    p("Pen at or above DT still does full damage. Below it, damage is cut to Pen / DT, but never below the floor. Heavier armor shrugs off more of what it stops."))
 upd(7, D8, "Difficulty scale", "Was: no difficulty scale was written down (UF-01). Now: six named difficulties.",
     tbl(["Difficulty", "Target"], [[k, v] for k, v in R["difficulty"].items()], [2, 1]),
     p(f"Roll a d20 and meet or beat the number needed: {R['checkBase']} - (skill - difficulty) / {R['checkStep']}, rounded toward zero. A SPECIAL check counts the stat x {R['specialAsSkill']} as its skill."), flags=["UF-01"])
@@ -76,6 +83,10 @@ upd(8, D8, "Accuracy, overskill and the cap", "Was: Perception and Strength pena
     f"Accuracy is the weapon's base plus the skill. The Perception and Strength penalties are set to 0 for now. The sheet's values (0.05, 0.0125 and 0.05) can be put back in Settings.",
     f"Skill counts for at most {R['overskillCap']} in hit chance. Skill above that adds nothing.",
     f"Hit chance never goes past {round(R['maxHit'] * 100)}%."), flags=["BG-02", "BG-03"])
+upd(8, D9, "Gun bonus, skill and melee base", "Was: hit = range value + (skill - requirement) / 200 for everything, with melee at 45%. Now:", bl(
+    f"Every gun (Small Guns, Big Guns, Energy) gets +{round(R['gunHitAdd'] * 100)}% to hit at every range. Thrown weapons and melee don't.",
+    f"Skill above or below a weapon's requirement counts {R['skillHitMul']}x: (skill - requirement) / 2 x {R['skillHitMul']}, rounded down, in percent.",
+    f"Light melee and fists start at {round(R['meleeBase'] * 100)}%. Heavy two-handed melee (a base cost of {R['heavyMeleeAP']}+ AP, not fists) starts at {round(R['meleeHeavyBase'] * 100)}%. Heavy weapons hit harder and pierce more, so with enough skill they pass the light ones."))
 upd(8, D8, "Cover", "Was: a Take Cover action and a Cover status. Now: cover is read from the map for every shot.",
     p("The line from shooter to target takes the worst tier it crosses. Something the shooter stands inside doesn't count. Damage changes apply after Damage Threshold."),
     tbl(["Tier", "Hit chance", "Damage"], [[c["n"], pct(c["hit"]), pct(c["dam"])] for c in R["cover"].values()], [2.4, 1.2, 1.2]))
@@ -85,10 +96,13 @@ for k, v in R["clearJam"].items(): _jam.setdefault(v, []).append(k)
 upd(9, D8, "Jams", "Was: nothing said what a jam does (UF-03). Now: the jam uses up the attack's AP, and clearing it costs AP by weapon type.",
     tbl(["AP to clear", "Weapon types"], [[k, ", ".join(v)] for k, v in sorted(_jam.items())] + [[R["clearJamDefault"], "anything not listed"]], [1, 6]), flags=["UF-03"])
 upd(9, D8, "Bursts, burst damage and untargeted shots", "Was: two descriptions of burst hits (US-07), no word on whether DT applies per bullet (US-08), and no rule for untargeted shots (US-09). Now:", bl(
-    "In a burst the hit band is cut into Count equal steps, and a higher roll lands more bullets, at least 1. A crit or super crit lands every bullet.",
+    "In a burst the hit band is cut into Count equal steps, and a higher roll lands more bullets, at least 1. A crit or super crit lands every bullet. (Replaced on 9 Nov: see Burst bullets by roll, below.)",
     "Each bullet's damage is worked out against DT on its own, then multiplied by the bullets that land.",
     f"A shot with no body part picked hits the Body. Aiming at a limb costs +{R['targetAP']['Limb']} AP, the head +{R['targetAP']['Head']}."), flags=["US-07", "US-08", "US-09"])
 upd(9, D8, "Ammo", "Was: the sheet never counted rounds down (US-06). Now: every shot takes its rounds from the shooter's inventory, enemies included. No rounds, no shot.", flags=["US-06"])
+upd(9, D9, "Burst bullets by roll", "Was: a crit landed the whole burst. Now: the roll decides how many bullets land, and only a super crit lands them all.",
+    p("The hit band, from the lowest hit up to the super crit, is cut into Count - 1 steps, widest first. A higher roll lands more bullets. Only the first bullet of a crit or super crit gets the crit multiplier; the rest are plain hits."),
+    tbl(["Roll (hit at 60+, super at 95, burst of 4)", "Bullets"], [["60-75", 1], ["76-87", 2], ["88-94", 3], ["95-99 (super crit)", 4]], [3.2, 1]))
 upd(9, D9, "The combat log", "Was: a block of numbers for every attack. Now: one line that tells what happened, with the numbers a click away.", bl(
     "Each attack is one story line, such as <i>Spike takes 7 DMG as Aquilius shoots them</i>. Click it for the roll, the bands, the damage math and any status.",
     "Color shows the outcome: red for a miss, green for a hit, bright green for a crit, bright pink for a super crit.",
@@ -102,6 +116,10 @@ upd(11, D8, "AP costs and refresh", "Was: the Action AP tab had no costs (UF-07)
 upd(11, D8, "Movement", "Was: two unlabeled AP rows (US-12). Now: AP by distance walked.",
     tbl(["Walk up to", "AP"], [[f"{m} m", a] for m, a in zip(R["bandMeters"], R["moveAP"])], [1.5, 1]),
     p("On your turn, dragging your token shows the path and its cost first. Then Confirm or Cancel."), flags=["US-12"])
+upd(11, D9, "Melee, punches and bursts", "Was: weapons cost their listed AP. Now:", bl(
+    f"Melee weapons cost {R['meleeApMul']}x their listed AP, rounded up.",
+    f"Punches (fists, gloves and other hand weapons) cost {R['punchAP']} AP for the first in a turn, then {R['punchStep']} more for each one after: 1, 2, 3...",
+    f"A burst costs {R['burstAP']} more AP than the weapon lists. Creatures' own attacks keep their AP."))
 upd(11, D9, "Throwing a grenade", "New.", p("Pick the grenade from Consumables or the item button. A dashed line runs from the thrower to the pointer, with the blast radius where it lands. Click to set the spot, check who's caught in it, then Throw or Cancel. Damage and range are in chapter 35."))
 
 upd(12, D8, "Meters, not hexes", "Was: a hex distance picked a range column directly, so hexes had no fixed size (UX-11). Now: real distance on a map.",
@@ -169,6 +187,8 @@ upd(20, D9, "Enemy skills", "Was: enemies had no skill numbers. Now: from their 
     f"Add {R['npcSkillSpecial']} for each point the skill's two SPECIAL stats average above 5, then a random amount up to {R['npcSkillSpread']} either way.",
     f"A skill for a weapon the enemy carries never falls short of that weapon's requirement. Skills for weapons they don't carry start from {round(R['npcOffSkill'] * 100)}% instead.",
     "Skills stay between 0 and 100."))
+upd(20, D9, "Creature attacks pierce", f"Was: creature attacks had no Pen, so any armor cut them to the damage floor. Now: a creature's attacks have Pen {R['creaturePen']} per tier (a tier 5 Deathclaw has 20).")
+upd(20, D9, "Enemy toughness", f"Was: enemy humans gained 6 HP a tier. Now: {R['npcHpPerTier']} a tier, so HP = 15 + END x 2 + (tier - 1) x {R['npcHpPerTier']}.")
 upd(20, D8, "Enemy gear", f"Was: human enemies had no weapons or armor (UF-20). Now: gear is picked for the enemy's tier, plus up to {R['genLootMax']} consumables. Unique weapons are never picked. Reroll on the enemy's card for a new set.", flags=["UF-20"])
 
 upd(21, D8, "Who gets enemy XP", "Was: not stated (US-19). Now: every player gets the full XP of every enemy killed.",
@@ -202,13 +222,24 @@ upd(29, D8, "Vendor prices", "Was: Stat Converter columns with no shop rules. No
 upd(29, D9, "Stock grows with tier", "Was: about the same stock at every tier. Now: higher tiers carry far more consumables and ammo, but still only a few guns and armor.",
     p("Guns and armor come from the vendor's tier and the one below. Consumables, ammo and materials can be anything up to the vendor's tier. Never unique weapons."),
     tbl(["Kind", "Lines at T1", "Lines at T6", "Quantity per tier"], [["Weapons", _n("weapon", 1), _n("weapon", 6), "-"], ["Armor", _n("armor", 1), _n("armor", 6), "-"], ["Accessories", _n("accessory", 1), _n("accessory", 6), "-"],
-        ["Consumables", _n("item", 1), _n("item", 6), f"+{round(_q['item'] * 100)}%, medicine +{round(_q['med'] * 100)}%"], ["Ammo", _n("ammo", 1), _n("ammo", 6), f"+{round(_q['ammo'] * 100)}%"], ["Materials", _n("material", 1), _n("material", 6), f"+{round(_q['material'] * 100)}%"]], [1.6, 1.1, 1.1, 2.6]))
+        ["Consumables", _n("item", 1), _n("item", 6), f"+{round(_q['item'] * 100)}%, medicine +{round(_q['med'] * 100)}%"], ["Ammo", "for the guns stocked", "for the guns stocked", "by kind, see Ammo follows the guns"], ["Materials", _n("material", 1), _n("material", 6), f"+{round(_q['material'] * 100)}%"]], [1.6, 1.1, 1.1, 2.6]))
+
+_va = R["vendorAmmo"]; _vq = lambda k, t: max(0, round(_va[k][0] + _va[k][1] * (t - 1)))
+upd(29, D9, "Ammo follows the guns", "Was: random ammo of any caliber. Now: a vendor carries ammo only for the guns on their shelf, and mostly the common loads.",
+    p(f"Guns are picked so calibers vary: each gun already on the shelf in a caliber makes another one {round(R['vendorSameCaliber'] * 100)}% as likely, so two 9mm guns can happen but aren't the norm. For each caliber on the shelf, the vendor stocks its loads up to their tier, by kind (chapter 37):"),
+    tbl(["Kind", "Rounds per line at T1", "At T3", "At T6"], [[k.capitalize(), _vq(k, 1), _vq(k, 3), _vq(k, 6)] for k in ["junk", "standard", "improved", "special", "best"]], [1.6, 1.6, 1, 1]),
+    p("Each amount varies by 25% either way. Junk thins out and is gone by tier 5. Better vendors carry more lines of improved and special loads, and from tier 2 sometimes a few rounds of the caliber's best."))
 
 _fg = R["throwables"]["Frag Grenade"]
 upd(35, D9, "Frag Grenade", "New: the first throwable.",
     tbl(["Distance from the blast", "Damage"], [[f"up to {i + 1} m", f"{d} DMG"] for i, d in enumerate(_fg["dmg"])] + [[f"past {_fg['radius']} m", "0"]], [2.2, 1.2]),
     p(f"{_fg['ap']} AP. {_fg['lb']} lb. Thrown up to {_fg['range']} m. It hits everyone in the radius, the party included, and ignores DT and cover. One grenade is used per throw. How to throw is in chapter 11."))
 
+_cp = R["ammoClassPrice"]
+upd(37, D9, "Ammo kinds, prices and scarcity", "Was: every load priced the same, with no sense of rarity. Now: ammo is about scarcity and progression.",
+    p("You start on junk and standard rounds because they're cheap and plentiful. Better ammo costs more and vendors stock less of it. Each load falls into a kind:"),
+    tbl(["Kind", "Loads", "Price x"], [["Junk", "Junk, Salvaged", _cp["junk"]], ["Standard", "Standard, Basic, Musket Ball", _cp["standard"]], ["Improved", "Surplus, Hand Load, Mil-Spec, Match, +P', +P+, Proof Load, Olympic Quality: a bit better, and pricier or made by hand", _cp["improved"]], ["Special", "everything else: hollow points, AP, slugs, buckshot and so on", _cp["special"]], ["Best", "the caliber's top special load", _cp["best"]]], [1.1, 4.6, 0.8]),
+    p(f"Ammo has no value in the workbook, so a round costs {R['ammoPrice']} cap x its tier x its kind's multiplier. The \"5.56mm - API\" load was filed under a caliber no gun uses; it is now 5.56mm NATO - API."))
 upd(37, D8, "Ammo comes from inventory", "Was: the DM tracked rounds by hand. Now: shots take rounds from the shooter's inventory, enemies included. No rounds, no shot.")
 
 _ap, _rd = [], []

@@ -11,7 +11,8 @@ const fx = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures.json"), "ut
 const skippedList = E.standardize(data, DEFAULT_RULES);
 const db = E.makeDb(data);
 const rules = JSON.parse(JSON.stringify(DEFAULT_RULES));
-Object.assign(rules, { perPenalty: 0.05, strGun: 0.0125, strMelee: 0.05, conditions: false });  // fixtures come from the sheet, which still has these
+Object.assign(rules, { perPenalty: 0.05, strGun: 0.0125, strMelee: 0.05, conditions: false,
+  gunHitAdd: 0, skillHitMul: 1, meleeHeavyBase: null, meleeApMul: 1, punchAP: null, burstAP: 0, burstMode: "steps", creaturePen: 0, armorFloors: null, pcHpPerLevel: 1, pcHpMul: 1, npcHpPerTier: 6 });  // fixtures come from the sheet; the 9 Nov balance pass is tested on its own below
 const ctx = { db, rules, scene: { time: "Daytime", weather: "Clear", env: "Grassland", effects: [] }, ov: {} };
 const near = (a, b, msg) => assert.ok(Math.abs(a - b) < 1e-6, `${msg}: got ${a}, sheet says ${b}`);
 const gecko = E.spawn(db.enemies.get("gecko"), "e1", ctx, () => 0.5);
@@ -250,12 +251,77 @@ test("overridden item data wins over the workbook", () => {
   assert.strictEqual(E.weaponView({ n: "Pipe Flamer" }, c, d, ov).base, 50);
 });
 
-test("default rules: hit chance is base weapon and skill only", () => {
+test("default rules: hit chance is base weapon, skill and the gun bonus only", () => {
   const c = { db, rules: JSON.parse(JSON.stringify(DEFAULT_RULES)), scene: ctx.scene, ov: {} };
   const A = E.derive({ kind: "pc", special: [1, 1, 5, 5, 5, 5, 5], skills: {}, gear: {}, weapons: [] }, c);
   const v = E.weaponView({ n: "Pipe Pistol", ammo: ".32 ACP - Standard" }, { kind: "pc" }, A, c);
   const hc = E.hitChance({ kind: "pc" }, A, { kind: "npc" }, A, v, 8, c, false);
-  assert.deepStrictEqual(hc.parts.map(([k]) => k).filter((k) => k !== "mods"), ["base", "skill"]);
+  assert.deepStrictEqual(hc.parts.map(([k]) => k).filter((k) => k !== "mods"), ["base", "skill", "gun"]);
+});
+
+// ---------- the 9 Nov 2026 balance pass, on the app's default rules
+const R9 = JSON.parse(JSON.stringify(DEFAULT_RULES));
+const c9 = { db, rules: R9, scene: ctx.scene, ov: {} };
+const pc9 = (skills, extra = {}) => ({ kind: "pc", level: 1, special: [5, 5, 5, 5, 5, 5, 5], skills, gear: {}, weapons: [], statuses: [], effects: [], inv: [], ...extra });
+test("balance pass: guns +12% at every range, skill over the requirement counts 1.5x rounded down", () => {
+  const P = pc9({ SG: 40 }); const A = E.derive(P, c9);
+  const w = data.weapons.find((x) => x.n === "Pipe Pistol"); const v = E.weaponView({ n: w.n, ammo: ".32 ACP - Standard" }, P, A, c9);
+  for (const band of [1, 3, 5]) {
+    const hc = E.hitChance(P, A, { kind: "npc" }, A, v, band, c9, null);
+    const part = (k) => (hc.parts.find(([n]) => n === k) || [])[1];
+    near(part("gun"), 0.12, "gun bonus");
+    near(part("skill"), Math.floor(((40 - w.req) / 2) * 1.5) / 100, "skill counts 1.5x, rounded down");
+  }
+});
+test("balance pass: heavy two-handed melee starts at 35%, light at 45%; melee AP x1.5; punches cost 1, 2, 3", () => {
+  const P = pc9({ MW: 50 }); const A = E.derive(P, c9);
+  const heavy = data.weapons.find((x) => x.tab === "MW" && x.tier && x.ok && x.type !== "Hand" && x.ap >= 3);
+  const light = data.weapons.find((x) => x.tab === "MW" && x.tier && x.ok && x.type !== "Hand" && x.ap <= 2);
+  const vh = E.weaponView({ n: heavy.n }, P, A, c9), vl = E.weaponView({ n: light.n }, P, A, c9);
+  assert.strictEqual(vh.hitBase(), 0.35, heavy.n); assert.strictEqual(vl.hitBase(), 0.45, light.n);
+  assert.strictEqual(vl.ap, Math.ceil(light.ap * 1.5)); assert.strictEqual(vh.ap, Math.ceil(heavy.ap * 1.5));
+  const fist = { n: "Basic Fighting" };
+  assert.deepStrictEqual([0, 1, 2].map((n) => E.weaponView(fist, { ...P, punches: n }, A, c9).ap), [1, 2, 3]);
+});
+test("balance pass: bursts cost 1 more AP, bullets come from where the roll lands, only the first bullet crits", () => {
+  const P = pc9({ SG: 60 }); const A = E.derive(P, c9);
+  const w = data.weapons.find((x) => x.tab === "SG" && x.ok && x.count === 4);
+  const load = E.loadsFor(c9, w.ammo).find((a) => a.ok && !a.pellets);
+  const v = E.weaponView({ n: w.n, ammo: load.n }, P, A, c9); assert.strictEqual(v.ap, w.ap + 1, "burst AP +1");
+  // the example: hit at 60+, super at 95, a burst of 4
+  const b = { jamAt: 0, hitAt: 60, critAt: 90, superAt: 95 };
+  assert.deepStrictEqual([60, 75, 76, 85, 88, 94, 95].map((r) => E.bullets(r, b, 4, E.classify(r, b), R9)), [1, 1, 2, 2, 3, 3, 4]);
+  const crit = E.resolve({ v, b, roll: 91, dt: 0, loc: "Body", rules: R9 });
+  assert.strictEqual(crit.outcome, "crit"); assert.strictEqual(crit.bullets, 3);
+  assert.strictEqual(crit.total, crit.each + crit.rest * 2, "one crit bullet, then plain hits"); assert.ok(crit.each > crit.rest);
+});
+test("balance pass: armor class sets the damage floor; creatures get Pen 4 a tier", () => {
+  const floor = (armor) => E.floorOf({ kind: "pc", gear: { armor } }, c9);
+  const of = (re) => data.armor.find((a) => ["Body", "Whole Body", "Power"].includes(a.loc) && re.test(a.type || "")).n;
+  assert.deepStrictEqual([floor(""), floor(of(/^light/i)), floor(of(/^medium/i)), floor(of(/^heavy/i)), floor(of(/^power/i))], [0.4, 0.3, 0.2, 0.1, 0.05]);
+  assert.strictEqual(E.resolve({ v: { base: 10, pen: 0, count: 1 }, b: { jamAt: 0, hitAt: 0, critAt: 100, superAt: 100 }, roll: 50, dt: 5, floor: 0.4, loc: "Body", rules: R9 }).total, 4, "10 damage, no Pen, clothing floor 40%");
+  const dc = E.spawn(db.enemies.get("deathclaw"), "e9", c9, () => 0.5);
+  const v = E.weaponView(dc.weapons[0], dc, E.derive(dc, c9), c9); assert.strictEqual(v.pen, 4 * dc.tier);
+});
+test("balance pass: players gain 2 HP a level with a 1.2x multiplier; enemy humans gain 5 a tier", () => {
+  const P = pc9({}, { level: 6 }); assert.strictEqual(E.derive(P, c9).hp, Math.floor((15 + 5 * 2 + 2 * 5) * 1.2));
+  const N = { kind: "npc", tier: 4, special: [5, 5, 5, 5, 5, 5, 5], skills: {}, gear: {}, weapons: [], statuses: [], effects: [], inv: [] };
+  assert.strictEqual(E.derive(N, c9).hp, 15 + 10 + 3 * 5);
+});
+test("balance pass: vendors carry ammo only for the guns they stock, junk thins out, the best loads are scarce", () => {
+  const seeded = (s) => () => (s = (s * 16807) % 2147483647) / 2147483647;
+  for (const [tier, seed] of [[1, 3], [3, 9], [6, 21]]) {
+    const st = E.vendorStock(c9, tier, seeded(seed)); const cat = (l) => E.get(c9, l.n);
+    const cals = new Set(st.filter((l) => cat(l).cat === "weapon").map((l) => E.low(cat(l).o.ammo || "")));
+    for (const l of st.filter((l) => cat(l).cat === "ammo")) {
+      assert.ok(cals.has(E.low(cat(l).o.cal)), `${l.n} has no gun on the shelf`);
+      const k = E.ammoClass(c9, cat(l).o);
+      if (tier === 6) assert.notStrictEqual(k, "junk", "no junk at tier 6");
+      if (k === "best") assert.ok(l.q <= 10, "only a little of the best");
+    }
+  }
+  assert.ok(E.valueOf(c9, "9mm Parabellum - Junk").val < E.valueOf(c9, "9mm Parabellum - Standard").val && E.valueOf(c9, "9mm Parabellum - Standard").val < E.valueOf(c9, "9mm Parabellum - Hand Load").val, "junk < standard < hand loads");
+  assert.ok(data.ammo.some((a) => a.n === "5.56mm NATO - API" && a.cal === "5.56mm NATO"), "the API load is filed under 5.56mm NATO");
 });
 test("no placeholder gear in the data", () => {
   for (const list of [data.armor, data.items, data.weapons, data.materials]) assert.ok(!list.some((x) => /^\(no /i.test(x.n)));

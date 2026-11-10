@@ -226,8 +226,8 @@ const E = (() => {
       d.dt = (e.baseDt || 0) + (m.dt || 0);
       d.save = 0;
     } else {
-      const lvlHp = e.kind === "pc" ? (d.level - 1) : ((e.tier || 1) - 1) * 6;
-      d.hp = Math.floor((15 + En * 2 + lvlHp + (m.hp || 0)) * (m.hpMul ? m.hpMul : 1) * (1 + (m.hpPct || 0)) * (e.hpMult || 1));
+      const lvlHp = e.kind === "pc" ? (d.level - 1) * (r.pcHpPerLevel != null ? r.pcHpPerLevel : 1) : ((e.tier || 1) - 1) * (r.npcHpPerTier != null ? r.npcHpPerTier : 6);
+      d.hp = Math.floor((15 + En * 2 + lvlHp + (m.hp || 0)) * (m.hpMul ? m.hpMul : 1) * (1 + (m.hpPct || 0)) * (e.hpMult || 1) * (e.kind === "pc" ? r.pcHpMul || 1 : 1) + 1e-9);
       if (e.kind === "pc") for (const name of [d.enc.activeTier, d.enc.totalTier]) if (name) for (const row of ctx.db.sc.get(low(name)) || []) if (row.mods) bump(row.mods);
       d.ap = Math.max(0, Math.floor((5 + A + (m.ap || 0)) * (1 + (m.apMul || 0))));
       d.pri = (A + P) / 2 + (m.pri || 0);
@@ -266,13 +266,22 @@ const E = (() => {
       const se = mode === "se" && w.dmg2 != null;
       v.mode = se ? "se" : "pr"; v.modeName = se ? w.seName : w.prName; v.hasSecondary = w.dmg2 != null;
       v.base = (se ? w.dmg2 : w.dmg) || 0; v.pen = (se ? w.pen2 : w.pen) || 0; v.ap = (se ? w.ap2 : w.ap) || 0;
-      v.hitBase = () => (w.base != null ? w.base : 0.45);
+      const r = ctx.rules, natural = !w.tier, punch = !natural && /^hand$/i.test(w.type || "");
+      // Heavy two-handed melee (base AP heavyMeleeAP or more, not fists) starts lower; skill carries it past light weapons later.
+      v.heavy = !natural && !punch && r.heavyMeleeAP != null && (w.ap || 0) >= r.heavyMeleeAP;
+      const lightBase = r.meleeBase != null ? r.meleeBase : 0.45;
+      const rowBase = w.base != null && w.base !== 0.45 ? w.base : null;  // 0.45 is the sheet's blanket default, so it follows the rules
+      v.hitBase = () => (rowBase != null ? rowBase : v.heavy && r.meleeHeavyBase != null ? r.meleeHeavyBase : lightBase);
+      if (punch && r.punchAP != null) { v.punch = true; v.ap = r.punchAP + (e.punches || 0) * (r.punchStep != null ? r.punchStep : 1); }  // 1 AP, then 2, 3... in the same turn
+      else if (!natural && r.meleeApMul) v.ap = Math.ceil(v.ap * r.meleeApMul - 1e-9);
+      if (natural && e.mob && r.creaturePen) v.pen += r.creaturePen * (e.tier || 1);
       v.base = (v.base || 0) + (d.m.damFlat && se ? d.m.damFlat : 0);
       v.count = 1; v.usesAmmo = false;
     } else {
       v.ap = Math.max(0, (w.ap || 0) + (d.m.apCost || 0));
       v.reload = Math.floor(Math.max(0, (w.reload || 0) + (d.m.reload || 0)) * (1 + (d.m.reloadMul || 0)));
       v.count = (w.count || 1) + (d.m.count || 0); v.cap = Math.floor(((w.mag || 0) + (d.m.magAdd || 0)) * (1 + (d.m.magPct || 0))); v.perShot = w.perShot || 1;
+      if (v.count > 1 && !w.thrown && ctx.rules.burstAP) v.ap += ctx.rules.burstAP;
       v.hitBase = (rng) => (w.hit || [])[rng - 1];
       v.reserve = w.ammo;
       v.usesAmmo = !v.thrown && !!w.ammo && w.ammo !== "N/A" && v.cap > 0;
@@ -299,7 +308,9 @@ const E = (() => {
     const base = v.melee ? v.hitBase() : v.hitBase(rng);
     if (base == null) return { hit: 0, raw: 0, parts: ["no hit data at this range"], noData: true, range: rng };
     parts.push(["base", base]);
-    parts.push(["skill", (skill - v.req) / 2 / 100]);
+    const mul = r.skillHitMul != null ? r.skillHitMul : 1, sk = ((skill - v.req) / 2) * mul;
+    parts.push(["skill", (mul === 1 ? sk : Math.floor(sk + 1e-9)) / 100]);
+    if (!v.melee && !v.thrown && r.gunHitAdd) parts.push(["gun", r.gunHitAdd]);
     if (r.perPenalty && !v.melee && A.sp.P != null && A.sp.P < rng) parts.push(["PER", -(rng - A.sp.P) * r.perPenalty]);
     if ((v.melee || v.thrown ? r.strMelee : r.strGun) && A.sp.S != null && A.sp.S < v.str) parts.push(["STR", -(v.str - A.sp.S) * v.str * (v.melee || v.thrown ? r.strMelee : r.strGun)]);
     let mods = A.m.acc || 0;
@@ -350,6 +361,15 @@ const E = (() => {
   /** Bullets landing in a burst: the hit band is cut into Count equal steps, higher rolls land more. */
   function bullets(roll, b, count, outcome, rules) {
     if (count <= 1) return 1;
+    if (rules && rules.burstMode === "segments") {
+      // The hit band up to the super crit is cut into Count - 1 steps, widest first (weights Count, Count-1 ... 2). Only a super crit lands them all.
+      if (outcome === "super") return count;
+      const span = b.superAt - b.hitAt; if (span <= 0) return 1;
+      const w = Array.from({ length: count - 1 }, (_, i) => count - i), tot = w.reduce((x, y) => x + y, 0);
+      let edge = b.hitAt;
+      for (let i = 0; i < w.length; i++) { edge += (span * w[i]) / tot; if (roll < edge - 1e-9) return i + 1; }
+      return count - 1;
+    }
     if (outcome === "crit" || outcome === "super") return rules && rules.critAllBullets === false ? 1 : count;
     const step = (b.critAt - b.hitAt) / count;
     if (step <= 0) return count;
@@ -379,17 +399,28 @@ const E = (() => {
     const avail = p.available != null ? p.available : v.count;
     res.bullets = Math.min(p.bulletsOv != null ? p.bulletsOv : bullets(roll, b, v.count, outcome, rules), Math.max(1, avail));
     const pel = v.pellets || 0;
-    let dmg;
-    if (pel && rules.pelletMode === "each") { const one = damage(v.base, v.pen, dt, lm, cm, rules.damageFloor); dmg = { x: one.x, raw: one.raw, final: one.final * pel }; }
-    else dmg = damage(pel ? v.base * pel : v.base, v.pen, dt, lm, cm, rules.damageFloor);
+    const floor = p.floor != null ? p.floor : rules.damageFloor;  // the target's armor sets the floor
+    const hitOf = (m) => { if (pel && rules.pelletMode === "each") { const one = damage(v.base, v.pen, dt, lm, m, floor); return { x: one.x, raw: one.raw, final: one.final * pel }; } return damage(pel ? v.base * pel : v.base, v.pen, dt, lm, m, floor); };
+    const dmg = hitOf(cm);
     // mult: cover and the target's damage-taken statuses, for example 0.9 behind soft cover.
     const mult = p.mult != null ? p.mult : 1;
-    res.each = p.damageOv != null ? p.damageOv : Math.max(mult > 0 ? 1 : 0, Math.floor(dmg.final * mult + 1e-9));
+    const after = (x) => Math.max(mult > 0 ? 1 : 0, Math.floor(x.final * mult + 1e-9));
+    res.each = p.damageOv != null ? p.damageOv : after(dmg);
     res.total = res.each * res.bullets;
+    // In segments mode only the first bullet of a burst is the crit; the rest are plain hits.
+    if (rules.burstMode === "segments" && res.bullets > 1 && outcome !== "hit" && p.damageOv == null) { res.rest = after(hitOf(rules.critMult.Hit)); res.total = res.each + res.rest * (res.bullets - 1); }
     if (outcome === "super" && sm.superKill) { res.kill = true; res.total = Math.max(res.total, 99999); }  // perks that instantly kill on a super crit
     const baseText = pel ? `${fix(v.base)}x${pel}` : String(fix(v.base));
-    res.math = `${baseText} × ${loc} ${lm} × ${critName} ${cm} = ${fix(dmg.x)}; Pen ${fix(v.pen)} ${v.pen >= dt ? "≥" : "<"} DT ${dt} → ${dmg.final}` + (res.bullets > 1 ? ` × ${res.bullets} bullets = ${res.total}` : "") + (mult !== 1 ? ` × ${fix(mult)} (cover, resistances) = ${res.each}` : "") + (p.damageOv != null ? ` (DM set ${p.damageOv})` : "");
+    res.math = `${baseText} × ${loc} ${lm} × ${critName} ${cm} = ${fix(dmg.x)}; Pen ${fix(v.pen)} ${v.pen >= dt ? "≥" : "<"} DT ${dt} → ${dmg.final}` + (res.bullets > 1 ? (res.rest != null ? ` first bullet, + ${res.bullets - 1} more at ${res.rest} = ${res.total}` : ` × ${res.bullets} bullets = ${res.total}`) : "") + (mult !== 1 ? ` × ${fix(mult)} (cover, resistances) = ${res.each}` : "") + (p.damageOv != null ? ` (DM set ${p.damageOv})` : "");
     return res;
+  }
+
+  /** Damage floor for hits on this target: its body armor's class sets it (clothing when there's none). Creatures keep the rules' floor. */
+  function floorOf(e, ctx) {
+    const r = ctx.rules, F = r.armorFloors; if (!F || !e || e.mob) return r.damageFloor;
+    const it = e.gear && e.gear.armor && get(ctx, e.gear.armor);
+    const k = it && (String(it.o.type || "").match(/^(light|medium|heavy|power)/i) || [])[1];
+    return F[k ? k.toLowerCase() : "clothing"] != null ? F[k ? k.toLowerCase() : "clothing"] : r.damageFloor;
   }
 
   // ---- skill checks
@@ -483,7 +514,16 @@ const E = (() => {
     }
     return out;
   }
-  /** A vendor's shelf: this tier and the one below, never unique weapons. */
+  /** junk, standard, improved (surplus, hand loads, match...), special, or best: the caliber's top special load. */
+  function ammoClass(ctx, a) {
+    const r = ctx.rules.ammoClasses || {}; const is = (k, x) => !!r[k] && new RegExp(r[k], "i").test(String(x.load || "").trim());
+    for (const k of ["junk", "standard", "improved"]) if (is(k, a)) return k;
+    const sp = loadsFor(ctx, a.cal).filter((x) => x.ok && !["junk", "standard", "improved"].some((k) => is(k, x)));
+    const score = (x) => (x.tier || 1) * 1000 + (x.dam || 0) * (x.pellets || 1) + (x.pen || 0);
+    const best = sp.reduce((m, x) => (!m || score(x) > score(m) ? x : m), null);
+    return sp.length > 1 && best && best.n === a.n ? "best" : "special";
+  }
+  /** A vendor's shelf: this tier and the one below, never unique weapons. Ammo only for the guns on the shelf, most of it the common loads. */
   function vendorStock(ctx, tier, rng = Math.random) {
     const d = ctx.db.data; const c = ctx.rules.vendorCounts; const g = ctx.rules.vendorGrowth || {}, qg = ctx.rules.vendorQtyGrowth || {};
     const inTier = (o) => { const t = Number(o.tier); return t >= Math.max(1, tier - 1) && t <= tier; };
@@ -498,17 +538,34 @@ const E = (() => {
       [armor.filter((a) => a.loc !== "Accessory"), n("armor"), () => 1],
       [armor.filter((a) => a.loc === "Accessory"), n("accessory"), () => 1],
       [d.items.filter((i) => i.effect && upTo({ tier: i.tier || 1 })), n("item"), (o) => Math.max(1, Math.round((1 + rng() * 2) * grow(med(o) ? "med" : "item")))],
-      [d.ammo.filter((a) => a.ok && upTo(a)), n("ammo"), () => Math.round((10 + rng() * 40) * grow("ammo"))],
       [d.materials.filter((m) => upTo(m)), n("material"), () => Math.max(1, Math.round((1 + rng() * 4) * grow("material")))],
     ];
-    return groups.flatMap(([list, k, qty]) => draw(list, k).map((o) => ({ n: o.n, q: qty(o) })));
+    // Guns: a caliber already on the shelf is less likely to come up again, so calibers vary without forbidding two 9mm guns.
+    const same = ctx.rules.vendorSameCaliber != null ? ctx.rules.vendorSameCaliber : 0.35;
+    const guns = []; { const pool = [...groups[0][0]], seen = {};
+      while (guns.length < groups[0][1] && pool.length) {
+        const wt = pool.map((w) => (w.ammo && w.ammo !== "N/A" ? Math.pow(same, seen[low(w.ammo)] || 0) : 1));
+        let x = rng() * wt.reduce((a, b) => a + b, 0), i = 0; while (i < pool.length - 1 && (x -= wt[i]) > 0) i++;
+        const w = pool.splice(i, 1)[0]; guns.push(w); if (w.ammo) seen[low(w.ammo)] = (seen[low(w.ammo)] || 0) + 1;
+      } }
+    const out = guns.map((o) => ({ n: o.n, q: 1 }));
+    for (const [list, k, qty] of groups.slice(1)) out.push(...draw(list, k).map((o) => ({ n: o.n, q: qty(o) })));
+    // Ammo for those guns: lots of the common loads, less of the good ones, a little of the caliber's best. Junk thins out by tier 5.
+    const VA = ctx.rules.vendorAmmo || {}, L = VA.lines || {};
+    const lines = (k) => { const [a, b] = L[k] || [1, 0]; return Math.max(0, Math.round(a + b * (tier - 1))); };
+    const qOf = (k) => { const [a, b] = VA[k] || [0, 0]; return Math.round((a + b * (tier - 1)) * (0.75 + rng() * 0.5)); };
+    for (const cal of [...new Set(guns.filter((w) => w.ammo && w.ammo !== "N/A" && !w.thrown).map((w) => w.ammo))]) {
+      const by = {}; for (const a of loadsFor(ctx, cal).filter((a) => a.ok && upTo(a))) { const k = ammoClass(ctx, a); (by[k] = by[k] || []).push(a); }
+      for (const k of ["junk", "standard", "improved", "special", "best"]) for (const a of draw(by[k] || [], lines(k))) { const q = qOf(k); if (q > 0) out.push({ n: a.n, q }); }
+    }
+    return out;
   }
   /** Base value of an item in caps. est means the workbook had no price, so this is the rules' placeholder. */
   function valueOf(ctx, name) {
     const it = get(ctx, name); if (!it) return { val: 0, est: true };
     if (it.o.val != null && it.o.val > 0) return { val: it.o.val, est: false };
     const t = Math.max(1, Math.min(6, Number(it.o.tier) || 1));
-    return { val: it.cat === "ammo" ? ctx.rules.ammoPrice * t : ctx.rules.noPrice[t - 1], est: true };
+    return { val: it.cat === "ammo" ? fix(ctx.rules.ammoPrice * t * ((ctx.rules.ammoClassPrice || {})[ammoClass(ctx, it.o)] || 1)) : ctx.rules.noPrice[t - 1], est: true };
   }
   // The sheet's Buy is 100/Barter and Sell is Barter/100: that is a vendor at 100. Clamped so nobody can buy low and sell high to the same vendor.
   const barterFactors = (mine, theirs) => ({ buy: Math.max(1, theirs / Math.max(1, mine)), sell: Math.max(0, Math.min(1, mine / theirs)) });
@@ -1312,6 +1369,6 @@ const E = (() => {
     return skipped;
   }
 
-  return { blastDamage, layoutReach, LAYOUT, story, weaponFamily, npcSkills, tierReq, npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
+  return { floorOf, ammoClass, blastDamage, layoutReach, LAYOUT, story, weaponFamily, npcSkills, tierReq, npcName, inside, trunkOf, VARS, standardize, forShot, whenHolds, enemyType, lineCover, pathBlocked, generateRoom, coverTier, SPECIAL, SPECIAL_NAMES, SKILLS, low, fix, makeDb, get, weightOf, parseEffect, parseHeal, healAmount, statusInfo, activeRows, derive, saveTarget, weaponView, loadsFor, hitChance, hitLine, bands, classify, bandSpans, bandText, bullets, damage, resolve, checkNeeded, checkResult, checkOdds, xpFor, levelForXp, xpGain, gearUp, spawn, makeBoss, rollCaps, pct, two, poolFor, isUnique, parseGear, vendorStock, valueOf, barterFactors, optimalRange };
 })();
 if (typeof module !== "undefined") module.exports = E;

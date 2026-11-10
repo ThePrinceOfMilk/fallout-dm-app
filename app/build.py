@@ -71,6 +71,7 @@ def hits(r, first):
 
 
 weapons = []
+CAL_FIX = {"5.56mm": "5.56mm NATO"}  # the API load is filed under "5.56mm"
 AMMO_ALIAS = {".308 win": ".308 WIN", ".45-70 govt": ".45-70 GOVT", ".50 cal ball": ".50 Ball", "nails": "Nail", "railway spikes": "Railway Spike", "40mm g": "40mm Shell", "25mm g": "25mm Shell"}
 RESERVE = {"MFC": "Microfusion Cell", "EC": "Energy Cell", "ECP": "Electron Charge Pack", "Fuel": "Flamer Fuel", "Nitrogen": "Nitrogen Tank"}
 
@@ -114,7 +115,10 @@ for r in rows("Ammo", 2, "B"):
     if not n:
         continue
     raw = r.get("E")
-    a = dict(n=n, cal=txt(r.get("C")), load=txt(r.get("D")), dam=num(raw), pen=num(r.get("F")), tier=num(r.get("G"), 1), lb=num(r.get("H"), 0), cls=txt(r.get("K")), note=txt(r.get("L")))
+    cal = txt(r.get("C"))
+    if cal in CAL_FIX:  # a caliber typed short in the workbook: file it under the real one
+        n = n.replace(cal, CAL_FIX[cal], 1); cal = CAL_FIX[cal]
+    a = dict(n=n, cal=cal, load=txt(r.get("D")), dam=num(raw), pen=num(r.get("F")), tier=num(r.get("G"), 1), lb=num(r.get("H"), 0), cls=txt(r.get("K")), note=txt(r.get("L")))
     if isinstance(raw, str) and "x" in raw.lower():  # "2x10" = 2 damage x 10 pellets
         a["dam"], a["pellets"] = [float(x) for x in raw.lower().split("x")[:2]]
     a["ok"] = a["dam"] is not None and a["pen"] is not None

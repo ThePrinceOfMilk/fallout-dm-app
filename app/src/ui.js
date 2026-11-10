@@ -355,7 +355,7 @@ function startFirstTurn() { const k = K(); k.acted = {}; const f = order().find(
 function startTurn(id) {
   const k = K(), e = ent(id);
   const me = cbOf(id); if (me) { me.still = me.moved ? 0 : (me.still || 0) + (k.round > 1 ? 1 : 0); me.moved = false; }  // Turtle counts rounds spent still
-  k.turnId = id; k.acted[id] = true; e.ap = der(e).ap; ui.rowSel = id; ui.atk = null; ui.pendingMove = null; ui.focus = "#roll"; if (e.kind === "pc") ui.sel = id;
+  k.turnId = id; k.acted[id] = true; e.ap = der(e).ap; e.punches = 0; ui.rowSel = id; ui.atk = null; ui.pendingMove = null; ui.focus = "#roll"; if (e.kind === "pc") ui.sel = id;
   log("turn", `Round ${k.round}: ${e.name}'s turn, ${e.ap} AP.`);
 }
 function nextTurn() { act("End turn", () => { const k = K(); const nx = order().find((c) => canAct(c) && !k.acted[c.id]); if (nx) startTurn(nx.id); else enterRoundEnd(); }); }
@@ -462,10 +462,11 @@ function fire() {
   const roll = Number(raw);
   act(`Attack: ${p.A.name} → ${p.T.name}`, () => {
     const { A, T, v, slot, b, dT } = p;
-    const res = E.resolve({ v, b, roll, dt: dT.dt, loc: a.loc, rules: S.rules, available: v.usesAmmo ? Math.floor((slot.mag || 0) / (v.perShot || 1)) : null, bulletsOv: num(a.ov.bullets), damageOv: num(a.ov.dmg), mult: Math.max(0, (1 + (p.cov.dam || 0)) * (1 + (dT.m.dmgTaken || 0))), shot: p.dA.m, taken: dT.m });
+    const res = E.resolve({ v, b, roll, dt: dT.dt, floor: E.floorOf(T, ctx()), loc: a.loc, rules: S.rules, available: v.usesAmmo ? Math.floor((slot.mag || 0) / (v.perShot || 1)) : null, bulletsOv: num(a.ov.bullets), damageOv: num(a.ov.dmg), mult: Math.max(0, (1 + (p.cov.dam || 0)) * (1 + (dT.m.dmgTaken || 0))), shot: p.dA.m, taken: dT.m });
     const jammed = res.outcome === "jam";
     if (!a.ov.free) A.ap = Math.max(0, (A.ap || 0) - (jammed && !S.rules.jamSpendsAP ? p.swap : p.cost));
     A.activeW = a.w;
+    if (v.punch) A.punches = (A.punches || 0) + 1;  // each punch this turn costs more
     let ammoText = "";
     if (jammed) slot.jammed = true;
     else if (v.usesAmmo && !(p.dA.m.critNoAmmo && (res.outcome === "crit" || res.outcome === "super"))) { slot.mag = (slot.mag || 0) - Math.min(slot.mag || 0, v.count * (v.perShot || 1)); ammoText = `${slot.mag}/${v.cap} left`; }

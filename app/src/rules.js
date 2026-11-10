@@ -1,6 +1,11 @@
 // Every number the DM might rebalance lives here. Saved campaigns keep their own edited copy.
 const DEFAULT_RULES = {
   maxHit: 0.95, damageFloor: 0.2, overskillCap: 100,
+  // 9 Nov 2026 balance pass: guns hit more, skill counts 1.5x, heavy melee starts lower, melee and bursts cost more AP, bullets by roll.
+  gunHitAdd: 0.12, skillHitMul: 1.5, meleeBase: 0.45, meleeHeavyBase: 0.35, heavyMeleeAP: 3,
+  meleeApMul: 1.5, punchAP: 1, punchStep: 1, burstAP: 1, burstMode: "segments", creaturePen: 4,
+  armorFloors: { clothing: 0.4, light: 0.3, medium: 0.2, heavy: 0.1, power: 0.05 },
+  pcHpPerLevel: 2, pcHpMul: 1.2, npcHpPerTier: 5,
   perPenalty: 0, strGun: 0, strMelee: 0,  // accuracy is skill and weapon only for now. The sheet's values are 0.05, 0.0125 and 0.05.
   loc: { Body: 1, Limb: 0.75, Head: 2 }, critMult: { Hit: 1, Crit: 2, Super: 3 }, superDefault: 0.01,
   critMode: "weapon", jamMode: "weapon", pelletMode: "combined", critAllBullets: true,
@@ -52,10 +57,15 @@ const DEFAULT_RULES = {
   // Blank consumables by category. Blank alcohol is booze, blank soda is caffeine. Set here so a pack can change it.
   substanceByCat: { Alcohol: [["Loose", 1], ["Drunk", 1]] }, substanceByName: { "^Nuka": [["Caffenated", 1]], "^Vim": [["Caffenated", 1]], "^Juice|^Brahmin Milk|Passionfruit": [["Hydrated", 1]] },
   // Vendors. Placeholder prices: the workbook has no value for ammo and most consumables.
-  vendorBarter: [10, 25, 35, 50, 60, 75, 85, 100], vendorCounts: { weapon: 4, armor: 3, accessory: 2, item: 6, ammo: 5, material: 3 },
+  vendorBarter: [10, 25, 35, 50, 60, 75, 85, 100], vendorCounts: { weapon: 4, armor: 3, accessory: 2, item: 6, material: 3 },
   // each tier above 1 adds this many picks; consumables and ammo grow fast, guns and armor stay scarce
-  vendorGrowth: { weapon: 0.4, armor: 0.4, accessory: 0.3, item: 2.4, ammo: 1.6, material: 1 },
-  vendorQtyGrowth: { item: 0.5, med: 0.9, ammo: 0.7, material: 0.5 },
+  vendorGrowth: { weapon: 0.4, armor: 0.4, accessory: 0.3, item: 2.4, material: 1 },
+  vendorQtyGrowth: { item: 0.5, med: 0.9, material: 0.5 },
+  // Vendor ammo, per caliber of the guns they stock: rounds per line = a + b x (tier - 1), and lines = a + b x (tier - 1).
+  vendorAmmo: { junk: [40, -10], standard: [30, 10], improved: [10, 5], special: [4, 4], best: [2, 1], lines: { junk: [1, 0], standard: [1, 0], improved: [0.5, 0.2], special: [0.5, 0.4], best: [0, 0.2] } },
+  vendorSameCaliber: 0.35,  // each gun of a caliber already on the shelf makes another of it this much as likely
+  ammoClasses: { junk: "^(junk|salvaged)$", standard: "^(standard|basic|musket ball)$", improved: "^(surplus|hand load|mil-spec|match|\\+p'|,?\\+p\\+|proof load|olympic quality)$" },
+  ammoClassPrice: { junk: 0.5, standard: 1, improved: 1.5, special: 2, best: 3 },
   // thrown with Use item: a dashed line to where it lands, damage by meters from the blast
   throwables: { "Frag Grenade": { radius: 5, dmg: [12, 8, 4, 2, 1], ap: 1, lb: 0.5, range: 30 } },  // range: the farthest throw in meters
   ammoPrice: 1, noPrice: [5, 10, 20, 40, 80, 150],
@@ -200,16 +210,18 @@ const RULE_SCHEMA = [
     ["maxHit", "Max hit chance", "pct"], ["superDefault", "Default super crit chance", "pct"],
     ["critMode", "Crit chance", [["weapon", "Weapon %"], ["sheet", "Luck-scaled"]]],
     ["jamMode", "Jam chance", [["weapon", "Weapon %"], ["sheet", "Luck-scaled"]]],
-    ["jamSpendsAP", "A jam still spends the attack's AP", "bool", "flag"], ["critAllBullets", "A crit burst lands every bullet", "bool", "flag"],
+    ["jamSpendsAP", "A jam still spends the attack's AP", "bool", "flag"], ["burstMode", "Burst bullets", [["segments", "By roll; crits hit the first bullet"], ["steps", "Old: by roll, crits land all"]], "flag"], ["critAllBullets", "Old burst mode: a crit lands every bullet", "bool"],
+    ["gunHitAdd", "Gun hit bonus, every range", "pct", "flag"], ["skillHitMul", "Skill above requirement counts x", "num", "flag"], ["meleeBase", "Melee base hit", "pct", "flag"], ["meleeHeavyBase", "Heavy melee base hit", "pct", "flag"], ["heavyMeleeAP", "Heavy melee: base AP at least", "num", "flag"],
     ["pelletMode", "Pellet ammo (2x10)", [["combined", "One hit"], ["each", "Each pellet"]], "flag"],
     ["overskillCap", "Skill counted at most", "num"], ["perPenalty", "PER penalty per range point", "pct"], ["strGun", "Gun STR penalty factor", "pct"], ["strMelee", "Melee and thrown STR penalty factor", "pct"],
   ]],
-  ["Damage", [["damageFloor", "Damage floor", "pct"], ["loc.Body", "Body multiplier", "num"], ["loc.Limb", "Limb multiplier", "num"], ["loc.Head", "Head multiplier", "num"], ["critMult.Crit", "Crit multiplier", "num"], ["critMult.Super", "Super crit multiplier", "num"]]],
-  ["AP costs", [["targetAP.Body", "Body shot extra AP", "num", "flag"], ["targetAP.Limb", "Limb shot extra AP", "num"], ["targetAP.Head", "Head shot extra AP", "num"], ["swapAP", "Swap weapon", "num"], ["reviveAP", "Revive", "num", "flag"]]],
+  ["Damage", [["armorFloors.clothing", "Damage floor: clothing or none", "pct", "flag"], ["armorFloors.light", "Damage floor: light armor", "pct"], ["armorFloors.medium", "Damage floor: medium armor", "pct"], ["armorFloors.heavy", "Damage floor: heavy armor", "pct"], ["armorFloors.power", "Damage floor: power armor", "pct"], ["damageFloor", "Damage floor: creatures", "pct"], ["creaturePen", "Creature attack Pen per tier", "num", "flag"], ["loc.Body", "Body multiplier", "num"], ["loc.Limb", "Limb multiplier", "num"], ["loc.Head", "Head multiplier", "num"], ["critMult.Crit", "Crit multiplier", "num"], ["critMult.Super", "Super crit multiplier", "num"]]],
+  ["AP costs", [["meleeApMul", "Melee AP multiplier", "num", "flag"], ["punchAP", "First punch in a turn", "num", "flag"], ["punchStep", "Each later punch costs this much more", "num", "flag"], ["burstAP", "Extra AP for a burst", "num", "flag"], ["targetAP.Body", "Body shot extra AP", "num", "flag"], ["targetAP.Limb", "Limb shot extra AP", "num"], ["targetAP.Head", "Head shot extra AP", "num"], ["swapAP", "Swap weapon", "num"], ["reviveAP", "Revive", "num", "flag"]]],
   ["Checks and stealth", [["checkBase", "Skill check base", "num"], ["checkStep", "Points per step", "num"], ["specialAsSkill", "Skill points per SPECIAL point", "num"], ["checksPerPlayer", "Pre-combat checks per player", "num"], ["sneakDiv", "Sneak roll: divide Sneak by", "num", "flag"], ["sneakSub", "Sneak roll: then subtract", "num", "flag"], ["caughtInit", "Caught sneaking: initiative", "num"]]],
+  ["HP", [["pcHpPerLevel", "Player HP per level", "num", "flag"], ["pcHpMul", "Player HP multiplier", "num"], ["npcHpPerTier", "Enemy human HP per tier", "num"]]],
   ["Downed and revive", [["saveCap", "Saving throw cap", "num"], ["revivePenalty", "Save lost per time revived (of 20)", "num"], ["reviveHP", "HP after revive", "num", "flag"], ["reviveShockTier", "Shock tier on revive", "num", "flag"]]],
   ["XP and healing", [["xpAward", "Enemy XP goes to", [["each", "Everyone"], ["split", "Split"], ["killer", "The killer"]], "flag"], ["xpIntStep", "XP per INT above 5", "pct"], ["defeatXpPct", "XP kept after a defeat", "pct", "flag"], ["passiveHealPct", "Passive heal after combat (of max HP)", "pct", "flag"], ["perkEvery", "Level perk every N levels", "num"]]],
-  ["Vendors", [["ammoPrice", "Ammo price per round, per tier", "num", "flag"], ["noPrice.0", "Unpriced item, tier 1", "num", "flag"], ["noPrice.1", "Unpriced item, tier 2", "num", "flag"], ["noPrice.2", "Unpriced item, tier 3", "num", "flag"], ["noPrice.3", "Unpriced item, tier 4", "num", "flag"], ["noPrice.4", "Unpriced item, tier 5", "num", "flag"], ["noPrice.5", "Unpriced item, tier 6", "num", "flag"]]],
+  ["Vendors", [["ammoPrice", "Ammo price per round, per tier", "num", "flag"], ["ammoClassPrice.junk", "Junk ammo price x", "num"], ["ammoClassPrice.improved", "Surplus, hand loads, match price x", "num"], ["ammoClassPrice.special", "Special ammo price x", "num"], ["ammoClassPrice.best", "Best ammo price x", "num"], ["vendorSameCaliber", "Odds of a second gun in a caliber", "pct"], ["noPrice.0", "Unpriced item, tier 1", "num", "flag"], ["noPrice.1", "Unpriced item, tier 2", "num", "flag"], ["noPrice.2", "Unpriced item, tier 3", "num", "flag"], ["noPrice.3", "Unpriced item, tier 4", "num", "flag"], ["noPrice.4", "Unpriced item, tier 5", "num", "flag"], ["noPrice.5", "Unpriced item, tier 6", "num", "flag"]]],
   ["Cover tiers", [["cover.concealment.hit", "Concealment: hit", "pct"], ["cover.soft.hit", "Soft cover: hit", "pct"], ["cover.soft.dam", "Soft cover: damage", "pct"], ["cover.hard.hit", "Hard cover: hit", "pct"], ["cover.hard.dam", "Hard cover: damage", "pct"], ["cover.impenetrable.hit", "Impenetrable: hit", "pct"], ["cover.impenetrable.dam", "Impenetrable: damage", "pct"]]],
   ["Auto status effects", [["autoStatus", "Crits apply a status by body part", "bool"], ["autoWeaponStatus", "Weapons apply their status on a hit", "bool", "flag"], ["critStatus.Head", "Head crit", "text", "flag"], ["critStatus.Body", "Body crit", "text", "flag"], ["critStatus.Arm", "Arm crit", "text"], ["critStatus.Leg", "Leg crit", "text"], ["critTier.Crit", "Tier on a crit", "num", "flag"], ["critTier.Super", "Tier on a super crit", "num", "flag"]]],
   ["Enemies and inventory", [["autoNames", "Generic enemies get a name by faction", "bool"], ["storyLog", "Combat log describes each attack", "bool"], ["genSkills", "Enemy skills follow tier, SPECIAL and weapon", "bool"], ["npcSkillSpecial", "Enemy skill per SPECIAL point over 5", "num"], ["npcSkillSpread", "Enemy skill random spread (+/-)", "num"], ["npcOffSkill", "Skills without a weapon, share of the tier", "pct"], ["bossMin", "Make Boss: minimum boost", "pct"], ["bossMax", "Make Boss: maximum boost", "pct"], ["genArmor", "Generated humans get armor", "bool", "flag"], ["genLootMax", "Generated consumables, up to", "num", "flag"], ["activePct", "Active inventory share of Carry", "pct"], ["startPool", "SPECIAL points at creation", "num"]]],
