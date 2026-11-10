@@ -782,8 +782,8 @@
   "ok": true
  },
  {
-  "n": "5.56mm - API",
-  "cal": "5.56mm",
+  "n": "5.56mm NATO - API",
+  "cal": "5.56mm NATO",
   "load": "API",
   "dam": 8,
   "pen": 32,

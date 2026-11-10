@@ -70,7 +70,7 @@ n,cal,load,dam,pen,tier,lb,cls,ok,pellets,note
 5.56mm NATO - Hollow Point,5.56mm NATO,Hollow Point,16,5,3,0.026,Rifles - Standard,true,,
 5.56mm NATO - AP,5.56mm NATO,AP,10,24,3,0.026,Rifles - Standard,true,,
 5.56mm NATO - Surplus,5.56mm NATO,Surplus,11,15,2,0.026,Rifles - Standard,true,,
-5.56mm - API,5.56mm,API,8,32,6,0.026,Rifles - Standard,true,,Tier 1 burn
+5.56mm NATO - API,5.56mm NATO,API,8,32,6,0.026,Rifles - Standard,true,,Tier 1 burn
 .308 WIN - Junk,.308 WIN,Junk,8,6,2,0.055,Rifles - Standard,true,,
 .308 WIN - Standard,.308 WIN,Standard,16,13,3,0.055,Rifles - Standard,true,,
 .308 WIN - Surplus,.308 WIN,Surplus,18,15,3,0.055,Rifles - Standard,true,,

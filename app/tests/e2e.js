@@ -1096,6 +1096,44 @@ async function launch() {
     await rail("tree"); assert.ok(await page.locator(".dialog .ftab").count() >= 2, "a folder tab per player"); assert.ok(await page.locator(".dialog .pnode").count() > 30, "skill and level perk trees");
     await press("Escape");
   });
+  await ok("QA pass: empty fights, deleting the actor, cut-down saves, spreadsheet round trips, an unreadable autosave", async () => {
+    const r = await page.evaluate(async () => {
+      const out = {}; const reset = () => { S = fresh(); Object.assign(ui, { atk: null, modal: null, end: null, def: null, sel: S.chars[0].id }); applyData(); render(); };
+      const raider = DATA.enemies.find((e) => !e.mob && !e.test).n;
+      // nobody to act: the fight waits instead of starting rounds forever
+      reset(); S.chars = []; ui.sel = null; ACT.setupOpen("1"); ACT.beginC(""); beginRounds(); render(); out.empty = K().phase;
+      // deleting whoever is acting passes the turn on
+      reset(); ACT.addPick(raider); ACT.beginC(""); beginRounds(); K().turnId = S.chars[0].id; ACT.delChar(S.chars[0].id); render(); out.turnAfterDelete = !!ent(K().turnId);
+      // a character with fields missing still loads and draws
+      S = normalize({ chars: [{ name: "Min" }] }); ui.sel = S.chars[0].id; render(); ACT.openChar(`${ui.sel}|inv`); ACT.openChar(`${ui.sel}|sheet`); ui.modal = null; out.minimal = [S.chars[0].special.length, !!S.chars[0].gear, S.chars[0].hp > 0];
+      // every table survives a trip through a spreadsheet file unchanged
+      reset(); out.csv = PACK_TABLES.filter((id) => { const rows = tableRows(id); const back = fromCsv(toCsv(rows), rows); return back.length !== rows.length || rows.some((x, i) => Object.keys({ ...x, ...back[i] }).some((k) => (x[k] == null || x[k] === "" ? back[i][k] != null : JSON.stringify(x[k]) !== JSON.stringify(back[i][k])))); });
+      // an edited traits table keeps its codes, even after Excel strips the zeros
+      const traits = clone(tableRows("traits")).map((t) => ({ ...t, code: String(Number(t.code)) })); traits[0].ben = "edited";
+      const mine = S.chars[0].traits.find(Boolean); await loadPack(makeZip(packFiles().map(([n, x]) => (n === "tables/traits.csv" ? [n, toCsv(traits)] : [n, x]))).buffer); render();
+      out.traitKept = db.traitByCode.has(mine) && DATA.traits[0].ben === "edited";
+      // HP and AP boxes stop at zero, and a short magazine only counts the rounds it had
+      reset(); const c = S.chars[0]; const el = document.querySelector(`[data-bind="${c.id}:hp"]`); el.value = "-3"; el.dispatchEvent(new Event("change", { bubbles: true })); out.hp = S.chars[0].hp;
+      reset(); ACT.addPick(raider); ACT.beginC(""); beginRounds(); const pc = S.chars[0]; const w = DATA.weapons.find((x) => x.ok && x.tab === "SG" && (x.count || 1) >= 3 && E.loadsFor(ctx(), x.ammo).some((a) => a.ok));
+      pc.weapons = [{ n: w.n, mag: 2, ammo: E.loadsFor(ctx(), w.ammo).find((a) => a.ok).n }]; pc.activeW = 0; pc.fam = {}; K().turnId = pc.id; pc.ap = 50; makeAttack(pc.id); ui.atk.roll = "50"; ui.atk.ov = { hit: "95" }; fire(); out.fam = pc.fam[E.low(w.n)];
+      // leave an autosave no build can draw, for the reload below
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ chars: [{ id: "c1", name: "A", special: [5, 5, 5, 5, 5, 5, 5] }], combat: { phase: "turns", round: 1, cbs: [{ id: "ghost" }], npcs: [], ranges: {}, acted: {}, last: {}, used: [], turnId: "ghost" } }));
+      prefs.autosave = false; dirty = false;
+      return out;
+    });
+    assert.strictEqual(r.empty, "roundEnd", "a fight with nobody in it waits at the end of the round");
+    assert.ok(r.turnAfterDelete, "deleting the acting character passes the turn to someone who exists");
+    assert.deepStrictEqual(r.minimal, [7, true, true], "a save with fields missing is filled in on load");
+    assert.deepStrictEqual(r.csv, [], "tables that change in a CSV round trip");
+    assert.ok(r.traitKept, "trait codes survive an edited traits.csv");
+    assert.strictEqual(r.hp, 0, "HP typed below zero stops at zero");
+    assert.strictEqual(r.fam, 2, "two rounds left in a burst of three count as two for familiarity");
+    await page.reload();
+    const after = await page.evaluate(() => ({ drawn: !!app.firstChild, chars: S.chars.length, kept: !!localStorage.getItem(SAVE_KEY + "-unreadable"), toast: document.getElementById("toast").textContent }));
+    assert.ok(after.drawn && after.chars > 0 && after.kept && /set aside/.test(after.toast), "an autosave that cannot be drawn is set aside and a fresh campaign opens");
+    errors.length = 0;  // the reload above is expected to hit the broken save once
+    await page.evaluate(() => { prefs.autosave = true; savePrefs(); localStorage.removeItem(SAVE_KEY + "-unreadable"); });
+  });
   await browser.close();
   for (const r of results) console.log(r.join("  "));
   const fails = results.filter((r) => r[0] === "FAIL");

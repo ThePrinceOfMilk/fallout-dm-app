@@ -2,6 +2,27 @@
  "maxHit": 0.95,
  "damageFloor": 0.2,
  "overskillCap": 100,
+ "gunHitAdd": 0.12,
+ "skillHitMul": 1.5,
+ "meleeBase": 0.45,
+ "meleeHeavyBase": 0.35,
+ "heavyMeleeAP": 3,
+ "meleeApMul": 1.5,
+ "punchAP": 1,
+ "punchStep": 1,
+ "burstAP": 1,
+ "burstMode": "segments",
+ "creaturePen": 4,
+ "armorFloors": {
+  "clothing": 0.4,
+  "light": 0.3,
+  "medium": 0.2,
+  "heavy": 0.1,
+  "power": 0.05
+ },
+ "pcHpPerLevel": 2,
+ "pcHpMul": 1.2,
+ "npcHpPerTier": 5,
  "perPenalty": 0,
  "strGun": 0,
  "strMelee": 0,
@@ -109,6 +130,8 @@
  },
  "perkEvery": 2,
  "gridM": 2,
+ "gridMode": "square",
+ "hexM": 12.5,
  "enemyTypes": {
   "robot": "robot|protectron|assaultron|sentry|eyebot|handy|gutsy|turret|securitron|synth",
   "insect": "ant\\b|cazador|bloatfly|scorpion|mantis|roach",
@@ -1284,8 +1307,91 @@
   "armor": 3,
   "accessory": 2,
   "item": 6,
-  "ammo": 5,
   "material": 3
+ },
+ "vendorGrowth": {
+  "weapon": 0.4,
+  "armor": 0.4,
+  "accessory": 0.3,
+  "item": 2.4,
+  "material": 1
+ },
+ "vendorQtyGrowth": {
+  "item": 0.5,
+  "med": 0.9,
+  "material": 0.5
+ },
+ "vendorAmmo": {
+  "junk": [
+   40,
+   -10
+  ],
+  "standard": [
+   30,
+   10
+  ],
+  "improved": [
+   10,
+   5
+  ],
+  "special": [
+   4,
+   4
+  ],
+  "best": [
+   2,
+   1
+  ],
+  "lines": {
+   "junk": [
+    1,
+    0
+   ],
+   "standard": [
+    1,
+    0
+   ],
+   "improved": [
+    0.5,
+    0.2
+   ],
+   "special": [
+    0.5,
+    0.4
+   ],
+   "best": [
+    0,
+    0.2
+   ]
+  }
+ },
+ "vendorSameCaliber": 0.35,
+ "ammoClasses": {
+  "junk": "^(junk|salvaged)$",
+  "standard": "^(standard|basic|musket ball)$",
+  "improved": "^(surplus|hand load|mil-spec|match|\\+p'|,?\\+p\\+|proof load|olympic quality)$"
+ },
+ "ammoClassPrice": {
+  "junk": 0.5,
+  "standard": 1,
+  "improved": 1.5,
+  "special": 2,
+  "best": 3
+ },
+ "throwables": {
+  "Frag Grenade": {
+   "radius": 5,
+   "dmg": [
+    12,
+    8,
+    4,
+    2,
+    1
+   ],
+   "ap": 1,
+   "lb": 0.5,
+   "range": 30
+  }
  },
  "ammoPrice": 1,
  "noPrice": [
@@ -1316,6 +1422,56 @@
  "reviveAP": 3,
  "reviveHP": 1,
  "reviveShockTier": 1,
+ "checkXpMul": 0.25,
+ "famCritMul": 5,
+ "famBands": [
+  [
+   0,
+   "Unfamiliar"
+  ],
+  [
+   10,
+   "Novice"
+  ],
+  [
+   100,
+   "Familiar"
+  ],
+  [
+   250,
+   "Proficient"
+  ],
+  [
+   750,
+   "Expert"
+  ],
+  [
+   2000,
+   "Master"
+  ]
+ ],
+ "coverRounds": {
+  "concealment": 4,
+  "soft": 12,
+  "hard": 60,
+  "impenetrable": 400
+ },
+ "coverTake": {
+  "concealment": 1.5,
+  "soft": 1,
+  "hard": 0.5,
+  "impenetrable": 0.25
+ },
+ "coverRound": 11,
+ "objBlastMul": 3,
+ "coverFade": [
+  "concealment",
+  "soft"
+ ],
+ "lootLuck": 10,
+ "lootFull": 120,
+ "lootFind": 0.02,
+ "lootFindMax": 6,
  "xpAward": "each",
  "xpIntStep": 0.05,
  "defeatXpPct": 0,
@@ -1340,6 +1496,148 @@
  "npcSkillSpecial": 3,
  "npcSkillSpread": 7,
  "npcOffSkill": 0.6,
+ "uniques": [
+  "Wild Bill's Sidearm",
+  "Plinker (Custom)",
+  "Infiltrator",
+  "Ratslayer",
+  "Lucky",
+  "Old Springfield",
+  "Peashooter (MAX9)",
+  "Percolator",
+  "Vance's 9mm SMG",
+  "General Liu Rifle",
+  "Snoop",
+  "Veruc (B2)",
+  "Impaciente",
+  "Mysterious Magnum",
+  "Unforgiven (B2)",
+  "A Light Shining in Darkness",
+  "Deliverer",
+  "Maria",
+  "Bekah (B2)",
+  "Green Bean (Rifle)",
+  "The Progenitor",
+  "Sleepytime",
+  "Alyonka (Mosin)",
+  "Paciencia",
+  "Bird's Eye",
+  "Wanda",
+  "Xuanlong Assault Rifle",
+  "Overseer's Guardian",
+  "Centennial",
+  "Bitter Memory",
+  "Hitman",
+  "Red Eye",
+  "Red Star",
+  "Stalker (B2)",
+  "Switch Em'",
+  "Silver Sea",
+  "The Gold Rush",
+  "Kit and Caboodle",
+  "All-American",
+  "Perforator (Pitt)",
+  "The Caravaneer",
+  "Hellreigel",
+  "Gobi Campaign Scout Rifle",
+  "Counting (Kirk)",
+  "Olympian",
+  "La Longue Carabine",
+  "Warlord",
+  "The Jam",
+  "Pipe Hitter",
+  "Little Friend (Commando)",
+  "Distant Hand",
+  "This Machine",
+  "Mjolnir",
+  "The Reaper",
+  "Medicine Stick",
+  "Tookarev",
+  "Firebrand",
+  "Christine's CoS silencer rifle",
+  "Lyudmila (USSR)",
+  "Shoulder Tapper",
+  "Courier's Pistol (Converted 9mm)",
+  "Chest Breacher (Shotty)",
+  "Shot Eagle",
+  "FIDO",
+  "Big Boomer",
+  "The Terrible Shotgun",
+  "Force Of Nature",
+  "American Ambition (x2 1911)",
+  "That Gun",
+  "Survivalist's Rifle",
+  "Eugene",
+  "Pull!",
+  "Scuttled Glory",
+  "The Shadow",
+  "Bozar",
+  "Chop Shop",
+  "Twin Fang",
+  "Li'l Devil",
+  "Ranger Sequoia",
+  "Tooth and Claw",
+  "Unbridled Rage",
+  "Pepper Shaker (Heavy Shotty)",
+  "CS72 Avenger",
+  "Dinner Bell",
+  "Thunderclap",
+  "Reactionary Destroyer",
+  "Butcher",
+  "Desert Storm",
+  "Rusoriz",
+  "Escalation (M1917 MG)",
+  "Heat of Reaction",
+  "Khans' First Toy",
+  "Drug Runner (Uzi)",
+  "The Enforcer",
+  "Maggie",
+  "Bingham Brash",
+  "Valkyrie",
+  "Compliance Regulator",
+  "Psyoper",
+  "Millenium Smuggler",
+  "Langley Pototype #239",
+  "Charcolov (AKflamer)",
+  "Megatron",
+  "AER14 prototype",
+  "Pew Pew",
+  "Q-35 Matter Modulator",
+  "Arroyo's Revenge (FO2 Pusle)",
+  "Tesla Beaton Prototype",
+  "The Viper",
+  "YCS-186",
+  "Cleansing Flame",
+  "Alien Blaster",
+  "Sprtel-Wood 9700",
+  "Euclids C-Finder",
+  "Metal Blaster",
+  "Slagga (B2)",
+  "Norfleet (B2) (plasma rocket)",
+  "The Smitty Special",
+  "Roman Candle (Rocket Pistol)",
+  "(Meltdown)",
+  "Red Glare",
+  "Thump Thump",
+  "Celebration (Rocket MG)",
+  "Unkempt Harold (Rocket Revolver)",
+  "Mercy",
+  "Annabelle",
+  "Yahya",
+  "Celebration Mk. 2",
+  "Figaro",
+  "Nuka Breaker",
+  "The Humble Cudgel",
+  "Tung Tung Tung",
+  "Golden Gloves",
+  "Nephi's Driver",
+  "Embrace of the Mantis King",
+  "Love and Hate",
+  "Recompense of the Fallen",
+  "Cram Opener",
+  "Liberator",
+  "Proton Inversal Axe"
+ ],
  "bossMin": 0.1,
  "bossMax": 0.3,
  "genArmor": true,
@@ -1529,7 +1827,7 @@
   },
   "pallet": {
    "n": "Pallet",
-   "cover": "concealment",
+   "cover": "open",
    "w": 1.2,
    "h": 1.2
   },
@@ -1565,7 +1863,7 @@
   },
   "bench": {
    "n": "Bench",
-   "cover": "soft",
+   "cover": "open",
    "w": 1.8,
    "h": 0.5
   },
@@ -1589,15 +1887,21 @@
   },
   "cot": {
    "n": "Cot",
-   "cover": "concealment",
+   "cover": "open",
    "w": 1.8,
    "h": 0.7
   },
   "footlocker": {
    "n": "Footlocker",
-   "cover": "soft",
+   "cover": "open",
    "w": 1,
    "h": 0.5
+  },
+  "chest": {
+   "n": "Chest",
+   "cover": "soft",
+   "w": 1,
+   "h": 0.6
   },
   "campfire": {
    "n": "Campfire",
@@ -1621,7 +1925,7 @@
   },
   "smallRock": {
    "n": "Small rock",
-   "cover": "concealment",
+   "cover": "open",
    "w": 1,
    "h": 1,
    "round": true
@@ -1712,7 +2016,7 @@
   },
   "stump": {
    "n": "Stump",
-   "cover": "soft",
+   "cover": "open",
    "w": 0.8,
    "h": 0.8,
    "round": true
@@ -1789,13 +2093,13 @@
   },
   "kitchenTable": {
    "n": "Kitchen table",
-   "cover": "soft",
+   "cover": "concealment",
    "w": 1.8,
    "h": 1.2
   },
   "bed": {
    "n": "Bed",
-   "cover": "soft",
+   "cover": "open",
    "w": 2,
    "h": 1.4
   },

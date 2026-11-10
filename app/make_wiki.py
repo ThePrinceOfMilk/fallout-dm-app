@@ -442,7 +442,8 @@ for pg, lvl, t in items:
     ch = int(t.split(".")[0]) if lvl == 2 else None
     if ch in U: toc.append([3, f"Changes ({labels[ch][0]}" + (f"-{labels[ch][-1]})" if len(labels[ch]) > 1 else ")"), shift(last[ch]) + 2])
 base.set_toc(toc)
-mid = os.path.join(tmp, "mid.pdf"); base.save(mid, garbage=3, deflate=True)
+base.subset_fonts()  # each inserted page brought its own full copy of the fonts: keep only the letters used, a quarter of the size
+mid = os.path.join(tmp, "mid.pdf"); base.save(mid, garbage=4, deflate=True)
 
 # ---- Fallout terminal look: black pages, green text. Every color in the PDF is swapped as it's drawn, so the layout doesn't change.
 BG = (0.008, 0.02, 0.008)
@@ -474,6 +475,8 @@ w = PdfWriter(clone_from=mid)
 for pg in w.pages: recolor(pg, w)
 w.add_metadata({"/Title": "Fallout TTRPG Game Bible"})
 with open(PDF, "wb") as f: w.write(f)
+# The recolored file carries leftovers from every step. One clean re-save halves it again; pages, text and contents stay the same.
+tidy = fitz.open(PDF); tidy.save(PDF + ".tmp.pdf", garbage=4, deflate=True); tidy.close(); os.replace(PDF + ".tmp.pdf", PDF)
 for d in upd_docs.values(): d.close()
 base.close(); shutil.rmtree(tmp, ignore_errors=True)
 print(f"{len(U)} chapters updated, {sum(len(v) for v in labels.values())} lettered pages, {len(decided)} flags resolved, {len(w.pages)} pages")

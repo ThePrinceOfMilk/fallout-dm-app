@@ -63,6 +63,8 @@ function normalize(p) {
   if (p.combat) for (const c of p.combat.cbs) if (c.x == null) { c.x = c.pos || 0; c.y = 0; }  // saves from before the map
   // shortcut: a fight saved on the old ring map opens on a plain 24m square with its old numbers as meters, so ranges shift until tokens are moved.
   if (!p.scene.map && (p.combat || Object.keys(p.scene.pos).length)) p.scene.map = { id: "custom", n: "Custom size", w: 24, h: 24 };
+  // A hand-edited or cut-down save can leave fields off a character. Fill them in, or the first screen that reads one fails.
+  p.chars = p.chars.map((c) => initChar({ name: "Unnamed", special: Array(7).fill(5), ...c, id: c.id || "c" + p.seq++ }, { db, rules: p.rules, scene: p.scene, ov: p.overrides }));
   return p;
 }
 function readJson(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
@@ -73,6 +75,7 @@ let dataRev = null;
 function applyData() {
   dataRev = S.tableRev || 0;
   for (const k of Object.keys(WORKBOOK)) DATA[k] = clone0((S.tables && S.tables[k]) || WORKBOOK[k]);
+  for (const t of DATA.traits) t.code = String(t.code).padStart(3, "0");  // a spreadsheet turns "007" into 7
   SKIPPED = E.standardize(DATA, S.rules);
   db = E.makeDb(DATA);
   if (document.getElementById("lists")) fillLists();
@@ -399,6 +402,7 @@ function enterRoundEnd() {
   log("turn", `End of round ${k.round}.`);
   const firstDown = S.chars.find((c) => c.dbno);
   if (firstDown) { ui.focus = `#save-${firstDown.id}`; return; }  // saving throws to roll: stop here
+  if (!order().some(canAct)) return;  // nobody left who can act (an empty party, say): stop here instead of starting rounds forever
   k.round++; k.phase = "turns"; startFirstTurn();  // nothing to decide between rounds, so the next one starts by itself
 }
 function nextRound() { act("Next round", () => { const k = K(); k.round++; k.phase = "turns"; startFirstTurn(); }); }
@@ -485,7 +489,7 @@ function fire() {
     const jammed = res.outcome === "jam";
     const crit = res.outcome === "crit" || res.outcome === "super";
     // Familiarity: rounds fired with this weapon (a swing is 1), a crit counts famCritMul times.
-    const fired = jammed ? 0 : v.usesAmmo ? v.count * (v.perShot || 1) : 1;
+    const fired = jammed ? 0 : v.usesAmmo ? Math.min(slot.mag || 0, v.count * (v.perShot || 1)) : 1;  // a short magazine fires what it has
     if (fired) { A.fam = A.fam || {}; const fk = E.low(v.n); A.fam[fk] = (A.fam[fk] || 0) + fired * (crit ? S.rules.famCritMul || 1 : 1); }
     // A hit through cover wears it down: the shot's damage before cover, times that tier's share.
     if (p.cov.id && res.total != null && !jammed && !["miss", "jam"].includes(res.outcome)) { const o = S.scene.objects.find((x) => x.id === p.cov.id); const open = E.resolve({ ...args, mult: Math.max(0, 1 + (dT.m.dmgTaken || 0)) }); hurtObj(o, E.fix((open.total || 0) * coverTake(o)), `${A.name}'s shot`); }
@@ -1301,8 +1305,6 @@ function initStage() {
   return `<div class="s dim" style="margin-bottom:3px">d20 + (AGL + PER) / 2. Type each player's roll. Enemy rolls are filled in, and you can change them.</div><table class="t"><tr><th>Who</th><th>Base</th><th>d20</th><th>Total</th></tr>${rows}</table><div class="acts" style="margin-top:6px">${primary("beginRounds", "", "Start round 1", "Enter")}${btn("rerollNpcInit", "", "Reroll enemies")}</div>`;
 }
 function apPips(cur, max) { const n = Math.min(Math.max(max, cur), 30); let r = ""; for (let i = 0; i < n; i++) r += `<i class="${i < cur ? "on" : ""}"></i>`; return `<span class="pips" title="${fmt(cur)} of ${fmt(max)} AP">${r}</span>`; }
-function apPips(cur, max) { const n = Math.min(Math.max(max, cur), 30); let r = ""; for (let i = 0; i < n; i++) r += `<i class="${i < cur ? "on" : ""}"></i>`; return `<span class="pips" title="${fmt(cur)} of ${fmt(max)} AP">${r}</span>`; }
-function apPips(cur, max) { const n = Math.min(Math.max(max, cur), 30); let r = ""; for (let i = 0; i < n; i++) r += `<i class="${i < cur ? "on" : ""}"></i>`; return `<span class="pips" title="${fmt(cur)} of ${fmt(max)} AP">${r}</span>`; }
 const seg = (title, body, cls = "") => `<section class="seg ${cls}"><h4 class="segh">${title}</h4><div class="segb">${body}</div></section>`;
 function turnStage() {
   const k = K(); const A = ent(k.turnId);
@@ -1600,7 +1602,9 @@ const toCsv = (rows) => {
   const cell = (v) => { const t = v == null ? "" : typeof v === "object" ? JSON.stringify(v) : String(v); return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
   return [cols.join(","), ...rows.map((r) => cols.map((c) => cell(r[c])).join(","))].join("\n");
 };
-function fromCsv(text) {
+function fromCsv(text, like = []) {
+  // A column that only ever holds text in the app's own table stays text, so a trait code "007" or a level "2.0" comes back unchanged.
+  const isText = {}; for (const r of like) for (const k in r) if (r[k] != null) isText[k] = isText[k] !== false && typeof r[k] === "string";
   // Reads spreadsheet text one character at a time, because quoted cells can hold commas and line breaks.
   const rows = []; let row = [], cur = "", q = false;
   for (let i = 0; i < text.length; i++) {
@@ -1613,8 +1617,8 @@ function fromCsv(text) {
   row.push(cur); if (row.some((x) => x !== "")) rows.push(row);
   const head = rows.shift() || [];
   // Turns cell text back into numbers, true or false, and lists, so a spreadsheet round trip changes nothing.
-  const val = (t) => { if (t === "") return undefined; if (t === "true") return true; if (t === "false") return false; if (/^[[{]/.test(t)) { try { return JSON.parse(t); } catch (e) { return t; } } return /^-?\d*\.?\d+(e-?\d+)?$/i.test(t) ? Number(t) : t; };
-  return rows.map((r) => { const o = {}; head.forEach((k, i) => { const v = val(r[i] == null ? "" : r[i]); if (v !== undefined) o[k.replace(/^﻿/, "")] = v; }); return o; });
+  const val = (t, k) => { if (t === "") return undefined; if (isText[k]) return t; if (t === "true") return true; if (t === "false") return false; if (/^[[{]/.test(t)) { try { return JSON.parse(t); } catch (e) { return t; } } return /^-?\d*\.?\d+(e-?\d+)?$/i.test(t) ? Number(t) : t; };
+  return rows.map((r) => { const o = {}; head.forEach((k0, i) => { const k = k0.replace(/^﻿/, ""); const v = val(r[i] == null ? "" : r[i], k); if (v !== undefined) o[k] = v; }); return o; });
 }
 // ----- packs. A .zip holds: campaign.json, rules.json, tables/*.csv, readme.txt.
 const CRC = (() => { const t = []; for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
@@ -1681,7 +1685,7 @@ async function loadPack(buf) {
     const text = files[name].replace(/^﻿/, "");
     if (id === "loot") { p.rules.lootTable = fromCsv(text).map((r) => [r.roll, r.shift]); continue; }
     if (text.trim().replace(/\r\n/g, "\n") === baseCsv(id, DEFAULT_RULES)) continue;
-    const rows = fromCsv(text);
+    const rows = fromCsv(text, tableRows(id));
     if (rows.some((r) => !r.n)) throw new Error(`${id}.csv: every row needs a name in the n column.`);
     edited++;
     if (id === "perks") { p.tables.levelPerks = rows.filter((r) => r.kind !== "Skill").map(({ kind, ...r }) => r); p.tables.skillPerks = rows.filter((r) => r.kind === "Skill").map(({ kind, ...r }) => r); }
@@ -2063,7 +2067,7 @@ const ACT = {
     const json = id === "enemies" ? { enemies: rows, namePools: S.rules.namePools, nameStyles: S.rules.nameStyles } : rows;
     const blob = new Blob([kind === "csv" ? toCsv(rows) : JSON.stringify(json, null, 1)], { type: kind === "csv" ? "text/csv" : "application/json" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `fallout-${id}.${kind}`;
-    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000);
     toast(`Exported ${rows.length} rows`);
   },
   tableReset(v) { act(`Reset ${v}`, () => { if (v === "perks") { delete S.tables.levelPerks; delete S.tables.skillPerks; } else delete S.tables[TABLE_IO[v]]; S.tableRev = (S.tableRev || 0) + 1; }); toast("Back to the workbook's table"); },
@@ -2248,9 +2252,13 @@ const ACT = {
   slotDel(v) { if (!confirm("Delete this save? This can't be undone.")) return; try { localStorage.removeItem("fallout-dm-slot-" + v); localStorage.setItem(SLOTS_KEY, JSON.stringify(slots().filter((x) => x.id !== v))); } catch (e) { /* nothing to clean up */ } if (prefs.slot === v) { prefs.slot = null; savePrefs(); } render(); },
   newChar() { ui.wiz = ui.wiz && ui.wiz.step < 5 ? ui.wiz : newWiz(); ui.modal = { type: "wizard" }; ui.focus = "#wizName"; render(); },
   edit(v) { const id = v || (K() ? ui.rowSel || actorId() : ui.rowSel && ent(ui.rowSel) ? ui.rowSel : ui.sel); if (!ent(id)) return; ui.modal = { type: "edit", id }; render(); },
-  delChar(v) { const e = ent(v); if (!confirm(`Delete ${e.name}?`)) return; act(`Delete ${e.name}`, () => { S.chars = S.chars.filter((c) => c.id !== v); if (S.combat) S.combat.cbs = S.combat.cbs.filter((c) => c.id !== v); ui.modal = null; ui.sel = (S.chars[0] || {}).id; }); },
+  delChar(v) { const e = ent(v); if (!confirm(`Delete ${e.name}?`)) return; act(`Delete ${e.name}`, () => { S.chars = S.chars.filter((c) => c.id !== v); ui.modal = null; ui.sel = (S.chars[0] || {}).id;
+    const k = S.combat; if (!k) return;
+    k.cbs = k.cbs.filter((c) => c.id !== v); if (ui.atk && (ui.atk.att === v || ui.atk.tgt === v)) ui.atk = null;
+    if (k.turnId === v) { const nx = order().find((c) => canAct(c) && !k.acted[c.id]); if (nx) startTurn(nx.id); else enterRoundEnd(); }  // it was their turn: pass it on, as removing an enemy does
+  }); },
   toggleTag(v) { const [id, k] = splitV(v); const e = ent(id); act("Change tags", () => { keepFull(e, () => { e.tags = e.tags.includes(k) ? e.tags.filter((x) => x !== k) : [...e.tags, k]; }); }); },
-  setOv(val, el) { const e = ent(el.dataset.id); const k = el.dataset.k; act(`Override ${k}: ${e.name}`, () => { keepFull(e, () => { e.ov = e.ov || {}; e.ov[k] = num(val); }); }); },
+  setOv(val, el) { const e = ent(el.dataset.id); const k = el.dataset.k; act(`Override ${k}: ${e.name}`, () => { keepFull(e, () => { e.ov = e.ov || {}; const t = num(val); e.ov[k] = t != null && (k === "hp" || k === "ap") ? Math.max(0, t) : t; }); }); },
   setSpecial(val, el) { const e = ent(el.dataset.id); const i = Number(el.dataset.i); const k = E.SPECIAL[i]; const t = num(val); if (t == null) return render(); act(`${SP_LABEL[k]}: ${e.name}`, () => { keepFull(e, () => { e.special[i] = t - (der(e).m[k] || 0); }); }); },
   setSkill(val, el) {
     const e = ent(el.dataset.id); const k = el.dataset.k; const t = num(val);
@@ -2598,7 +2606,7 @@ document.addEventListener("change", (e) => {
       const v = valueOf(el);
       act(`Edit ${who.name}`, () => {
         if (path === "name") who.customName = true;
-        if (path === "hp" || path === "ap") setPath(who, path, v == null ? 0 : v);
+        if (path === "hp" || path === "ap") setPath(who, path, Math.max(0, v || 0));
         else keepFull(who, () => setPath(who, path, v));
         if (path === "hp") syncDown(who);
       });
@@ -2624,7 +2632,7 @@ document.addEventListener("change", async (e) => {
   const f = e.target.files[0]; if (!f) return;
   try {
     const text = await f.text();
-    const rows = /\.csv$/i.test(f.name) ? fromCsv(text) : JSON.parse(text);
+    const rows = /\.csv$/i.test(f.name) ? fromCsv(text, tableRows(e.target.dataset.table)) : JSON.parse(text);
     const err = importTable(e.target.dataset.table, rows);
     toast(err || `Replaced with ${rows.length} rows. Undo goes back.`);
   } catch (err) { toast("Could not read that file."); }
@@ -2861,4 +2869,9 @@ applyScale();
 const FRESH_START = /*FRESH*/false;
 if (FRESH_START && !readJson(SAVE_KEY)) { S = fresh(); S.chars = []; ui.sel = null; ui.wiz = newWiz(); ui.modal = { type: "wizard" }; ui.focus = "#wizName"; applyData(); }
 if (!readJson(SAVE_KEY)) save();
-render();
+try { render(); } catch (err) {
+  // The stored campaign can't be drawn by this build. Keep it aside and open a fresh one, rather than a blank page nobody can get out of.
+  try { localStorage.setItem(SAVE_KEY + "-unreadable", JSON.stringify(S)); } catch (e2) { /* storage full: the slots are still there */ }
+  S = fresh(); Object.assign(ui, { sel: (S.chars[0] || {}).id, rowSel: null, modal: null, atk: null, end: null, def: null }); applyData(); render();
+  toast("The last autosave could not be opened and was set aside. Your named saves are under Load.");
+}

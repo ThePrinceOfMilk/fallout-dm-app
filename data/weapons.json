@@ -529,7 +529,8 @@
   ],
   "lb": 10,
   "val": 100,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Pipe Rifle",
@@ -1001,7 +1002,8 @@
   ],
   "lb": 4,
   "val": 80,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": ".357 Magnum revolver",
@@ -1157,7 +1159,8 @@
   "lb": 14,
   "val": 210,
   "note": "Integrated Silencer",
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Service rifle",
@@ -1378,7 +1381,8 @@
   ],
   "lb": 12,
   "val": 200,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Classic Hunting rifle",
@@ -1926,7 +1930,8 @@
   ],
   "lb": 4,
   "val": 350,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": ".44 Magnum revolver",
@@ -2019,7 +2024,8 @@
   ],
   "lb": 6,
   "val": 145,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "5mm Pistol",
@@ -2080,7 +2086,8 @@
   ],
   "lb": 6,
   "val": 125,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Service 9mm Pistol (Beretta)",
@@ -2196,7 +2203,8 @@
   ],
   "lb": 6,
   "val": 205,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": ".45 Auto SMG",
@@ -2292,7 +2300,8 @@
   ],
   "lb": 12,
   "val": 235,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Classic Sniper rifle",
@@ -2387,7 +2396,8 @@
   "lb": 22,
   "val": 410,
   "note": "Can switch between .308 bolt action, and .357 semi auto",
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Snoop",
@@ -2418,7 +2428,8 @@
   ],
   "lb": 10,
   "val": 130,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Handmade Rifle (AK47)",
@@ -2515,7 +2526,8 @@
   "lb": 14,
   "val": 210,
   "note": "Increases accuracy per burst by +1",
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Radium Rifle",
@@ -2798,7 +2810,8 @@
   ],
   "lb": 8,
   "val": 390,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Euro PDW (MP7)",
@@ -2861,7 +2874,8 @@
   ],
   "lb": 10,
   "val": 430,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Unforgiven (B2)",
@@ -2893,7 +2907,8 @@
   "lb": 8,
   "val": 295,
   "note": "High ass AP cost high crit",
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "A Light Shining in Darkness",
@@ -2924,7 +2939,8 @@
   ],
   "lb": 6,
   "val": 370,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Deliverer",
@@ -2955,7 +2971,8 @@
   ],
   "lb": 8,
   "val": 355,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Maria",
@@ -2986,7 +3003,8 @@
   ],
   "lb": 6,
   "val": 405,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Bekah (B2)",
@@ -3017,7 +3035,8 @@
   ],
   "lb": 26,
   "val": 335,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Euro Rifle (AUG)",
@@ -3079,7 +3098,8 @@
   ],
   "lb": 22,
   "val": 315,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "The Progenitor",
@@ -3111,7 +3131,8 @@
   ],
   "lb": 14,
   "val": 325,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Sleepytime",
@@ -3143,7 +3164,8 @@
   ],
   "lb": 12,
   "val": 360,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Covert SMG (MP5)",
@@ -3206,7 +3228,8 @@
   ],
   "lb": 20,
   "val": 405,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Paciencia",
@@ -3237,7 +3260,8 @@
   ],
   "lb": 20,
   "val": 415,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Bird's Eye",
@@ -3268,7 +3292,8 @@
   ],
   "lb": 30,
   "val": 505,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Syringer",
@@ -3329,7 +3354,8 @@
   ],
   "lb": 36,
   "val": 450,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Xuanlong Assault Rifle",
@@ -3361,7 +3387,8 @@
   ],
   "lb": 18,
   "val": 435,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Advanced Military Carbine",
@@ -3425,7 +3452,8 @@
   "lb": 12,
   "val": 405,
   "note": "Shoots 2 projectiles for one shot (one calc)",
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Centennial",
@@ -3457,7 +3485,8 @@
   ],
   "lb": 34,
   "val": 535,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Bitter Memory",
@@ -3488,7 +3517,8 @@
   ],
   "lb": 22,
   "val": 555,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Hitman",
@@ -3519,7 +3549,8 @@
   ],
   "lb": 24,
   "val": 570,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Red Eye",
@@ -3550,7 +3581,8 @@
   ],
   "lb": 26,
   "val": 590,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Modern Military DMR",
@@ -3612,7 +3644,8 @@
   ],
   "lb": 14,
   "val": 410,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Stalker (B2)",
@@ -3645,7 +3678,8 @@
   "lb": 6,
   "val": 420,
   "note": "Full Auto Makarov",
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Switch Em'",
@@ -3677,7 +3711,8 @@
   ],
   "lb": 4,
   "val": 395,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Caseless Rifle (G11)",
@@ -3773,7 +3808,8 @@
   "lb": 8,
   "val": 705,
   "note": "Damage",
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "The Gold Rush",
@@ -3805,7 +3841,8 @@
   "lb": 8,
   "val": 850,
   "note": "Crit Chance",
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Kit and Caboodle",
@@ -3838,7 +3875,8 @@
   "lb": 12,
   "val": 510,
   "note": "Akimbo Barretas",
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Advanced Military Rifle",
@@ -3900,7 +3938,8 @@
   ],
   "lb": 16,
   "val": 620,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Perforator (Pitt)",
@@ -3932,7 +3971,8 @@
   "lb": 14,
   "val": 590,
   "note": "integrated silenecer",
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "The Caravaneer",
@@ -3964,7 +4004,8 @@
   ],
   "lb": 12,
   "val": 465,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Hellreigel",
@@ -3996,7 +4037,8 @@
   ],
   "lb": 22,
   "val": 730,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Advanced Military Sniper",
@@ -4058,7 +4100,8 @@
   ],
   "lb": 22,
   "val": 690,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Counting (Kirk)",
@@ -4090,7 +4133,8 @@
   "lb": 24,
   "val": 735,
   "note": "must be really accurate at 110 m (for some reason), Gehwer 98",
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Olympian",
@@ -4121,7 +4165,8 @@
   ],
   "lb": 20,
   "val": 800,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "La Longue Carabine",
@@ -4152,7 +4197,8 @@
   ],
   "lb": 16,
   "val": 705,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Warlord",
@@ -4184,7 +4230,8 @@
   ],
   "lb": 30,
   "val": 850,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "The Jam",
@@ -4216,7 +4263,8 @@
   ],
   "lb": 28,
   "val": 765,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Pipe Hitter",
@@ -4248,7 +4296,8 @@
   ],
   "lb": 12,
   "val": 875,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Little Friend (Commando)",
@@ -4280,7 +4329,8 @@
   ],
   "lb": 10,
   "val": 730,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Distant Hand",
@@ -4311,7 +4361,8 @@
   ],
   "lb": 24,
   "val": 920,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "This Machine",
@@ -4342,7 +4393,8 @@
   ],
   "lb": 24,
   "val": 790,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Mjolnir",
@@ -4373,7 +4425,8 @@
   ],
   "lb": 32,
   "val": 1100,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Vintorez",
@@ -4436,7 +4489,8 @@
   ],
   "lb": 14,
   "val": 670,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Medicine Stick",
@@ -4467,7 +4521,8 @@
   ],
   "lb": 26,
   "val": 695,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Custom 180",
@@ -4531,7 +4586,8 @@
   ],
   "lb": 18,
   "val": 620,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Firebrand",
@@ -4563,7 +4619,8 @@
   ],
   "lb": 8,
   "val": 840,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Bitch (B2)",
@@ -4837,7 +4894,8 @@
   ],
   "lb": 28,
   "val": 1100,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Lyudmila (USSR)",
@@ -4869,7 +4927,8 @@
   "lb": 28,
   "val": 1250,
   "note": "Low ass AP Cost, sprays .308 (or maybe Fury)",
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Shoulder Tapper",
@@ -4900,7 +4959,8 @@
   ],
   "lb": 20,
   "val": 1495,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Death's Whisper",
@@ -5723,7 +5783,8 @@
    null,
    null
   ],
-  "lb": 4
+  "lb": 4,
+  "unique": true
  },
  {
   "n": "Mars Pistol",
@@ -5998,7 +6059,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Homemade Double Barrel",
@@ -6105,7 +6167,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Automatic Rifle (BAR)",
@@ -6357,7 +6420,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Vindicator Minigun",
@@ -6401,7 +6465,8 @@
    0.01,
    0.01,
    0.01
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Riot shotgun",
@@ -6445,7 +6510,8 @@
    0.01,
    0.01,
    0.01
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Force Of Nature",
@@ -6467,7 +6533,8 @@
    0.01,
    0.01,
    0.01
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Prototype Combat Shotgun",
@@ -6636,7 +6703,8 @@
    null,
    null
   ],
-  "note": "can be Akimbo"
+  "note": "can be Akimbo",
+  "unique": true
  },
  {
   "n": "12.7mm pistol",
@@ -6718,7 +6786,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Survivalist's Rifle",
@@ -6738,7 +6807,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Anti-Personel Rifle (Barret)",
@@ -6842,7 +6912,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Pull!",
@@ -6862,7 +6933,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Scuttled Glory",
@@ -6882,7 +6954,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Soviet Riot Shotgun",
@@ -6922,7 +6995,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Bozar",
@@ -6943,7 +7017,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Red Terror LMG (RPD)",
@@ -6985,7 +7060,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Great War MG (M1917 MG)",
@@ -7047,7 +7123,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Li'l Devil",
@@ -7067,7 +7144,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Ranger Sequoia",
@@ -7088,7 +7166,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Tooth and Claw",
@@ -7108,7 +7187,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Deathclaw Hunting Carbine",
@@ -7148,7 +7228,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Resistance X-Bow (Half Life)",
@@ -7190,7 +7271,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "CS72 Avenger",
@@ -7211,7 +7293,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Dinner Bell",
@@ -7233,7 +7316,8 @@
    0.01,
    0.01,
    0.01
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Thunderclap",
@@ -7254,7 +7338,8 @@
    0.01,
    0.01,
    0.01
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Reactionary Destroyer",
@@ -7274,7 +7359,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Butcher",
@@ -7294,7 +7380,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Desert Storm",
@@ -7315,7 +7402,8 @@
    0.01,
    0.01,
    0.01
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Rusoriz",
@@ -7336,7 +7424,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Escalation (M1917 MG)",
@@ -7357,7 +7446,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Heat of Reaction",
@@ -7378,7 +7468,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Khans' First Toy",
@@ -7398,7 +7489,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Drug Runner (Uzi)",
@@ -7419,7 +7511,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "The Enforcer",
@@ -7439,7 +7532,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Peacekeeper (Hunting Unique)",
@@ -7480,7 +7574,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Bingham Brash",
@@ -7500,7 +7595,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Valkyrie",
@@ -7521,7 +7617,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Taser",
@@ -8574,7 +8671,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Homemeade Kaleidoscope",
@@ -8858,7 +8956,8 @@
    null,
    null
   ],
-  "note": "Energy status weapon"
+  "note": "Energy status weapon",
+  "unique": true
  },
  {
   "n": "Heavy Cryolator",
@@ -8971,7 +9070,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Shoulder Mounted Gatling Laser",
@@ -9256,7 +9356,8 @@
    null,
    null
   ],
-  "note": "Energy status weapon"
+  "note": "Energy status weapon",
+  "unique": true
  },
  {
   "n": "Charcolov (AKflamer)",
@@ -9280,7 +9381,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Heavy Incinerator",
@@ -9395,7 +9497,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "AER14 prototype",
@@ -9418,7 +9521,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Anti-Air Laser Cannon",
@@ -9467,7 +9571,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Converted Plasma Machine Gun",
@@ -9561,7 +9666,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Arroyo's Revenge (FO2 Pusle)",
@@ -9584,7 +9690,8 @@
    null,
    null
   ],
-  "note": "(FO2 Tesla Rifle)"
+  "note": "(FO2 Tesla Rifle)",
+  "unique": true
  },
  {
   "n": "Tesla Beaton Prototype",
@@ -9607,7 +9714,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Gatling Gauss",
@@ -9652,7 +9760,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "YCS-186",
@@ -9677,7 +9786,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Cleansing Flame",
@@ -9701,7 +9811,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Alien Blaster",
@@ -9724,7 +9835,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Sprtel-Wood 9700",
@@ -9748,7 +9860,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Euclids C-Finder",
@@ -9771,7 +9884,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Metal Blaster",
@@ -9794,7 +9908,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "PkWMG",
@@ -9842,7 +9957,8 @@
    null,
    null
   ],
-  "note": "High ass plasma melt chance"
+  "note": "High ass plasma melt chance",
+  "unique": true
  },
  {
   "n": "Norfleet (B2) (plasma rocket)",
@@ -9865,7 +9981,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "The Smitty Special",
@@ -9889,7 +10006,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Dynamite",
@@ -10545,7 +10663,8 @@
    null,
    null
   ],
-  "lb": 5
+  "lb": 5,
+  "unique": true
  },
  {
   "n": "(Meltdown)",
@@ -10566,7 +10685,8 @@
    -2,
    -2,
    -2
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Anti Tank Grenade Bouquet",
@@ -11264,7 +11384,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Fat Grenade",
@@ -11325,7 +11446,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "C-4 Plastic Explosive",
@@ -11426,7 +11548,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Unkempt Harold (Rocket Revolver)",
@@ -11446,7 +11569,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Big Mt. Kamikaze Drone",
@@ -11507,7 +11631,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Fat Mine",
@@ -11588,7 +11713,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Yahya",
@@ -11608,7 +11734,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Celebration Mk. 2",
@@ -11628,7 +11755,8 @@
    null,
    null,
    null
-  ]
+  ],
+  "unique": true
  },
  {
   "n": "Dress Cane",
@@ -12459,7 +12587,8 @@
   "status": "Crit; Bleeding (100%) +1",
   "lb": 2,
   "val": 90,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Machete",
@@ -12663,7 +12792,8 @@
   "pen2": 2,
   "lb": 24,
   "val": 60,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Police Riot Shield",
@@ -12727,7 +12857,8 @@
   "pen2": 2,
   "lb": 12,
   "val": 90,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Tung Tung Tung",
@@ -12748,7 +12879,8 @@
   "pen2": 2,
   "lb": 10,
   "val": 150,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Bear Trap Fist",
@@ -12811,7 +12943,8 @@
   "pen2": 1,
   "lb": 6,
   "val": 200,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Homemade Hook Hands",
@@ -13299,7 +13432,8 @@
   "pen2": 12,
   "lb": 10,
   "val": 150,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "War Hammer",
@@ -13362,7 +13496,8 @@
   "pen2": 40,
   "lb": 20,
   "val": 200,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Deathclaw Hand",
@@ -13405,7 +13540,8 @@
   "pen2": 12,
   "lb": 14,
   "val": 100,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Love and Hate",
@@ -13426,7 +13562,8 @@
   "pen2": 16,
   "lb": 4,
   "val": 100,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Power Fist V2 (3D FO)",
@@ -13468,7 +13605,8 @@
   "pen2": 20,
   "lb": 4,
   "val": 150,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Saturnite Fist",
@@ -13619,7 +13757,8 @@
   "ap2": 2,
   "lb": 12,
   "val": 150,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Proton Axe",
@@ -13661,7 +13800,8 @@
   "ap2": 3,
   "lb": 24,
   "val": 250,
-  "ok": true
+  "ok": true,
+  "unique": true
  },
  {
   "n": "Katana",
