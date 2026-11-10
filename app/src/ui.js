@@ -41,6 +41,12 @@ function fresh() {
   s.chars = clone(DATA.party).map((x) => initChar(x, { db, rules, scene: s.scene, ov: s.overrides }));
   return s;
 }
+// The log keeps its last LOG_KEEP lines, and only the newest LOG_DETAIL keep their fold-out detail (no window shows older ones).
+const LOG_KEEP = 2000, LOG_DETAIL = 300;
+function trimLog(s) {
+  const L = s.log; if (L.length > LOG_KEEP) L.splice(0, L.length - LOG_KEEP);
+  for (let i = 0; i < L.length - LOG_DETAIL; i++) if (L[i].more || L[i].id != null) { delete L[i].more; delete L[i].id; }
+}
 function normalize(p) {
   if (!p || !Array.isArray(p.chars)) throw new Error("That file is not a Fallout DM save.");
   p.rules = mergeRules(DEFAULT_RULES, p.rules);
@@ -51,6 +57,7 @@ function normalize(p) {
   if ((p.rulesRev || 0) < 2) { p.rules.perPenalty = 0; p.rules.strGun = 0; p.rules.strMelee = 0; p.rulesRev = 2; }  // accuracy became skill and weapon only
   p.vendor = p.vendor || { tier: 1, barter: 50, stock: null };
   for (const c of p.chars) c.inv = (c.inv || []).filter((l) => !/^\(no /i.test(l.n));
+  trimLog(p);  // shrinks saves made before the log had a working cap
   p.scene = Object.assign(freshScene(p.rules), p.scene || {});
   delete p.scene.picks;
   if (p.combat) for (const c of p.combat.cbs) if (c.x == null) { c.x = c.pos || 0; c.y = 0; }  // saves from before the map
@@ -87,11 +94,18 @@ function scheduleRender() {
   if (deferRender) { setTimeout(render, 0); return; }
   render();
 }
+// Undo keeps whole-campaign snapshots, so it is capped by size as well as count: a long campaign was reaching ~580 MB.
+const UNDO_MAX = 300, UNDO_CHARS = 25e6;
+let undoChars = 0;
+function pushUndo(label) {
+  const snap = JSON.stringify(S); undoStack.push({ label, snap }); undoChars += snap.length;
+  while (undoStack.length > 1 && (undoStack.length > UNDO_MAX || undoChars > UNDO_CHARS)) undoChars -= undoStack.shift().snap.length;
+}
 function act(label, fn) {
-  undoStack.push({ label, snap: JSON.stringify(S) });
-  if (undoStack.length > 300) undoStack.shift();
+  pushUndo(label);
   redoStack.length = 0;
   fn();
+  trimLog(S);
   touched();
   scheduleRender();
 }
@@ -101,9 +115,9 @@ function afterTimeTravel() {
   if (ui.atk) { ui.atk.res = null; ui.atk.err = ""; if (!ent(ui.atk.att) || !ent(ui.atk.tgt)) ui.atk = null; }
   touched(); render();
 }
-function undo() { const u = undoStack.pop(); if (!u) return toast("Nothing to undo"); redoStack.push({ label: u.label, snap: JSON.stringify(S) }); S = JSON.parse(u.snap); afterTimeTravel(); toast("Undid: " + u.label); }
-function redo() { const u = redoStack.pop(); if (!u) return toast("Nothing to redo"); undoStack.push({ label: u.label, snap: JSON.stringify(S) }); S = JSON.parse(u.snap); afterTimeTravel(); toast("Redid: " + u.label); }
-function log(k, x) { S.log.push({ k, x, r: S.combat ? S.combat.round : 0 }); if (S.log.length > 3000) S.log.shift(); }
+function undo() { const u = undoStack.pop(); if (!u) return toast("Nothing to undo"); undoChars -= u.snap.length; redoStack.push({ label: u.label, snap: JSON.stringify(S) }); S = JSON.parse(u.snap); afterTimeTravel(); toast("Undid: " + u.label); }
+function redo() { const u = redoStack.pop(); if (!u) return toast("Nothing to redo"); pushUndo(u.label); S = JSON.parse(u.snap); afterTimeTravel(); toast("Redid: " + u.label); }
+function log(k, x) { S.log.push({ k, x, r: S.combat ? S.combat.round : 0 }); }
 let toastTimer;
 function toast(t) { const el = document.getElementById("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), 2600); }
 

@@ -1030,6 +1030,17 @@ async function launch() {
     assert.match(await p2.locator(".dialog").innerText(), /archetype/i);
     await p2.reload(); assert.strictEqual(await p2.evaluate(() => S.chars.length), 0, "still opens after a reload"); await ctx2.close();
   });
+  await ok("Long campaigns: the log is trimmed and undo memory is capped", async () => {
+    const r = await page.evaluate(() => {
+      for (let i = 0; i < 2500; i++) S.log.push({ k: "story o-hit", x: "line " + i, r: 1, id: S.seq++, more: ["detail"] });
+      act("Trim test", () => {});
+      const L = S.log, kept = [L.length, !!L[0].more, !!L[L.length - 1].more, L[L.length - 1].x];
+      const fat = JSON.stringify(S).length; for (let i = 0; i < 400; i++) pushUndo("fill");
+      const out = { kept, n: undoStack.length, chars: undoChars, fat }; undo(); return out;
+    });
+    assert.deepStrictEqual(r.kept, [2000, false, true, "line 2499"]);
+    assert.ok(r.chars <= 25e6 && r.n <= 300 && r.n >= Math.min(300, Math.floor(25e6 / r.fat)), JSON.stringify(r));
+  });
   await browser.close();
   for (const r of results) console.log(r.join("  "));
   const fails = results.filter((r) => r[0] === "FAIL");
