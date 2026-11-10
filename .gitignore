@@ -1,3 +1,9 @@
 node_modules/
 __pycache__/
 *.tmp.pdf
+
+# Removed from GitHub by the owner: built from locally, never committed
+Fallout Spreadsheet(4).xlsx
+Fallout Enemies (for review).pdf
+Fallout Enemies (for review).json
+Skipped and Unsure.md
