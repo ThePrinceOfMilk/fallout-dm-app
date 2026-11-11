@@ -1178,7 +1178,9 @@ const E = (() => {
       dy = p.y - o.y;
     return { x: o.x + dx * c + dy * s, y: o.y - dx * s + dy * c };
   }
-  function crosses(a0, b0, o) {
+  const crosses = (a, b, o) => entryT(a, b, o) >= 0;
+  /** How far along the line from a to b (0 to 1) it first enters the box, or -1 when it misses. */
+  function entryT(a0, b0, o) {
     const a = unturn(a0, o),
       b = unturn(b0, o);
     // Standard box test: shrink the line to the part inside the box's x range, then its y range. Anything left means it crosses.
@@ -1193,7 +1195,7 @@ const E = (() => {
       [dy, a.y, o.y, hh],
     ]) {
       if (Math.abs(d) < 1e-9) {
-        if (Math.abs(p - c) > half) return false;
+        if (Math.abs(p - c) > half) return -1;
         continue;
       }
       let t1 = (c - half - p) / d,
@@ -1201,9 +1203,9 @@ const E = (() => {
       if (t1 > t2) [t1, t2] = [t2, t1];
       lo = Math.max(lo, t1);
       hi = Math.min(hi, t2);
-      if (lo > hi) return false;
+      if (lo > hi) return -1;
     }
-    return true;
+    return lo;
   }
   const inside = (p0, o) => {
     const p = unturn(p0, o);
@@ -1211,10 +1213,38 @@ const E = (() => {
   };
   const coverTier = (o, r) => o.cover || r.coverByKind[o.kind] || "open";
   /** The worst cover between shooter and target. Something the shooter stands inside doesn't count: they can shoot out of a bush. */
-  function lineCover(a, b, objects, r) {
+  // With coverStack on, every object the line crosses adds its penalty (capped at -100%); fade(o) scales one by the health it has left.
+  function lineCover(a, b, objects, r, fade) {
     const rank = Object.keys(r.cover);
     let best = "open",
       by = null;
+    if (r.coverStack) {
+      let hit = 0,
+        dam = 0;
+      const names = [];
+      for (const o of objects || []) {
+        const t = coverTier(o, r);
+        const box = shotBox(o, r);
+        if (t === "open" || inside(a, box) || !crosses(a, b, box)) continue;
+        const f = fade ? fade(o) : 1;
+        hit += r.cover[t].hit * f;
+        dam += r.cover[t].dam * f;
+        names.push(o.label || (r.mapItems[o.item] || {}).n || t);
+        if (rank.indexOf(t) > rank.indexOf(best)) {
+          best = t;
+          by = o;
+        }
+      }
+      return {
+        tier: best,
+        n: r.cover[best].n + (names.length > 1 ? ` x${names.length}` : ""),
+        hit: Math.max(-1, fix(hit)),
+        dam: Math.max(-1, fix(dam)),
+        by: names.join(", "),
+        id: by ? by.id : null,
+        stacked: names.length,
+      };
+    }
     for (const o of objects || []) {
       const t = coverTier(o, r);
       const box = shotBox(o, r);
@@ -1231,6 +1261,20 @@ const E = (() => {
       by: by ? by.label || (r.mapItems[by.item] || {}).n || "" : "",
       id: by ? by.id : null,
     };
+  }
+  /** Everything a ray from a, len meters long at angle ang, runs into: [{d, tier, o}] by distance. Objects a stands inside don't count. */
+  function rayCover(a, ang, len, objects, r) {
+    const b = { x: a.x + Math.cos(ang) * len, y: a.y + Math.sin(ang) * len };
+    const out = [];
+    for (const o of objects || []) {
+      const t = coverTier(o, r);
+      if (t === "open") continue;
+      const box = shotBox(o, r);
+      if (inside(a, box)) continue;
+      const lo = entryT(a, b, box);
+      if (lo >= 0) out.push({ d: lo * len, tier: t, o });
+    }
+    return out.sort((x, y) => x.d - y.d);
   }
   /** Does walking this path hit something solid, like a building? */
   const pathBlocked = (a, b, objects) => (objects || []).some((o) => o.block && crosses(a, b, o));
@@ -2049,12 +2093,87 @@ const E = (() => {
     const building = LAYOUT.indoorThemes.includes(themeId);
     const LT = r.roomThemes[themeId] || {};
     if (LT.loose) {
-      // No floor plan: pick things by their weights and drop each where it fits, a meter clear of everything else, leaving the way in open.
-      const keys = Object.keys(LT.items).filter((k) => r.mapItems[k]),
+      // No floor plan, but some sense: lines of things first (barricades end to end, pews one behind another), then the rest by weight.
+      // Things marked edge stand against a wall with their long side to it; most others line up one way, so the place looks arranged;
+      // and anything with an "around" gathers its chairs or stools on the side facing the middle. The way in stays open.
+      const rowKeys = Object.keys(LT.rows || {}).filter((k) => r.mapItems[k]);
+      const keys = Object.keys(LT.items).filter((k) => r.mapItems[k] && !rowKeys.includes(k)),
         tot = keys.reduce((t, k) => t + LT.items[k], 0);
       const want = Math.max(LT.min || 0, Math.min(LT.max || 60, Math.round(map.w * map.h * LT.density * rand(0.8, 1.2))));
       reserve(B.x0, -2.5, B.x0 + 4.5, 2.5);
-      for (let made = 0, tries = 0; made < want && tries < want * 30; tries++) {
+      const mainRot = rng() < 0.5; // the one way most things face
+      let made = 0;
+      const around = (ob, key) => {
+        const a = (LT.around || {})[key];
+        const sc = a && r.mapItems[a[0]];
+        if (!sc || Math.min(map.w, map.h) < 8) return; // a narrow space has no room to walk round a table and its chairs
+        const [sk, lo, hi, gap] = a;
+        const n = lo + Math.floor(rng() * (hi - lo + 1));
+        const sr = Math.min(sc.w, sc.h) / 2;
+        const horiz = ob.w >= ob.h,
+          long = Math.max(ob.w, ob.h) / Math.min(ob.w, ob.h) > 2;
+        for (let i = 0; i < n; i++) {
+          let x, y;
+          if (long) {
+            // a counter or bar: stools along the side that faces the middle of the map
+            const t = (i + 0.5) / n - 0.5,
+              side = horiz ? (ob.y > 0 ? -1 : 1) : ob.x > 0 ? -1 : 1;
+            x = horiz ? ob.x + t * (ob.w - 0.4) : ob.x + side * (ob.w / 2 + gap * 0.5 + sr);
+            y = horiz ? ob.y + side * (ob.h / 2 + gap * 0.5 + sr) : ob.y + t * (ob.h - 0.4);
+          } else {
+            const ang = (i / n) * 2 * Math.PI + rng() * 0.4,
+              d = Math.max(ob.w, ob.h) / 2 + sr + gap * 0.3;
+            x = ob.x + Math.cos(ang) * d;
+            y = ob.y + Math.sin(ang) * d;
+          }
+          if (x < B.x0 + 1.2 + sr || x > B.x1 - 1.2 - sr || y < B.y0 + 1.2 + sr || y > B.y1 - 1.2 - sr) continue; // never pinned against a wall
+          if (add(sk, x, y, { pad: 0.05 })) made++;
+        }
+      };
+      const atEdge = (key) => {
+        const c = r.mapItems[key];
+        const side = any(["N", "S", "E", "W"]),
+          alongX = side === "N" || side === "S";
+        const rot = !c.round && c.w >= c.h !== alongX;
+        const w = rot ? c.h : c.w,
+          h = rot ? c.w : c.h;
+        if (w > map.w - 2 || h > map.h - 2) return null;
+        const x = side === "W" ? B.x0 + w / 2 + 0.15 : side === "E" ? B.x1 - w / 2 - 0.15 : rand(B.x0 + w / 2 + 0.5, B.x1 - w / 2 - 0.5);
+        const y = side === "N" ? B.y0 + h / 2 + 0.15 : side === "S" ? B.y1 - h / 2 - 0.15 : rand(B.y0 + h / 2 + 0.5, B.y1 - h / 2 - 0.5);
+        return add(key, x, y, { rot, pad: 0.4 });
+      };
+      // [how few, how many, gap, stacked]: end to end, or stacked one behind another (pews, crop rows)
+      const row = (key, spec) => {
+        const [lo, hi, gap = 0.1, stack = r.mapItems[key].w / r.mapItems[key].h > 3] = spec;
+        const c = r.mapItems[key];
+        const n = lo + Math.floor(rng() * (hi - lo + 1));
+        for (let tries = 0; tries < 12; tries++) {
+          const horiz = rng() < 0.5;
+          const longX = stack ? !horiz : horiz;
+          const rot = !c.round && c.w >= c.h !== longX;
+          const w = rot ? c.h : c.w,
+            h = rot ? c.w : c.h;
+          const step = (horiz ? w : h) + (stack ? Math.max(gap, 0.9) : gap);
+          const len = n * step;
+          if (len > (horiz ? map.w : map.h) - 3) continue;
+          const x0 = horiz ? rand(B.x0 + 1.5, B.x1 - 1.5 - len) + w / 2 : rand(B.x0 + w / 2 + 1, B.x1 - w / 2 - 1);
+          const y0 = horiz ? rand(B.y0 + h / 2 + 1, B.y1 - h / 2 - 1) : rand(B.y0 + 1.5, B.y1 - 1.5 - len) + h / 2;
+          const line = [];
+          for (let i = 0; i < n; i++) {
+            const ob = add(key, horiz ? x0 + i * step : x0, horiz ? y0 : y0 + i * step, { rot, pad: 0.6, touch: line });
+            if (ob) line.push(ob);
+          }
+          if (line.length >= lo) {
+            made += line.length;
+            return;
+          }
+          // too short to read as a line: take it back and try somewhere else
+          for (const ob of line) out.splice(out.indexOf(ob), 1);
+          count[key] -= line.length;
+        }
+      };
+      for (const k of rowKeys) row(k, LT.rows[k]);
+      for (let tries = 0; made < want && tries < want * 30 && tot > 0; tries++) {
         let x = rng() * tot,
           key = keys[0];
         for (const k of keys) {
@@ -2064,12 +2183,21 @@ const E = (() => {
             break;
           }
         }
-        const c = r.mapItems[key],
-          rot = !c.round && rng() < 0.5;
-        const w = rot ? c.h : c.w,
-          h = rot ? c.w : c.h;
-        if (w > map.w - 2.4 || h > map.h - 2.4) continue;
-        if (add(key, rand(B.x0 + w / 2 + 1, B.x1 - w / 2 - 1), rand(B.y0 + h / 2 + 1, B.y1 - h / 2 - 1), { rot, pad: 1 })) made++;
+        const c = r.mapItems[key];
+        if ((LT.once || []).includes(key) && count[key]) continue; // one altar, one counter, one ticket booth
+        let ob;
+        if ((LT.edge || []).includes(key)) ob = atEdge(key);
+        else {
+          const rot = !c.round && (rng() < 0.85 ? mainRot : !mainRot);
+          const w = rot ? c.h : c.w,
+            h = rot ? c.w : c.h;
+          if (w > map.w - 2.4 || h > map.h - 2.4) continue;
+          ob = add(key, rand(B.x0 + w / 2 + 1, B.x1 - w / 2 - 1), rand(B.y0 + h / 2 + 1, B.y1 - h / 2 - 1), { rot, pad: 1 });
+        }
+        if (ob) {
+          made++;
+          around(ob, key);
+        }
       }
     } else if (themeId === "city" && indoorMap) {
       const F = frame({ x0: B.x0 + 0.05, y0: B.y0 + 0.05, x1: B.x1 - 0.05, y1: B.y1 - 0.05 });
@@ -2814,6 +2942,8 @@ const E = (() => {
     whenHolds,
     enemyType,
     lineCover,
+    rayCover,
+    shotBox,
     pathBlocked,
     generateRoom,
     coverTier,

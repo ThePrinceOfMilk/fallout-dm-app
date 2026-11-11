@@ -380,7 +380,7 @@ test("40 archetypes: every kit is real, everyone can fight, wears clothes and ca
   for (const a of list) {
     const w = get(a.w); assert.ok(w, `${a.n}: ${a.w}`); assert.ok(Number(w.o.tier) <= 2, `${a.n}: weapon tier ${w.o.tier}`);
     if (["SG", "BG"].includes(w.o.tab) && !w.o.thrown) assert.ok(a.ammo, `${a.n} has a gun but no ammo`);
-    if (a.ammo) { assert.ok(get(a.ammo[0]), `${a.n}: ${a.ammo[0]}`); assert.ok(a.ammo[1] <= 10, `${a.n} rounds`); }
+    if (a.ammo) { assert.ok(get(a.ammo[0]), `${a.n}: ${a.ammo[0]}`); assert.ok(a.ammo[1] >= Math.min(12, 2 * (w.o.mag || 1)) && a.ammo[1] <= 30, `${a.n} rounds: 2-3 magazines, at least 12`); }
     const locs = a.wear.map((n) => { const g = get(n); assert.ok(g, `${a.n}: ${n}`); return g.o.loc; });
     assert.ok(locs.includes("Vanity") || locs.includes("Body"), `${a.n} has no clothes`);
     assert.ok(a.items.length >= 1 && a.items.length <= 3, `${a.n} items`);
@@ -658,4 +658,47 @@ test("frag grenade: damage falls off by meter out to 5m, and it weighs half a po
 test("cover: beds, campfires and other low things are open ground", () => {
   for (const k of ["bed", "cot", "bedroll", "campfire", "pallet", "footlocker", "bench", "smallRock", "stump", "tentPole"]) assert.strictEqual(rules.mapItems[k].cover, "open", k);
   assert.strictEqual(rules.mapItems.kitchenTable.cover, "concealment");
+});
+// ---------- 11 Nov review round
+test("cover stacks: two bushes and a crate add up, capped at -100%; off, only the worst counts", () => {
+  const r = { ...DEFAULT_RULES, coverStack: true };
+  const objs = [
+    { id: "a", kind: "cover", item: "bush", cover: "concealment", x: 3, y: 0, w: 1, h: 1 },
+    { id: "b", kind: "cover", item: "bush", cover: "concealment", x: 5, y: 0, w: 1, h: 1 },
+    { id: "c", kind: "cover", item: "crate", cover: "soft", x: 7, y: 0, w: 1, h: 1 },
+  ];
+  const on = E.lineCover({ x: 0, y: 0 }, { x: 10, y: 0 }, objs, r);
+  assert.strictEqual(on.hit, E.fix(-0.1 - 0.1 - 0.25)); assert.strictEqual(on.tier, "soft"); assert.strictEqual(on.stacked, 3);
+  const off = E.lineCover({ x: 0, y: 0 }, { x: 10, y: 0 }, objs, { ...r, coverStack: false });
+  assert.strictEqual(off.hit, -0.25);
+  const walls = [1, 2, 3].map((i) => ({ id: "w" + i, kind: "hard", cover: "hard", x: i * 2, y: 0, w: 0.5, h: 2 }));
+  assert.strictEqual(E.lineCover({ x: 0, y: 0 }, { x: 10, y: 0 }, walls, r).hit, -1, "never past -100%");
+  assert.strictEqual(E.lineCover({ x: 3, y: 0 }, { x: 10, y: 0 }, objs, r).stacked, 2, "the bush you stand in doesn't count");
+});
+test("line of sight: a ray lists what it runs into, nearest first", () => {
+  const objs = [
+    { id: "far", kind: "cover", item: "crate", cover: "soft", x: 8, y: 0, w: 1, h: 1 },
+    { id: "near", kind: "cover", item: "bush", cover: "concealment", x: 3, y: 0, w: 1, h: 1 },
+    { id: "off", kind: "cover", item: "crate", cover: "soft", x: 0, y: 5, w: 1, h: 1 },
+  ];
+  const hits = E.rayCover({ x: 0, y: 0 }, 0, 20, objs, DEFAULT_RULES);
+  assert.deepStrictEqual(hits.map((x) => x.o.id), ["near", "far"]);
+  assert.ok(Math.abs(hits[0].d - 2.5) < 1e-6, "enters the bush at its near face");
+});
+test("new settings lay out with lines and one-only things, and every new item is in the catalog", () => {
+  for (const id of ["raiderCamp", "hospital", "subway", "diner", "checkpoint", "church"]) {
+    const t = DEFAULT_RULES.roomThemes[id];
+    assert.ok(t && t.loose, id);
+    for (const k of [...Object.keys(t.items), ...Object.keys(t.rows || {}), ...(t.edge || []), ...(t.once || [])]) assert.ok(DEFAULT_RULES.mapItems[k], `${id}: ${k}`);
+  }
+  for (let seed = 1; seed < 30; seed++) {
+    let s = seed;
+    const rng = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+    let n = 0;
+    const objs = E.generateRoom({ id: "bigRoom", w: 30, h: 20 }, "church", DEFAULT_RULES, rng, [], () => "x" + n++);
+    assert.ok(objs.filter((o) => o.item === "altar").length <= 1, "one altar");
+    assert.ok(objs.filter((o) => o.item === "pew").length >= 4, "a block of pews");
+  }
+  assert.strictEqual(DEFAULT_RULES.knifeBleed.super, 5, "a knife super crit is the worst bleed");
+  assert.ok(DEFAULT_RULES.throwables["Frag Grenade"].bleed);
 });

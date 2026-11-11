@@ -19,8 +19,8 @@ PDF = os.path.join(ROOT, "Fallout TTRPG Game Bible.pdf"); BASE = os.path.join(HE
 if not os.path.exists(BASE): shutil.copy(PDF, BASE)
 D = json.load(open(os.path.join(HERE, "tests", "wiki.json"), encoding="utf8"))
 R = D["rules"]
-D8, D9, D10 = "8 Nov 2026", "9 Nov 2026", "10 Nov 2026"
-LATEST = "10 November 2026"
+D8, D9, D10, D11 = "8 Nov 2026", "9 Nov 2026", "10 Nov 2026", "11 Nov 2026"
+LATEST = "11 November 2026"
 
 # ---- the bible's own look: Segoe UI when Windows has it, else Helvetica
 FONTS = "C:/Windows/Fonts"
@@ -345,6 +345,51 @@ upd(29, D10, "Unique weapons stay out of shops, gear and loot", "Was: only weapo
     "Named means a proper name or an odd, specific name, such as Lucky, Ratslayer, That Gun, Big Boomer or Mjolnir. Generic descriptors stay ordinary even with brackets, such as Service 9mm Pistol (Beretta). Homemade weapons stay ordinary.",
     "The list is uniques in rules.js, so the DM can add or remove names."))
 
+# ---------------------------------------------------------------- 11 Nov 2026 review round
+upd(8, D11, "Cover stacks", "Was: only the worst cover between shooter and target counted. Now: every object the shot passes through adds its penalty, down to -100%.", bl(
+    "Two bushes and a crate in the way: concealment -10%, concealment -10% and soft cover -25%, so -45% to hit. The damage penalties add the same way.",
+    "Worn concealment and soft cover still count for the health they have left, each one on its own.",
+    "Something the shooter stands inside doesn't count: they can shoot out of a bush.",
+    "Settings, Cover: 'Cover stacks' switches back to the old rule, where only the worst one counts."))
+upd(11, D11, "A grenade lands near where it's thrown, not on it", "Was: a grenade landed exactly on the spot picked. Now: it lands somewhere random inside a circle around that spot.", bl(
+    f"The circle's radius is {R['throwScatter']['base']}m less 1m for every {R['throwScatter']['perSkill']} points of Explosives, never under {R['throwScatter']['min']}m. Explosives 20 gives {max(R['throwScatter']['min'], R['throwScatter']['base'] - 20 / R['throwScatter']['perSkill'])}m; 100 gives {max(R['throwScatter']['min'], R['throwScatter']['base'] - 100 / R['throwScatter']['perSkill'])}m.",
+    "Every point in the circle is as likely as any other. The blast, its damage, its Bleeding and the cover it wrecks all count from where it lands. The log says how far off it landed.",
+    "The throw preview draws the circle as a dashed yellow ring, and the map shows the grenade flying there and bursting.",
+    "Settings, Cover tiers: the three numbers can be changed. Setting all three to 0 makes every throw land on the spot."))
+upd(12, D11, "The accuracy ring shows line of sight", "Was: a soft halo of hit chance by range band, ignoring cover. Now: solid bands that drop behind cover.", bl(
+    "Each band is one solid color, from dark red at low odds to bright yellow at high odds, so lightness alone tells them apart.",
+    "Behind each object the ring loses that object's cover penalty, and past several it keeps losing more. Where the chance reaches 0% the ring is clear.",
+    "A black line marks every edge between where a shot can land and where it can't, at the ends of the bands and along the sides of cover.",
+    "The ring still measures against a target with no modifiers of its own. The attack panel has the exact number for the target picked."))
+upd(12, D11, "More cover, more settings, and placing things by name", "Was: +Cover and +Hard placed a plain box. Now: you pick what to place from a list and can name it first.", bl(
+    "+Cover lists every concealment and soft cover object, +Hard every hard and impenetrable one, each at its real size. +Hazard lists fire, radiation, toxic gas, acid, live wires, mines, spike traps and deep water. +Marker lists note, objective, loot, way in or out, trap, ambush point and waypoint.",
+    "31 new objects, among them wrecked trucks, tank traps, concrete pipes, fuel tanks, hedges, spiked barricades, burn barrels, hospital beds, subway cars, diner booths and pews.",
+    "Six new settings: raider camp, hospital ward, subway station, diner, checkpoint and church.",
+    "Settings lay out with more sense: barricades, tank traps and turnstiles stand in lines, pews in rows one behind another, beds and counters against the walls, stools along the open side of a counter, one altar or ticket booth, and most other things lined up the same way.",
+    "Objects take the color of what they're made of (wood, metal, rust, stone, plants, cloth, sand, tile). The cover tier shows in the outline: dashed for concealment, thin for soft, thick for hard, thickest for impenetrable.",
+    "Map tokens stand on a base: round for the party, dashed round for allies, a diamond for enemies. They are drawn smaller, so a map's scale shows."))
+upd(12, D11, "How full a room gets", "New: Sparse, Normal or Cluttered next to Randomize room. Normal is the default and is the old amount.", bl(
+    "Sparse fills a setting to about 55% of normal and also leaves out about a third of an indoor plan's furniture. Cluttered fills it to about 160%.",
+    "Indoor plans (home, office, factory, warehouse, police) are laid out room by room, so Cluttered adds little to them; it shows most on open ground and the spread-out settings."))
+upd(12, D11, "The accuracy ring uses the target picked", "Was: the ring always measured against someone with no modifiers of their own. Now: with a target picked, it uses that target's own modifiers, as the attack panel does.", bl(
+    "Its hover text names the target. With nobody picked it works as before. The cover shading on top is unchanged."))
+upd(17, D11, "A fight ends by itself", "Was: with one side down, rounds went on until someone pressed End. Now: at the end of a round, a side with nobody left ends the fight.", bl(
+    "No enemy standing: the after-action screen opens.",
+    "Nobody in the party standing, allies included: the defeat screen opens.",
+    "Mid-round, a large End the fight (or Defeat) button shows as soon as one side is out, for ending it right away."))
+upd(22, D11, "Kits carry more ammo", "Was: 3 to 10 rounds. Now: two or three magazines.", bl(
+    "The Scribe Dropout's Laser Musket is crank-charged and needs no ammo; the kit now carries 10 spare Microfusion Cells to trade or for a later energy weapon.",
+    "Three magazines for small ones (4 to 8 rounds), two for large ones (10 rounds).",
+    "A gun that holds one or two: 12 rounds or arrows, and 20 shells for a shotgun."))
+upd(27, D11, "Knives cause Bleeding", "New.", bl(
+    f"A crit with a knife (any weapon named knife, switchblade, shiv, dagger or razor) gives Bleeding {R['knifeBleed']['crit']}; a super crit gives Bleeding {R['knifeBleed']['super']}, the worst.",
+    "Bleeding never goes down this way: a weaker bleed on someone already bleeding worse leaves the worse one.",
+    "Settings, Cover tiers: both tiers can be changed."))
+upd(35, D11, "Shrapnel causes Bleeding", "New.", bl(
+    f"Someone hurt by a Frag Grenade and still standing bleeds: Bleeding {R['blastBleedMax']} in the innermost meter, one tier less for each meter out, never under 1.",
+    "Resistance to Bleeding (Cut Gloves and the like) lowers it as usual."))
+
+
 starts, parts, titles = {}, [], {}
 for b in base[1].get_text("dict")["blocks"]:
     for l in b.get("lines", []):
@@ -393,7 +438,7 @@ def put(page, x, y, text, size, bold=False, color=GREEN, right=False):  # y is t
     if right: x -= tlen(text, size, bold)
     page.insert_text((x, y), text, fontsize=size, fontname=name, fontfile=ff, color=tuple(int(color[i:i + 2], 16) / 255 for i in (1, 3, 5)))
 
-newest = lambda ch: max((u[0] for u in U[ch]), key=[D8, D9, D10].index)
+newest = lambda ch: max((u[0] for u in U[ch]), key=[D8, D9, D10, D11].index)
 put(base[0], 54, 570.5, f"Updated {LATEST}. Changes sit in the chapters they affect, on lettered pages such as {labels[12][0]}.", 8.2, color=GREY)
 for ch in U:
     pg = base[first[ch] - 1]

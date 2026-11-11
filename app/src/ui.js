@@ -585,7 +585,8 @@ function rankByName(list, q, nameOf = (x) => x.n) {
   };
   return list.filter((x) => score(x) < 3).sort((a, b) => score(a) - score(b));
 }
-const usable = (item) => item && (item.effect || item.ap != null);
+const CONSUMABLE_CATS = ["Healing", "Chem/Drug", "Alcohol", "Drink", "Food", "Tobacco", "Poison", "Resistance", "Counter"];
+const usable = (item) => item && (item.effect || item.ap != null || CONSUMABLE_CATS.includes(item.cat));
 
 // ---------- combat flow
 const order = () => [...K().cbs].sort((a, b) => (b.init == null ? -99 : b.init) - (a.init == null ? -99 : a.init) || (b.base || 0) - (a.base || 0));
@@ -956,6 +957,18 @@ function enterRoundEnd() {
   ui.atk = null;
   tickRound();
   log("turn", `End of round ${k.round}.`);
+  // a side with nobody left to shoot at ends the fight here, so nobody has to press End
+  if (!npcsAlive()) {
+    k.phase = "end";
+    log("turn", "No enemies left standing. The fight is over.");
+    return;
+  }
+  if (!partyUp()) {
+    k.phase = "defeat";
+    ui.def = null;
+    log("turn", "Nobody in the party is left standing.");
+    return;
+  }
   const firstDown = S.chars.find((c) => c.dbno);
   if (firstDown) {
     ui.focus = `#save-${firstDown.id}`;
@@ -976,6 +989,8 @@ function nextRound() {
 }
 const npcsAlive = () => K().cbs.filter((c) => sideOf(c.id) === "npc" && alive(c)).length;
 const pcsUp = () => S.chars.filter((c) => !c.dbno).length;
+// the party side is out when no player is up and no ally is still standing
+const partyUp = () => pcsUp() || K().cbs.some((c) => sideOf(c.id) === "pc" && ent(c.id).kind !== "pc" && alive(c));
 
 // ---------- attack
 const PARTS = {
@@ -1079,7 +1094,7 @@ function atkView() {
   const v = E.weaponView(slot, A, dA, c, a.mode);
   if (dA.m.critPerRange) v.crit = E.fix(v.crit * range); // Sharpshooter
   // Cover is a flag on every shot, from the line between the two of them. OVR can set it by hand.
-  const lc = T ? coverNow(E.lineCover(posOf(A.id), posOf(T.id), S.scene.objects, S.rules)) : { tier: "open", n: "Open", hit: 0, dam: 0, by: "" };
+  const lc = T ? lineCoverNow(posOf(A.id), posOf(T.id)) : { tier: "open", n: "Open", hit: 0, dam: 0, by: "" };
   const cov = a.ov.cover ? { ...S.rules.cover[a.ov.cover], tier: a.ov.cover, by: "DM set" } : lc;
   const hc = E.hitChance(A, dA, T || A, dT, v, range, c, cov);
   const hit = num(a.ov.hit) != null ? num(a.ov.hit) / 100 : hc.hit * (1 + (dA.m.accMul || 0));
@@ -1263,6 +1278,28 @@ function fire() {
       K().stealthDue = A.id;
       ui.focus = "#stealthRoll";
     }
+    {
+      const from = { ...posOf(A.id) },
+        to = { ...posOf(T.id) };
+      const n = jammed || v.melee ? 0 : Math.max(1, Math.min(v.count || 1, fired || v.count || 1));
+      const land = Math.min(n, res.bullets || 0);
+      const d = dist(from, to) || 0.01,
+        aim = Math.atan2(to.y - from.y, to.x - from.x);
+      const shots = Array.from({ length: n }, (_, i) => {
+        if (i < land) return { x: to.x + (Math.random() - 0.5) * 0.3, y: to.y - 0.25 + (Math.random() - 0.5) * 0.3, hit: true };
+        // a miss flies past at an angle that clears the target, and carries on a little beyond it
+        const turn = aim + (Math.random() < 0.5 ? -1 : 1) * (Math.atan(1.1 / d) + Math.random() * 0.18),
+          len = d * 1.3 + 2;
+        return { x: from.x + Math.cos(turn) * len, y: from.y + Math.sin(turn) * len, hit: false };
+      });
+      for (let i = shots.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shots[i], shots[j]] = [shots[j], shots[i]];
+      }
+      const first = shots.findIndex((x) => x.hit);
+      const firstHit = v.melee ? (res.total ? 0 : null) : first < 0 ? null : first * TRACER_GAP + TRACER_MS;
+      if (n || firstHit != null) addFx({ type: "shot", a: from, tgt: T.id, shots, firstHit, dur: n * TRACER_GAP + TRACER_MS + 600 });
+    }
     a.res = {
       story,
       outcome: res.outcome,
@@ -1324,6 +1361,9 @@ function hitStatuses(res, T, v, part, shot = {}) {
   if (crit && shot.critDisorient && db.status.has("disoriented")) give("Disoriented", shot.critDisorient, "perk"); // Forced Slumber
   if (crit && shot.critLimb) give("Injured Limb (Leg/Arm)", 1, "perk", ["LArm", "RArm", "LLeg", "RLeg"][Math.floor(Math.random() * 4)]);
   if (crit && shot.critBleed && db.status.has("bleeding")) give("Bleeding", shot.critBleed, "crit with a perk"); // Shrapnel
+  const kb = r.knifeBleed;
+  if (crit && kb && kb.match && db.status.has("bleeding") && new RegExp(kb.match, "i").test(v.n))
+    give("Bleeding", res.outcome === "super" ? kb.super : kb.crit, `${res.outcome === "super" ? "super crit" : "crit"} with a ${v.n}`);
   if (shot.knockChance && db.status.has("knocked out") && Math.random() < shot.knockChance)
     give("Knocked Out", 1, `${E.pct(shot.knockChance)}% knockdown chance`); // Super Slam
   if (r.autoWeaponStatus && v.status) {
@@ -1626,7 +1666,7 @@ function charCard(c) {
   const me = K() ? actorId() : null;
   const sp = E.SPECIAL.map(
     (k, i) =>
-      `<label title="${E.SPECIAL_NAMES[k]}: ${d.sp[k]}${d.sp[k] !== b0.sp[k] ? ` (base ${b0.sp[k]}, changed by statuses or gear)` : ""}"><span>${k}</span>${numBox(`data-c="setSpecial" data-id="${c.id}" data-i="${i}" id="sp-${c.id}-${i}"`, d.sp[k], `cell ${moved(d.sp[k], b0.sp[k])}`)}</label>`,
+      `<label title="${E.SPECIAL_NAMES[k]}: ${d.sp[k]}${d.sp[k] !== b0.sp[k] ? ` (base ${b0.sp[k]}, changed by statuses or gear)` : ""}"><span class="spk">${prefs.spStyle === "text" ? k : prefs.spStyle === "both" ? `${vicon(k, "spmini")}${k}` : vicon(k, "spmini")}</span>${numBox(`data-c="setSpecial" data-id="${c.id}" data-i="${i}" id="sp-${c.id}-${i}"`, d.sp[k], `cell ${moved(d.sp[k], b0.sp[k])}`)}</label>`,
   ).join("");
   const sk = E.SKILLS.map(([k, n]) => {
     const tagged = (c.tags || []).includes(k);
@@ -1652,7 +1692,7 @@ function charCard(c) {
 }
 // ----- the inventory window: gear on a rough body, then what's carried
 const GEAR_SLOTS = {
-  head: ["Helmet", (a) => /head/i.test(a.loc)],
+  head: ["Headgear", (a) => /head/i.test(a.loc)],
   vanity: ["Clothing", (a) => a.loc === "Vanity"],
   armor: ["Armor", (a) => ["Body", "Whole Body", "Power"].includes(a.loc)],
   acc0: ["Vanity 1", (a) => a.loc === "Accessory"],
@@ -1707,7 +1747,7 @@ function gearPicker(c, s) {
   const stats = (o) =>
     isW ? `${fmt(o.ap || 0)} AP${o.ammo && o.ammo !== "N/A" ? " · " + o.ammo : ""}` : `DT ${fmt(o.dt || 0)}${o.buffs ? " · " + o.buffs : ""}`;
   const row = (o, tag) =>
-    `<button class="rowbtn" data-a="gearEquip" data-v="${h(o.n)}" title="${h([o.buffs, o.nerfs, o.note].filter(Boolean).join(" · "))}">${pix(itemKind(o.n)[1])}<span class="grow">${h(o.n)}</span><span class="s dim">${h(stats(o))}</span>${tag}</button>`;
+    `<button class="rowbtn" data-a="gearEquip" data-v="${h(o.n)}" title="${h([o.buffs, o.nerfs, o.note].filter(Boolean).join(" · "))}">${itemIcon(o.n)}<span class="grow">${h(o.n)}</span><span class="s dim">${h(stats(o))}</span>${tag}</button>`;
   const all = q
     ? (isW ? DATA.weapons.filter((w) => w.tier) : DATA.armor.filter((a) => GEAR_SLOTS[s][1](a))).filter((o) => E.low(o.n).includes(q)).slice(0, 30)
     : [];
@@ -1729,14 +1769,20 @@ function gearMenu(c, d) {
   ];
   const mods = list.map((x) => `<span class="chip ${/ -|to -/.test(x) ? "" : "pos"}">${h(x)}</span>`).join("");
   const accs = c.gear.acc[2] ? ["acc0", "acc1", "acc2"] : ["acc0", "acc1"];
-  const fig = `<svg class="figsvg" viewBox="0 0 100 200" aria-hidden="true"><circle cx="50" cy="24" r="20"/><path d="M26 54h48l6 62h-14l-2 80h-12l-2-60h-4l-2 60h-12l-2-80h-14z"/></svg>`;
+  // the same figure as the Health window, with a line from each gear box to where it's worn: headgear to the head, armor to the
+  // outside of the body, clothing to the middle of it
+  const fig = `<svg class="figsvg" viewBox="60 0 120 172" aria-hidden="true">${Object.values(FIG_PARTS)
+    .map((p) => p[0])
+    .join(
+      "",
+    )}</svg><svg class="figlines" viewBox="0 0 300 250" aria-hidden="true"><path d="M150 28L220 22M150 106L214 52M150 188L230 74"/><circle cx="220" cy="22" r="3"/><circle cx="214" cy="52" r="3"/><circle cx="230" cy="74" r="3"/></svg>`;
   return `<div class="geartop"><div class="bigdt"><b>${fmt(d.dt)}</b><span>TOTAL DT</span></div><div class="grow"><div class="s dim">FROM GEAR</div><div class="chips">${mods || `<span class="s dim">No modifiers.</span>`}</div></div><div class="s dim" style="text-align:right">Caps ${fmt(c.caps)}<br>Total ${fmt(d.enc.total)}/${fmt(d.carry)} lb<br>Active ${fmt(d.enc.active)}/${fmt(d.enc.capActive)} lb</div></div>
    <div class="gearmenu"><div class="gcol">${weaponBox(c, d, 0)}${weaponBox(c, d, 1)}${c.weapons
      .slice(2)
      .map((_, i) => weaponBox(c, d, i + 2))
      .join(
        "",
-     )}</div><div class="gfig">${fig}${gearBox(c, "head")}${gearBox(c, "vanity")}${gearBox(c, "armor")}</div><div class="gcol">${accs.map((s) => gearBox(c, s)).join("")}</div></div>
+     )}</div><div class="gfig">${fig}${gearBox(c, "head")}${gearBox(c, "armor")}${gearBox(c, "vanity")}</div><div class="gcol">${accs.map((s) => gearBox(c, s)).join("")}</div></div>
    ${ui.modal.pick ? `<div class="gpick">${gearPicker(c, ui.modal.pick)}</div>` : ""}`;
 }
 // ----- character and health menus
@@ -1758,7 +1804,7 @@ function sheetBody() {
       : m.tab === "traits"
         ? traitsSect(c)
         : `${d.m.lucky ? `<label class="rr" style="max-width:220px"><span>Lucky Number digit</span>${bindNum(c.id, "luckyDigit", c.luckyDigit != null ? c.luckyDigit : 7)}</label>` : ""}<div class="hpline" style="margin-bottom:3px"><span>DT</span>${ovCell(c, "dt", fmt(d.dt), "Damage Threshold")}<span>INIT</span>${ovCell(c, "pri", fmt(d.pri), "Initiative base")}<span>SAVE</span>${ovCell(c, "save", d.save, "Saving throw: roll at or under on a d20")}</div>${statList(c, d)}${statsSect(c, d)}<h3>What's changing this character's numbers</h3>${modsSect(c, d)}`;
-  return `<div class="opts" style="margin-bottom:4px">${tabs}</div>${body}`;
+  return `${specialRow(c, d)}<div class="opts" style="margin:8px 0 6px">${tabs}</div>${body}`;
 }
 // A box figure: each body part shows what's wrong with it. Limbs from the statuses that name them, head and body from the crit statuses.
 const diceBtn = (id, kind) =>
@@ -1788,6 +1834,14 @@ function coverNow(lc) {
   const f = clamp(1 - o.dmg / max, 0, 1);
   return { ...lc, hit: E.fix(lc.hit * f), dam: E.fix(lc.dam * f), n: `${lc.n} ${Math.round(f * 100)}%`, worn: f };
 }
+// How much of its cover an object still gives: worn concealment and soft cover protect less.
+function coverLeft(o) {
+  const max = objHp(o);
+  if (!o || !max || !o.dmg || !(S.rules.coverFade || []).includes(E.coverTier(o, S.rules))) return 1;
+  return clamp(1 - o.dmg / max, 0, 1);
+}
+const lineCoverNow = (a, b) =>
+  S.rules.coverStack ? E.lineCover(a, b, S.scene.objects, S.rules, coverLeft) : coverNow(E.lineCover(a, b, S.scene.objects, S.rules));
 function hurtObj(o, amount, by) {
   const max = objHp(o);
   if (!max || !(amount > 0)) return;
@@ -1981,6 +2035,54 @@ function blastHits(at, t) {
     .filter((x) => x.dmg > 0)
     .sort((p, q) => p.d - q.d);
 }
+// MAP EFFECTS: short animations for shots, throws and item use. Each is kept in ui.fx with its start time and drawn with a negative
+// animation-delay, so a re-render halfway through carries on where it was instead of starting over. Off when the system asks for less motion.
+function addFx(f) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const now = performance.now();
+  ui.fx = (ui.fx || []).filter((x) => now - x.t0 < x.dur);
+  ui.fx.push({ ...f, t0: now });
+  setTimeout(scheduleRender, f.dur + 40);
+}
+const liveFx = () => (ui.fx || []).filter((x) => performance.now() - x.t0 < x.dur);
+const fxDelay = (f, at = 0) => `animation-delay:${Math.round(at - (performance.now() - f.t0))}ms`;
+const TRACER_GAP = 110,
+  TRACER_MS = 260;
+// a target being hit flashes red and shakes, once for each bullet that lands
+function tokFx(id) {
+  const f = liveFx().find((x) => x.type === "shot" && x.tgt === id && x.firstHit != null);
+  return f ? { cls: "hitfx", style: fxDelay(f, f.firstHit) } : null;
+}
+function fxLayer(k2, vw) {
+  const tw = E.fix(Math.max(0.14 * k2, vw * 0.006)); // tracer width in meters: thin up close, still visible zoomed out
+  return liveFx()
+    .map((f) => {
+      if (f.type === "shot")
+        return f.shots
+          .map((s, i) => {
+            // a short streak runs the length of the line: dash and gap in meters, since lines ignore pathLength in some browsers
+            const len = E.fix(dist(f.a, s)),
+              ld = E.fix(Math.min(2, Math.max(0.4, len * 0.25)));
+            return `<line class="tracer ${s.hit ? "hit" : "miss"}" x1="${f.a.x}" y1="${f.a.y}" x2="${E.fix(s.x)}" y2="${E.fix(s.y)}" style="stroke-width:${tw};stroke-dasharray:${ld} ${E.fix(len + ld)};--ld:${ld}px;--len:${len}px;${fxDelay(f, i * TRACER_GAP)}"/>`;
+          })
+          .join("");
+      if (f.type === "throw") {
+        const dx = E.fix(f.to.x - f.from.x),
+          dy = E.fix(f.to.y - f.from.y);
+        return `<circle class="scatterfx" cx="${f.aim.x}" cy="${f.aim.y}" r="${f.spread}" style="${fxDelay(f)}"/><g transform="translate(${f.from.x} ${f.from.y})"><circle class="nade" r="${E.fix(0.3 * k2)}" style="--dx:${dx}px;--dy:${dy}px;${fxDelay(f)}"/></g><circle class="boom" cx="${f.to.x}" cy="${f.to.y}" r="${f.radius}" style="${fxDelay(f, 700)}"/>`;
+      }
+      if (f.type === "float") {
+        const p = posOf(f.id);
+        const pic =
+          f.icon === "MED"
+            ? `<rect x="-.42" y="-.42" width=".84" height=".84" rx=".12" class="medbg"/><path class="medx" d="M-.12 -.3h.24v.18h.18v.24h-.18v.18h-.24v-.18h-.18v-.24h.18z"/>`
+            : `<g transform="translate(-.42 -.42) scale(.035)" class="ficon">${VICON[f.icon] || VICON.item}</g>`;
+        return `<g transform="translate(${E.fix(p.x + 0.6 * k2)} ${E.fix(p.y - 1.2 * k2)}) scale(${E.fix(k2 * 1.4)})"><g class="floatfx" style="${fxDelay(f)}">${pic}</g></g>`;
+      }
+      return "";
+    })
+    .join("");
+}
 function throwOverlay() {
   const T = ui.throwing;
   if (!T) return "";
@@ -1994,7 +2096,13 @@ function throwOverlay() {
     )
     .reverse()
     .join("");
-  return `<g id="throwPrev" class="${T.at ? "set" : "follow"}"><line class="throwline" x1="${from.x}" y1="${from.y}" x2="${at.x}" y2="${at.y}" vector-effect="non-scaling-stroke"/>${rings}</g>`;
+  const spread = throwSpread(ent(T.id));
+  return `<g id="throwPrev" class="${T.at ? "set" : "follow"}"><line class="throwline" x1="${from.x}" y1="${from.y}" x2="${at.x}" y2="${at.y}" vector-effect="non-scaling-stroke"/>${rings}<circle class="scatterring blastring" cx="${at.x}" cy="${at.y}" r="${spread}"/></g>`;
+}
+// How far off a throw can land: less the better their Explosives.
+function throwSpread(e) {
+  const s = S.rules.throwScatter || { base: 0, perSkill: 1, min: 0 };
+  return E.fix(Math.max(s.min || 0, (s.base || 0) - (der(e).skills.EXP || 0) / (s.perSkill || 1)));
 }
 function throwPreview(svg, ev) {
   const g = document.getElementById("throwPrev");
@@ -2020,7 +2128,7 @@ function throwBar() {
   const far = dist(posOf(A.id), T.at);
   if (t.range && far > t.range)
     return `<div class="moveconfirm"><span class="warn">${Math.round(far)}m is too far: ${h(T.item)} reaches ${t.range}m.</span><span class="s">Click closer.</span><span class="spacer"></span><button class="btn tiny" data-a="throwCancel" data-v="">${kbd("Esc")}Cancel</button></div>`;
-  return `<div class="moveconfirm"><span class="bright">Throw ${h(T.item)} ${far.toFixed(1)}m?</span><span><b>${t.ap}</b> AP</span><span class="s">${hits.map((x) => `${h(x.e.name)} <b>${x.dmg}</b>`).join(" · ") || "Nobody in the blast"}</span><span class="spacer"></span><button class="btn primary tiny" data-primary="1" data-a="throwConfirm" data-v="">${kbd("Enter")}Throw</button><button class="btn tiny" data-a="throwCancel" data-v="">${kbd("Esc")}Cancel</button></div>`;
+  return `<div class="moveconfirm"><span class="bright">Throw ${h(T.item)} ${far.toFixed(1)}m?</span><span><b>${t.ap}</b> AP</span><span class="s">Lands within <b>${throwSpread(A)}m</b> of the spot (Explosives ${der(A).skills.EXP || 0}). On the spot: ${hits.map((x) => `${h(x.e.name)} <b>${x.dmg}</b>`).join(" · ") || "nobody in the blast"}</span><span class="spacer"></span><button class="btn primary tiny" data-primary="1" data-a="throwConfirm" data-v="">${kbd("Enter")}Throw</button><button class="btn tiny" data-a="throwCancel" data-v="">${kbd("Esc")}Cancel</button></div>`;
 }
 function saveToBody() {
   const m = ui.modal;
@@ -2031,6 +2139,16 @@ function saveToBody() {
    <button class="btn ${packFile ? "" : "primary"}" ${packFile ? "" : 'data-primary="1"'} data-a="saveToFile" data-v="new">${pick ? "Save to a new location…" : coarse ? "Save a copy to this device" : "Download a copy"}</button>${btn("closeModal", "", "Not now")}</div>
    <div class="s dim" style="margin-top:6px">${pick ? "The file you pick, or the pack you loaded, is remembered for this session." : "This browser can't remember a file location, so a copy is downloaded instead."}</div>`;
 }
+// The health figure: a small head, a long narrow body, long thin arms at its sides and legs under it.
+// Each part is green when fine and red with stripes when something is wrong; its label sits off to the side on a line.
+const FIG_PARTS = {
+  Head: [`<rect x="109" y="11" width="22" height="22" rx="4"/>`, [132, 22], [176, 18], "r"],
+  Body: [`<rect x="104" y="37" width="32" height="66" rx="6"/>`, [136, 58], [176, 50], "r"],
+  LArm: [`<rect x="88" y="37" width="13" height="48" rx="4"/>`, [89, 60], [64, 64], "l"],
+  RArm: [`<rect x="139" y="37" width="13" height="48" rx="4"/>`, [151, 74], [176, 86], "r"],
+  LLeg: [`<rect x="104" y="106" width="15" height="56" rx="4"/>`, [105, 138], [64, 142], "l"],
+  RLeg: [`<rect x="121" y="106" width="15" height="56" rx="4"/>`, [135, 148], [176, 132], "r"],
+};
 function bodyMap(c) {
   const r = S.rules;
   const on = {};
@@ -2041,31 +2159,70 @@ function bodyMap(c) {
     if (!st.parts && st.n === (r.critStatus || {}).Head) on.Head.push(label);
     if (!st.parts && st.n === (r.critStatus || {}).Body) on.Body.push(label);
   }
-  const box = (id) => {
-    const bad = on[id].length;
-    const crip = on[id].some((x) => /injur|cripp/i.test(x));
-    return `<div class="hm-${id} ${bad ? "hurt" : ""}" title="${h(PARTS[id][0])}${bad ? ": " + h(on[id].join(", ")) : ": fine"}"><b>${h(PARTS[id][0].replace(/^(Left|Right) /, (m) => m[0] + " "))}</b><span>${crip ? "CRIPPLED" : bad ? h(on[id].join(", ")) : "OK"}</span></div>`;
-  };
-  return `<div class="bodymap" aria-label="Body">${["Head", "LArm", "Body", "RArm", "LLeg", "RLeg"].map(box).join("")}</div>`;
+  const parts = Object.entries(FIG_PARTS)
+    .map(([id, [shape, from, to, side]]) => {
+      const bad = on[id].length;
+      const crip = on[id].some((x) => /injur|cripp/i.test(x));
+      const name = PARTS[id][0].replace(/^(Left|Right) /, (m) => m[0] + " ");
+      const say = crip ? "CRIPPLED" : bad ? on[id].join(", ") : "OK";
+      const x = side === "l" ? to[0] - 4 : to[0] + 4;
+      // the status words wrap onto two short lines so they fit beside the figure
+      const words = say.split(" "),
+        lines = [""];
+      for (const w of words) {
+        if (lines[lines.length - 1] && (lines[lines.length - 1] + " " + w).length > 14) lines.push(w);
+        else lines[lines.length - 1] = (lines[lines.length - 1] + " " + w).trim();
+      }
+      const shown = lines.slice(0, 2).map((t, i) => (i === 1 && lines.length > 2 ? t.slice(0, 13) + "…" : t));
+      const anchor = side === "l" ? "end" : "start";
+      return `<g class="fp ${bad ? "hurt" : ""} ${crip ? "crip" : ""}"><title>${h(PARTS[id][0])}: ${h(bad ? on[id].join(", ") : "fine")}</title><g class="fps">${shape}</g><path class="lead" d="M${from[0]} ${from[1]}L${to[0]} ${to[1]}"/><text x="${x}" y="${to[1] - 3}" text-anchor="${anchor}" class="fpn">${h(name)}</text>${shown.map((t, i) => `<text x="${x}" y="${to[1] + 11 + i * 12}" text-anchor="${anchor}" class="fpv">${h(t)}</text>`).join("")}</g>`;
+    })
+    .join("");
+  return `<svg class="bodyfig" viewBox="-30 0 300 172" role="img" aria-label="Body"><defs><pattern id="hurtx" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="hx0"/><rect width="3" height="6" class="hx1"/></pattern></defs>${parts}</svg>`;
 }
 function healthBody() {
   const c = ent(ui.modal.id);
   if (!c) return "";
   const d = der(c);
-  const line = (st, i) => {
-    const inf = E.statusInfo(ctx(), st);
-    return `<div class="line t"><div class="grow"><span class="bright">${h(st.n)}${st.tier > 1 ? " " + st.tier : ""}</span>${st.parts ? ` <span class="s dim">${h(st.parts.map((p) => PARTS[p][0]).join(", "))}</span>` : ""}<div class="s dim">${h(inf.text || (inf.def && inf.def.desc) || "")}</div></div><label class="f" style="width:42px">Turns${bindNum(c.id, `statuses.${i}.turns`, st.turns)}</label><button class="btn tiny" data-a="delStatus" data-v="${c.id}|${i}" title="Remove">X</button></div>`;
-  };
-  const all = (c.statuses || []).map((st, i) => [st, i, (E.statusInfo(ctx(), st).def || {}).tone]);
-  const good = all.filter((x) => x[2] === "Positive"),
-    bad = all.filter((x) => x[2] !== "Positive");
-  const fx = (c.effects || [])
-    .map(
-      (f, i) =>
-        `<div class="line t"><div class="grow"><span class="bright">${h(f.label)}</span><div class="s dim">${h(f.text || "")}</div></div><label class="f" style="width:42px">Turns${bindNum(c.id, `effects.${i}.turns`, f.turns)}</label><button class="btn tiny" data-a="delEffect" data-v="${c.id}|${i}" title="Remove">X</button></div>`,
-    )
-    .join("");
   const base = E.derive({ ...c, statuses: [], effects: [] }, ctx());
+  // one row per status or item effect, in columns
+  const rows = [];
+  (c.statuses || []).forEach((st, i) => {
+    const inf = E.statusInfo(ctx(), st);
+    const tone = (inf.def || {}).tone === "Positive" ? "Beneficial" : "Harmful";
+    rows.push({
+      tone,
+      n: st.n,
+      tier: st.tier || 1,
+      where: st.parts ? st.parts.map((p) => PARTS[p][0]).join(", ") : "",
+      text: inf.text || (inf.def && inf.def.desc) || "",
+      turns: bindNum(c.id, `statuses.${i}.turns`, st.turns),
+      del: `${btn("delStatus", `${c.id}|${i}`, "X", "", "tiny", "Remove")}`,
+      mods: inf.mods || {},
+    });
+  });
+  (c.effects || []).forEach((f, i) =>
+    rows.push({
+      tone: "Item",
+      n: f.label,
+      tier: "",
+      where: "",
+      text: f.text || "",
+      turns: bindNum(c.id, `effects.${i}.turns`, f.turns),
+      del: btn("delEffect", `${c.id}|${i}`, "X", "", "tiny", "Remove"),
+      mods: {},
+    }),
+  );
+  rows.sort((x, y) => ["Harmful", "Beneficial", "Item"].indexOf(x.tone) - ["Harmful", "Beneficial", "Item"].indexOf(y.tone));
+  const table = `<table class="t sttab"><tr><th>Status</th><th>Kind</th><th>Tier</th><th>Where</th><th>Effect</th><th>Turns</th><th></th></tr>${
+    rows
+      .map(
+        (r) =>
+          `<tr class="st-${r.tone.toLowerCase()}"><td class="bright">${h(r.n)}</td><td><span class="tag ${r.tone === "Harmful" ? "bad" : ""}">${r.tone}</span></td><td>${r.tier}</td><td class="dim">${h(r.where)}</td><td class="dim">${h(r.text)}</td><td class="tn">${r.turns}</td><td>${r.del}</td></tr>`,
+      )
+      .join("") || `<tr><td colspan="7" class="dim">No statuses. Harmful and Beneficial ones show here.</td></tr>`
+  }</table>`;
+  // everything they add up to: stats that moved, odds and damage, and damage or healing each round
   const diffs = [
     ...E.SPECIAL.map((k) => [E.SPECIAL_NAMES[k], base.sp[k], d.sp[k]]),
     ...E.SKILLS.map(([k, n]) => [n, base.skills[k], d.skills[k]]),
@@ -2073,14 +2230,20 @@ function healthBody() {
     ["AP", base.ap, d.ap],
     ["DT", base.dt, d.dt],
   ].filter(([, a, b]) => a !== b);
-  const other = [];
+  const sum = diffs.map(([n, a, b]) => [n, `${b - a > 0 ? "+" : ""}${fmt(E.fix(b - a))}`, b < a]);
   const acc = (d.m.acc || 0) - (base.m.acc || 0),
     dam = (d.m.dam || 0) - (base.m.dam || 0);
-  if (acc) other.push(`Hit chance ${acc > 0 ? "+" : ""}${fmt(E.pct(acc))}%`);
-  if (dam) other.push(`Damage ${dam > 0 ? "+" : ""}${fmt(E.pct(dam))}%`);
-  return `<div class="geartop">${bodyMap(c)}<div class="bigdt"><b>${fmt(c.hp)}/${d.hp}</b><span>HEALTH</span></div><div class="grow">${hpBar(c.hp, d.hp)}<div class="s dim" style="margin-top:2px">AP ${fmt(c.ap)}/${d.ap} · DT ${fmt(d.dt)} · Save ${d.save}${c.dbno ? ' · <span class="bad">DOWN (DBNO)</span>' : ""}${c.timesRevived ? ` · Revived ${c.timesRevived}x` : ""}</div></div></div>
-   <div class="hcols"><div><h3>Harmful</h3>${bad.map(([st, i]) => line(st, i)).join("") || `<div class="s dim">None.</div>`}<h3>Beneficial</h3>${good.map(([st, i]) => line(st, i)).join("") || `<div class="s dim">None.</div>`}${fx ? `<h3>From items</h3>${fx}` : ""}<div class="line"><input class="grow" id="addSt-${c.id}" list="dl-status" placeholder="Add status: type, Enter" data-enter="addStatusFromInput" data-id="${c.id}"></div></div>
-   <div><h3>Effect on skills and stats</h3>${diffs.length ? `<table class="t"><tr><th>What</th><th>Without</th><th>Now</th></tr>${diffs.map(([n, a, b]) => `<tr><td>${h(n)}</td><td class="dim">${fmt(a)}</td><td class="${b < a ? "warn" : "bright"}">${fmt(b)}</td></tr>`).join("")}</table>` : `<div class="s dim">Nothing is changing them right now.</div>`}${other.length ? `<div class="s warn" style="margin-top:3px">${h(other.join(" · "))}</div>` : ""}</div></div>`;
+  if (acc) sum.push(["Hit chance", `${acc > 0 ? "+" : ""}${fmt(E.pct(acc))}%`, acc < 0]);
+  if (dam) sum.push(["Damage", `${dam > 0 ? "+" : ""}${fmt(E.pct(dam))}%`, dam < 0]);
+  const dot = rows.reduce((t, r) => t + (r.mods.dot || 0), 0),
+    regen = rows.reduce((t, r) => t + (r.mods.regen || 0), 0);
+  if (dot) sum.push(["Damage each round", `-${fmt(dot)} HP`, true]);
+  if (regen) sum.push(["Healing each round", `+${fmt(regen)} HP`, false]);
+  const summary = sum.length
+    ? `<div class="stsum">${sum.map(([n, v, bad]) => `<div class="${bad ? "neg" : "pos"}"><b>${h(v)}</b><span>${h(n)}</span></div>`).join("")}</div>`
+    : `<div class="s dim">Nothing is changing their numbers right now.</div>`;
+  return `<div class="hlayout"><div class="hfig">${bodyMap(c)}</div><div class="hright"><div class="geartop"><div class="bigdt"><b>${fmt(c.hp)}/${d.hp}</b><span>HEALTH</span></div><div class="grow">${hpBar(c.hp, d.hp)}<div class="s dim" style="margin-top:4px">AP ${fmt(c.ap)}/${d.ap} · DT ${fmt(d.dt)} · Save ${d.save}${c.dbno ? ' · <span class="bad">DOWN (DBNO)</span>' : ""}${c.timesRevived ? ` · Revived ${c.timesRevived}x` : ""}</div></div></div><h3>All statuses together</h3>${summary}</div></div>
+   <h3>Statuses <small class="dim">${rows.length}</small></h3>${table}<div class="line"><input class="grow" id="addSt-${c.id}" list="dl-status" placeholder="Add status: type, Enter" data-enter="addStatusFromInput" data-id="${c.id}"></div>`;
 }
 // ----- vendor
 // Barter sets the base. Perks with buy or sell variables move it from there.
@@ -2110,7 +2273,7 @@ function vendorWin() {
   const chipsRow = (act_, list, cur, pre = "") =>
     list.map((x) => `<button class="opt ${x === cur ? "on" : ""}" data-a="${act_}" data-v="${x}">${pre}${x}</button>`).join("");
   const line = (name, q, price, est, a, val, label) =>
-    `<tr><td style="width:18px">${pix(itemKind(name)[1])}</td><td class="bright" title="${h((E.get(ctx(), name) || { o: {} }).o.effect || (E.get(ctx(), name) || { o: {} }).o.buffs || "")}">${h(name)}</td><td>${fmt(q)}</td><td title="${est ? "The workbook has no price for this. Placeholder from Settings." : ""}">${fmt(price)}${est ? "~" : ""}</td><td><button class="btn tiny" data-a="${a}" data-v="${h(val)}">${label}</button></td></tr>`;
+    `<tr><td style="width:18px">${itemIcon(name)}</td><td class="bright" title="${h((E.get(ctx(), name) || { o: {} }).o.effect || (E.get(ctx(), name) || { o: {} }).o.buffs || "")}">${h(name)}</td><td>${fmt(q)}</td><td title="${est ? "The workbook has no price for this. Placeholder from Settings." : ""}">${fmt(price)}${est ? "~" : ""}</td><td><button class="btn tiny" data-a="${a}" data-v="${h(val)}">${label}</button></td></tr>`;
   const body = !c
     ? `<div class="dim">Pick a character.</div>`
     : ui.venTab === "buy"
@@ -2136,15 +2299,26 @@ function vendorWin() {
     { tools: btn("venRoll", "", "Restock", "", "tiny", "New stock at this tier") },
   );
 }
+// S.P.E.C.I.A.L. in big type with a drawing for each, across the top of the Character window
+function specialRow(c, d) {
+  const b0 = baseStats(c);
+  return `<div class="spbig">${E.SPECIAL.map(
+    (k) =>
+      `<div class="spcell ${moved(d.sp[k], b0.sp[k])}" title="${E.SPECIAL_NAMES[k]}: ${d.sp[k]}${d.sp[k] !== b0.sp[k] ? ` (base ${b0.sp[k]})` : ""}">${vicon(k, "spi")}<b>${d.sp[k]}</b><span>${E.SPECIAL_NAMES[k]}</span></div>`,
+  ).join("")}</div>`;
+}
 function statList(c, d) {
   const b0 = baseStats(c);
-  const row = (name, now, was) =>
-    `<tr><td>${h(name)}</td><td class="num ${moved(now, was) || "bright"}">${fmt(now)}</td><td class="s dim">${now !== was ? "base " + fmt(was) : ""}</td></tr>`;
-  return `<div class="hcols statlist"><div><h3>S.P.E.C.I.A.L.</h3><table class="t">${E.SPECIAL.map((k) => row(E.SPECIAL_NAMES[k], d.sp[k], b0.sp[k])).join("")}</table></div><div><h3>Skills</h3><table class="t">${E.SKILLS.map(([k, n]) => row(n + ((c.tags || []).includes(k) ? " (tagged)" : ""), d.skills[k], b0.skills[k])).join("")}</table></div></div>`;
+  return `<h3>Skills</h3><div class="skgrid">${E.SKILLS.map(([k, n]) => {
+    const tag = (c.tags || []).includes(k);
+    const now = d.skills[k],
+      was = b0.skills[k];
+    return `<div class="skc ${tag ? "tagged" : ""}" title="${h(n)}: ${now}${now !== was ? ` (base ${was})` : ""}${tag ? ", tagged" : ""}">${vicon(k, "ski")}<span class="grow">${h(n)}</span>${tag ? `<span class="tag">TAG</span>` : ""}<b class="${moved(now, was) || ""}">${fmt(now)}</b></div>`;
+  }).join("")}</div>`;
 }
 function statsSect(c, d) {
   return `<div class="grid">${field("AP now", bindNum(c.id, "ap", c.ap))}${field("Caps", bindNum(c.id, "caps", c.caps))}${field(`XP (next ${E.xpFor(c.level + 1, S.rules)})`, bindNum(c.id, "xp", c.xp))}${field("Level", bindNum(c.id, "level", c.level))}${field("Revived", bindNum(c.id, "timesRevived", c.timesRevived))}${field("Super crit %", numBox(`data-c="setSuper" data-id="${c.id}" id="sc-${c.id}" placeholder="${fmt(E.pct(d.superCrit))}"`, c.superCrit == null ? "" : E.pct(c.superCrit)))}</div>
-    <div class="s dim">Carry ${fmt(d.carry)} lb · Active ${fmt(d.enc.active)}/${fmt(d.enc.capActive)} lb · Total ${fmt(d.enc.total)} lb · Skill pts/level ${d.pts}${c.ptsBank ? ` · Unspent ${c.ptsBank}` : ""} · Buy ×${fmt(d.buy)} · Sell ×${fmt(d.sell)}</div>
+    <div class="s dim">Carry ${fmt(d.carry)} lb · Active ${fmt(d.enc.active)}/${fmt(d.enc.capActive)} lb · Total ${fmt(d.enc.total)} lb · Skill pts/level ${d.pts}${c.ptsBank ? ` · Unspent ${c.ptsBank}` : ""} · Buy ×${fmt(Math.round(d.buy * 100) / 100)} · Sell ×${fmt(Math.round(d.sell * 100) / 100)}</div>
     ${c.ptsBank ? btn("spendPts", c.id, "Spend skill points", "", "tiny") : ""}
     ${field("Notes", `<textarea rows="2" data-bind="${c.id}:notes" spellcheck="false">${h(c.notes)}</textarea>`)}`;
 }
@@ -2191,19 +2365,37 @@ const ITEM_ICON = {
   Poison: "skull",
   Tool: "wrench",
 };
+// [folder name, old pixel icon, line icon]
+const ITEM_VICON = {
+  Healing: "MED",
+  "Chem/Drug": "stim",
+  Alcohol: "bottle",
+  Drink: "bottle",
+  Food: "food",
+  Counter: "shield",
+  Literature: "book",
+  Tobacco: "smoke",
+  Resistance: "shield",
+  Poison: "skull",
+  Tool: "tool",
+};
 function itemKind(name) {
   const it = E.get(ctx(), name);
-  if (!it) return ["Other", "dot"];
+  if (!it) return ["Other", "dot", "item"];
   const o = it.o;
   if (it.cat === "weapon")
-    return o.tab === "MW" ? ["Melee", "sword"] : o.tab === "EW" ? ["Energy weapons", "bolt"] : o.tab === "EX" ? ["Explosives", "bomb"] : ["Guns", "gun"];
-  if (it.cat === "ammo") return ["Ammo", "ammo"];
-  if (it.cat === "armor") return o.loc === "Accessory" ? ["Accessories", "ring"] : ["Armor", "vest"];
-  if (it.cat === "material") return ["Materials", "nut"];
-  if (it.cat === "mod") return ["Mods", "scope"];
-  if (it.cat === "item") return [o.cat || "Items", ITEM_ICON[o.cat] || "dot"];
-  return ["Other", "dot"];
+    return [
+      ...(o.tab === "MW" ? ["Melee", "sword"] : o.tab === "EW" ? ["Energy weapons", "bolt"] : o.tab === "EX" ? ["Explosives", "bomb"] : ["Guns", "gun"]),
+      weaponIcon(o),
+    ];
+  if (it.cat === "ammo") return ["Ammo", "ammo", "ammo"];
+  if (it.cat === "armor") return o.loc === "Accessory" ? ["Accessories", "ring", "ring"] : ["Armor", "vest", /head/i.test(o.loc) ? "helmet" : "armor"];
+  if (it.cat === "material") return ["Materials", "nut", "nut"];
+  if (it.cat === "mod") return ["Mods", "scope", "mod"];
+  if (it.cat === "item") return [o.cat || "Items", ITEM_ICON[o.cat] || "dot", ITEM_VICON[o.cat] || "item"];
+  return ["Other", "dot", "item"];
 }
+const itemIcon = (name) => vicon(itemKind(name)[2], "ii");
 // Inventory folders: each item kind sorts into one tab. Active is everything ticked as on hand.
 const INV_TABS = [
   ["all", "All"],
@@ -2220,7 +2412,7 @@ function invTab(name) {
   if (it.cat === "weapon") return "weapons";
   if (it.cat === "armor") return "armor";
   if (it.cat === "ammo") return "ammo";
-  if (it.cat === "item" && ["Healing", "Chem/Drug", "Alcohol", "Drink", "Food", "Tobacco", "Poison", "Resistance"].includes(it.o.cat)) return "consumables";
+  if (it.cat === "item" && CONSUMABLE_CATS.includes(it.o.cat)) return "consumables";
   return "misc";
 }
 const INV_SORTS = [
@@ -2262,7 +2454,7 @@ function invSect(c, d) {
           .map(([l, i]) => {
             const it = E.get(ctx(), l.n);
             const canUse = it && it.cat === "item" && usable(it.o);
-            return `<div class="irow"><span class="iq">${numBox(`data-c="setQty" data-id="${c.id}" data-i="${i}" id="q-${c.id}-${i}" title="How many"`, fmt(l.q), "cell")}</span>${pix(itemKind(l.n)[1])}<span class="grow" title="${h(it && it.o.effect ? it.o.effect : "")}">${h(l.n)}${it && it.o.effect ? ` <span class="s dim">${h(it.o.effect)}</span>` : ""}${it && it.cat === "weapon" && c.kind === "pc" ? ` ${famTag(c, l.n)} <span class="famedit" title="Rounds fired: the DM can set it">${numBox(`data-c="setFam" data-id="${c.id}" data-n="${h(l.n)}" id="fam-${c.id}-${i}"`, fmt(famOf(c, l.n).n), "cell")}</span>` : ""}</span><span class="s faint">${fmt(E.weightOf(ctx(), l.n) * l.q)}lb</span><label class="chk s" title="Active: on hand during combat"><input type="checkbox" data-a="invActive" data-v="${c.id}|${i}"${l.active ? " checked" : ""}>ACTIVE</label>${canUse ? `<button class="btn tiny" data-a="useItemFrom" data-v="${c.id}|${i}">Use</button>` : ""}<button class="btn tiny" data-a="invDel" data-v="${c.id}|${i}" title="Remove">X</button></div>`;
+            return `<div class="irow"><span class="iq">${numBox(`data-c="setQty" data-id="${c.id}" data-i="${i}" id="q-${c.id}-${i}" title="How many"`, fmt(l.q), "cell")}</span>${itemIcon(l.n)}<span class="grow" title="${h(it && it.o.effect ? it.o.effect : "")}">${h(l.n)}${it && it.o.effect ? ` <span class="s dim">${h(it.o.effect)}</span>` : ""}${it && it.cat === "weapon" && c.kind === "pc" ? ` ${famTag(c, l.n)} <span class="famedit" title="Rounds fired: the DM can set it">${numBox(`data-c="setFam" data-id="${c.id}" data-n="${h(l.n)}" id="fam-${c.id}-${i}"`, fmt(famOf(c, l.n).n), "cell")}</span>` : ""}</span><span class="s faint">${fmt(E.weightOf(ctx(), l.n) * l.q)}lb</span><label class="chk s" title="Active: on hand during combat"><input type="checkbox" data-a="invActive" data-v="${c.id}|${i}"${l.active ? " checked" : ""}>ACTIVE</label>${canUse ? `<button class="btn tiny primary usebtn" data-a="useSelf" data-v="${c.id}|${i}" title="Use it on ${h(c.name)} right away">Self</button><button class="btn tiny usebtn" data-a="useItemFrom" data-v="${c.id}|${i}" title="Use or give it: pick who, then Use">Use…</button>` : ""}<button class="btn tiny" data-a="invDel" data-v="${c.id}|${i}" title="Remove">X</button></div>`;
           })
           .join("")}`,
     )
@@ -2362,7 +2554,10 @@ function consoleWin() {
           ? "Roll initiative"
           : "Stealth phase";
   return win("w-action", title, "", stage, {
-    tools: k.phase === "turns" || k.phase === "roundEnd" ? `${btn("endCombat", "", "End", "Q", "tiny")}${btn("defeat", "", "Defeat", "D", "tiny")}` : "",
+    tools:
+      k.phase === "turns" || k.phase === "roundEnd"
+        ? `${btn("endCombat", "", npcsAlive() ? "End" : "End the fight", "Q", npcsAlive() ? "tiny" : "primary pulse")}${btn("defeat", "", "Defeat", "D", partyUp() ? "tiny" : "primary pulse")}`
+        : "",
   });
 }
 function mapOptions() {
@@ -2397,7 +2592,14 @@ function encounterWin(open) {
     `<label class="f">Style<select id="themeId" data-c="setTheme">${options(
       [...(customMap(M.id) ? [["asBuilt", "As built"]] : []), ...Object.entries(S.rules.roomThemes).map(([id, t]) => [id, t.n])],
       sc.theme,
-    )}</select></label><div class="egbtns"><button class="btn primary" data-a="randomRoom" data-v="" title="New furniture for this location and style">Randomize room</button><label class="chk s" title="Add a chest of ammo near the party. It opens for whoever is within R1 on their turn."><input type="checkbox" id="roomChest" data-u="roomChest"${ui.roomChest ? " checked" : ""}> Chest</label>${btn("clearRoom", "", "Clear room", "", "", "Remove all objects")}</div>`,
+    )}</select></label><div class="egbtns"><button class="btn primary" data-a="randomRoom" data-v="" title="New furniture for this location and style">Randomize room</button><select id="roomDensity" data-c="setDensity" title="How full the room gets when randomized">${options(
+      [
+        ["sparse", "Sparse"],
+        ["normal", "Normal"],
+        ["cluttered", "Cluttered"],
+      ],
+      S.scene.density || "normal",
+    )}</select><label class="chk s" title="Add a chest of ammo near the party. It opens for whoever is within R1 on their turn."><input type="checkbox" id="roomChest" data-u="roomChest"${ui.roomChest ? " checked" : ""}> Chest</label>${btn("clearRoom", "", "Clear room", "", "", "Remove all objects")}</div>`,
   );
   const place = group(
     "g-place",
@@ -2447,6 +2649,35 @@ const mapTools = () =>
         `<button class="btn tiny ${ui.place === id ? "on" : ""}" data-a="mapPlace" data-v="${id}" title="Then click the map to place ${h(n.toLowerCase())}">+${h(n.split(" ")[0])}</button>`,
     )
     .join("");
+// What the next click on the map places: a kind of thing from the list and, if you like, a name of your own.
+function placeChoices(kind) {
+  const r = S.rules;
+  if (kind === "hazard") return Object.entries(r.hazardKinds || {}).map(([k, n]) => ["hz:" + k, n]);
+  if (kind === "note") return Object.entries(r.markerKinds || {}).map(([k, n]) => ["mk:" + k, n]);
+  const tiers = kind === "hard" ? ["hard", "impenetrable"] : ["concealment", "soft"];
+  return [
+    ["", kind === "hard" ? "Plain hard cover" : "Plain cover"],
+    ...Object.entries(r.mapItems)
+      .filter(([k, c]) => tiers.includes(c.cover) && k !== "void")
+      .map(([k, c]) => [k, `${c.n} (${(r.cover[c.cover] || {}).n || c.cover}, ${c.w}x${c.h}m)`])
+      .sort((a, b) => a[1].localeCompare(b[1])),
+  ];
+}
+function placeBar() {
+  const list = placeChoices(ui.place);
+  if (ui.placeItem == null || !list.some(([k]) => k === ui.placeItem)) ui.placeItem = list[0][0];
+  return `<div class="maptools placebar"><span class="warn s">Place ${h(MAP_OBJ[ui.place][0].toLowerCase())}:</span><select id="placeItem" data-u="placeItem" title="What to place">${options(list, ui.placeItem)}</select><input id="placeName" autocomplete="off" class="grow" placeholder="Name (optional)" data-u="placeName" value="${h(ui.placeName || "")}"><span class="s dim">then click the map · Esc to stop</span></div>`;
+}
+// The map key: what objects are made of, how solid their cover is, whose token is whose, and the accuracy ring's colors.
+function mapLegend() {
+  const sw = (m, n) => `<span class="lg"><svg viewBox="0 0 20 14"><rect class="lgobj m-${m}" x="2" y="2" width="16" height="10" rx="1"/></svg>${n}</span>`;
+  const tier = (t, n) => `<span class="lg"><svg viewBox="0 0 20 14"><rect class="lgtier lt-${t}" x="2" y="2" width="16" height="10"/></svg>${n}</span>`;
+  const ring = [0.1, 0.3, 0.5, 0.7, 0.9].map((x) => `<i style="background:${ringColor(x)}"></i>`).join("");
+  return `<div class="maplegend"><b>Made of</b>${sw("wood", "Wood")}${sw("metal", "Metal")}${sw("rust", "Wrecks")}${sw("stone", "Stone")}${sw("plant", "Plants")}${sw("fabric", "Cloth")}${sw("sand", "Sand")}${sw("tile", "Tile")}
+    <b>Cover (outline)</b>${tier("concealment", "Concealment: dashed")}${tier("soft", "Soft: thin")}${tier("hard", "Hard: thick")}${tier("impenetrable", "Impenetrable: thickest")}
+    <b>Tokens</b><span class="lg"><svg viewBox="0 0 20 14"><circle class="lgb pc" cx="10" cy="7" r="5"/></svg>Party</span><span class="lg"><svg viewBox="0 0 20 14"><circle class="lgb ally" cx="10" cy="7" r="5"/></svg>Ally</span><span class="lg"><svg viewBox="0 0 20 14"><rect class="lgb npc" x="6" y="3" width="8" height="8" transform="rotate(45 10 7)"/></svg>Enemy</span>
+    <b>Accuracy ring</b><span class="lg ringkey">${ring}</span><span class="lg">low to high · clear = no shot</span></div>`;
+}
 function mapExtras() {
   if (ui.throwing) return throwBar();
   const pm = ui.pendingMove && ent(ui.pendingMove.id);
@@ -2465,7 +2696,7 @@ function mapExtras() {
           E.coverTier(sel, S.rules),
         )}</select><label class="chk s"><input type="checkbox" data-a="objBlock" data-v="${sel.id}"${sel.block ? " checked" : ""}>Blocks walking</label><input id="objLabel" autocomplete="off" class="grow" placeholder="Label" data-c="setObjLabel" value="${h(sel.label || "")}">${btn("objDel", sel.id, "Remove", "", "tiny")}</div>`
       : ""
-  }${!sel && !ui.place ? `<div class="maptools s dim maphint">Select an object, then drag its handle or press Q/E to turn it.</div>` : ""}${ui.place ? `<div class="maptools warn s">Click the map to place ${h(MAP_OBJ[ui.place][0].toLowerCase())}. Esc to stop.</div>` : ""}`;
+  }${!sel && !ui.place ? `<div class="maptools s dim maphint">Select an object, then drag its handle or press Q/E to turn it.</div>` : ""}${ui.place ? placeBar() : ""}`;
 }
 const SITES = (sub) => db.situations.filter((r) => r.sub === sub).map((r) => [r.n, r.n === "Grassland" ? "Grassland (Plains)" : r.n]);
 function enemyTab() {
@@ -2569,8 +2800,9 @@ function labelLines(e, tail = "") {
 }
 // PEOPLE ON THE MAP. Zoomed out they keep a steady size on screen, about 2% of the view, so you can always find them.
 // As you zoom in they stop shrinking at real life size, so up close they look like a person next to a real-size table.
-const TOKEN_VIEW = 0.05,
-  TOKEN_REAL = 1;
+// tokens are drawn at least TOKEN_REAL x real size, and at least TOKEN_VIEW of the view's width, so they stay findable zoomed out
+const TOKEN_VIEW = 0.028,
+  TOKEN_REAL = 0.55;
 const tokenScale = (viewW) => Math.max(TOKEN_REAL, viewW * TOKEN_VIEW);
 const ZOOM_MIN_VIEW = 5; // the closest zoom: 5 meters across
 // What part of the map is on screen. No zoom means the whole map with a small margin.
@@ -2806,27 +3038,105 @@ const GLYPH = {
   bedroll: `<rect x="-.5" y="-.46" width="1" height=".92" rx=".2" ry=".4"/>${dline("M-.2 -.46V.46")}`,
   sheet: `${box(-0.5, -0.5, 1, 1)}${dline("M-.5 0H.5")}`,
   forklift: `${box(-0.2, -0.5, 0.7, 1)}${box(-0.5, -0.36, 0.3, 0.14)}${box(-0.5, 0.22, 0.3, 0.14)}${box(0, -0.3, 0.26, 0.6, "pale")}`,
+  // ---- added 11 Nov: a drawing of its own for each kind of thing
+  dumpster: `${box(-0.5, -0.5, 1, 1)}${dline("M-.5 -.2H.5M-.1 -.5V-.2M.1 -.5V-.2")}${box(-0.46, 0.25, 0.92, 0.16, "d")}`,
+  tires: `${CIRC(0.24, -0.2, -0.18)}${CIRC(0.24, 0.22, -0.1)}${CIRC(0.24, 0, 0.22)}${CIRC(0.1, -0.2, -0.18, "d")}${CIRC(0.1, 0.22, -0.1, "d")}${CIRC(0.1, 0, 0.22, "d")}`,
+  tireWall: `${CIRC(0.17, -0.33, 0)}${CIRC(0.17, 0, 0)}${CIRC(0.17, 0.33, 0)}${CIRC(0.07, -0.33, 0, "d")}${CIRC(0.07, 0, 0, "d")}${CIRC(0.07, 0.33, 0, "d")}`,
+  roundTable: `${CIRC(0.34)}${CIRC(0.1, 0, 0, "d")}${CIRC(0.09, 0, -0.43, "pale")}${CIRC(0.09, 0, 0.43, "pale")}${CIRC(0.09, -0.43, 0, "pale")}${CIRC(0.09, 0.43, 0, "pale")}`,
+  post: `${CIRC(0.34)}${CIRC(0.14, 0, 0, "pale")}`,
+  hydrant: `${CIRC(0.32)}${box(-0.48, -0.1, 0.96, 0.2)}${CIRC(0.12, 0, 0, "d")}`,
+  statue: `${box(-0.5, -0.5, 1, 1)}${CIRC(0.3, 0, 0, "pale")}${CIRC(0.13, 0, -0.04, "d")}`,
+  tower: `${box(-0.5, -0.5, 1, 1)}${dline("M-.5 -.5L.5 .5M.5 -.5L-.5 .5")}${box(-0.2, -0.2, 0.4, 0.4, "pale")}`,
+  container: `${box(-0.5, -0.5, 1, 1)}${dline("M-.5 -.25H.42M-.5 0H.42M-.5 .25H.42M.42 -.5V.5")}`,
+  hesco: `${box(-0.5, -0.5, 1, 1)}${dline("M-.25 -.5V.5M0 -.5V.5M.25 -.5V.5M-.5 0H.5")}`,
+  wire: `${box(-0.5, -0.12, 1, 0.24, "pale")}${dline("M-.5 0L-.4 -.4L-.3 .4L-.2 -.4L-.1 .4L0 -.4L.1 .4L.2 -.4L.3 .4L.4 -.4L.5 0")}`,
+  pillar: `${box(-0.5, -0.5, 1, 1)}${box(-0.3, -0.3, 0.6, 0.6, "d")}`,
+  jersey: `${box(-0.5, -0.5, 1, 1)}${box(-0.32, -0.5, 0.12, 1, "pale")}${box(0.2, -0.5, 0.12, 1, "pale")}${dline("M-.5 0H.5")}`,
+  mailbox: `<rect x="-.5" y="-.5" width="1" height="1" rx=".5" ry=".3"/>${box(0.12, -0.44, 0.1, 0.4, "pale")}`,
+  fence: `${box(-0.5, -0.14, 1, 0.28, "pale")}${box(-0.5, -0.5, 0.1, 1)}${box(-0.05, -0.5, 0.1, 1)}${box(0.4, -0.5, 0.1, 1)}`,
+  crops: (() => {
+    let p = "";
+    for (const y of [-0.3, 0, 0.3]) for (let x = -0.42; x <= 0.43; x += 0.12) p += CIRC(0.06, E.fix(x), y);
+    return p;
+  })(),
+  hay: `${CIRC(0.46)}${dline("M0 0a.1 .1 0 0 1 .1 .1a.2 .2 0 0 1 -.2 .2a.3 .3 0 0 1 -.3 -.3a.36 .36 0 0 1 .36 -.36")}`,
+  tank: `${CIRC(0.48)}${CIRC(0.34, 0, 0, "d")}${dline("M-.48 0H.48M0 -.48V.48")}`,
+  pump: `${box(-0.5, -0.5, 1, 1)}${box(-0.3, -0.36, 0.6, 0.3, "pale")}${CIRC(0.08, 0.28, 0.28, "dot")}`,
+  slot: `${box(-0.5, -0.5, 1, 1)}${box(-0.36, -0.3, 0.72, 0.3, "pale")}${dline("M-.12 -.3V0M.12 -.3V0")}`,
+  jukebox: `<path d="M-.5 .5V-.1A.5 .5 0 0 1 .5 -.1V.5Z"/>${dline("M-.3 .5V-.05A.3 .3 0 0 1 .3 -.05V.5")}`,
+  piano: `${box(-0.5, -0.5, 1, 1)}${box(-0.5, 0.24, 1, 0.26, "pale")}${dline("M-.3 .24V.5M-.1 .24V.5M.1 .24V.5M.3 .24V.5")}`,
+  planks: `${box(-0.5, -0.5, 1, 1)}${dline("M-.5 -.25H.5M-.5 0H.5M-.5 .25H.5")}`,
+  bunk: `${box(-0.5, -0.5, 1, 1)}${box(-0.46, -0.42, 0.22, 0.36, "pale")}${box(-0.46, 0.06, 0.22, 0.36, "pale")}${dline("M-.5 0H.5")}`,
+  cart: `${box(-0.4, -0.5, 0.8, 1)}${box(-0.28, -0.36, 0.56, 0.72, "d")}${box(-0.5, -0.42, 0.1, 0.24, "dot")}${box(0.4, -0.42, 0.1, 0.24, "dot")}${box(-0.5, 0.18, 0.1, 0.24, "dot")}${box(0.4, 0.18, 0.1, 0.24, "dot")}`,
+  rails: (() => {
+    let p = "";
+    for (let x = -0.45; x <= 0.46; x += 0.1) p += box(E.fix(x - 0.025), -0.45, 0.05, 0.9, "pale");
+    return p + dline("M-.5 -.25H.5M-.5 .25H.5");
+  })(),
+  crater: `${CIRC(0.48, 0, 0, "d")}${CIRC(0.32, 0, 0, "d")}${CIRC(0.15)}`,
+  stalagmite: `${CIRC(0.46)}${CIRC(0.28, 0, 0, "d")}${CIRC(0.1, 0, 0, "pale")}`,
+  beam: `${box(-0.5, -0.5, 1, 1)}${dline("M-.5 -.5L.5 .5M.5 -.5L-.5 .5")}`,
+  engine: `${box(-0.5, -0.5, 1, 1)}${CIRC(0.12, -0.25, -0.15, "d")}${CIRC(0.12, 0, -0.15, "d")}${CIRC(0.12, 0.25, -0.15, "d")}${dline("M-.5 .2H.5")}`,
+  column: `${CIRC(0.46)}${dline("M-.3 -.2L0 .1L.25 -.15M0 .1V.4")}`,
+  booth: `${box(-0.5, -0.5, 1, 1)}${box(-0.36, -0.36, 0.72, 0.72, "pale")}${box(-0.12, -0.12, 0.24, 0.24, "dot")}`,
+  vending: `${box(-0.5, -0.5, 1, 1)}${box(-0.4, -0.4, 0.5, 0.8, "pale")}${box(0.2, -0.3, 0.2, 0.12, "dot")}`,
+  tractor: `${box(-0.3, -0.35, 0.65, 0.7)}${box(-0.5, -0.5, 0.26, 0.3, "dot")}${box(-0.5, 0.2, 0.26, 0.3, "dot")}${box(0.3, -0.46, 0.2, 0.2, "dot")}${box(0.3, 0.26, 0.2, 0.2, "dot")}`,
+  scarecrow: `${box(-0.5, -0.08, 1, 0.16)}${box(-0.08, -0.5, 0.16, 1)}${CIRC(0.16, 0, -0.32, "pale")}`,
+  flag: `${CIRC(0.3)}${box(0, -0.5, 0.5, 0.3, "pale")}`,
+  tent: `${box(-0.5, -0.5, 1, 1)}${dline("M-.5 0H.5M-.5 -.5L0 0L-.5 .5M.5 -.5L0 0L.5 .5")}`,
+  ammoBox: `${box(-0.5, -0.5, 1, 1)}${dline("M-.5 0H.5")}${box(-0.08, -0.5, 0.16, 0.14, "dot")}${box(-0.08, 0.36, 0.16, 0.14, "dot")}`,
+  radio: `${box(-0.5, -0.5, 1, 1)}${box(-0.36, -0.36, 0.36, 0.42, "pale")}${CIRC(0.08, 0.24, -0.15, "dot")}`,
+  lockers: `${box(-0.5, -0.5, 1, 1)}${dline("M-.25 -.5V.5M0 -.5V.5M.25 -.5V.5")}${CIRC(0.03, -0.37, 0.2, "dot")}${CIRC(0.03, -0.12, 0.2, "dot")}${CIRC(0.03, 0.12, 0.2, "dot")}${CIRC(0.03, 0.37, 0.2, "dot")}`,
+  drawers: `${box(-0.5, -0.5, 1, 1)}${dline("M-.5 -.17H.5M-.5 .17H.5")}${box(-0.1, -0.36, 0.2, 0.06, "dot")}${box(-0.1, -0.03, 0.2, 0.06, "dot")}${box(-0.1, 0.3, 0.2, 0.06, "dot")}`,
+  copier: `${box(-0.5, -0.5, 1, 1)}${box(-0.4, -0.4, 0.8, 0.45, "pale")}${box(-0.4, 0.15, 0.5, 0.2, "d")}`,
+  safe: `${box(-0.5, -0.5, 1, 1)}${CIRC(0.22, 0, 0, "d")}${dline("M0 -.22V.22M-.22 0H.22")}`,
+  generator: `${box(-0.5, -0.5, 1, 1)}${dline("M-.4 -.3H.4M-.4 -.1H.4M-.4 .1H.4")}${box(0.15, 0.22, 0.25, 0.18, "pale")}`,
+  press: `${box(-0.5, -0.5, 1, 1)}${box(-0.3, -0.3, 0.6, 0.6, "d")}${box(-0.15, -0.15, 0.3, 0.3, "pale")}`,
+  toolCart: `${box(-0.5, -0.5, 1, 1)}${box(-0.42, -0.38, 0.36, 0.32, "pale")}${box(0.06, -0.38, 0.36, 0.32, "pale")}${CIRC(0.06, -0.42, 0.4, "dot")}${CIRC(0.06, 0.42, 0.4, "dot")}`,
+  books: `${box(-0.5, -0.5, 1, 1)}${dline("M-.4 -.5V.5M-.32 -.5V.5M-.2 -.5V.5M-.05 -.5V.5M.05 -.5V.5M.2 -.5V.5M.3 -.5V.5M.42 -.5V.5")}`,
+  campfire: `${CIRC(0.46, 0, 0, "d")}${dline("M-.35 -.35L.35 .35M.35 -.35L-.35 .35")}<path class="flame" d="M0 -.3C.2 -.1 .2 .1 0 .26C-.2 .1 -.2 -.1 0 -.3Z"/>`,
+  burnBarrel: `${CIRC(0.46)}${CIRC(0.3, 0, 0, "d")}<path class="flame" d="M0 -.22C.15 -.05 .15 .1 0 .2C-.15 .1 -.15 -.05 0 -.22Z"/>`,
+  truck: `<rect x="-.5" y="-.46" width=".72" height=".92" rx=".04" ry=".1"/><rect x=".24" y="-.4" width=".26" height=".8" rx=".06" ry=".1"/>${box(0.3, -0.32, 0.08, 0.64, "pale")}${dline("M-.5 0H.2")}`,
+  moto: `<ellipse rx=".5" ry=".22"/>${CIRC(0.1, -0.36, 0, "dot")}${CIRC(0.1, 0.36, 0, "dot")}${dline("M.2 -.4V.4")}`,
+  tankTrap: `<path d="M-.5 -.35L-.35 -.5L0 -.15L.35 -.5L.5 -.35L.15 0L.5 .35L.35 .5L0 .15L-.35 .5L-.5 .35L-.15 0Z"/>`,
+  pipe: `${box(-0.5, -0.5, 1, 1)}<ellipse class="d" cx="-.42" rx=".06" ry=".4"/><ellipse class="d" cx=".42" rx=".06" ry=".4"/>`,
+  spool: `${CIRC(0.48)}${CIRC(0.3, 0, 0, "d")}${CIRC(0.1, 0, 0, "pale")}`,
+  hedge: `<path d="${lobes(0.24, 6, -0.25, 0)}"/><path d="${lobes(0.24, 6, 0.25, 0)}"/>`,
+  mattress: `<rect x="-.5" y="-.5" width="1" height="1" rx=".12" ry=".2"/>${CIRC(0.04, -0.25, -0.2, "dot")}${CIRC(0.04, 0.25, -0.2, "dot")}${CIRC(0.04, -0.25, 0.2, "dot")}${CIRC(0.04, 0.25, 0.2, "dot")}${CIRC(0.04, 0, 0, "dot")}`,
+  wheelchair: `${box(-0.3, -0.35, 0.6, 0.7)}${box(-0.5, -0.4, 0.14, 0.8, "dot")}${box(0.36, -0.4, 0.14, 0.8, "dot")}`,
+  subwayCar: `<rect x="-.5" y="-.46" width="1" height=".92" rx=".03" ry=".15"/>${dline("M-.5 -.2H.5M-.5 .2H.5")}${box(-0.3, -0.46, 0.1, 0.12, "pale")}${box(0.2, -0.46, 0.1, 0.12, "pale")}${box(-0.3, 0.34, 0.1, 0.12, "pale")}${box(0.2, 0.34, 0.1, 0.12, "pale")}`,
+  turnstile: `${box(-0.5, -0.2, 1, 0.4)}${CIRC(0.14, 0, 0, "pale")}${dline("M-.3 -.5V.5M.3 -.5V.5")}`,
+  spikes: `${box(-0.5, -0.12, 1, 0.24)}${dline("M-.45 -.45L-.25 .45M-.15 -.45L.05 .45M.15 -.45L.35 .45M-.25 -.45L-.45 .45M.05 -.45L-.15 .45M.35 -.45L.15 .45")}`,
+  spotlight: `${CIRC(0.3)}<path class="pale" d="M.2 -.15L.5 -.5V.5L.2 .15Z"/>`,
+  medCabinet: `${box(-0.5, -0.5, 1, 1)}${box(-0.1, -0.4, 0.2, 0.8, "pale")}${box(-0.3, -0.1, 0.6, 0.2, "pale")}`,
+  altar: `${box(-0.5, -0.5, 1, 1)}${box(-0.3, -0.3, 0.6, 0.6, "pale")}${dline("M0 -.25V.25M-.15 -.08H.15")}`,
+  pulpit: `<path d="M-.5 -.5H.5V.2L0 .5L-.5 .2Z"/>`,
+  metalCrate: `${box(-0.5, -0.5, 1, 1)}${box(-0.38, -0.38, 0.76, 0.76, "d")}${CIRC(0.05, -0.42, -0.42, "dot")}${CIRC(0.05, 0.42, -0.42, "dot")}${CIRC(0.05, -0.42, 0.42, "dot")}${CIRC(0.05, 0.42, 0.42, "dot")}`,
+  scrapWall: `${box(-0.5, -0.5, 1, 1)}${dline("M-.3 -.5L-.25 .5M.05 -.5L-.05 .5M.3 -.5L.35 .5")}${CIRC(0.04, -0.4, 0, "dot")}${CIRC(0.04, 0.18, 0, "dot")}`,
+  pew: `${box(-0.5, -0.5, 1, 1)}${box(-0.5, -0.5, 1, 0.28, "d")}`,
+  hz: `<path d="M0 -.5L.5 .5H-.5Z"/>${dline("M0 -.15V.2")}${CIRC(0.04, 0, 0.33, "dot")}`,
+  pin: `<path d="M0 .5L-.32 -.05A.36 .36 0 1 1 .32 -.05Z"/>${CIRC(0.13, 0, -0.2, "pale")}`,
 };
 const ITEM_GLYPH = {
   chest: "chest",
   desk: "desk",
   officeChair: "chair",
-  cabinet: "crate",
-  bookshelf: "shelves",
-  copier: "machine",
+  cabinet: "drawers",
+  bookshelf: "books",
+  copier: "copier",
   cooler: "barrel",
   pottedPlant: "bush",
   partition: "plainWall",
   couch: "couch",
-  officeSafe: "machine",
+  officeSafe: "safe",
   conveyor: "conveyor",
-  pressMachine: "machine",
-  boiler: "barrel",
+  pressMachine: "press",
+  boiler: "tank",
   workbench: "table",
   oilDrum: "barrel",
   pipeRack: "bars",
-  generator: "machine",
-  toolCart: "table",
+  generator: "generator",
+  toolCart: "toolCart",
   shelves: "shelves",
   crate: "crate",
   crateStack: "crate",
@@ -2834,7 +3144,7 @@ const ITEM_GLYPH = {
   forklift: "forklift",
   barrels: "barrels",
   cellBars: "bars",
-  lockers: "shelves",
+  lockers: "lockers",
   sandbags: "sandbags",
   bench: "table",
   frontCounter: "table",
@@ -2842,9 +3152,9 @@ const ITEM_GLYPH = {
   bedroll: "bedroll",
   cot: "bed",
   footlocker: "crate",
-  campfire: "fire",
+  campfire: "campfire",
   tarpWall: "sheet",
-  tentPole: "dot",
+  tentPole: "post",
   smallRock: "rock",
   rock: "rock",
   boulder: "rock",
@@ -2861,11 +3171,11 @@ const ITEM_GLYPH = {
   stump: "stump",
   car: "car",
   bus: "bus",
-  dumpster: "crate",
-  mailbox: "plainWall",
-  hydrant: "dot",
-  lamppost: "dot",
-  barricade: "plainWall",
+  dumpster: "dumpster",
+  mailbox: "mailbox",
+  hydrant: "hydrant",
+  lamppost: "post",
+  barricade: "jersey",
   rubble: "rubble",
   building: "building",
   concreteWall: "plainWall",
@@ -2877,58 +3187,105 @@ const ITEM_GLYPH = {
   sink: "sink",
   stove: "stove",
   fridge: "fridge",
-  dresser: "shelves",
+  dresser: "drawers",
   stoneWall: "stoneWall",
-  pillar: "plainWall",
+  pillar: "pillar",
   void: "building",
-  tirePile: "barrel",
+  tirePile: "tires",
   scrapHeap: "rubble",
-  shippingContainer: "crate",
+  shippingContainer: "container",
   carStack: "car",
-  engineBlock: "machine",
-  guardTower: "crate",
-  hesco: "sandbags",
-  ammoCrate: "crate",
-  razorWire: "bars",
-  fieldTent: "sheet",
-  flagpole: "dot",
-  radioTable: "table",
-  concreteBlock: "plainWall",
+  engineBlock: "engine",
+  guardTower: "tower",
+  hesco: "hesco",
+  ammoCrate: "ammoBox",
+  razorWire: "wire",
+  fieldTent: "tent",
+  flagpole: "flag",
+  radioTable: "radio",
+  concreteBlock: "jersey",
   metalSheet: "sheet",
   barCounter: "table",
-  barStool: "dot",
-  pokerTable: "barrel",
-  slotMachine: "machine",
-  jukebox: "machine",
-  stage: "pallet",
-  piano: "desk",
+  barStool: "post",
+  pokerTable: "roundTable",
+  slotMachine: "slot",
+  jukebox: "jukebox",
+  stage: "planks",
+  piano: "piano",
   vaultConsole: "machine",
-  bunkBed: "bed",
-  reactorCore: "barrel",
+  bunkBed: "bunk",
+  reactorCore: "tank",
   waterPurifier: "machine",
-  hayBale: "barrel",
-  fence: "plainWall",
+  hayBale: "hay",
+  fence: "fence",
   waterTrough: "bathtub",
-  tractor: "forklift",
-  scarecrow: "dot",
-  cropRow: "sheet",
-  silo: "barrel",
-  gasPump: "machine",
-  vendingMachine: "fridge",
+  tractor: "tractor",
+  scarecrow: "scarecrow",
+  cropRow: "crops",
+  silo: "tank",
+  gasPump: "pump",
+  vendingMachine: "vending",
   billboard: "plainWall",
-  phoneBooth: "crate",
-  tollBooth: "crate",
-  brokenColumn: "stump",
+  phoneBooth: "booth",
+  tollBooth: "booth",
+  brokenColumn: "column",
   collapsedWall: "stoneWall",
-  statue: "plainWall",
-  crater: "dune",
-  stalagmite: "rock",
-  mineCart: "crate",
-  supportBeam: "dot",
+  statue: "statue",
+  crater: "crater",
+  stalagmite: "stalagmite",
+  mineCart: "cart",
+  supportBeam: "beam",
   oreVein: "rock",
-  railTrack: "conveyor",
+  railTrack: "rails",
+  truck: "truck",
+  motorcycle: "moto",
+  tankTrap: "tankTrap",
+  concretePipe: "pipe",
+  cableSpool: "spool",
+  fuelTank: "tank",
+  metalCrate: "metalCrate",
+  trashPile: "rubble",
+  hedge: "hedge",
+  spikeBarricade: "spikes",
+  burnBarrel: "burnBarrel",
+  mattress: "mattress",
+  cage: "bars",
+  scrapWall: "scrapWall",
+  tireWall: "tireWall",
+  hospitalBed: "bed",
+  gurney: "bed",
+  curtain: "sheet",
+  medCabinet: "medCabinet",
+  wheelchair: "wheelchair",
+  operatingTable: "table",
+  subwayCar: "subwayCar",
+  turnstile: "turnstile",
+  ticketBooth: "booth",
+  boothSeat: "couch",
+  dinerCounter: "table",
+  nukaMachine: "vending",
+  guardBooth: "booth",
+  spotlight: "spotlight",
+  pew: "pew",
+  altar: "altar",
+  pulpit: "pulpit",
 };
-const KIND_GLYPH = { cover: "crate", hard: "plainWall", wall: "plainWall", tree: "tree", hazard: null, note: "dot" };
+const KIND_GLYPH = { cover: "crate", hard: "plainWall", wall: "plainWall", tree: "tree", hazard: "hz", note: "pin" };
+const MAT_OF = {};
+for (const [m, list] of Object.entries({
+  wood: "desk lDesk kitchenTable workbench bench frontCounter barCounter radioTable pokerTable dresser bookshelf pallet crate footlocker chest ammoCrate log stump piano stage pew altar pulpit dinerCounter fence scarecrow waterTrough deadTree crateStack spikeBarricade cableSpool tentPole operatingTable",
+  metal:
+    "cabinet lockers officeSafe shelves cellBars armoryCage dumpster shippingContainer metalSheet engineBlock mineCart gasPump vendingMachine slotMachine jukebox phoneBooth lamppost hydrant fridge stove oilDrum barrels boiler pipeRack generator pressMachine conveyor forklift toolCart copier cooler vaultConsole reactorCore waterPurifier silo tractor cage metalCrate scrapWall fuelTank medCabinet turnstile spotlight burnBarrel nukaMachine wheelchair tankTrap razorWire railTrack billboard mailbox flagpole officeChair supportBeam subwayCar barStool",
+  rust: "wreck car bus truck motorcycle scrapHeap carStack tirePile tireWall trashPile",
+  stone:
+    "rock smallRock boulder stoneWall ruinWall rubble building concreteWall pillar barricade concreteBlock brokenColumn collapsedWall statue stalagmite oreVein crater concretePipe guardTower tollBooth guardBooth ticketBooth void",
+  plant: "bush tree bigTree thicket pottedPlant cactus cropRow hedge hayBale",
+  fabric: "bed cot bedroll couch bunkBed tarpWall fieldTent mattress curtain hospitalBed gurney boothSeat partition",
+  sand: "dune sandbags hesco",
+  tile: "toilet bathtub sink",
+  fire: "campfire",
+}))
+  for (const k of list.split(" ")) MAT_OF[k] = m;
 const MAP_OBJ = { cover: ["Cover", 1], hard: ["Hard cover", 1], hazard: ["Hazard", 1], note: ["Marker", 1], wall: ["Wall", 0], tree: ["Tree", 0] };
 // The aiming line is colored by the selected weapon's accuracy at each range band. Red is its worst band, green its best.
 function aimLine(a, b) {
@@ -2957,12 +3314,11 @@ function aimLine(a, b) {
   stops += `<stop offset="1" stop-color="${color(hits[bandFor(d) - 1])}"/>`;
   return `<defs><linearGradient id="aimg" gradientUnits="userSpaceOnUse" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}">${stops}</linearGradient></defs><line class="aimbg" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/><line class="aim" style="stroke:url(#aimg)" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
 }
-// THE ACCURACY RING. On someone's turn, a halo around them shows their real hit chance with the weapon in hand at every range band:
-// clear where they can't hit, light red at low odds through yellow, green only above 65%, brighter as it climbs.
-const ringColor = (x) =>
-  x < 0.65
-    ? `hsl(${Math.round((55 * x) / 0.65)},100%,${Math.round(66 - (10 * x) / 0.65)}%)`
-    : `hsl(${Math.round(85 + (50 * (x - 0.65)) / 0.35)},100%,${Math.round(50 + (25 * (x - 0.65)) / 0.35)}%)`;
+// THE ACCURACY RING. On someone's turn, a halo around them shows their real hit chance with the weapon in hand at every range band,
+// and behind each object it reads as line of sight: the area past cover drops by that cover's penalty, until nothing can hit there.
+// Solid steps, dark red at low odds up to bright yellow at high odds, so lightness alone tells them apart (colorblind-safe).
+// Anywhere a shot can't land is left clear, with a black line around it.
+const ringColor = (x) => `hsl(${Math.round(2 + 56 * x)},100%,${Math.round(40 + 40 * x)}%)`;
 function ringHits(id) {
   const A = ent(id);
   const c = ctx();
@@ -2972,19 +3328,58 @@ function ringHits(id) {
   const o = (E.get(c, slot.n) || { o: {} }).o;
   const d0 = der(A);
   const open = { tier: "open", n: "Open", hit: 0, dam: 0 };
-  // shortcut: odds are against a target with no modifiers of its own (the shooter's own stats stand in), so dodge perks and cover aren't in the ring.
+  // With no target picked, odds are against someone with no modifiers of their own (the shooter's stats stand in).
   return S.rules.bandMeters.map((_, i) => {
     try {
       const r = i + 1;
       const dA = E.forShot(d0, A, { o, range: r, round: K() ? K().round : 1 }, c);
       const v = E.weaponView(slot, A, dA, c, ui.atk && ui.atk.att === id ? ui.atk.mode : "pr");
-      if (v.melee && r > 1 && !dA.m.lunge) return 0;
+      if (v.melee && r > 1 && !dA.m.lunge) return -1;
+      // with a target picked, the odds are against them: their dodge perks, armor-type rules and so on, as in the attack panel
+      const T = ui.atk && ui.atk.att === id && ui.atk.tgt ? ent(ui.atk.tgt) : null;
+      if (T) {
+        const tSlot = (T.weapons || [])[T.activeW || 0];
+        const tO = tSlot ? (E.get(c, tSlot.n) || { o: {} }).o : {};
+        const round = K() ? K().round : 1;
+        const dA2 = E.forShot(d0, A, { o, vs: E.enemyType(T, S.rules), targetMob: !!T.mob, range: r, round, part: ui.atk.loc }, c);
+        const v2 = E.weaponView(slot, A, dA2, c, ui.atk.mode);
+        if (v2.melee && r > 1 && !dA2.m.lunge) return -1;
+        const dT = E.forShot(der(T), T, { o: tO, round, attackerO: o, attackerMob: !!A.mob, range: r, part: ui.atk.loc }, c);
+        const hc2 = E.hitChance(A, dA2, T, dT, v2, r, c, open);
+        return hc2.noData ? -1 : hc2.hit * (1 + (dA2.m.accMul || 0));
+      }
       const hc = E.hitChance(A, dA, A, d0, v, r, c, open);
-      return hc.noData ? 0 : Math.max(0, hc.hit);
+      return hc.noData ? -1 : hc.hit;
     } catch (e) {
-      return 0;
+      return -1;
     }
   });
+}
+const RING_RAYS = 240;
+// One ray's pieces: [from, to, chance] in meters, with chance <= 0 meaning no shot lands there.
+function rayPieces(a, ang, hits, objs) {
+  const m = S.rules.bandMeters;
+  const R = m[m.length - 1];
+  const hitBy = E.rayCover(a, ang, R, objs, S.rules);
+  const cuts = [...new Set([0, ...m, ...hitBy.map((x) => x.d)])].filter((x) => x <= R).sort((x, y) => x - y);
+  const out = [];
+  for (let i = 0; i + 1 < cuts.length; i++) {
+    const r0 = cuts[i],
+      r1 = cuts[i + 1];
+    if (r1 - r0 < 1e-6) continue;
+    const band = bandFor((r0 + r1) / 2) - 1;
+    let pen = 0;
+    for (const x of hitBy)
+      if (x.d <= r0 + 1e-6) {
+        const cv = S.rules.cover[x.tier].hit * coverLeft(x.o);
+        pen = S.rules.coverStack ? pen + cv : Math.min(pen, cv);
+      }
+    const ch = hits[band] < 0 ? 0 : Math.round((hits[band] + pen) * 100) / 100;
+    const last = out[out.length - 1];
+    if (last && last[2] === ch) last[1] = r1;
+    else out.push([r0, r1, ch]);
+  }
+  return out;
 }
 function accRing(id) {
   const hits = ringHits(id);
@@ -2992,22 +3387,64 @@ function accRing(id) {
   const m = S.rules.bandMeters;
   const R = m[m.length - 1];
   const a = posOf(id);
-  let stops = "";
-  hits.forEach((x, i) => {
-    const lo = (i ? m[i - 1] : 0) / R,
-      hi = m[i] / R;
-    if (x <= 0)
-      stops += `<stop offset="${lo.toFixed(4)}" stop-color="#000" stop-opacity="0"/><stop offset="${hi.toFixed(4)}" stop-color="#000" stop-opacity="0"/>`;
-    else stops += `<stop offset="${((lo + hi) / 2).toFixed(4)}" stop-color="${ringColor(x)}" stop-opacity="${(0.38 + 0.42 * x).toFixed(2)}"/>`;
-  });
-  // Black lines where the chance to hit starts and stops, so the limits of a possible shot are plain.
-  let edges = "";
-  hits.forEach((x, i) => {
-    const prev = i ? hits[i - 1] > 0 : false;
-    if (x > 0 !== prev) edges += `<circle class="ringedge" cx="${a.x}" cy="${a.y}" r="${i ? m[i - 1] : 0}"/>`;
-  });
-  if (hits[hits.length - 1] > 0) edges += `<circle class="ringedge" cx="${a.x}" cy="${a.y}" r="${R}"/>`;
-  return `<defs><radialGradient id="accg" gradientUnits="userSpaceOnUse" cx="${a.x}" cy="${a.y}" r="${R}">${stops}</radialGradient></defs><circle class="accring" cx="${a.x}" cy="${a.y}" r="${R}" fill="url(#accg)"><title>Hit chance by range: ${hits.map((x, i) => `R${i + 1} ${Math.round(x * 100)}%`).join(", ")}</title></circle>${edges}`;
+  const objs = S.scene.objects.filter((o) => E.coverTier(o, S.rules) !== "open" && dist(o, a) - Math.max(o.w || 1, o.h || 1) <= R);
+  // Rays all round; neighbors with the same pieces merge into one wedge, so open ground stays a handful of shapes.
+  const runs = [];
+  for (let k = 0; k < RING_RAYS; k++) {
+    const pcs = rayPieces(a, ((k + 0.5) / RING_RAYS) * 2 * Math.PI, hits, objs);
+    const key = pcs.map((p) => p.join(",")).join(";");
+    const last = runs[runs.length - 1];
+    if (last && last.key === key) last.k1 = k + 1;
+    else runs.push({ k0: k, k1: k + 1, key, pcs });
+  }
+  if (runs.length > 1 && runs[0].key === runs[runs.length - 1].key) {
+    const end = runs.pop();
+    runs[0].k0 = end.k0 - RING_RAYS;
+  }
+  const P = (r, k) => {
+    const t = (k / RING_RAYS) * 2 * Math.PI;
+    return `${E.fix(a.x + r * Math.cos(t))} ${E.fix(a.y + r * Math.sin(t))}`;
+  };
+  const arc = (r, k0, k1, sweep) => `A${r} ${r} 0 ${k1 - k0 > RING_RAYS / 2 ? 1 : 0} ${sweep} ${P(r, sweep ? k1 : k0)}`;
+  let fills = "",
+    edges = "";
+  const full = runs.length === 1;
+  for (const run of runs) {
+    const { k0, k1, pcs } = run;
+    pcs.forEach(([r0, r1, ch], i) => {
+      if (ch <= 0) return;
+      const col = ringColor(Math.min(1, ch));
+      if (full)
+        fills += `<path class="ringfill" fill-rule="evenodd" style="fill:${col}" d="M${a.x - r1} ${a.y}a${r1} ${r1} 0 1 0 ${2 * r1} 0a${r1} ${r1} 0 1 0 ${-2 * r1} 0Z${r0 ? `M${a.x - r0} ${a.y}a${r0} ${r0} 0 1 0 ${2 * r0} 0a${r0} ${r0} 0 1 0 ${-2 * r0} 0Z` : ""}"/>`;
+      else
+        fills += `<path class="ringfill" style="fill:${col}" d="M${P(r0, k0)}L${P(r1, k0)}${arc(r1, k0, k1, 1)}L${P(r0, k1)}${r0 ? arc(r0, k0, k1, 0) : ""}Z"/>`;
+      // black lines along the near and far side wherever the next piece is a place no shot lands
+      const before = pcs[i - 1],
+        after = pcs[i + 1];
+      for (const [r, open] of [
+        [r0, r0 > 0 && (!before || before[2] <= 0)],
+        [r1, !after || after[2] <= 0],
+      ])
+        if (open)
+          edges += full ? `<circle class="ringedge" cx="${a.x}" cy="${a.y}" r="${r}"/>` : `<path class="ringedge" d="M${P(r, k0)}${arc(r, k0, k1, 1)}"/>`;
+    });
+  }
+  // black lines across the wedges where one side can be hit and the other can't
+  if (!full)
+    runs.forEach((run, i) => {
+      const next = runs[(i + 1) % runs.length];
+      const k = run.k1;
+      const lit = (pcs) => pcs.filter((p) => p[2] > 0).map((p) => [p[0], p[1]]);
+      const A0 = lit(run.pcs),
+        B0 = lit(next.pcs);
+      const pts = [...new Set([...A0.flat(), ...B0.flat()])].sort((x, y) => x - y);
+      const inn = (L, x) => L.some(([p, q]) => x > p && x < q);
+      for (let j = 0; j + 1 < pts.length; j++) {
+        const mid = (pts[j] + pts[j + 1]) / 2;
+        if (inn(A0, mid) !== inn(B0, mid)) edges += `<path class="ringedge" d="M${P(pts[j], k)}L${P(pts[j + 1], k)}"/>`;
+      }
+    });
+  return `<g class="accring"><title>Hit chance by range on open ground${ui.atk && ui.atk.att === id && ent(ui.atk.tgt) ? ` against ${h(ent(ui.atk.tgt).name)}` : ""}: ${hits.map((x, i) => `R${i + 1} ${Math.max(0, Math.round(x * 100))}%`).join(", ")}. Past cover it drops by the cover's penalty.</title>${fills}${edges}</g>`;
 }
 // Ctrl while dragging on a turn: the token snaps to the middle of the range band it's in, measured from the target (or the nearest foe).
 function snapRange(id, p) {
@@ -3059,22 +3496,26 @@ function mapSvg() {
       const tier = E.coverTier(o, S.rules);
       const cv = S.rules.cover[tier] || {};
       const name = o.label || (S.rules.mapItems[o.item] || {}).n || MAP_OBJ[o.kind][0];
-      const gl = o.kind === "hazard" ? `<path d="M0 -.5L.5 .5H-.5Z"/>` : GLYPH[ITEM_GLYPH[o.item] || KIND_GLYPH[o.kind] || "crate"];
+      const gl = GLYPH[ITEM_GLYPH[o.item] || KIND_GLYPH[o.kind] || "crate"];
       // Drawn at real size in meters, so a tree is tiny on a 220m map and full size when you zoom in. Harder cover looks more solid.
       const turn = o.angle ? `rotate(${o.angle}) ` : "";
       const draw = turn + (o.rot ? `rotate(90) scale(${ht} ${w})` : `scale(${w} ${ht})`);
-      const showName = o.label || (v.w <= 30 && o.item !== "concreteWall"); /* walls are obvious; their names were clutter */
+      const showName =
+        o.label ||
+        (v.w <= 30 &&
+          o.item !== "concreteWall" &&
+          name.length * label * 0.6 <= Math.max(w, ht) * 1.6); /* walls are obvious; and a name wider than its thing would print over its neighbors */
       // Trees: a faint circle for the trunk, which is what stops shots, under a fainter picture of the leaves.
       const trunk = E.trunkOf(o, S.rules);
       const art = trunk
         ? `<g class="gly trunk" style="opacity:${S.rules.trunkOpacity}" transform="scale(${w * trunk} ${ht * trunk})"><ellipse rx=".5" ry=".5"/></g><g class="gly canopy" style="opacity:${S.rules.canopyOpacity}" transform="${draw}">${gl}</g>`
-        : `<g class="gly" style="opacity:${cv.opacity != null ? cv.opacity : 1}" transform="${draw}">${gl}</g>`;
+        : `<g class="gly" style="opacity:${Math.max(0.6, cv.opacity != null ? cv.opacity : 1)}" transform="${draw}">${gl}</g>`;
       const hpMax = objHp(o);
       const hpBar_ =
         hpMax && o.dmg
           ? `<g class="ohp"><rect class="ohpbg" x="${-w / 2}" y="${-ht / 2 - label * 0.7}" width="${w}" height="${label * 0.4}"/><rect class="ohpf" x="${-w / 2}" y="${-ht / 2 - label * 0.7}" width="${E.fix(w * clamp(1 - o.dmg / hpMax, 0, 1))}" height="${label * 0.4}"/></g>`
           : "";
-      return `<g class="obj ${o.kind} tier-${tier} ${o.voidBlock ? "oob" : ""} ${o.loot ? (o.opened ? "opened" : "lootable") : ""} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${hpMax ? `, ${fmt(hpMax - (o.dmg || 0))}/${hpMax} HP` : ""}${o.loot ? (o.opened ? ", opened" : ", opens for whoever is within R1 on their turn") : ""}${trunk ? ", only the trunk stops shots" : ""}${o.block ? ", blocks movement" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle></g>` : ""}${hpBar_}${showName || o.loot ? `<text style="font-size:${label}px" y="${ht / 2 + label}">${h(name)}${o.loot && o.opened ? " (open)" : ""}</text>` : ""}</g>`;
+      return `<g class="obj ${o.kind} tier-${tier} m-${MAT_OF[o.item] || "none"} ${o.voidBlock ? "oob" : ""} ${o.loot ? (o.opened ? "opened" : "lootable") : ""} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${hpMax ? `, ${fmt(hpMax - (o.dmg || 0))}/${hpMax} HP` : ""}${o.loot ? (o.opened ? ", opened" : ", opens for whoever is within R1 on their turn") : ""}${trunk ? ", only the trunk stops shots" : ""}${o.block ? ", blocks movement" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle></g>` : ""}${hpBar_}${showName || o.loot ? `<text style="font-size:${label}px" y="${ht / 2 + label}">${h(name)}${o.loot && o.opened ? " (open)" : ""}</text>` : ""}</g>`;
     })
     .join("");
   const me = k ? (fightPhase() ? actorId() : null) : ui.sel;
@@ -3098,7 +3539,8 @@ function mapSvg() {
         e.dbno ? "dbno" : "",
       ].join(" ");
       const showR = me && me !== e.id && !gone && (k ? true : e.kind === "npc");
-      return `<g class="tok ${cls}" data-tok="${e.id}" transform="translate(${p.x} ${p.y}) scale(${k2})"><title>${h(e.name)}: ${fmt(e.hp)}/${d.hp} HP</title><circle class="hit" r="${Math.max(0.75, (v.w * 0.014) / k2)}"/>${(TOKEN_ICONS[iconOf(e)] || TOKEN_ICONS.person)[1]}${gone ? `<path class="x" d="M-.4 -.4 L.4 .4 M.4 -.4 L-.4 .4"/>` : `<rect class="hpbg" x="-.55" y=".48" width="1.1" height=".24"/><rect class="hpb" x="-.55" y=".48" width="${(1.1 * pct).toFixed(2)}" height=".24"/>`}<text class="lab" style="font-size:${labU * 1.8}px" y="${0.8 + labU * 1.8}">${labelLines(
+      const fx = tokFx(e.id);
+      return `<g class="tok ${cls}" data-tok="${e.id}" transform="translate(${p.x} ${p.y}) scale(${k2})"><title>${h(e.name)}: ${fmt(e.hp)}/${d.hp} HP</title><circle class="hit" r="${Math.max(0.75, (v.w * 0.014) / k2)}"/><g class="tokin ${fx ? fx.cls : ""}" style="${fx ? fx.style : ""}">${e.kind === "pc" || e.ally ? `<circle class="base" cy="-.3" r=".86"/>` : `<rect class="base" x="-.66" y="-.96" width="1.32" height="1.32" transform="rotate(45 0 -.3)"/>`}<g transform="translate(0 -.3) scale(.78) translate(0 .3)">${(TOKEN_ICONS[iconOf(e)] || TOKEN_ICONS.person)[1]}</g>${fx ? `<circle class="flash" cy="-.3" r=".9" style="${fx.style}"/>` : ""}</g>${gone ? `<path class="x" d="M-.4 -.4 L.4 .4 M.4 -.4 L-.4 .4"/>` : `<rect class="hpbg" x="-.6" y=".66" width="1.2" height=".2"/><rect class="hpb" x="-.6" y=".66" width="${(1.2 * pct).toFixed(2)}" height=".2"/>`}<text class="lab" style="font-size:${labU * 1.8}px" y="${0.95 + labU * 1.8}">${labelLines(
         e,
         showR ? ` R${rangeOf(me, e.id)}` : "",
       )
@@ -3124,7 +3566,7 @@ function mapSvg() {
     extra += aimLine(a, b);
   }
   const zoomed = ui.zoom ? ui.zoom.k : 1;
-  return `<div class="mapwrap"><svg id="map" class="${ui.place ? "placing" : ""}" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of ${h(M.n)}, ${M.w} by ${M.h} meters"><rect class="floor" x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/><defs><clipPath id="floorclip"><rect x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/></clipPath></defs><path class="grid" clip-path="url(#floorclip)" d="${grid}" style="stroke-opacity:${hex ? 0.8 : v.w > 120 ? 0.35 : v.w > 60 ? 0.6 : 1}"/>${ring}${objs}${extra}${throwOverlay()}${people}</svg><div class="zoombar"><span class="scale s">${hex ? `${S.rules.hexM}m hexes` : S.rules.gridMode === "none" ? "No grid" : `${step}m grid`} · ${Math.round(v.w)}m across</span><button class="btn tiny ${!hex && S.rules.gridMode !== "none" ? "on" : ""}" data-a="setGrid" data-v="square" title="${step}m squares">&#9633;</button><button class="btn tiny ${hex ? "on" : ""}" data-a="setGrid" data-v="hex" title="Hexes ${S.rules.hexM}m across">Hex</button><button class="btn tiny ${S.rules.gridMode === "none" ? "on" : ""}" data-a="setGrid" data-v="none" title="No grid">Off</button><button class="btn tiny" data-a="mapZoom" data-v="1.5" title="Zoom in (or scroll)">+</button><button class="btn tiny" data-a="mapZoom" data-v="0.667" title="Zoom out (or scroll)">-</button><button class="btn tiny ${zoomed > 1 ? "on" : ""}" data-a="mapZoom" data-v="0" title="Show the whole map">Fit</button></div></div>`;
+  return `<div class="mapwrap"><svg id="map" class="${ui.place ? "placing" : ""}" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of ${h(M.n)}, ${M.w} by ${M.h} meters"><rect class="floor" x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/><defs><clipPath id="floorclip"><rect x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/></clipPath></defs><path class="grid" clip-path="url(#floorclip)" d="${grid}" style="stroke-opacity:${hex ? 0.8 : v.w > 120 ? 0.35 : v.w > 60 ? 0.6 : 1}"/>${ring}${objs}${extra}${throwOverlay()}${people}${fxLayer(k2, v.w)}</svg>${ui.legend ? mapLegend() : ""}<div class="zoombar"><button class="btn tiny ${ui.legend ? "on" : ""}" data-a="legendToggle" data-v="" title="What the colors, outlines and shapes on the map mean">Key</button><span class="scale s">${hex ? `${S.rules.hexM}m hexes` : S.rules.gridMode === "none" ? "No grid" : `${step}m grid`} · ${Math.round(v.w)}m across</span><button class="btn tiny ${!hex && S.rules.gridMode !== "none" ? "on" : ""}" data-a="setGrid" data-v="square" title="${step}m squares">&#9633;</button><button class="btn tiny ${hex ? "on" : ""}" data-a="setGrid" data-v="hex" title="Hexes ${S.rules.hexM}m across">Hex</button><button class="btn tiny ${S.rules.gridMode === "none" ? "on" : ""}" data-a="setGrid" data-v="none" title="No grid">Off</button><button class="btn tiny" data-a="mapZoom" data-v="1.5" title="Zoom in (or scroll)">+</button><button class="btn tiny" data-a="mapZoom" data-v="0.667" title="Zoom out (or scroll)">-</button><button class="btn tiny ${zoomed > 1 ? "on" : ""}" data-a="mapZoom" data-v="0" title="Show the whole map">Fit</button></div></div>`;
 }
 function checkValue(e, use) {
   const d = der(e);
@@ -3197,8 +3639,14 @@ function turnStage() {
   const slot = (A.weapons || [])[A.activeW || 0];
   const v = slot ? E.weaponView(slot, A, d, ctx()) : null;
   const banners = [];
-  if (!npcsAlive()) banners.push(`<div class="banner">All enemies are down. ${btn("endCombat", "", "End combat", "", "tiny")}</div>`);
-  if (!pcsUp()) banners.push(`<div class="banner">The whole party is down. ${btn("defeat", "", "Defeat", "", "tiny")}</div>`);
+  if (!npcsAlive())
+    banners.push(
+      `<div class="banner bigend"><span>All enemies are down.</span><label class="s">Loot all to <select id="endLootTo" data-u="endLootTo" title="Who gets everything on the after-action screen. You can still change each item there.">${options([["", "Choose later"], ...S.chars.map((c) => [c.id, c.name])], ui.endLootTo || "")}</select></label><button class="btn primary big" data-a="endCombat" data-v="">${kbd("Q")}End the fight</button></div>`,
+    );
+  if (!partyUp())
+    banners.push(
+      `<div class="banner bigend bad"><span>The whole party is down.</span><button class="btn primary big" data-a="defeat" data-v="">${kbd("D")}Defeat</button></div>`,
+    );
   const na = (cost) => (cost > (A.ap || 0) ? "na" : "");
   const free = S.rules.moveAP[1] > (A.ap || 0) ? "na" : "";
   const cons = (A.inv || []).map((l, i) => ({ l, i, it: E.get(ctx(), l.n) })).filter((x) => x.it && x.it.cat === "item" && usable(x.it.o));
@@ -3216,7 +3664,7 @@ function turnStage() {
       cons
         .map(
           (x) =>
-            `<button class="opt" data-a="useItemFrom" data-v="${A.id}|${x.i}" title="${h(x.it.o.effect || "")}">${pix(itemKind(x.l.n)[1])} ${h(x.l.n)} x${fmt(x.l.q)}${x.it.o.ap ? ` <small>${x.it.o.ap}AP</small>` : ""}</button>`,
+            `<button class="opt" data-a="useItemFrom" data-v="${A.id}|${x.i}" title="${h(x.it.o.effect || "")}">${itemIcon(x.l.n)} ${h(x.l.n)} x${fmt(x.l.q)}${x.it.o.ap ? ` <small>${x.it.o.ap}AP</small>` : ""}</button>`,
         )
         .join("") || `<span class="s dim">None carried.</span>`;
   return `${head}${banners.join("")}<div class="segs">${ui.atk ? attackPanel() : seg("Attack", `<span class="s dim">${h(A.name)} has no weapon.</span>`)}${seg("Actions", actions, "half")}${seg("Consumables", `<div class="row wrap">${consBody}</div>`, "half")}${d.notes.length ? seg(`For the DM <small>${d.notes.length}</small>`, fold(`rem:${A.id}`, "Reminders", d.notes.map((n) => `<div class="txt s">${h(n)}</div>`).join("")), "half") : ""}${(S.scene.effects || []).length ? seg("Carried over", S.scene.effects.map((f) => `<div class="txt s">${h(f.label)}${f.hit ? `: ${f.who} ${E.pct(f.hit)}% to hit` : ""}</div>`).join(""), "half") : ""}</div>`;
@@ -3245,7 +3693,7 @@ function attackPanel() {
   const weapons = A.weapons
     .map((s, i) => {
       const w = E.weaponView(s, A, p.dA, ctx());
-      return `<button class="wcard ${a.w === i ? "on" : ""}" data-a="atkW" data-v="${i}" title="${h(s.n)}">${pix(itemKind(s.n)[1])}<span class="nm">${h(s.n)}</span><small>${fmt(w.ap)}AP${w.usesAmmo ? ` ${s.mag || 0}/${w.cap} +${ammoHeld(A, w.reserve)}` : ""}${s.jammed ? " JAM" : ""}</small></button>`;
+      return `<button class="wcard ${a.w === i ? "on" : ""}" data-a="atkW" data-v="${i}" title="${h(s.n)}">${itemIcon(s.n)}<span class="nm">${h(s.n)}</span><small>${fmt(w.ap)}AP${w.usesAmmo ? ` ${s.mag || 0}/${w.cap} +${ammoHeld(A, w.reserve)}` : ""}${s.jammed ? " JAM" : ""}</small></button>`;
     })
     .join("");
   const loads = loadsHeld(A, v, p.slot);
@@ -3258,8 +3706,9 @@ function attackPanel() {
   const w = E.get(ctx(), v.n);
   const r = a.res;
   const hitPct = Math.round(E.pct(p.hit));
+  const foe = T && sideOf(T.id) !== sideOf(A.id);
   const tgt = T
-    ? `<div class="tgtcard"><span class="nm grow">${h(T.name)}</span><span class="s">${fmt(T.hp)}/${p.dT.hp} HP · DT ${fmt(p.dT.dt)}</span></div>${hpBar(T.hp, p.dT.hp)}${chips(T)}`
+    ? `<div class="tgtcard ${foe ? "foe" : "friend"}"><span class="tgtside">${foe ? "ENEMY" : "ALLY"}</span><span class="nm grow">${h(T.name)}</span><span class="s">${fmt(T.hp)}/${p.dT.hp} HP · DT ${fmt(p.dT.dt)}</span></div>${hpBar(T.hp, p.dT.hp)}${chips(T)}`
     : `<div class="warnline">Click an enemy on the map or in the list.</div>`;
   const ovr = ui.atkOv
     ? `<div class="ovrow s">Hit%${numBox(`id="ovHit" data-u="atk.ov.hit"`, a.ov.hit)} Bullets${numBox(`id="ovB" data-u="atk.ov.bullets"`, a.ov.bullets)} Dmg${numBox(`id="ovD" data-u="atk.ov.dmg"`, a.ov.dmg)}<label class="chk"><input type="checkbox" id="ovFree" data-u="atk.ov.free"${a.ov.free ? " checked" : ""}>Free</label><select id="ovCover" data-u="atk.ov.cover" title="Cover on this shot"><option value="">Cover: from map</option>${options(
@@ -3298,10 +3747,11 @@ function attackPanel() {
          ? `<div class="warnline">No ${h(v.caliber)} ammo in inventory.</div>`
          : ""
    }`;
-  const targeting = `<div class="atkmid">${T ? bodyFig(a, T) : ""}<div class="atkinfo">${tgt}
-     <div class="stats3"><div><b>${hitPct}%</b><span>HIT</span></div><div><b>x${S.rules.loc[a.loc]}</b><span>${h(PARTS[a.part][0])}</span></div><div class="costbig ${p.cost > (A.ap || 0) && !a.ov.free ? "over" : ""}"><b>${fmt(p.cost)} AP</b><span>THIS SHOT · ${fmt(Math.max(0, (A.ap || 0) - p.cost))} LEFT</span></div><div class="covflag tier-${p.cov.tier}" title="${h(p.cov.by ? "Blocked by: " + p.cov.by : "Nothing in the way")}"><b>${h(p.cov.n)}</b><span>${p.cov.hit ? `${fmt(E.pct(p.cov.hit))}% hit` : "NO PENALTY"}${p.cov.dam ? ` ${fmt(E.pct(p.cov.dam))}% dmg` : ""}</span></div><div class="rng"><b><button class="xb" data-a="atkRange" data-v="-1" title="Closer">-</button>R${range}<button class="xb" data-a="atkRange" data-v="1" title="Farther">+</button> <small class="rngm">${T ? `${dist(posOf(A.id), posOf(T.id)).toFixed(1)}m` : ""}</small></b><span>${k.ranges[pairKey(a.att, a.tgt)] != null ? "DM SET" : "FROM MAP"}</span></div></div>
-     <div class="math">HIT ${h(E.hitLine(hc))}${num(a.ov.hit) != null ? ` <span class="warn">DM SET ${h(a.ov.hit)}%</span>` : ""}</div>
-     <div class="s dim">Dam ${v.pellets ? `${fmt(v.base)}x${v.pellets}` : fmt(v.base)} Pen ${fmt(v.pen)}${v.count > 1 ? ` · burst ${v.count}` : ""}${p.extra || p.swap ? ` · ${fmt(v.ap)}${p.extra ? ` +${p.extra} aimed` : ""}${p.swap ? ` +${p.swap} swap` : ""} AP` : ""}</div></div></div>`;
+  const tile = (lab, val, sub, cls = "", tip = "") =>
+    `<div class="ttile ${cls}"${tip ? ` title="${h(tip)}"` : ""}><span class="tl">${lab}</span><b>${val}</b><small>${sub}</small></div>`;
+  const tiles = `<div class="ttiles">${tile("Hit", `${hitPct}%`, num(a.ov.hit) != null ? "DM SET" : "chance", `hitt ${hitPct <= 0 ? "zero" : ""}`)}${tile("Aim", `x${S.rules.loc[a.loc]}`, h(PARTS[a.part][0]), "", "Damage multiplier for the part aimed at. Click the body to change it.")}${tile("Cost", `${fmt(p.cost)} AP`, `${fmt(Math.max(0, (A.ap || 0) - p.cost))} left`, `costbig ${p.cost > (A.ap || 0) && !a.ov.free ? "over" : ""}`)}${tile("Cover", h(p.cov.n), `${p.cov.hit ? `${fmt(E.pct(p.cov.hit))}% hit` : "no penalty"}${p.cov.dam ? ` ${fmt(E.pct(p.cov.dam))}% dmg` : ""}`, `covflag tier-${p.cov.tier}`, p.cov.by ? "Blocked by: " + p.cov.by : "Nothing in the way")}${tile("Range", `<button class="xb" data-a="atkRange" data-v="-1" title="Closer">-</button>R${range}<button class="xb" data-a="atkRange" data-v="1" title="Farther">+</button>`, `${T ? `${dist(posOf(A.id), posOf(T.id)).toFixed(1)}m · ` : ""}${k.ranges[pairKey(a.att, a.tgt)] != null ? "DM set" : "from map"}`, "rng")}${tile("Damage", `${v.pellets ? `${fmt(v.base)}x${v.pellets}` : fmt(v.base)}`, `Pen ${fmt(v.pen)}${v.count > 1 ? ` · burst ${v.count}` : ""}`)}</div>`;
+  const targeting = `<div class="atkmid">${T ? bodyFig(a, T) : ""}<div class="atkinfo">${tgt}${tiles}
+     <div class="math">HIT ${h(E.hitLine(hc))}${num(a.ov.hit) != null ? ` <span class="warn">DM SET ${h(a.ov.hit)}%</span>` : ""}${p.extra || p.swap ? ` · AP ${fmt(v.ap)}${p.extra ? ` +${p.extra} aimed` : ""}${p.swap ? ` +${p.swap} swap` : ""}` : ""}</div></div></div>`;
   const short = {
     jam: (s) => `${E.two(s.to + 1)} -`,
     hit: (s) => `${E.two(s.from)} +`,
@@ -3437,6 +3887,11 @@ function lootRows() {
 function endStage() {
   const k = K();
   const u = (ui.end = ui.end || { xp: {}, heal: {}, loot: {}, add: {}, lootRoll: "", extra: [], exN: "", exQ: 1, exTo: (S.chars[0] || {}).id });
+  // picked on the End the fight banner: every item starts out going to them
+  if (ui.endLootTo && !u.prefilled && ent(ui.endLootTo)) {
+    u.prefilled = true;
+    for (const l of lootRows()) u.loot[l.key] = ui.endLootTo;
+  }
   u.extra = u.extra || [];
   const pcs = S.chars
     .map((c) => {
@@ -3452,13 +3907,13 @@ function endStage() {
   const extras = u.extra
     .map(
       (l, i) =>
-        `<tr><td class="bright">${pix(itemKind(l.n)[1])} ${h(l.n)}</td><td>${fmt(l.q)}</td><td class="dim">Added by DM</td><td><select id="exTo-${i}" data-u="end.extra.${i}.to">${options([["", "Leave"], ...who], l.to || "")}</select> <button class="btn tiny" data-a="endExDel" data-v="${i}" title="Remove">X</button></td></tr>`,
+        `<tr><td class="bright">${itemIcon(l.n)} ${h(l.n)}</td><td>${fmt(l.q)}</td><td class="dim">Added by DM</td><td><select id="exTo-${i}" data-u="end.extra.${i}.to">${options([["", "Leave"], ...who], l.to || "")}</select> <button class="btn tiny" data-a="endExDel" data-v="${i}" title="Remove">X</button></td></tr>`,
     )
     .join("");
   const dropRows = loot
     .map(
       (l) =>
-        `<tr><td class="bright">${pix(l.caps ? "dot" : itemKind(l.n)[1])} ${h(l.n)}</td><td>${l.q}</td><td class="dim">${h(l.from)}</td><td><select id="loot-${h(l.key.replace(":", "-"))}" data-u="end.loot.${h(l.key)}">${options([["", "Leave"], ...who], u.loot[l.key] || "")}</select></td></tr>`,
+        `<tr><td class="bright">${l.caps ? pix("dot") : itemIcon(l.n)} ${h(l.n)}</td><td>${l.q}</td><td class="dim">${h(l.from)}</td><td><select id="loot-${h(l.key.replace(":", "-"))}" data-u="end.loot.${h(l.key)}">${options([["", "Leave"], ...who], u.loot[l.key] || "")}</select></td></tr>`,
     )
     .join("");
   const ls = lootScore();
@@ -3533,7 +3988,7 @@ function itemsBody() {
   const body = shown
     .map(([c, o], i) => {
       const open = ui.brOpen === o.n;
-      return `<tr class="click" data-a="brToggle" data-v="${h(o.n)}"><td title="${h(c)}" style="width:20px">${pix(itemKind(o.n)[1])}</td><td class="bright" title="${h(o.n)}">${h(o.n)}</td><td>${o.tier != null && o.tier !== "" ? h(o.tier) : "-"}</td><td title="${h(statText(c, o))}">${h(statText(c, o))}</td><td title="${fmt(o.lb)}">${Number((o.lb || 0).toFixed(2))}</td><td>${o.val != null ? fmt(o.val) : "-"}</td><td style="overflow:visible"><button class="btn tiny" data-a="brGive" data-v="${h(o.n)}" title="Give one">+</button></td></tr>${open ? `<tr><td class="open" colspan="7"><div style="padding:3px 0">${detailFields(o, E.low(o.n), BR_LIST().find(([, x]) => x.n === o.n)[1], `br${i}`)}</div></td></tr>` : ""}`;
+      return `<tr class="click" data-a="brToggle" data-v="${h(o.n)}"><td title="${h(c)}" style="width:20px">${itemIcon(o.n)}</td><td class="bright" title="${h(o.n)}">${h(o.n)}</td><td>${o.tier != null && o.tier !== "" ? h(o.tier) : "-"}</td><td title="${h(statText(c, o))}">${h(statText(c, o))}</td><td title="${fmt(o.lb)}">${Number((o.lb || 0).toFixed(2))}</td><td>${o.val != null ? fmt(o.val) : "-"}</td><td style="overflow:visible"><button class="btn tiny" data-a="brGive" data-v="${h(o.n)}" title="Give one">+</button></td></tr>${open ? `<tr><td class="open" colspan="7"><div style="padding:3px 0">${detailFields(o, E.low(o.n), BR_LIST().find(([, x]) => x.n === o.n)[1], `br${i}`)}</div></td></tr>` : ""}`;
     })
     .join("");
   const th = (k, l, w) => `<th style="width:${w}" data-a="brSortBy" data-v="${k}">${l}${ui.brSort === k && !q ? (ui.brDir > 0 ? " ^" : " v") : ""}</th>`;
@@ -3629,7 +4084,8 @@ const RAIL = [
   ["items", "Item", "box"],
   ["notes", "Note", "pencil"],
   ["vendor", "Shop", "box"],
-  ["tree", "Perks", "star"],
+  ["skillTree", "Skill tree", "dna"],
+  ["levelPerks", "Level perks", "star"],
   ["guide", "Help", "star"],
 ];
 function rail() {
@@ -3649,7 +4105,8 @@ const RAIL_TITLE = {
   items: "Item browser",
   notes: "Old notes",
   vendor: "Vendor: buy and sell",
-  tree: "Perk trees: skill, level and mastery perks",
+  skillTree: "Skill tree: proficiency, expertise and mastery perks for each skill",
+  levelPerks: "Level perks: the perks unlocked by level",
 };
 const UI_SCALES = [2, 1.5, 1, 0.75, 0.5, 0.25];
 // Zooming in makes the page narrower in CSS pixels, but breakpoints only see the real screen.
@@ -4525,7 +4982,8 @@ function renderModal() {
     char: [`${h((ce || {}).name)}: Inventory`, () => (ce ? invSect(ce, der(ce)) : "")],
     icon: [`${h((ce || {}).name)}: map icon`, iconModal],
     vendor: ["Vendor", vendorWin],
-    tree: ["Perk trees", treeModal],
+    skillTree: ["Skill tree", () => treeModal("skill")],
+    levelPerks: ["Level perks", () => treeModal("level")],
     mapmaker: [ui.mm && ui.mm.id ? "Map creator: edit" : "Map creator: new map", mapMakerBody],
   };
   const [title, body] = defs[m.type];
@@ -4533,7 +4991,7 @@ function renderModal() {
   const size =
     m.type === "dev" || m.type === "mapmaker"
       ? "full"
-      : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard", "vendor", "tree"].includes(m.type)
+      : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard", "vendor", "skillTree", "levelPerks"].includes(m.type)
         ? "big"
         : ["autoWin", "move", "uiScale", "saveTo"].includes(m.type)
           ? "tiny"
@@ -4696,7 +5154,7 @@ function mapMakerBody() {
   return `<div class="mmwrap">${side}${svg}</div>`;
 }
 // PERK TREES: a folder tab per player. Skill perks grow in three ranks per skill (Proficiency, Expertise, Mastery); level perks by level.
-function treeModal() {
+function treeModal(mode) {
   const pcs = S.chars;
   if (!pcs.length) return `<div class="dim">No characters yet.</div>`;
   const e = ent(ui.treeId) || pcs[0];
@@ -4711,7 +5169,7 @@ function treeModal() {
     if (!ranks.length) return "";
     const val = d.skills[k] || 0;
     const tiers = [...new Set(ranks.map((p) => p.need))];
-    return `<div class="trow"><div class="tlabel"><span class="bright">${h(n)}</span><span class="s dim">${val}</span></div><div class="tranks">${tiers
+    return `<div class="trow"><div class="tlabel">${vicon(k)}<span class="bright grow">${h(n)}</span><span class="tval">${val}</span></div><div class="tranks">${tiers
       .map(
         (need, i) =>
           `${i ? `<span class="tlink">&#9654;</span>` : ""}<div class="tcol">${ranks
@@ -4734,7 +5192,10 @@ function treeModal() {
           .join("")}</div></div>`,
     )
     .join("");
-  return `${tabs}<div class="fpane"><div class="s dim" style="margin-bottom:4px">${h(e.name)} · level ${e.level}${e.perkDue ? ` · <span class="warn">${e.perkDue} level perk${e.perkDue === 1 ? "" : "s"} to pick</span>` : ""}. Bright: taken. Outlined: open to take. Faint: locked.</div><h3>Skill perks and mastery</h3><div class="trow thead"><div></div><div class="tranks"><div class="tcol s dim">PROFICIENCY · over 60</div><span class="tlink"></span><div class="tcol s dim">EXPERTISE · over 80</div><span class="tlink"></span><div class="tcol s dim">MASTERY · over 100</div></div></div>${skills}<h3>Level perks</h3>${lv}</div>`;
+  const head = `<div class="s dim" style="margin-bottom:6px">${h(e.name)} · level ${e.level}${mode === "level" && e.perkDue ? ` · <span class="warn">${e.perkDue} level perk${e.perkDue === 1 ? "" : "s"} to pick</span>` : ""}. Bright: taken. Outlined: open to take. Faint: locked.</div>`;
+  return mode === "skill"
+    ? `${tabs}<div class="fpane">${head}<div class="trow thead"><div></div><div class="tranks"><div class="tcol s dim">PROFICIENCY · over 60</div><span class="tlink"></span><div class="tcol s dim">EXPERTISE · over 80</div><span class="tlink"></span><div class="tcol s dim">MASTERY · over 100</div></div></div>${skills}</div>`
+    : `${tabs}<div class="fpane">${head}${lv}</div>`;
 }
 function moveSpot(att, tgt, r) {
   const a = posOf(att),
@@ -5037,7 +5498,7 @@ function wizCustom(w) {
   const list = k.items
     .map(
       ([n, q], i) =>
-        `<div class="irow">${pix(itemKind(n)[1])}<span class="grow bright">${h(n)}</span><span class="s dim">x${q}</span><span class="s dim">${h(itemKind(n)[0])}</span><button class="btn tiny" data-a="wizKitDel" data-v="${i}" title="Remove">X</button></div>`,
+        `<div class="irow">${itemIcon(n)}<span class="grow bright">${h(n)}</span><span class="s dim">x${q}</span><span class="s dim">${h(itemKind(n)[0])}</span><button class="btn tiny" data-a="wizKitDel" data-v="${i}" title="Remove">X</button></div>`,
     )
     .join("");
   return `<h3>Custom starting gear <span class="s dim">pick anything from the item lists</span></h3><div class="row wrap" style="margin-bottom:4px"><label class="f grow">Background<input id="wizBg" autocomplete="off" data-u="wiz.custom.bg" value="${h(k.bg)}" placeholder="e.g. Wasteland drifter"></label><label class="f" style="width:80px">Caps${numBox(`id="wizCaps" data-u="wiz.custom.caps"`, k.caps)}</label></div>
@@ -5260,7 +5721,7 @@ const ACT = {
   },
   closeModal() {
     const hadAtk = ui.atk;
-    ui.modal = null;
+    ui.modal = (ui.modal && ui.modal.back) || null;
     if (hadAtk && K()) ui.focus = "#roll";
     render();
   },
@@ -5380,9 +5841,15 @@ const ACT = {
       return toast(`${A.name} has no ${T.item} left.`);
     }
     if (k && fightPhase() && !canPay(A, t.ap, `throw the ${T.item}`)) return;
-    const hits = blastHits(T.at, t);
     const thrown = dist(posOf(A.id), T.at);
     if (t.range && thrown > t.range) return toast(`Too far: a ${T.item} reaches ${t.range}m.`);
+    // it lands anywhere inside the spread around the spot picked, every point as likely as any other
+    const spread = throwSpread(A),
+      turn = Math.random() * 2 * Math.PI,
+      off = spread * Math.sqrt(Math.random());
+    const land = inMap({ x: E.fix(T.at.x + Math.cos(turn) * off), y: E.fix(T.at.y + Math.sin(turn) * off) });
+    const from = { ...posOf(A.id) };
+    const hits = blastHits(land, t);
     act(`Throw: ${T.item}`, () => {
       if (k && fightPhase()) A.ap = Math.max(0, (A.ap || 0) - t.ap);
       line.q--;
@@ -5390,15 +5857,23 @@ const ACT = {
       const start = S.log.length;
       log(
         "hit o-hit",
-        `${A.name} throws ${T.item} ${thrown.toFixed(1)}m · ${t.ap} AP · ${hits.map((x) => `${x.e.name} ${fmt(x.d)}m: ${x.dmg}`).join(", ") || "nobody in the blast"}`,
+        `${A.name} throws ${T.item} ${thrown.toFixed(1)}m · lands ${dist(land, T.at).toFixed(1)}m off · ${t.ap} AP · ${hits.map((x) => `${x.e.name} ${fmt(x.d)}m: ${x.dmg}`).join(", ") || "nobody in the blast"}`,
       );
       for (const x of hits) {
         x.e.hp = Math.max(0, (x.e.hp || 0) - x.dmg);
         syncDown(x.e, A.id);
         log("hit", `${x.e.name} ${x.e.hp}/${der(x.e).hp} HP after the blast`);
+        if (t.bleed && x.dmg > 0 && x.e.hp > 0 && db.status.has("bleeding")) {
+          const ring = Math.max(0, Math.ceil(x.d - 1e-9) - 1); // 0 in the innermost meter
+          const tier = clamp((S.rules.blastBleedMax || 5) - ring, 1, 5);
+          const cur = (x.e.statuses || []).find((q) => q.n === "Bleeding");
+          keepFull(x.e, () => addStatus(x.e, "Bleeding", Math.max(tier, cur ? cur.tier : 0)));
+          const now = (x.e.statuses || []).find((q) => q.n === "Bleeding");
+          if (now) log("status", `${x.e.name} gains Bleeding ${now.tier}: shrapnel ${fmt(x.d)}m from the blast.`);
+        }
       }
       for (const o of [...S.scene.objects]) {
-        const d = Math.max(0, dist(o, T.at) - Math.max(o.w || 1, o.h || 1) / 2);
+        const d = Math.max(0, dist(o, land) - Math.max(o.w || 1, o.h || 1) / 2);
         hurtObj(o, E.fix(E.blastDamage(t, d) * (S.rules.objBlastMul || 1) * coverTake(o)), `the ${T.item}`);
       } // explosives wreck cover
       if (S.rules.storyLog) {
@@ -5412,6 +5887,7 @@ const ACT = {
         S.log.push({ k: `story o-${hits.length ? "hit" : "miss"}`, x: story, r: k ? k.round : 0, id: S.seq++, more });
       }
     });
+    addFx({ type: "throw", from, aim: { ...T.at }, to: land, spread, radius: t.radius, dur: 1400 });
     ui.throwing = null;
     render();
   },
@@ -5905,7 +6381,12 @@ const ACT = {
       ui.modal = null;
     });
   },
+  legendToggle() {
+    ui.legend = !ui.legend;
+    render();
+  },
   mapPlace(v) {
+    if (ui.place !== v) ui.placeItem = null;
     ui.place = ui.place === v ? null : v;
     ui.mapSel = null;
     render();
@@ -5970,14 +6451,22 @@ const ACT = {
       else {
         // on a drawn map the out-of-bounds blocks stay, and nothing new lands on them
         const keep = cm ? builtObjects(cm).filter((o) => o.voidBlock) : [];
-        const made = E.generateRoom(
-          cm ? { ...mapOf(), id: "custom" } : mapOf(),
-          S.scene.theme,
-          S.rules,
-          Math.random,
-          [...party, ...foesAt],
-          () => "o" + S.seq++,
-        );
+        // Clutter scales every setting's density; sparse also thins the fixed furniture of indoor plans by about a third
+        const mul = { sparse: 0.55, cluttered: 1.6 }[S.scene.density] || 1;
+        const r2 =
+          mul === 1
+            ? S.rules
+            : {
+                ...S.rules,
+                roomThemes: Object.fromEntries(
+                  Object.entries(S.rules.roomThemes).map(([k, t]) => [
+                    k,
+                    { ...t, density: t.density * mul, min: Math.round((t.min || 0) * Math.min(1, mul)), max: Math.round((t.max || 60) * mul) },
+                  ]),
+                ),
+              };
+        let made = E.generateRoom(cm ? { ...mapOf(), id: "custom" } : mapOf(), S.scene.theme, r2, Math.random, [...party, ...foesAt], () => "o" + S.seq++);
+        if (S.scene.density === "sparse") made = made.filter((o) => o.block || /wall|building|void/i.test(o.item || "") || Math.random() > 0.35);
         const corners = (o) =>
           [
             [0, 0],
@@ -6130,6 +6619,12 @@ const ACT = {
       if (!S.combat && mapOf().id === "cm:" + m.id) applyMap(S.rules.sceneDefaults.map);
       ui.modal = null;
     });
+  },
+  setDensity(val) {
+    act("Room clutter", () => {
+      S.scene.density = val === "normal" ? "" : val;
+    });
+    ACT.randomRoom();
   },
   setSpawn(val) {
     act("Enemy distance", () => {
@@ -6403,9 +6898,17 @@ const ACT = {
       });
     });
   },
+  useSelf(v) {
+    const [id, i] = splitV(v);
+    const back = ui.modal && ui.modal.type === "char" ? ui.modal : null;
+    ui.modal = { type: "item", who: id, tgt: id, sel: Number(i), back };
+    ACT.itemUse(); // if it can't be used (AP, a perk), the usual window stays up and says why
+    render();
+  },
   useItemFrom(v) {
     const [id, i] = splitV(v);
-    ui.modal = { type: "item", who: id, tgt: id, sel: Number(i) };
+    const back = ui.modal && ui.modal.type === "char" ? ui.modal : null;
+    ui.modal = { type: "item", who: id, tgt: id, sel: Number(i), back };
     render();
   },
   setWeapon(val, el) {
@@ -6903,7 +7406,8 @@ const ACT = {
         `${A.name} uses ${it.n}${T !== A ? ` on ${T.name}` : ""}: ${it.effect || "no effect written"}${healVal ? `. ${healVal > 0 ? "+" : ""}${healVal} HP, now ${T.hp}/${der(T).hp}` : ""}.${it.addict && !S.combat ? ` Roll addiction: d100 at or under ${E.pct(it.addict)}.` : ""}`,
       );
       if (S.combat && K().phase === "stealth") K().stealthDue = A.id;
-      ui.modal = null;
+      ui.modal = m.back || null;
+      addFx({ type: "float", id: T.id, icon: ITEM_VICON[it.cat] || "item", dur: 1500 });
       if (ui.atk) ui.focus = "#roll";
     });
   },
@@ -7925,18 +8429,22 @@ document.addEventListener("pointerup", (ev) => {
       const p = inMap(svgPoint(d.svg, ev));
       const kind = ui.place;
       const id = "o" + S.seq++;
-      act(`Place ${MAP_OBJ[kind][0]}`, () => {
+      const pick = ui.placeItem || "";
+      const cat = S.rules.mapItems[pick];
+      const sub = /^(hz|mk):/.test(pick) ? pick.slice(3) : "";
+      const subName = sub ? (kind === "hazard" ? S.rules.hazardKinds : S.rules.markerKinds)[sub] : "";
+      act(`Place ${cat ? cat.n : subName || MAP_OBJ[kind][0]}`, () => {
         const size = { cover: [1, 1], hard: [1.2, 1.2], hazard: [2, 2], note: [0.5, 0.5] }[kind];
         const big = Math.max(1, (ui.viewW || 20) / 40);
-        /* a little larger when zoomed far out, so it can be seen and grabbed */ S.scene.objects.push({
-          id,
-          kind,
-          x: E.fix(p.x),
-          y: E.fix(p.y),
-          w: E.fix(size[0] * big),
-          h: E.fix(size[1] * big),
-          label: "",
-        });
+        const label = String(ui.placeName || "").trim() || (kind === "hazard" || (kind === "note" && sub && sub !== "note") ? subName : "");
+        // a catalog item comes at its real size; a plain one a little larger when zoomed far out, so it can be seen and grabbed
+        const o = cat
+          ? { id, kind: cat.round ? "tree" : kind, item: pick, cover: cat.cover, x: E.fix(p.x), y: E.fix(p.y), w: cat.w, h: cat.h, label }
+          : { id, kind, x: E.fix(p.x), y: E.fix(p.y), w: E.fix(size[0] * big), h: E.fix(size[1] * big), label };
+        if (cat && cat.block) o.block = true;
+        if (cat && cat.round) o.round = true;
+        if (sub) o.sub = sub;
+        S.scene.objects.push(o);
         ui.mapSel = kind === "note" ? id : null;
         if (kind === "note") ui.focus = "#objLabel";
       });

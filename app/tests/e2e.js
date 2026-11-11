@@ -59,7 +59,7 @@ async function launch() {
     assert.ok(Math.abs(rec.y - clog.y) < 3 && clog.x > rec.x && clog.width < rec.width, "recent events and a small combat log side by side");
     const ys = await page.locator(".w-party .card").evaluateAll((l) => l.map((c) => [c.getBoundingClientRect().x, c.getBoundingClientRect().y]));
     assert.ok(ys.every(([x], i) => x === ys[0][0] && (!i || ys[i][1] > ys[i - 1][1])), "cards stack vertically");
-    assert.match(await text('[data-card="c1"] .spc'), /^S/, "SPECIAL by single letter");
+    assert.strictEqual(await page.locator('[data-card="c1"] .spc .spk svg.vic').count(), 7, "S.P.E.C.I.A.L. by symbol");
     assert.strictEqual(await page.locator('[data-card="c1"] .stats7:not(.spc) label').first().locator("span").innerText(), "BA", "skills by two letters");
     const s = await state();
     assert.strictEqual(s.chars.length, 4);
@@ -132,7 +132,7 @@ async function launch() {
     await click("sheetTab", "stats"); assert.ok(await page.locator(".dialog #ov-c2-dt").count()); await press("Escape");
     await page.evaluate(() => { const c = S.chars[0]; addStatus(c, "Weak", 2); addStatus(c, "Strengthened", 1); render(); });
     await click("openChar", "c1|health"); await has("HEALTH", ".dialog"); await has("Harmful", ".dialog"); await has("Beneficial", ".dialog");
-    await has("Effect on skills", ".dialog"); await has("Weak", ".dialog");
+    await has("All statuses together", ".dialog"); await has("Weak", ".dialog");
     await press("Escape");
     await page.evaluate(() => { S.chars[0].statuses = []; S.chars[0].ap = der(S.chars[0]).ap; ui.sel = "c1"; render(); });
   });
@@ -145,7 +145,7 @@ async function launch() {
     const w0 = await text(".dialog .wbox");
     for (const x of ["AP", "Best", "Value", "Skill", "Crit", "Mag", "In pack"]) assert.ok(w0.includes(x), `weapon box shows ${x}: ${w0}`);
     assert.deepStrictEqual(await page.locator(".dialog .ftab").evaluateAll((l) => l.map((b) => b.dataset.v)), ["all", "active", "weapons", "armor", "ammo", "consumables", "misc"], "folder tabs");
-    assert.strictEqual(await page.locator(".dialog .irow").count(), await page.locator(".dialog .irow svg.pix").count(), "a symbol on every row");
+    assert.strictEqual(await page.locator(".dialog .irow").count(), await page.locator(".dialog .irow svg.vic").count(), "a symbol on every row");
     const n0 = (await state()).chars[0].inv.length;
     await page.fill("#addItem-c1", "Stimpak"); await press("Enter");
     assert.strictEqual((await state()).chars[0].inv.length, n0 + 1);
@@ -323,7 +323,7 @@ async function launch() {
     await page.waitForTimeout(30);
     const t1 = await size(treeSel), p1 = await size('[data-tok="c1"] path.b');
     assert.ok(t1 > t0 * 2, `objects grow with zoom: ${t0} to ${t1}`); assert.ok(p1 < t1, "people stay smaller");
-    assert.strictEqual(await page.evaluate(() => tokenScale(1000) > tokenScale(40)), true); assert.strictEqual(await page.evaluate(() => tokenScale(3)), 1, "life size up close");
+    assert.strictEqual(await page.evaluate(() => tokenScale(1000) > tokenScale(40)), true); assert.strictEqual(await page.evaluate(() => tokenScale(3)), 0.55, "about life size up close");
     const box = await page.locator("#map").boundingBox(); await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.wheel(0, -300); await page.waitForTimeout(80);
     const zk = await page.evaluate(() => ui.zoom.k); assert.ok(zk > 2.25, "scrolling zooms in");
     await page.evaluate(() => { S.scene.objects = S.scene.objects.filter((o) => E.trunkOf(o, S.rules)); S.scene.objects.forEach((o) => { if (Math.hypot(o.x, o.y) < 8) o.x += 12; }); render(); });  // leaves are click-through, so only a trunk could catch this drag
@@ -487,7 +487,7 @@ async function launch() {
     await page.evaluate(() => { S.combat.ranges = {}; render(); });
     await page.locator(`[data-a="pick"][data-v="${foes[0]}"] .nm`).click();  // the turn may be a player's or an enemy's here
     assert.strictEqual(await page.evaluate(() => ui.atk.tgt), foes[0], "clicking in the enemy list starts an attack on it");
-    await has(`R${await page.evaluate(([a, b]) => rangeOf(a, b), [me, foes[0]])}`, ".stats3");
+    await has(`R${await page.evaluate(([a, b]) => rangeOf(a, b), [me, foes[0]])}`, ".ttiles");
     await has(`${await page.evaluate(([a, b]) => dist(posOf(a), posOf(b)).toFixed(1), [me, foes[0]])}m`, ".rng");
     await page.mouse.click(...Object.values(await center(`[data-tok="${foes[1]}"]`)));
     assert.strictEqual(await page.evaluate(() => ui.atk.tgt), foes[1], "clicking on the map changes target");
@@ -956,7 +956,7 @@ async function launch() {
     assert.strictEqual(c.traits.length, 3); assert.strictEqual(c.tags.length, 3); assert.strictEqual(c.gear.vanity, "Field Hand Outfit");
     assert.strictEqual(c.weapons[0].n, "Single Rifle"); assert.strictEqual(c.weapons[1].n, "Basic Fighting");
     const rounds = (c.weapons[0].mag || 0) + c.inv.filter((l) => /5\.56/.test(l.n)).reduce((t, l) => t + l.q, 0);
-    assert.strictEqual(rounds, 8, "kit ammo, nothing more"); assert.ok(c.inv.some((l) => l.n === "Bandage")); assert.ok(c.weapons[0].mag > 0, "starts loaded");
+    assert.strictEqual(rounds, 12, "kit ammo, nothing more"); assert.ok(c.inv.some((l) => l.n === "Bandage")); assert.ok(c.weapons[0].mag > 0, "starts loaded");
     assert.strictEqual(c.caps, 0, "poverty");
     await has("Party so far: 1", ".dialog"); await click("wizAnother"); assert.strictEqual(await page.evaluate(() => ui.wiz.step), 0); await press("Escape");
     await page.evaluate(() => undo()); await page.evaluate(() => undo());
@@ -1015,12 +1015,25 @@ async function launch() {
     const r = await p3.evaluate(() => {
       ui.setup = true; S.scene.objects = []; const e = addEnemy("Raider"); S.scene.pos[e.id] = { x: 10, y: 0 }; S.scene.pos.c1 = { x: -10, y: 0 }; e.hp = 30;
       S.chars[0].inv.push({ n: "Frag Grenade", q: 1, active: true }); render();
+      S.rules.throwScatter = { base: 0, perSkill: 20, min: 0 }; // a perfect throw, so the damage is exact
       ACT.throwStart("c1|Frag Grenade"); ui.throwing.at = { x: 8, y: 0 }; render();
       const bar = document.querySelector(".moveconfirm").innerText;
       ACT.throwConfirm();
       return { hp: S.scene.npcs[0].hp, left: S.chars[0].inv.filter((l) => l.n === "Frag Grenade").length, last: S.log.slice(-1)[0], bar };
     });
     assert.strictEqual(r.hp, 22, "2m from the blast is 8 damage"); assert.strictEqual(r.left, 0, "the grenade is used up");
+    const sc = await p3.evaluate(() => {
+      S.rules.throwScatter = { base: 6, perSkill: 20, min: 0.5 };
+      const out = [];
+      for (let i = 0; i < 12; i++) {
+        S.chars[0].inv.push({ n: "Frag Grenade", q: 1, active: true });
+        ACT.throwStart("c1|Frag Grenade"); ui.throwing.at = { x: 0, y: 20 }; render(); ACT.throwConfirm();
+        const lines = S.log.flatMap((l) => [l.x, ...(l.more || [])]).filter((x) => /lands [0-9.]+m off/.test(x));
+        out.push(Number(/lands ([0-9.]+)m off/.exec(lines[lines.length - 1])[1]));
+      }
+      return { off: out, spread: throwSpread(S.chars[0]), fx: (ui.fx || []).some((f) => f.type === "throw") };
+    });
+    assert.ok(sc.off.every((x) => x <= sc.spread + 0.01), `lands inside the ${sc.spread}m spread: ${sc.off}`); assert.ok(sc.off.some((x) => x > 0.05), "and not always on the spot");
     assert.match(r.bar, /8/); assert.match(r.last.x, /Frag Grenade/); assert.match(r.last.x, /8 DMG/);
     assert.match(await p3.evaluate(() => throwOverlay.toString()), /throwline/);
     assert.ok(await p3.evaluate(() => { S.chars[0].inv.push({ n: "Frag Grenade", q: 1, active: true }); ACT.throwStart("c1|Frag Grenade"); ui.throwing.at = { x: 40, y: 0 }; render(); const ok = /too far/i.test(document.querySelector(".moveconfirm").innerText); ACT.throwCancel(); return ok; }), "a throw has a 30m reach");
@@ -1097,7 +1110,7 @@ async function launch() {
     assert.ok(r.snap && r.hex === "hex" && r.turnbar >= 2, "snap, hex grid and the turn bar");
     await page.evaluate(() => ACT.iconPick("c1")); await page.locator('[data-a="iconSet"][data-v="c1|cowboy"]').click();
     assert.strictEqual((await state()).chars[0].icon, "cowboy", "pick a map icon from the card");
-    await rail("tree"); assert.ok(await page.locator(".dialog .ftab").count() >= 2, "a folder tab per player"); assert.ok(await page.locator(".dialog .pnode").count() > 30, "skill and level perk trees");
+    await rail("skillTree"); assert.ok(await page.locator(".dialog .ftab").count() >= 2, "a folder tab per player"); assert.ok(await page.locator(".dialog .pnode").count() > 30, "skill perk tree"); await rail("levelPerks"); assert.ok(await page.locator(".dialog .pnode").count() > 10, "level perks");
     await press("Escape");
   });
   await ok("QA pass: empty fights, deleting the actor, cut-down saves, spreadsheet round trips, an unreadable autosave", async () => {
@@ -1125,7 +1138,7 @@ async function launch() {
       prefs.autosave = false; dirty = false;
       return out;
     });
-    assert.strictEqual(r.empty, "roundEnd", "a fight with nobody in it waits at the end of the round");
+    assert.strictEqual(r.empty, "end", "a fight with nobody left on one side ends at the end of the round");
     assert.ok(r.turnAfterDelete, "deleting the acting character passes the turn to someone who exists");
     assert.deepStrictEqual(r.minimal, [7, true, true], "a save with fields missing is filled in on load");
     assert.deepStrictEqual(r.csv, [], "tables that change in a CSV round trip");

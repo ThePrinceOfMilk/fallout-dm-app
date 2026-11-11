@@ -4712,3 +4712,861 @@ html.lt1000 .win > .wt {
 #mmSvg:focus {
   outline: none;
 }
+
+/* 11 Nov review: the fight-over banner is a big call to action */
+.banner.bigend {
+  border: 2px solid var(--bright);
+  color: var(--bright);
+  padding: 10px 12px;
+  font-size: 16px;
+  justify-content: space-between;
+  background: color-mix(in srgb, var(--bright) 10%, transparent);
+}
+.banner.bigend.bad {
+  border-color: var(--bad);
+  color: var(--bad);
+}
+.btn.big {
+  font-size: 18px;
+  padding: 8px 22px;
+  min-height: 42px;
+}
+.btn.pulse {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse {
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--bright) 35%, transparent);
+  }
+}
+
+/* 11 Nov review: target panel as a grid of tiles; the name says friend or foe in color and in words */
+.atkinfo .tgtcard.foe .nm {
+  color: #ff5a4d;
+}
+.atkinfo .tgtcard.friend .nm {
+  color: #39ff6a;
+}
+.tgtside {
+  font-size: var(--fs-s);
+  padding: 1px 6px;
+  border: 1px solid currentColor;
+  letter-spacing: 0.08em;
+}
+.tgtcard.foe .tgtside {
+  color: #ff5a4d;
+}
+.tgtcard.friend .tgtside {
+  color: #39ff6a;
+}
+.ttiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 8px 0 6px;
+}
+.ttile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--win3) 55%, transparent);
+  line-height: 1.05;
+  min-width: 0;
+}
+.ttile .tl {
+  font-size: calc(var(--fs-s) * 0.9);
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.ttile b {
+  font-weight: normal;
+  font-family: var(--head);
+  font-size: 26px;
+  color: var(--bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ttile small {
+  font-size: var(--fs-s);
+  color: var(--dim);
+}
+.ttile.hitt b {
+  font-size: 34px;
+}
+.ttile.hitt.zero b {
+  color: var(--bad);
+}
+.ttile.costbig b {
+  font-size: 26px !important;
+}
+.ttile.covflag b {
+  font-size: 22px !important;
+}
+.ttile.rng b {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.seg .atkmid {
+  gap: 14px;
+  align-items: stretch;
+}
+.seg .atkmid .body {
+  transform: scale(1.2);
+  transform-origin: top left;
+  margin: 4px 18px 26px 4px;
+}
+
+/* 11 Nov review: the accuracy ring is solid steps with black edges, and shows line of sight past cover */
+:is(#map, #mmSvg) .accring {
+  pointer-events: none;
+}
+:is(#map, #mmSvg) .ringfill {
+  fill-opacity: 0.55;
+  stroke: none;
+}
+:is(#map, #mmSvg) .ringedge {
+  fill: none;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+/* 11 Nov review: line icons (icons.js) */
+.vic {
+  width: 1.3em;
+  height: 1.3em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+  vertical-align: -0.3em;
+}
+.vic .f {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* 11 Nov review: Character window header and skill grid */
+.spbig {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.spcell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px 6px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--win3) 55%, transparent);
+  color: var(--ink);
+}
+.spcell .spi {
+  width: 34px;
+  height: 34px;
+  stroke-width: 1.5;
+}
+.spcell b {
+  font-family: var(--head);
+  font-weight: normal;
+  font-size: 40px;
+  line-height: 0.9;
+  color: var(--bright);
+}
+.spcell span {
+  font-size: var(--fs-s);
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.spcell.up b {
+  color: #7cff9b;
+}
+.spcell.down b {
+  color: var(--bad);
+}
+.skgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 4px 10px;
+  margin-bottom: 8px;
+}
+.skc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+}
+.skc .ski {
+  width: 22px;
+  height: 22px;
+  color: var(--dim);
+}
+.skc.tagged .ski,
+.skc.tagged .grow {
+  color: var(--bright);
+}
+.skc b {
+  font-family: var(--head);
+  font-weight: normal;
+  font-size: 24px;
+  min-width: 2ch;
+  text-align: right;
+  color: var(--bright);
+}
+.tlabel .vic {
+  width: 20px;
+  height: 20px;
+  color: var(--dim);
+}
+.tlabel .tval {
+  font-family: var(--head);
+  font-size: 22px;
+  color: var(--bright);
+}
+
+/* 11 Nov review: the Health window */
+.hlayout {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.bodyfig {
+  width: 100%;
+  height: auto;
+  max-height: 330px;
+}
+.bodyfig .fps > * {
+  fill: color-mix(in srgb, var(--ink) 35%, transparent);
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.bodyfig .fp.hurt .fps > * {
+  fill: url(#hurtx);
+  stroke: var(--bad);
+  stroke-width: 2;
+}
+.bodyfig .hx0 {
+  fill: #4a120e;
+}
+.bodyfig .hx1 {
+  fill: var(--bad);
+}
+.bodyfig .lead {
+  stroke: var(--dim);
+  stroke-width: 1;
+  fill: none;
+}
+.bodyfig .fp.hurt .lead {
+  stroke: var(--bad);
+}
+.bodyfig .fpn {
+  fill: var(--bright);
+  font: 12px var(--font);
+}
+.bodyfig .fpv {
+  fill: var(--dim);
+  font: 10.5px var(--font);
+}
+.bodyfig .fp.hurt .fpv {
+  fill: var(--bad);
+}
+.stsum {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 6px;
+}
+.stsum > div {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+}
+.stsum > div.neg {
+  border-left-color: var(--bad);
+}
+.stsum > div.pos {
+  border-left-color: var(--ink);
+}
+.stsum b {
+  font-family: var(--head);
+  font-weight: normal;
+  font-size: 24px;
+  color: var(--bright);
+}
+.stsum .neg b {
+  color: var(--bad);
+}
+.stsum span {
+  font-size: var(--fs-s);
+  color: var(--dim);
+}
+.sttab {
+  width: 100%;
+}
+.sttab td,
+.sttab th {
+  padding: 4px 6px;
+  vertical-align: top;
+}
+.sttab .tn {
+  width: 52px;
+}
+.sttab tr.st-harmful td:first-child {
+  box-shadow: inset 3px 0 0 var(--bad);
+}
+.sttab tr.st-beneficial td:first-child {
+  box-shadow: inset 3px 0 0 var(--ink);
+}
+@media (max-width: 760px) {
+  .hlayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 11 Nov review: inventory gear boxes sit beside the figure, each on a line to where it's worn */
+.gearmenu {
+  grid-template-columns: minmax(0, 1.4fr) 300px 150px;
+}
+.gfig {
+  display: block;
+  width: 300px;
+  height: 250px;
+  min-height: 250px;
+}
+.gfig .figsvg {
+  inset: auto;
+  left: 170px;
+  top: 0;
+  width: 120px;
+  height: 172px;
+  fill: #15502a;
+  stroke: #2f9a50;
+  stroke-width: 1.5;
+}
+.gfig .figlines {
+  position: absolute;
+  inset: 0;
+  width: 300px;
+  height: 250px;
+  pointer-events: none;
+  z-index: 2;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  fill: var(--ink);
+}
+.gfig .gbox {
+  position: absolute;
+  left: 0;
+  width: 150px;
+  min-height: 56px;
+}
+.gfig .gb-head {
+  top: 0;
+}
+.gfig .gb-armor {
+  top: 78px;
+}
+.gfig .gb-vanity {
+  top: 160px;
+}
+
+.sttab .tn input {
+  width: 48px;
+}
+
+/* 11 Nov review: map objects in the colors of what they're made of. The outline shows the cover tier:
+   dashed = concealment, thin = soft cover, thick = hard cover, thickest and bright = impenetrable. */
+:is(#map, #mmSvg) .obj.m-wood {
+  fill: #7a5a32;
+  stroke: #e0b878;
+}
+:is(#map, #mmSvg) .obj.m-metal {
+  fill: #5f6f78;
+  stroke: #cfdfe8;
+}
+:is(#map, #mmSvg) .obj.m-rust {
+  fill: #7a4630;
+  stroke: #e8a07a;
+}
+:is(#map, #mmSvg) .obj.m-stone {
+  fill: #7d7f76;
+  stroke: #e2e4da;
+}
+:is(#map, #mmSvg) .obj.m-plant {
+  fill: #2f6b2c;
+  stroke: #9fe888;
+}
+:is(#map, #mmSvg) .obj.m-fabric {
+  fill: #5c4f72;
+  stroke: #cdbce6;
+}
+:is(#map, #mmSvg) .obj.m-sand {
+  fill: #9a8550;
+  stroke: #f2dfa2;
+}
+:is(#map, #mmSvg) .obj.m-tile {
+  fill: #9fb0ad;
+  stroke: #f4fffc;
+}
+:is(#map, #mmSvg) .obj.m-fire {
+  fill: #5a2a10;
+  stroke: #ffb040;
+}
+:is(#map, #mmSvg) .obj .gly .flame {
+  fill: #ffb040;
+  stroke: #ff6a20;
+}
+:is(#map, #mmSvg) .obj .gly > * {
+  stroke-width: 1.2px;
+}
+:is(#map, #mmSvg) .obj.tier-concealment .gly > :not(.d):not(.dot):not(.pale) {
+  stroke-dasharray: 4 3;
+  fill-opacity: 0.7;
+}
+:is(#map, #mmSvg) .obj.tier-hard .gly > :not(.d):not(.dot):not(.pale) {
+  stroke-width: 2.6px;
+}
+:is(#map, #mmSvg) .obj.tier-impenetrable .gly > :not(.d):not(.dot):not(.pale) {
+  stroke-width: 3.4px;
+}
+:is(#map, #mmSvg) .obj.tier-open .gly > :not(.d):not(.dot):not(.pale) {
+  stroke-width: 0.8px;
+  fill-opacity: 0.6;
+}
+:is(#map, #mmSvg) .obj.hazard {
+  fill: #ffb43f;
+  stroke: #000;
+}
+:is(#map, #mmSvg) .obj.hazard .gly > :first-child {
+  stroke: #000;
+  stroke-width: 2px;
+}
+:is(#map, #mmSvg) .obj.note {
+  fill: var(--bright);
+  stroke: #000;
+}
+:is(#map, #mmSvg) .obj.sel .gly > :not(.d):not(.dot):not(.pale) {
+  stroke: #fff;
+  stroke-width: 3px;
+}
+/* tokens: a dark base under each, outlined in the side's color; the shape of the base also says the side */
+:is(#map, #mmSvg) .tok .base {
+  fill: rgba(0, 0, 0, 0.6);
+  stroke-width: 2.2px;
+  vector-effect: non-scaling-stroke;
+}
+:is(#map, #mmSvg) .tok.pc .base {
+  stroke: #4dff7c;
+}
+:is(#map, #mmSvg) .tok.ally .base {
+  stroke: #4da6ff;
+  stroke-dasharray: 5 3;
+}
+:is(#map, #mmSvg) .tok.npc .base {
+  stroke: #ff4d4d;
+}
+:is(#map, #mmSvg) .tok.cur .base {
+  stroke-width: 3.5px;
+}
+:is(#map, #mmSvg) .tok.tgt .base {
+  stroke: #fff;
+  stroke-width: 3.5px;
+}
+:is(#map, #mmSvg) .tok.gone .base {
+  opacity: 0.4;
+}
+.placebar {
+  gap: 8px;
+  align-items: center;
+}
+.placebar select {
+  max-width: 280px;
+}
+
+/* ---------- 11 Nov review: a spacing pass. One scale (4, 8, 12, 16 px), a little more air in bodies, rows, buttons and inputs,
+   section headings that read as headings, and the same height for controls side by side. */
+:root {
+  --sp1: 4px;
+  --sp2: 8px;
+  --sp3: 12px;
+  --sp4: 16px;
+}
+.wb {
+  padding: var(--sp1) var(--sp2);
+}
+.dialog > .wb {
+  padding: var(--sp3) var(--sp4);
+}
+.wt {
+  padding: 2px var(--sp2);
+  min-height: 1.6em;
+  gap: var(--sp1);
+}
+h3 {
+  margin: var(--sp3) 0 var(--sp1);
+  padding-bottom: 3px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  letter-spacing: 0.06em;
+}
+.btn {
+  padding: 2px var(--sp2);
+  min-height: 24px;
+  transition:
+    background-color 0.12s,
+    border-color 0.12s;
+}
+.btn.tiny {
+  padding: 0 5px;
+  min-height: 0;
+}
+/* the top bar and the side panels keep their tight fit: one row of dev buttons, names on one line */
+.devbar .btn.tiny {
+  padding: 0 4px;
+  min-height: 0;
+}
+.opt {
+  padding: 2px 7px;
+}
+input,
+select {
+  padding: 2px 5px;
+  min-height: 22px;
+}
+textarea {
+  padding: 4px 6px;
+}
+.line {
+  padding: 4px 0;
+  gap: 6px;
+}
+.dialog table.t td,
+.dialog table.t th {
+  padding: 3px 6px;
+}
+table.t th {
+  text-align: left;
+  font-weight: normal;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: var(--fs-s);
+}
+.segs {
+  gap: var(--sp2);
+}
+.seg {
+  padding: 14px var(--sp2) var(--sp2);
+}
+.irow {
+  padding: 3px 0;
+  gap: 6px;
+}
+.ftabs {
+  gap: 3px;
+}
+
+/* 11 Nov review: map effects. Tracers fly from the shooter; a hit flashes the target red and shakes it; a grenade flies and bursts;
+   an item used floats up from its user. Delays come from ui.fx, so a re-render mid-way doesn't restart them. */
+:is(#map) .tracer {
+  stroke: #ffe14d;
+  stroke-linecap: round;
+  animation: tracer 260ms linear both;
+  pointer-events: none;
+  filter: drop-shadow(0 0 2px #ffb000);
+}
+@keyframes tracer {
+  from {
+    stroke-dashoffset: var(--ld);
+  }
+  to {
+    stroke-dashoffset: calc(-1 * var(--len));
+  }
+}
+:is(#map) .tokin.hitfx {
+  animation: shake 420ms ease-out both;
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  15% {
+    transform: translate(-0.16px, 0.05px);
+  }
+  30% {
+    transform: translate(0.16px, -0.05px);
+  }
+  45% {
+    transform: translate(-0.12px, 0);
+  }
+  60% {
+    transform: translate(0.1px, 0.04px);
+  }
+  80% {
+    transform: translate(-0.05px, 0);
+  }
+}
+:is(#map) .tok .flash {
+  fill: #ff2a2a;
+  stroke: none;
+  opacity: 0;
+  animation: flash 450ms ease-out both;
+  pointer-events: none;
+}
+@keyframes flash {
+  0% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+:is(#map) .nade {
+  fill: #ffe14d;
+  stroke: #000;
+  stroke-width: 1.5px;
+  vector-effect: non-scaling-stroke;
+  animation: nadefly 700ms cubic-bezier(0.3, 0.1, 0.6, 1) both;
+  pointer-events: none;
+}
+@keyframes nadefly {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(calc(var(--dx) / 2), calc(var(--dy) / 2)) scale(1.9);
+  }
+  99% {
+    transform: translate(var(--dx), var(--dy)) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(1);
+    opacity: 0;
+  }
+}
+:is(#map) .boom {
+  fill: #ff8a1a;
+  stroke: #ffe14d;
+  stroke-width: 3px;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: boom 650ms ease-out forwards;
+  pointer-events: none;
+}
+@keyframes boom {
+  0% {
+    transform: scale(0.15);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+:is(#map) .scatterfx {
+  fill: none;
+  stroke: #ffe14d;
+  stroke-width: 2px;
+  stroke-dasharray: 6 4;
+  vector-effect: non-scaling-stroke;
+  animation: fadeout 900ms ease-in both;
+  pointer-events: none;
+}
+:is(#map) .scatterring {
+  fill: none !important;
+  stroke: #ffe14d;
+  stroke-dasharray: 6 4;
+  stroke-width: 2px;
+}
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+:is(#map) .floatfx {
+  animation: floatup 1500ms ease-out both;
+  pointer-events: none;
+}
+@keyframes floatup {
+  0% {
+    transform: translate(0, 0.3px);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, -1.6px);
+    opacity: 0;
+  }
+}
+:is(#map) .floatfx .medbg {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+:is(#map) .floatfx .medx {
+  fill: #e8231e;
+}
+:is(#map) .floatfx .ficon {
+  fill: none;
+  stroke: #d2ffdd;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+:is(#map) .floatfx .ficon .f {
+  fill: #d2ffdd;
+  stroke: none;
+}
+
+/* 11 Nov review, round 3: map key, card S.P.E.C.I.A.L. icons */
+.mapwrap {
+  position: relative;
+}
+.maplegend {
+  position: absolute;
+  right: 6px;
+  bottom: 34px;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 1px 12px;
+  padding: 8px 10px;
+  max-height: calc(100% - 50px);
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.88);
+  border: 1px solid var(--line2);
+  font-size: var(--fs-s);
+  color: var(--ink);
+}
+.maplegend b {
+  grid-column: 1 / -1;
+}
+.maplegend b {
+  margin-top: 4px;
+  color: var(--bright);
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.maplegend .lg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.maplegend svg {
+  width: 22px;
+  height: 15px;
+  flex: none;
+}
+.maplegend .lgobj.m-wood {
+  fill: #7a5a32;
+  stroke: #e0b878;
+}
+.maplegend .lgobj.m-metal {
+  fill: #5f6f78;
+  stroke: #cfdfe8;
+}
+.maplegend .lgobj.m-rust {
+  fill: #7a4630;
+  stroke: #e8a07a;
+}
+.maplegend .lgobj.m-stone {
+  fill: #7d7f76;
+  stroke: #e2e4da;
+}
+.maplegend .lgobj.m-plant {
+  fill: #2f6b2c;
+  stroke: #9fe888;
+}
+.maplegend .lgobj.m-fabric {
+  fill: #5c4f72;
+  stroke: #cdbce6;
+}
+.maplegend .lgobj.m-sand {
+  fill: #9a8550;
+  stroke: #f2dfa2;
+}
+.maplegend .lgobj.m-tile {
+  fill: #9fb0ad;
+  stroke: #f4fffc;
+}
+.maplegend .lgtier {
+  fill: #5f6f78;
+  stroke: #cfdfe8;
+}
+.maplegend .lt-concealment {
+  stroke-dasharray: 3 2;
+  stroke-width: 1.2;
+  fill-opacity: 0.7;
+}
+.maplegend .lt-soft {
+  stroke-width: 1.2;
+}
+.maplegend .lt-hard {
+  stroke-width: 2.4;
+}
+.maplegend .lt-impenetrable {
+  stroke-width: 3.4;
+}
+.maplegend .lgb {
+  fill: rgba(0, 0, 0, 0.6);
+  stroke-width: 2;
+}
+.maplegend .lgb.pc {
+  stroke: #4dff7c;
+}
+.maplegend .lgb.ally {
+  stroke: #4da6ff;
+  stroke-dasharray: 3 2;
+}
+.maplegend .lgb.npc {
+  stroke: #ff4d4d;
+}
+.maplegend .ringkey i {
+  display: inline-block;
+  width: 14px;
+  height: 10px;
+  opacity: 0.85;
+}
+.spk {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+.spk .spmini {
+  width: 12px;
+  height: 12px;
+  vertical-align: -2px;
+}
+
+/* 11 Nov review, round 4: the targeting body keeps its boxes, with rounded corners */
+.bp {
+  border-radius: 4px;
+}
+.bp-Head {
+  border-radius: 6px;
+}
