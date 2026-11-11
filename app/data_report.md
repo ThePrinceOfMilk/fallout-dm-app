@@ -1,6 +1,6 @@
 # DM app data report
 
-Built from `Fallout Spreadsheet(4).xlsx` on 2026-11-10.
+Built from `Fallout Spreadsheet(4).xlsx` on 2026-11-11.
 
 Weapons 650 (383 with full stats), ammo 172, armor 287, items 236, materials 86, mods 93, recipes 295, enemies 184, traits 100, skill perks 182, level perks 103, statuses 76.
 

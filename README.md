@@ -26,6 +26,14 @@ Your campaign autosaves in that browser. To keep a copy or move it, use **Load >
 | [Skipped and Unsure.md](Skipped%20and%20Unsure.md) | Effects that still need a DM's judgment |
 | [app/](app/) | Source code, build scripts and tests |
 
+## Shared table
+Click **Open session** in the top bar on any device. A link appears; send it to whoever should join. Anyone who opens it gets the same DM screen, from any network, and changes show on every device within a second. The game is kept online (on a free Cloudflare relay, `app/relay/`) for 14 days after the last change, so the host's device can sleep or close. **Leave session** stops syncing on that device.
+The link holds a secret token: anyone with it can edit your game, so only share it with your table.
+
+No internet? `cd app && node table_server.js` serves the app to devices on the same Wi-Fi and prints their link. The first time, allow Node on **Private networks** when Windows Firewall asks.
+
+Relay setup (once, already done for the hosted copy): `cd app/relay && npx wrangler deploy`, then put the printed address in `RELAY` in `src/ui.js`.
+
 ## Editing the data
 
 The app carries its data inside the HTML, so it works offline. The files in [data/](data/) are copies for reading and editing.

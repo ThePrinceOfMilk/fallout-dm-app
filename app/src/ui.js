@@ -237,7 +237,8 @@ function saveStatus() {
   if (st) st.textContent = statusText();
 }
 const statusText = () =>
-  saveFailed ? "SAVE FAILED: USE BACKUP FILE" : dirty ? "UNSAVED CHANGES" : lastSaved ? "SAVED " + lastSaved.toLocaleTimeString() : "NOTHING NEW TO SAVE";
+  (table.on ? (table.up ? `TABLE: ${table.n} CONNECTED / ` : "TABLE: RECONNECTING / ") : "") +
+  (saveFailed ? "SAVE FAILED: USE BACKUP FILE" : dirty ? "UNSAVED CHANGES" : lastSaved ? "SAVED " + lastSaved.toLocaleTimeString() : "NOTHING NEW TO SAVE");
 function save() {
   lastSaveTry = Date.now();
   try {
@@ -250,8 +251,25 @@ function save() {
   }
   saveStatus();
 }
+// Shared table (app/table_server.js): on only when the page is served by it. Everything else is at the end of this file.
+const table = {
+  on: false,
+  up: false,
+  n: 0,
+  rev: 0,
+  id: Math.random().toString(36).slice(2),
+  t: "",
+  links: [],
+  base: "",
+  timer: null,
+  busy: false,
+  again: false,
+  pending: null,
+  quiet: false,
+};
 function touched() {
   dirty = true;
+  if (table.on && !table.quiet) tableSend();
   if (prefs.autosave && !prefs.interval) save();
   else saveStatus();
 }
@@ -1534,7 +1552,7 @@ const DEV = [
   ["state", "Raw state"],
 ];
 function devBar() {
-  return `<header class="devbar"><span class="brand">Fallout DM</span><button class="btn tiny devtoggle ${ui.devOpen ? "on" : ""}" data-a="devToggle" data-v="">Dev ${ui.devOpen ? "-" : "+"}</button><span class="devlabel">Dev:</span><span class="devlist ${ui.devOpen ? "open" : ""}">${DEV.map(([id, n]) => btn("dev", id, n, "", "tiny")).join("")}</span><span class="spacer"></span>${btn("refresh", "", "Refresh", "", "tiny", "Reload every list and table into the menus after you edit them")}${btn("undo", "", "Undo", "U", "tiny", undoStack.length ? "Undo: " + undoStack[undoStack.length - 1].label : "Nothing to undo")}${btn("redo", "", "Redo", "Y", "tiny")}${btn("search", "", "Search", "/", "tiny")}${btn("help", "", "Keys", "?", "tiny keysbtn")}</header>`;
+  return `<header class="devbar"><span class="brand">Fallout DM</span><button class="btn tiny devtoggle ${ui.devOpen ? "on" : ""}" data-a="devToggle" data-v="">Dev ${ui.devOpen ? "-" : "+"}</button><span class="devlabel">Dev:</span><span class="devlist ${ui.devOpen ? "open" : ""}">${DEV.map(([id, n]) => btn("dev", id, n, "", "tiny")).join("")}</span><span class="spacer"></span>${table.on ? btn("table", "", table.up ? `Table: ${table.n}` : "Table: ...", "", "tiny " + (table.up ? "" : "warn"), "Share this table: join links and devices") : btn("openSession", "", "Open session", "", "tiny", "Get a link so other devices can join this game as DM screens")}${btn("refresh", "", "Refresh", "", "tiny", "Reload every list and table into the menus after you edit them")}${btn("undo", "", "Undo", "U", "tiny", undoStack.length ? "Undo: " + undoStack[undoStack.length - 1].label : "Nothing to undo")}${btn("redo", "", "Redo", "Y", "tiny")}${btn("search", "", "Search", "/", "tiny")}${btn("help", "", "Keys", "?", "tiny keysbtn")}</header>`;
 }
 function hints() {
   if (ui.modal)
@@ -4486,6 +4504,7 @@ function renderModal() {
     edit: [`Edit: ${h((ce || {}).name)}`, editModal],
     level: [`${h((ce || {}).name)}: now level ${(ce || {}).level}`, levelModal],
     help: ["Keys", helpModal],
+    table: ["Shared table", tableModal],
     search: ["Search", searchModal],
     detail: [m.hit ? `${h(m.hit[1].n)} [${h(m.hit[0])}]` : "", detailModal],
     dev: [m.cat ? h((DEV.find(([id]) => id === m.cat) || [])[1]) : "", devWin],
@@ -5169,6 +5188,31 @@ const ACT = {
   help() {
     ui.modal = { type: "help" };
     render();
+  },
+  table() {
+    ui.modal = { type: "table" };
+    render();
+  },
+  async openSession() {
+    toast("Opening a session...");
+    let j;
+    try {
+      j = await (await fetch(RELAY + "/new", { method: "POST" })).json();
+    } catch (e) {
+      return toast("Could not reach the session server. Check the internet connection.");
+    }
+    history.replaceState(null, "", `?room=${j.room}&t=${j.t}`); // a reload rejoins
+    await tableJoin();
+    ACT.table();
+  },
+  leaveSession() {
+    location.href = location.pathname; // this device keeps the campaign in its own autosave
+  },
+  tableCopy(v) {
+    const el = document.getElementById("tableLink" + v);
+    el.select();
+    // navigator.clipboard needs https, and the Wi-Fi link is plain http
+    toast(document.execCommand("copy") ? "Link copied" : "Select the link and copy it");
   },
   search(v) {
     ui.modal = { type: "search", q: v || "", i: 0 };
@@ -8151,3 +8195,121 @@ try {
   render();
   toast("The last autosave could not be opened and was set aside. Your named saves are under Load.");
 }
+
+// ---------- shared table
+// Open session goes through the cloud relay (app/relay); a link with only ?t= is the Wi-Fi server (app/table_server.js).
+const RELAY = "https://fallout-table.wasteland-relay.workers.dev";
+const APP_URL = "https://theprinceofmilk.github.io/fallout-dm-app/";
+const tableUrl = (k) => `${table.base}/sync/${k}?t=${encodeURIComponent(table.t)}`;
+function tableModal() {
+  return `<div class="s">${table.up ? `${table.n} device${table.n === 1 ? "" : "s"} connected.` : "Reconnecting to the table..."} Anyone with a link below gets this same DM screen, and changes show on every device.</div>${table.links.map((l, i) => `<div class="row" style="margin-top:6px"><input id="tableLink${i}" class="grow" readonly value="${h(l)}" title="${h(l)}">${btn("tableCopy", i, "Copy", "", "tiny")}</div>`).join("")}<div class="s dim" style="margin-top:8px">${table.base ? "The link works from any network. The game is kept online for 14 days after the last change." : "These links work on the same Wi-Fi. To bring your campaign here: Save pack in your usual copy, then Load pack here."}</div>${table.base ? `<div class="acts" style="margin-top:8px">${btn("leaveSession", "", "Leave session", "", "tiny", "Stop syncing on this device. The others keep playing.")}</div>` : ""}`;
+}
+function tableSend() {
+  clearTimeout(table.timer);
+  table.timer = setTimeout(tablePost, 150);
+}
+async function tablePost() {
+  if (table.busy) return (table.again = true); // one send at a time, so each one starts from the newest rev
+  table.busy = true;
+  try {
+    const r = await fetch(tableUrl("state"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ baseRev: table.rev, from: table.id, S }),
+    });
+    const j = await r.json();
+    if (r.ok) table.rev = Math.max(table.rev, j.rev);
+    else if (r.status === 409) {
+      table.again = false;
+      tableTake(j);
+      toast("Someone else changed that first. Your last change was not kept.");
+    }
+  } catch (e) {
+    table.again = true; // offline: try again once the stream is back
+  }
+  table.busy = false;
+  if (table.again && table.up) {
+    table.again = false;
+    tablePost();
+  }
+}
+// Only a drag or a box with a half-typed value holds updates back; a box the app focused for you does not.
+const tableBusy = () => {
+  const a = document.activeElement;
+  return pointerDown || (!!a && /^(INPUT|TEXTAREA)$/.test(a.tagName) && !a.readOnly && a.value !== a.defaultValue);
+};
+function tableTake(msg) {
+  if (tableBusy()) return (table.pending = msg); // don't redraw under a drag or a half-typed number
+  table.pending = null;
+  let p;
+  try {
+    p = normalize(msg.S);
+  } catch (e) {
+    return;
+  }
+  S = p;
+  table.rev = msg.rev;
+  // shortcut: undo only covers your own changes since the last remote update; upgrade to a shared server-side undo if the user asks.
+  undoStack.length = redoStack.length = undoChars = 0;
+  if (!ent(ui.sel)) ui.sel = (S.chars[0] || {}).id;
+  if (ui.modal && ui.modal.id && !ent(ui.modal.id)) ui.modal = null;
+  if (ui.atk && (!S.combat || !ent(ui.atk.att) || !ent(ui.atk.tgt))) ui.atk = null;
+  table.quiet = true;
+  save();
+  table.quiet = false;
+  scheduleRender();
+}
+const tableFlush = () =>
+  setTimeout(() => {
+    if (table.pending && !tableBusy()) tableTake(table.pending);
+  }, 0);
+document.addEventListener("pointerup", tableFlush, true);
+document.addEventListener("focusout", tableFlush, true);
+async function tableJoin() {
+  const q = new URLSearchParams(location.search);
+  table.t = q.get("t") || "";
+  const room = q.get("room");
+  if (room) {
+    table.base = RELAY + "/s/" + room;
+    table.links = [(location.protocol === "https:" ? location.origin + location.pathname : APP_URL) + `?room=${room}&t=${table.t}`];
+  } else if (!table.t || location.protocol === "file:") return;
+  let hello;
+  try {
+    const r = await fetch(tableUrl("hello"));
+    hello = await r.json();
+    if (!r.ok) return room && toast(hello.error || "Could not join that session.");
+  } catch (e) {
+    return room && toast("Could not reach the session. Check the internet connection and reload.");
+  }
+  Object.assign(table, { on: true, rev: hello.rev });
+  if (hello.links) table.links = hello.links;
+  if (!hello.hasState) tablePost(); // first device in: its campaign becomes the table's
+  const es = new EventSource(tableUrl("events"));
+  const status = () => {
+    saveStatus();
+    const b = document.querySelector('[data-a="table"]');
+    if (b && !tableBusy()) scheduleRender(); // the button shows the device count
+  };
+  es.onopen = () => {
+    table.up = true;
+    status();
+    if (table.again) tablePost();
+  };
+  es.onerror = () => {
+    table.up = false;
+    status();
+  };
+  es.onmessage = (e) => {
+    const m = JSON.parse(e.data);
+    table.up = true;
+    if (m.n) table.n = m.n;
+    if (!m.S) return status();
+    if (m.from === table.id) {
+      table.rev = Math.max(table.rev, m.rev);
+      return status();
+    }
+    tableTake(m);
+  };
+  render();
+}
+tableJoin();
