@@ -1,9 +1,10 @@
 // Plays a full sample session on the dashboard in a real browser, mostly from the keyboard, the way a DM would.
 // Run: npm install && npm run e2e   (uses the Edge or Chrome already on this machine)
+// E2E_BROWSER=webkit node tests/e2e.js runs it in Safari's engine instead (npx playwright install webkit, once).
 const path = require("path");
 const fs = require("fs");
 const assert = require("node:assert");
-const { chromium } = require("playwright-core");
+const { chromium, webkit } = require("playwright-core");
 
 const APP = "file:///" + path.resolve(__dirname, "../../Fallout DM App.html").replace(/\\/g, "/");
 const SHOTS = process.env.SHOTS || "";
@@ -11,6 +12,7 @@ let step = 0;
 const results = [];
 
 async function launch() {
+  if (process.env.E2E_BROWSER === "webkit") return webkit.launch();
   for (const channel of ["msedge", "chrome"]) {
     try { return await chromium.launch({ channel, headless: true }); } catch (e) { /* try the next browser */ }
   }
@@ -28,7 +30,11 @@ async function launch() {
   page.on("dialog", (d) => d.accept());
   const ok = async (name, fn) => {
     step++;
-    try { await fn(); results.push(["PASS", name]); } catch (e) { results.push(["FAIL", name, e.message.split("\n").filter(Boolean).slice(0, 6).join(" ")]); }
+    try { await fn(); results.push(["PASS", name]); } catch (e) {
+      results.push(["FAIL", name, e.message.split("\n").filter(Boolean).slice(0, 6).join(" ")]);
+      // a failed step doesn't leave a window open over the next ones
+      await page.evaluate(() => { ui.modal = null; ui.dlg = {}; if (document.activeElement) document.activeElement.blur(); render(); }).catch(() => {});
+    }
     assert.ok(errors.length === 0, `Script error during "${name}": ${errors.join(" | ")}`);
     if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `${String(step).padStart(2, "0")}-${name.replace(/[^a-z0-9]+/gi, "-").slice(0, 40)}.png`) });
   };
@@ -93,6 +99,8 @@ async function launch() {
     await page.mouse.move(b0.x + 80, b0.y + 8); await page.mouse.down(); await page.mouse.move(b0.x + 30, b0.y + 48); await page.mouse.up();
     const b1 = await d.boundingBox();
     assert.ok(Math.abs(b1.x - (b0.x - 50)) < 3 && Math.abs(b1.y - (b0.y + 40)) < 3, `moved to ${b1.x},${b1.y}`);
+    // WebKit's test mode can't drag the browser's own resize corner (and an iPad has none), so the size half is Chromium only
+    if (process.env.E2E_BROWSER === "webkit") { await press("Escape"); await page.evaluate(() => { ui.dlg = {}; }); return; }
     await page.mouse.move(b1.x + b1.width - 3, b1.y + b1.height - 3); await page.mouse.down(); await page.mouse.move(b1.x + b1.width - 103, b1.y + b1.height - 63); await page.mouse.up();
     const b2 = await d.boundingBox();
     assert.ok(b2.width < b1.width - 80, `resized to ${b2.width}`);

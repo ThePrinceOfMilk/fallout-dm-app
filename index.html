@@ -2568,6 +2568,9 @@ label.btn {
   flex-direction: column;
   min-width: 0;
 }
+.turnwho {
+  overflow: hidden; /* in a narrow action window the name is cut short instead of running into the AP number */
+}
 .turnlabel {
   font-size: 11px;
   letter-spacing: 0.12em;
@@ -4781,6 +4784,15 @@ html.lt1000 .win > .wt {
   gap: 6px;
   margin: 8px 0 6px;
 }
+/* beside the body figure on an upright tablet the target column is narrow: two tiles a row keep the numbers readable */
+.atkinfo {
+  container-type: inline-size;
+}
+@container (max-width: 320px) {
+  .ttiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 .ttile {
   display: flex;
   flex-direction: column;
@@ -4790,6 +4802,7 @@ html.lt1000 .win > .wt {
   background: color-mix(in srgb, var(--win3) 55%, transparent);
   line-height: 1.05;
   min-width: 0;
+  container-type: inline-size; /* the big number shrinks to its tile (cqi) instead of being cut off on a tablet */
 }
 .ttile .tl {
   font-size: calc(var(--fs-s) * 0.9);
@@ -4801,6 +4814,7 @@ html.lt1000 .win > .wt {
   font-weight: normal;
   font-family: var(--head);
   font-size: 26px;
+  font-size: min(26px, 26cqi);
   color: var(--bright);
   white-space: nowrap;
   overflow: hidden;
@@ -4812,15 +4826,18 @@ html.lt1000 .win > .wt {
 }
 .ttile.hitt b {
   font-size: 34px;
+  font-size: min(34px, 32cqi);
 }
 .ttile.hitt.zero b {
   color: var(--bad);
 }
 .ttile.costbig b {
   font-size: 26px !important;
+  font-size: min(26px, 26cqi) !important;
 }
 .ttile.covflag b {
   font-size: 22px !important;
+  font-size: min(22px, 22cqi) !important;
 }
 .ttile.rng b {
   display: flex;
@@ -6025,13 +6042,47 @@ table.t th {
     padding: 4px 5px;
   }
   .ttile b {
-    font-size: 20px;
+    font-size: 22px;
+    font-size: min(22px, 26cqi);
   }
 }
-@media (max-width: 1000px) {
-  /* the window title already says whose turn it is; this copy collided with the AP number */
+@media (max-width: 1000px), (pointer: coarse) {
+  /* the window title already says whose turn it is; this copy collided with the AP number (also on a sideways tablet) */
   .turnhead .turnwho {
     display: none;
+  }
+}
+/* the implant odds take a whole line on a phone, and Extra slots goes under them */
+.impodds {
+  flex-wrap: wrap;
+}
+.impodds > .s:first-child {
+  flex: 1 1 260px;
+}
+/* phones: the Doctor button already shows the price, so the Caps column goes and the buttons fit */
+@media (max-width: 599px) {
+  .imptab th:nth-child(3),
+  .imptab td:nth-child(3) {
+    display: none;
+  }
+}
+/* touch screens of any size fold the dev tables behind the Dev button, as phones already did */
+@media (pointer: coarse) {
+  .devlabel {
+    display: none;
+  }
+  .devtoggle {
+    display: inline-block;
+  }
+  .devbar .devlist:not(.open) {
+    display: none;
+  }
+  .devbar .devlist.open {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    width: 100%;
+    order: 9;
   }
 }
 /* tablets: the panels reach the bottom of the screen instead of stopping where their content ends */
@@ -6383,6 +6434,149 @@ table.t th {
 }
 .rewt td {
   padding: 2px 4px;
+}
+
+/* ----- the spectator's party board: big cards in the map's place until the fight's initiative screen */
+.spboardwin > .wb {
+  overflow: auto;
+  padding: 8px;
+}
+.spmembers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+}
+.spmember {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--win3) 55%, transparent);
+}
+.spmember.down {
+  border-color: var(--bad);
+}
+.spmhead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--head);
+  font-size: 22px;
+  color: var(--bright);
+}
+.spmhead svg {
+  width: 28px;
+  height: 28px;
+}
+.splv {
+  font-size: 18px;
+  color: var(--dim);
+}
+.spbig {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.spbig .lab {
+  color: var(--dim);
+}
+.spbig b {
+  font-family: var(--head);
+  font-size: 30px;
+  font-weight: normal;
+  color: var(--bright);
+}
+.spbig b small {
+  font-size: 18px;
+  color: var(--dim);
+}
+.spbig .bar {
+  height: 14px;
+}
+.spline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+.spline b,
+.spxp b {
+  color: var(--bright);
+  font-weight: normal;
+}
+.spxp .bar {
+  height: 6px;
+  margin-top: 3px;
+}
+.spspecial {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+.spsp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3px 0;
+  border: 1px solid var(--line);
+}
+.spsp small {
+  font-size: calc(var(--fs-s) * 0.9);
+  color: var(--dim);
+}
+.spsp b {
+  font-family: var(--head);
+  font-size: 22px;
+  font-weight: normal;
+  color: var(--bright);
+}
+.spsect .tl {
+  display: block;
+  font-size: calc(var(--fs-s) * 0.9);
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 3px;
+}
+.spitems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.spitem {
+  padding: 2px 7px;
+  border: 1px solid var(--line);
+  font-size: var(--fs-s);
+}
+.spitem.w {
+  border-color: var(--ink);
+  color: var(--bright);
+}
+.spitem small {
+  color: var(--dim);
+}
+.spmember .icons {
+  display: flex;
+  gap: 6px;
+}
+.spmember .icb {
+  flex: 1;
+  min-height: 40px;
+}
+/* the party board takes the whole screen; the combat log is on the LOG button until the fight */
+.spboard.noside {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "map rail";
+}
+@media (max-width: 599px) {
+  .spboard.noside {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto !important;
+    grid-template-areas: "map" "rail";
+  }
+  .spmembers {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 </style>
 </head>
@@ -12088,6 +12282,8 @@ function weaponIcon(o) {
 }
 const vicon = (name, cls = "") => `<svg class="vic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${VICON[name] || VICON.item}</svg>`;
 
+// ===== 01-state.js: THE APP'S STATE. The workbook data, saving and loading, prefs, the ui object (what is open and selected),
+// undo and redo (act), and the spectator screen's limits. Add new saved state here, and a default for old saves in normalize().
 "use strict";
 function clone0(o) {
   return JSON.parse(JSON.stringify(o));
@@ -12398,19 +12594,65 @@ const SPEC_ASK_C = new Set(["setLoad"]); // the same, for a drop-down
 const SPEC_RAIL = ["log", "skillTree", "wiki", "uiScale", "guide"];
 const SPEC_MODALS = new Set(["char", "sheet", "health", "item", "skillTree", "uiScale", "guide", "level", "vendor"]);
 const specRail = () => [...SPEC_RAIL, ...(S.vendor && S.vendor.public ? ["vendor"] : [])];
-function specCard(c) {
-  const d = der(c);
-  const k = K();
-  const menus = CARD_MENUS.map(
-    ([id, n, ic]) => `<button class="icb" data-a="openChar" data-v="${c.id}|${id}" title="${n}">${pix(ic)}<span>${n}</span></button>`,
-  ).join("");
+// The Inventory, Character and Health buttons, and the level-up banner, shared by the small card and the big party board.
+const specMenus = (c) =>
+  CARD_MENUS.map(([id, n, ic]) => `<button class="icb" data-a="openChar" data-v="${c.id}|${id}" title="${n}">${pix(ic)}<span>${n}</span></button>`).join("");
+function specLevel(c) {
   const due = (c.ptsBank || 0) > 0 || (c.perkDue || 0) > 0;
-  const lvl = canLevel(c)
+  return canLevel(c)
     ? `<div class="banner s">${btn("levelUp", c.id, `Level up to ${c.level + 1}`, "", "primary tiny")}</div>`
     : due
       ? `<div class="banner s">${btn("spendPts", c.id, `Assign: ${c.ptsBank ? `${c.ptsBank} skill points` : ""}${c.ptsBank && c.perkDue ? " + " : ""}${c.perkDue ? `${c.perkDue} perk` : ""}`, "", "primary tiny")}</div>`
       : "";
+}
+function specCard(c) {
+  const d = der(c);
+  const k = K();
+  const menus = specMenus(c);
+  const lvl = specLevel(c);
   return `<article class="card spcard ${c.dbno ? "down" : ""} ${k && k.turnId === c.id ? "cur" : ""}"><header class="chead">${iconSvg(c.icon)}<span class="nm grow">${h(c.name)}</span><span class="s dim">LV${c.level}</span></header><div class="hpline"><span>HP</span><b>${fmt(c.hp)}/${fmt(d.hp)}</b><span class="grow">${hpBar(c.hp, d.hp)}</span><span>AP</span><b>${fmt(c.ap)}/${fmt(d.ap)}</b></div>${chips(c, true)}${lvl}<div class="icons">${menus}</div></article>`;
+}
+// THE SPECTATOR'S PARTY BOARD. The map stays hidden until the DM reaches the initiative screen, so the setup and the
+// sneaking phase give nothing away. Its space shows each member large enough to read and tap on a tablet: health, level
+// and XP, SPECIAL, what they have equipped, and their active items (at most SPEC_BOARD_ITEMS, then "+N more").
+const SPEC_BOARD_ITEMS = 6;
+const specMapShown = () => !!K() && K().phase !== "stealth";
+function specMember(c) {
+  const d = der(c);
+  const L = c.level || 1,
+    step = S.rules.levelXpStep,
+    from = step * L * (L - 1),
+    to = step * (L + 1) * L;
+  const xpP = L >= S.rules.maxLevel ? 1 : clamp(((c.xp || 0) - from) / (to - from), 0, 1);
+  const special = Object.entries(SP_LABEL)
+    .map(([k, n]) => `<span class="spsp"><small>${n}</small><b>${fmt(d.sp[k])}</b></span>`)
+    .join("");
+  const g = c.gear || {};
+  const worn = [
+    ...(c.weapons || []).filter((w) => w && w.n).map((w) => ["W", w.n]),
+    ...[g.head, g.armor, g.vanity, ...(g.acc || [])].filter(Boolean).map((n) => ["A", n]),
+  ];
+  const active = (c.inv || []).filter((l) => l.active && l.q > 0);
+  const chip = ([kind, n]) => `<span class="spitem ${kind === "W" ? "w" : ""}">${h(n)}</span>`;
+  const items = active
+    .slice(0, SPEC_BOARD_ITEMS)
+    .map((l) => `<span class="spitem">${h(l.n)}${l.q > 1 ? ` <small>x${l.q}</small>` : ""}</span>`)
+    .join("");
+  const more =
+    active.length > SPEC_BOARD_ITEMS ? btn("openChar", `${c.id}|inv`, `+${active.length - SPEC_BOARD_ITEMS} more`, "See the whole inventory", "tiny") : "";
+  return `<article class="spmember ${c.dbno ? "down" : ""}"><header class="spmhead">${iconSvg(c.icon)}<span class="nm grow">${h(c.name)}</span><span class="splv">LV ${L}</span></header>
+    <div class="spbig"><span class="lab">HP</span><b>${fmt(c.hp)}<small>/${fmt(d.hp)}</small></b><span class="grow">${hpBar(c.hp, d.hp)}</span></div>
+    <div class="spline s"><span>AP <b>${fmt(c.ap)}/${fmt(d.ap)}</b></span><span>DT <b>${fmt(d.dt)}</b></span><span>Caps <b>${fmt(c.caps || 0)}</b></span></div>
+    <div class="spxp s"><span>XP <b>${fmt(c.xp || 0)}</b>${L < S.rules.maxLevel ? ` <span class="dim">/ ${fmt(to)} for LV ${L + 1}</span>` : ""}</span><div class="bar xp"><i style="width:${xpP * 100}%"></i></div></div>
+    <div class="spspecial">${special}</div>
+    ${statusIcons(c)}${specLevel(c)}
+    <div class="spsect"><span class="tl">Equipped</span><div class="spitems">${worn.map(chip).join("") || `<span class="s dim">Nothing equipped.</span>`}</div></div>
+    <div class="spsect"><span class="tl">Active items</span><div class="spitems">${items || `<span class="s dim">None marked active.</span>`}${more}</div></div>
+    <div class="icons">${specMenus(c)}</div></article>`;
+}
+function specBoard() {
+  const wiki = `<button class="btn tiny" data-a="railGo" data-v="wiki" title="Open the game bible">Wiki</button>`;
+  return `<section class="win w-map spmap spboardwin"><header class="wt"><span>Party<span class="dim"> · the map shows when the fight starts</span></span><span class="spacer"></span>${wiki}<span class="s ${table.up ? "dim" : "warn"}">${table.up ? "Spectating" : "Reconnecting..."}</span></header><div class="wb" data-scroll="spboard"><div class="spmembers">${S.chars.map(specMember).join("") || `<div class="empty">No characters yet.</div>`}</div></div></section>`;
 }
 function specView() {
   if (ui.modal && !SPEC_MODALS.has(ui.modal.type)) ui.modal = null;
@@ -12424,7 +12666,9 @@ function specView() {
   const k = K();
   const M = mapOf();
   const turn = k && k.turnId && ent(k.turnId) ? ` · Round ${k.round} · ${h(ent(k.turnId).name)}'s turn` : k ? ` · Round ${k.round}` : "";
-  const map = `<section class="win w-map spmap"><header class="wt"><span>${h(M.n)}<span class="dim">${turn}</span></span><span class="spacer"></span><span class="s ${table.up ? "dim" : "warn"}">${table.up ? "Spectating" : "Reconnecting..."}</span></header><div class="wb" style="padding:0">${mapSvg()}</div></section>`;
+  const map = !specMapShown()
+    ? specBoard()
+    : `<section class="win w-map spmap"><header class="wt"><span>${h(M.n)}<span class="dim">${turn}</span></span><span class="spacer"></span><span class="s ${table.up ? "dim" : "warn"}">${table.up ? "Spectating" : "Reconnecting..."}</span></header><div class="wb" style="padding:0">${mapSvg()}</div></section>`;
   const party = win(
     "w-party",
     `Party ${S.chars.length}`,
@@ -12440,7 +12684,10 @@ function specView() {
       40,
     )}</div>`,
   );
-  const foesNow = (k ? k.cbs.filter((c) => sideOf(c.id) === "npc" && alive(c)).map((c) => ent(c.id)) : foes().filter((e) => !e.ally)).filter(Boolean);
+  const board = !specMapShown();
+  const foesNow = board
+    ? []
+    : (k ? k.cbs.filter((c) => sideOf(c.id) === "npc" && alive(c)).map((c) => ent(c.id)) : foes().filter((e) => !e.ally)).filter(Boolean);
   const enemies = foesNow.length
     ? win(
         "w-spfoes",
@@ -12455,7 +12702,7 @@ function specView() {
       return `<button class="railb ${(ui.modal && ui.modal.type === id) || (id === "log" && ui.logOpen) ? "on" : ""}" data-a="railGo" data-v="${id}" title="${h(RAIL_TITLE[id] || r[1])}">${pix(r[2])}<span>${r[1]}</span></button>`;
     })
     .join("")}</nav>`;
-  return `<div class="dash spec"><div class="spboard"><aside class="spcol">${party}${enemies}${log}</aside>${map}${rail}</div>${ui.logOpen ? logFloat() : ""}${ui.modal ? renderModal() : ""}</div>`;
+  return `<div class="dash spec"><div class="spboard ${board ? "noside" : ""}">${board ? "" : `<aside class="spcol">${party}${enemies}${log}</aside>`}${map}${rail}</div>${ui.logOpen ? logFloat() : ""}${ui.modal ? renderModal() : ""}</div>`;
 }
 // After drawing: boxes a spectator can't change are read-only, and buttons it can't use are hidden.
 const SPEC_HIDE = [
@@ -12740,7 +12987,8 @@ const setPath = (o, path, v) => {
   x[p[p.length - 1]] = v;
 };
 const getPath = (o, path) => path.split(".").reduce((x, k) => (x == null ? x : x[k]), o);
-
+// ===== 02-game.js: GAME ACTIONS THAT CHANGE S. View helpers, editable data overrides, shared actions (inventory, statuses, XP),
+// the combat flow (start, turns, rounds, end), attacks, and the automated enemy turn. Rules math belongs in engine.js, not here.
 // ---------- small view helpers
 const kbd = (k) => (k ? `<kbd>${h(k)}</kbd>` : "");
 const SHOWN_KEYS = new Set(["A", "R", "M", "I", "N", "B", "Enter", "Esc", "/", "?"]); // only the keys for what happens all the time
@@ -13024,8 +13272,6 @@ function canPay(e, cost, what) {
   toast(`${e.name} needs ${cost} AP to ${what}, has ${fmt(e.ap)}.`);
   return false;
 }
-const SOLID = new Set(["wall", "hard", "tree"]);
-const solidAt = (p) => S.scene.objects.some((o) => SOLID.has(o.kind) && o.w && E.inside(p, o));
 const WALKABLE = new Set(["bedroll", "pallet"]);
 /** Can someone stand here? Not inside walls, furniture, rocks or tree trunks. Rugs and bedrolls are fine, and hazards and markers are areas, not things. */
 function standBlocked(p) {
@@ -14071,7 +14317,9 @@ function reqMet(req, d) {
 }
 const ABBR = { BAR: "BA", EW: "EW", EXP: "EX", SG: "SG", BG: "BG", LPK: "LP", MED: "ME", MW: "MW", REP: "RE", SCI: "SC", SNK: "SN", SPE: "SP", SUR: "SU" };
 const canLevel = (e) => !S.combat && E.levelForXp(e.xp || 0, S.rules) > (e.level || 1);
-
+// ===== 03-cards.js: WINDOWS AND CARDS. Rewards, recent events, notes, the dev bar, the party and enemy windows, character cards,
+// weapon and gear boxes, the hit table, cover, objects' HP, chests, status icons, familiarity, map effect animations,
+// throwing, the body map, the Health tab and its implant list, and vendor prices.
 // ---------- pixel icons, 8x8
 const ICONS = {
   gear: "..#..#.. .######. .#....#. ##.##.## ##.##.## .#....#. .######. ..#..#..",
@@ -15020,7 +15268,7 @@ function implantsBox(c, d) {
   const fix = failed
     ? `<div class="line"><span class="bad">${h(I.failStatus)}</span><span class="s dim">-1 STR, END, AGI until fixed: pay a doctor, or use a Doctor's Bag on yourself.</span>${dm ? btn("surgeryFix", c.id, `Doctor fixes it · ${fmt(I.doctorFix)}c`, "", `tiny${(c.caps || 0) < I.doctorFix ? " na" : ""}`) : ""}</div>`
     : "";
-  return `<h3>Implants <small class="dim">${have.length}/${slots} slots</small></h3><div class="line"><span class="s dim">Chance now: by a doctor ${fmt(E.pct(pDoc))}% (END and Luck) · by yourself ${pSelf ? fmt(E.pct(pSelf)) + "%" : `needs Medicine ${I.self.minMed}`} (Medicine, END and Luck). Each implant already in makes the next ${fmt(E.pct(I.perImplant))}% harder.</span><span class="spacer"></span>${slotsCtl}</div>${fix}<table class="t sttab"><tr><th>Implant</th><th>Effect</th><th>Caps</th><th></th></tr>${rows}</table>`;
+  return `<h3>Implants <small class="dim">${have.length}/${slots} slots</small></h3><div class="line impodds"><span class="s dim">Chance now: by a doctor ${fmt(E.pct(pDoc))}% (END and Luck) · by yourself ${pSelf ? fmt(E.pct(pSelf)) + "%" : `needs Medicine ${I.self.minMed}`} (Medicine, END and Luck). Each implant already in makes the next ${fmt(E.pct(I.perImplant))}% harder.</span><span class="spacer"></span>${slotsCtl}</div>${fix}<table class="t sttab imptab"><tr><th>Implant</th><th>Effect</th><th>Caps</th><th></th></tr>${rows}</table>`;
 }
 // ----- vendor
 // Barter sets the base. Perks with buy or sell variables move it from there.
@@ -15029,6 +15277,9 @@ function priceFactors(e, vendor) {
   const f = E.barterFactors(d ? d.skills.BAR : 0, vendor);
   return { buy: f.buy * (1 + ((d && d.m.buy) || 0)), sell: f.sell * (1 + ((d && d.m.sell) || 0)) };
 }
+// ===== 04-sheet-map.js: THE CHARACTER SHEET AND THE MAP. The turn bar, the vendor window, the sheet's sections (SPECIAL, stats, traits, perks,
+// inventory, statuses, mods), the encounter window, the fight map and its placement bar, the move readout (moveHow),
+// enemy cards, token labels, zoom (mapView, setZoom), the aim line, the accuracy ring and the map's SVG (mapSvg).
 // THE TURN BAR: everyone in initiative order across the top of the fight. Click a name to select them.
 function turnBar() {
   const k = K();
@@ -16401,7 +16652,7 @@ function mapSvg() {
     if (p.tgt && ent(p.tgt) && p.steps.some((s) => s.t === "attack")) extra += aimLine(to, posOf(p.tgt));
   }
   const zoomed = ui.zoom ? ui.zoom.k : 1;
-  return `<div class="mapwrap"><svg id="map" class="${ui.place ? "placing" : ""}" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of ${h(M.n)}, ${M.w} by ${M.h} meters"><rect class="floor" x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/><defs><clipPath id="floorclip"><rect x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/></clipPath></defs><path class="grid" clip-path="url(#floorclip)" d="${grid}" style="stroke-opacity:${hex ? 0.8 : v.w > 120 ? 0.35 : v.w > 60 ? 0.6 : 1}"/>${ring}${objs}${extra}${throwOverlay()}${people}${fxLayer(k2, v.w)}</svg>${ui.legend ? mapLegend() : ""}<div class="zoombar"><button class="btn tiny ${ui.legend ? "on" : ""}" data-a="legendToggle" data-v="" title="What the colors, outlines and shapes on the map mean">Key</button><span class="scale s">${hex ? `${S.rules.hexM}m hexes` : S.rules.gridMode === "none" ? "No grid" : `${step}m grid`} · ${Math.round(v.w)}m across</span><button class="btn tiny ${!hex && S.rules.gridMode !== "none" ? "on" : ""}" data-a="setGrid" data-v="square" title="${step}m squares">&#9633;</button><button class="btn tiny ${hex ? "on" : ""}" data-a="setGrid" data-v="hex" title="Hexes ${S.rules.hexM}m across">Hex</button><button class="btn tiny ${S.rules.gridMode === "none" ? "on" : ""}" data-a="setGrid" data-v="none" title="No grid">Off</button><button class="btn tiny" data-a="mapZoom" data-v="1.5" title="Zoom in (or scroll)">+</button><button class="btn tiny" data-a="mapZoom" data-v="0.667" title="Zoom out (or scroll)">-</button><button class="btn tiny ${zoomed > 1 ? "on" : ""}" data-a="mapZoom" data-v="0" title="Show the whole map">Fit</button></div></div>`;
+  return `<div class="mapwrap"><svg id="map" class="${ui.place ? "placing" : ""}" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of ${h(M.n)}, ${M.w} by ${M.h} meters"><rect class="floor" x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/><defs><clipPath id="floorclip"><rect x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/></clipPath></defs><path class="grid" clip-path="url(#floorclip)" d="${grid}" style="stroke-opacity:${hex ? 0.8 : v.w > 120 ? 0.35 : v.w > 60 ? 0.6 : 1}"/>${ring}${objs}${extra}${throwOverlay()}${people}${fxLayer(k2, v.w)}</svg>${ui.legend ? mapLegend() : ""}<div class="zoombar"><button class="btn tiny ${ui.legend ? "on" : ""}" data-a="legendToggle" data-v="" title="What the colors, outlines and shapes on the map mean">Key</button><span class="scale s">${hex ? `${S.rules.hexM}m hexes` : S.rules.gridMode === "none" ? "No grid" : `${step}m grid`} · ${Math.round(v.w)}m across</span><button class="btn tiny ${!hex && S.rules.gridMode !== "none" ? "on" : ""}" data-a="setGrid" data-v="square" title="${step}m squares">&#9633;</button><button class="btn tiny ${hex ? "on" : ""}" data-a="setGrid" data-v="hex" title="Hexes ${S.rules.hexM}m across">Hex</button><button class="btn tiny ${S.rules.gridMode === "none" ? "on" : ""}" data-a="setGrid" data-v="none" title="No grid">Off</button><button class="btn tiny" data-a="mapZoom" data-v="1.5" title="Zoom in (or scroll, pinch, double-tap)">+</button><button class="btn tiny" data-a="mapZoom" data-v="0.667" title="Zoom out (or scroll, pinch)">-</button><button class="btn tiny ${zoomed > 1 ? "on" : ""}" data-a="mapZoom" data-v="0" title="Show the whole map">Fit</button></div></div>`;
 }
 function checkValue(e, use) {
   const d = der(e);
@@ -16409,6 +16660,8 @@ function checkValue(e, use) {
     ? { v: (d.sp[use] || 0) * S.rules.specialAsSkill, label: `${SP_LABEL[use]} ${d.sp[use]} x ${S.rules.specialAsSkill}` }
     : { v: d.skills[use] || 0, label: `${SKILL_NAME[use]} ${d.skills[use] || 0}` };
 }
+// ===== 05-fight-settings.js: FIGHT STAGES AND SETTINGS. Skill checks, stealth, initiative, the turn and attack panels, end of round, XP, loot and defeat,
+// the item details, Settings (the rules editor), the side rail, UI size, auto turn options, save slots and load.
 function checkBody() {
   const m = ui.chk;
   const k = K();
@@ -16503,10 +16756,6 @@ function turnStage() {
         )
         .join("") || `<span class="s dim">None carried.</span>`;
   return `${head}${autoBox(A)}${banners.join("")}<div class="segs">${ui.atk ? attackPanel() : seg("Attack", `<span class="s dim">${h(A.name)} has no weapon.</span>`)}${seg("Actions", actions, "half")}${seg("Consumables", `<div class="conslist">${consBody}</div>`, "half")}${d.notes.length ? seg(`For the DM <small>${d.notes.length}</small>`, fold(`rem:${A.id}`, "Reminders", d.notes.map((n) => `<div class="txt s">${h(n)}</div>`).join("")), "half") : ""}${(S.scene.effects || []).length ? seg("Carried over", S.scene.effects.map((f) => `<div class="txt s">${h(f.label)}${f.hit ? `: ${f.who} ${E.pct(f.hit)}% to hit` : ""}</div>`).join(""), "half") : ""}</div>`;
-}
-function lastResult() {
-  const l = [...S.log].reverse().find((x) => ["hit", "miss", "jam"].includes(x.k));
-  return l ? `<div class="s dim" style="margin-bottom:4px">LAST: ${h(l.x)}</div>` : "";
 }
 function bodyFig(a, T) {
   const hurt = new Set();
@@ -17067,7 +17316,8 @@ function pwBody() {
   return `<div class="grid" style="grid-template-columns:1.2fr 1.6fr .6fr">${field("Do this", `<select id="pwAct" data-u="pw.act">${options(ACTS, m.act)}</select>`)}${needsName ? field(isStatus ? "Status" : "Item", `<input id="pwName" autocomplete="off" list="${isStatus ? "dl-status" : "dl-all"}" data-u="pw.name" value="${h(m.name)}">`) : "<span></span>"}${needsVal ? field(needsName ? "How many" : "Amount (+ or -)", numBox(`id="pwVal" data-u="pw.val"`, m.val)) : m.act === "addStatus" ? field("Tier", `<select id="pwTier" data-u="pw.tier">${options([1, 2, 3, 4, 5], m.tier)}</select>`) : "<span></span>"}</div>
    <h3>To <button class="opt" data-a="pwWho" data-v="1">All</button> <button class="opt" data-a="pwWho" data-v="">None</button></h3><div class="row wrap">${list.map((e) => `<label class="chk"><input type="checkbox" id="pw-${e.id}" data-u="pw.who.${e.id}"${m.who[e.id] !== false ? " checked" : ""}>${h(e.name)}</label>`).join(" ") || `<span class="dim">Nobody here.</span>`}</div><div class="acts" style="margin-top:6px">${primary("pwApply", "", "Apply", "Enter")}</div>`;
 }
-
+// ===== 06-tables-packs.js: DATA TABLES AND SAVE PACKS. The dev windows' editable tables, CSV and JSON import and export, .zip save packs,
+// loot tables, and the modal window frame (renderModal) that every pop-up uses.
 // ----- dev windows: full, editable tables
 const R_COLS = Array.from({ length: 10 }, (_, i) => [`hit.${i}`, `R${i + 1}`, "pct"]);
 const WEAPON_COLS = {
@@ -17861,6 +18111,7 @@ function iconModal() {
     )
     .join("")}</div>`;
 }
+// ===== 07-mapmaker.js: THE MAP CREATOR. Draw a location once and keep it with the campaign. Its mouse and touch input is in 11-input.js.
 // ---------- MAP CREATOR: draw a location once, keep it with the campaign, pick it under Location like any other.
 const MM_SHAPES = [
   ["rect", "Rectangle"],
@@ -18006,6 +18257,8 @@ function mapMakerBody() {
   const svg = `<div class="mmcanvas"><svg id="mmSvg" tabindex="-1" class="tool-${m.tool}" viewBox="${-m.w / 2 - pad} ${-m.h / 2 - pad} ${m.w + 2 * pad} ${m.h + 2 * pad}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map being drawn, ${m.w} by ${m.h} meters"><rect class="floor" x="${-m.w / 2}" y="${-m.h / 2}" width="${m.w}" height="${m.h}"/><path class="grid" d="${grid}"/>${mmAll().map(draw).join("")}<rect id="mmDraft" class="draft" width="0" height="0"/></svg></div>`;
   return `<div class="mmwrap">${side}${svg}</div>`;
 }
+// ===== 08-modals.js: POP-UP WINDOWS. The perk and skill trees, move, item, status, edit and level-up windows, notes, the guide,
+// the character wizard, help, bible search, details and the terminal view.
 // PERK TREES: a folder tab per player. Skill perks grow in three ranks per skill (Proficiency, Expertise, Mastery); level perks by level.
 // Skill tree branches. A skill not listed here lands in an Other branch.
 const SKILL_TYPES = [
@@ -18248,6 +18501,10 @@ const GUIDE = [
   [
     "Cover and the aim line",
     "The line to your target is colored by the selected weapon's accuracy at each range band: red is its worst, green its best. Every shot has a cover flag from whatever the line crosses, and the worst thing wins. Open has no penalty. Concealment is -10% to hit. Soft cover is -25% to hit and -10% damage. Hard cover is -50% and -50%. Impenetrable is -100% and -100%. You can change any object's tier by clicking it, and set a shot's cover by hand under OVR. Buildings also stop walking.",
+  ],
+  [
+    "Moving around the map",
+    "Scroll over the map, or pinch it with two fingers, to zoom in on that spot. Drag empty ground, or move two fingers, to slide the map while zoomed in. On a touch screen, double-tap empty ground to get twice as close, and again at the closest zoom to see the whole map. Fit shows the whole map at once.",
   ],
   [
     "Rooms",
@@ -18617,7 +18874,8 @@ function termView(c, o, q, lines) {
     });
   return `<div class="robco"><div class="termhd">ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL<br>${c === "Bible" ? `GAME BIBLE // PAGE ${h(o.page)}` : `DATABASE // ${h(c.toUpperCase())}`}</div><div class="termln">&gt; ${q ? `QUERY "${h(q)}"` : "OPEN"}<br>&gt; ENTRY: ${h(String(o.n).toUpperCase())}</div>${body}<div class="termln">&gt; <span class="termcur">&#9608;</span></div></div>`;
 }
-
+// ===== 09-actions.js: EVERY BUTTON. ACT holds one function per data-a name; a button with data-a="x" data-v="y" calls ACT.x("y").
+// To add a button: give it data-a and data-v in the HTML, and add the function here. Wrap changes to S in act(label, fn) so Undo works.
 // ---------- actions
 const splitV = (v) => String(v).split("|");
 const ACT = {
@@ -20226,8 +20484,7 @@ const ACT = {
     ui.focus = `#chk-${id}`;
     render();
     if (!document.activeElement || document.activeElement.id !== `chk-${id}`) {
-      const el = document.getElementById("chkTarget");
-      if (el) el.focus();
+      focusSoft(document.getElementById("chkTarget"));
     }
   },
   chkPreset(v) {
@@ -20934,9 +21191,12 @@ const ACT = {
     });
   },
 };
-
+// ===== 10-render.js: DRAWING THE SCREEN AND THE KEYBOARD. render() rebuilds the page from S and ui; it keeps focus and scroll where they were.
 // ---------- rendering
 const app = document.getElementById("app");
+// Safari (iPhone, iPad) only turns a tap into a click on something it thinks is clickable, and a listener on the
+// whole page doesn't count. With this one on the app itself, tapping a panel header, a card or a table row works there.
+app.addEventListener("click", () => {});
 function focusKey(el) {
   if (!el || el === document.body) return null;
   if (el.id) return "#" + CSS.escape(el.id);
@@ -20998,10 +21258,8 @@ function render() {
   }
   if (ui.focus) {
     const el = document.querySelector(ui.focus);
-    const roll = ui.focus === "#roll";
     ui.focus = null;
-    // on a touch screen, focusing the roll box pops the keyboard up and scrolls the target out of view: tap it when you're ready
-    if (el && !(roll && matchMedia("(pointer: coarse)").matches)) el.focus();
+    focusSoft(el);
   } else if (key) {
     const el = document.querySelector(key);
     if (el) {
@@ -21016,9 +21274,17 @@ function render() {
   }
   const dlg = document.querySelector(".dialog");
   if (dlg && !dlg.contains(document.activeElement)) {
-    const f = dlg.querySelector(".wb input, .wb select, .wb textarea, .wb button");
+    // with a keyboard the first box is ready to type in; on a touch screen that would pop the keyboard up, so a button instead
+    const f = dlg.querySelector(touchScreen() ? ".wb button" : ".wb input, .wb select, .wb textarea, .wb button");
     (f || dlg.querySelector("button")).focus();
   }
+}
+// On a phone or tablet the keyboard only opens when you tap a box yourself: the app never focuses a text box there.
+// (Focus that was already in a box before a redraw is put back, since you tapped that box.)
+const touchScreen = () => matchMedia("(pointer: coarse)").matches;
+const typingBox = (el) => !!el && el.matches("textarea, input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]):not([type=file])");
+function focusSoft(el) {
+  if (el && !(touchScreen() && typingBox(el))) el.focus();
 }
 
 // ---------- events
@@ -21029,13 +21295,24 @@ document.addEventListener(
   },
   true,
 );
+// A touch the browser takes over to scroll a panel ends in pointercancel, not pointerup. Both have to let go,
+// or redraws and table updates stay held back until the next tap.
+for (const type of ["pointerup", "pointercancel"])
+  document.addEventListener(
+    type,
+    () => {
+      pointerDown = false;
+      setTimeout(() => {
+        if (pendingRender) render();
+      }, 0);
+    },
+    true,
+  );
 document.addEventListener(
-  "pointerup",
+  "pointercancel",
   () => {
-    pointerDown = false;
-    setTimeout(() => {
-      if (pendingRender) render();
-    }, 0);
+    drag = mmDrag = null;
+    document.body.classList.remove("dragging");
   },
   true,
 );
@@ -21462,7 +21739,8 @@ document.addEventListener("keydown", (e) => {
   }
   if (isRoll && k.length === 1) e.preventDefault();
 });
-
+// ===== 11-input.js: MOUSE AND TOUCH. Dragging tokens and objects, resize bars, moving windows, the map creator, two-finger pinch on the map,
+// and wheel zoom. A touch the browser cancels (pointercancel) must end a drag the same way pointerup does.
 // ---------- mouse: map tokens, resize bars, and moving and sizing context windows
 let drag = null,
   downOnScrim = false;
@@ -21604,6 +21882,30 @@ document.addEventListener("pointermove", (ev) => {
     }
   }
 });
+// Double-tap empty ground on a touch screen: twice as close around that spot; at the closest zoom, the whole map again.
+// Only when nothing is being placed or thrown, so a tap there only ever cleared the selection before.
+let lastTap = null;
+function doubleTap(ev) {
+  const t = performance.now(),
+    l = lastTap;
+  lastTap = { t, x: ev.clientX, y: ev.clientY };
+  if (!l || t - l.t > 350 || Math.hypot(ev.clientX - l.x, ev.clientY - l.y) > 40) return false;
+  lastTap = null;
+  return true;
+}
+function tapZoom(svg, ev) {
+  const p = svgPoint(svg, ev),
+    v0 = mapView(),
+    k0 = ui.zoom ? ui.zoom.k : 1;
+  if (k0 * 2 > (v0.W / ZOOM_MIN_VIEW) * 0.99) setZoom(1);
+  else {
+    setZoom(k0 * 2, p.x, p.y);
+    const v1 = mapView(); // keep the tapped spot under the finger
+    ui.zoom.x = p.x + v1.w / 2 - ((p.x - v0.x) / v0.w) * v1.w;
+    ui.zoom.y = p.y + v1.h / 2 - ((p.y - v0.y) / v0.h) * v1.h;
+  }
+  render();
+}
 function keepDialog(w) {
   const r = w.getBoundingClientRect();
   ui.dlg[w.dataset.dlg] = { x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height) };
@@ -21640,6 +21942,7 @@ document.addEventListener("pointerup", (ev) => {
     return;
   }
   if (d.kind === "mapbg") {
+    if (!d.panned && !ui.throwing && !ui.place && ev.pointerType === "touch" && doubleTap(ev)) return tapZoom(d.svg, ev);
     if (d.panned || isSpec()) return;
     if (ui.throwing) {
       ui.throwing.at = inMap(svgPoint(d.svg, ev));
@@ -21831,6 +22134,79 @@ document.addEventListener("pointerup", () => {
   ui.focus = "#mmSvg";
   render();
 });
+// ---------- two fingers on the map: pinch to zoom, move both to slide (phones and tablets, spectators too)
+// The page's own pinch is off over the map (touch-action: none in the CSS), so the map gets the fingers.
+// While the fingers move only the view box changes, which keeps it smooth; the map is redrawn once when they lift.
+const fingers = new Map();
+let pinch = null;
+function fingerPair() {
+  const [a, b] = [...fingers.values()];
+  return { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+}
+document.addEventListener(
+  "pointerdown",
+  (ev) => {
+    if (ev.pointerType !== "touch" || !ev.target.closest || !ev.target.closest("#map")) return;
+    if (ev.isPrimary) fingers.clear(); // a new gesture: forget any finger whose lift never arrived
+    fingers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+    if (fingers.size !== 2) return;
+    ev.stopPropagation(); // the second finger is not a tap or a drag of its own
+    drag = null; // nor is the first one any more
+    const svg = document.getElementById("map"),
+      r = svg.getBoundingClientRect(),
+      v = mapView(),
+      f = fingerPair();
+    // the map point between the fingers stays between them; upp is meters per screen pixel when the pinch began
+    pinch = {
+      f,
+      k: ui.zoom ? ui.zoom.k : 1,
+      at: svgPoint(svg, { clientX: f.x, clientY: f.y }),
+      upp: Math.max(v.w / r.width, v.h / r.height),
+      w: v.w,
+      cx: r.left + r.width / 2,
+      cy: r.top + r.height / 2,
+    };
+  },
+  true,
+);
+document.addEventListener(
+  "pointermove",
+  (ev) => {
+    if (!fingers.has(ev.pointerId)) return;
+    fingers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+    if (!pinch || fingers.size < 2) return;
+    const f = fingerPair();
+    setZoom(pinch.k * (f.d / pinch.f.d));
+    if (ui.zoom) {
+      const upp = pinch.upp * (mapView().w / pinch.w);
+      ui.zoom.x = pinch.at.x - (f.x - pinch.cx) * upp;
+      ui.zoom.y = pinch.at.y - (f.y - pinch.cy) * upp;
+    }
+    const v = mapView(),
+      svg = document.getElementById("map");
+    if (svg) svg.setAttribute("viewBox", `${v.x} ${v.y} ${v.w} ${v.h}`);
+  },
+  true,
+);
+for (const type of ["pointerup", "pointercancel"])
+  document.addEventListener(
+    type,
+    (ev) => {
+      if (!fingers.delete(ev.pointerId) || !pinch || fingers.size >= 2) return;
+      pinch = drag = null; // the finger still down doesn't start a drag
+      render();
+    },
+    true,
+  );
+// Safari (iPad, iPhone) also sends its own pinch as gesture events; over the map they would zoom the whole page instead.
+for (const type of ["gesturestart", "gesturechange"])
+  document.addEventListener(
+    type,
+    (ev) => {
+      if (ev.target.closest && ev.target.closest("#map")) ev.preventDefault();
+    },
+    { passive: false },
+  );
 // Scroll over the map to zoom in on what's under the pointer.
 let wheelQueued = false;
 document.addEventListener(
@@ -21847,7 +22223,9 @@ document.addEventListener(
     const p = svgPoint(svg, ev);
     const v0 = mapView();
     const k0 = ui.zoom ? ui.zoom.k : 1;
-    setZoom(k0 * (ev.deltaY < 0 ? 1.2 : 1 / 1.2), p.x, p.y);
+    // a mouse wheel notch (about 100) zooms 1.2 times; a trackpad pinch sends many small steps, so it zooms smoothly
+    const dy = clamp((ev.deltaY || 0) * (ev.deltaMode === 1 ? 33 : 1), -100, 100);
+    setZoom(k0 * Math.exp(-dy * 0.0018), p.x, p.y);
     if (ui.zoom) {
       const v1 = mapView();
       ui.zoom.x = p.x + v1.w / 2 - ((p.x - v0.x) / v0.w) * v1.w;
@@ -21870,7 +22248,8 @@ document.addEventListener("contextmenu", (ev) => {
     ACT.objDel(g.dataset.obj);
   }
 });
-
+// ===== 12-boot.js: START-UP AND THE SHARED TABLE. Fills the lists, loads the save and draws the first screen; then Open session
+// (RELAY, the Cloudflare relay address) and the same-Wi-Fi table server.
 // ---------- boot
 function fillLists() {
   const dl = (id, arr) => `<datalist id="${id}">${arr.map((x) => `<option value="${h(x)}"></option>`).join("")}</datalist>`;
@@ -22021,6 +22400,7 @@ const tableFlush = () =>
     if (table.pending && !tableBusy()) tableTake(table.pending);
   }, 0);
 document.addEventListener("pointerup", tableFlush, true);
+document.addEventListener("pointercancel", tableFlush, true);
 document.addEventListener("focusout", tableFlush, true);
 async function tableJoin() {
   const q = new URLSearchParams(location.search);

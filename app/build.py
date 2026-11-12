@@ -300,12 +300,14 @@ def bible_index():
 
 # Inline everything into one file
 src = lambda f: open(os.path.join(HERE, "src", f), encoding="utf8").read()
+# The UI is split by topic into src/ui/NN-name.js; they run as one script, joined in file-name order.
+ui_src = lambda: "".join(src(os.path.join("ui", f)) for f in sorted(os.listdir(os.path.join(HERE, "src", "ui"))) if f.endswith(".js"))
 b64 = lambda p: base64.b64encode(open(p, "rb").read()).decode("ascii") if os.path.exists(p) else ""
 data["report"] = "\n".join(rep)
 if os.path.exists(os.path.join(HERE, "src", "shell.html")):
     blob = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/").replace("<!--", "<\\u0021--")
     html = src("shell.html").replace("/*STYLE*/", src("style.css")).replace("/*FONT*/", b64(os.path.join(HERE, "src", "fonts", "vt323.woff2"))).replace("/*FONT2*/", b64(os.path.join(HERE, "src", "fonts", "sharetech.woff2")))
-    html = html.replace("/*RULES*/", src("combat_text.js") + "\n" + src("rules.js")).replace("/*ENGINE*/", src("engine.js")).replace("/*UI*/", src("icons.js") + "\n" + src("ui.js"))
+    html = html.replace("/*RULES*/", src("combat_text.js") + "\n" + src("rules.js")).replace("/*ENGINE*/", src("engine.js")).replace("/*UI*/", src("icons.js") + "\n" + ui_src())
     html = html.replace("/*DATA*/", blob)
     html = html.replace('"/*BIBLETXT*/"', json.dumps(bible_index()))  # the bible's text, for Search
     hosted = html.replace("/*WIKI*/", "")  # the hosted page opens the PDF that sits beside it, so it doesn't carry a copy

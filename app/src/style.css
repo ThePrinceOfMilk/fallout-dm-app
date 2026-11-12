@@ -2562,6 +2562,9 @@ label.btn {
   flex-direction: column;
   min-width: 0;
 }
+.turnwho {
+  overflow: hidden; /* in a narrow action window the name is cut short instead of running into the AP number */
+}
 .turnlabel {
   font-size: 11px;
   letter-spacing: 0.12em;
@@ -4775,6 +4778,15 @@ html.lt1000 .win > .wt {
   gap: 6px;
   margin: 8px 0 6px;
 }
+/* beside the body figure on an upright tablet the target column is narrow: two tiles a row keep the numbers readable */
+.atkinfo {
+  container-type: inline-size;
+}
+@container (max-width: 320px) {
+  .ttiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 .ttile {
   display: flex;
   flex-direction: column;
@@ -4784,6 +4796,7 @@ html.lt1000 .win > .wt {
   background: color-mix(in srgb, var(--win3) 55%, transparent);
   line-height: 1.05;
   min-width: 0;
+  container-type: inline-size; /* the big number shrinks to its tile (cqi) instead of being cut off on a tablet */
 }
 .ttile .tl {
   font-size: calc(var(--fs-s) * 0.9);
@@ -4795,6 +4808,7 @@ html.lt1000 .win > .wt {
   font-weight: normal;
   font-family: var(--head);
   font-size: 26px;
+  font-size: min(26px, 26cqi);
   color: var(--bright);
   white-space: nowrap;
   overflow: hidden;
@@ -4806,15 +4820,18 @@ html.lt1000 .win > .wt {
 }
 .ttile.hitt b {
   font-size: 34px;
+  font-size: min(34px, 32cqi);
 }
 .ttile.hitt.zero b {
   color: var(--bad);
 }
 .ttile.costbig b {
   font-size: 26px !important;
+  font-size: min(26px, 26cqi) !important;
 }
 .ttile.covflag b {
   font-size: 22px !important;
+  font-size: min(22px, 22cqi) !important;
 }
 .ttile.rng b {
   display: flex;
@@ -6019,13 +6036,47 @@ table.t th {
     padding: 4px 5px;
   }
   .ttile b {
-    font-size: 20px;
+    font-size: 22px;
+    font-size: min(22px, 26cqi);
   }
 }
-@media (max-width: 1000px) {
-  /* the window title already says whose turn it is; this copy collided with the AP number */
+@media (max-width: 1000px), (pointer: coarse) {
+  /* the window title already says whose turn it is; this copy collided with the AP number (also on a sideways tablet) */
   .turnhead .turnwho {
     display: none;
+  }
+}
+/* the implant odds take a whole line on a phone, and Extra slots goes under them */
+.impodds {
+  flex-wrap: wrap;
+}
+.impodds > .s:first-child {
+  flex: 1 1 260px;
+}
+/* phones: the Doctor button already shows the price, so the Caps column goes and the buttons fit */
+@media (max-width: 599px) {
+  .imptab th:nth-child(3),
+  .imptab td:nth-child(3) {
+    display: none;
+  }
+}
+/* touch screens of any size fold the dev tables behind the Dev button, as phones already did */
+@media (pointer: coarse) {
+  .devlabel {
+    display: none;
+  }
+  .devtoggle {
+    display: inline-block;
+  }
+  .devbar .devlist:not(.open) {
+    display: none;
+  }
+  .devbar .devlist.open {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    width: 100%;
+    order: 9;
   }
 }
 /* tablets: the panels reach the bottom of the screen instead of stopping where their content ends */
@@ -6377,4 +6428,147 @@ table.t th {
 }
 .rewt td {
   padding: 2px 4px;
+}
+
+/* ----- the spectator's party board: big cards in the map's place until the fight's initiative screen */
+.spboardwin > .wb {
+  overflow: auto;
+  padding: 8px;
+}
+.spmembers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+}
+.spmember {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--win3) 55%, transparent);
+}
+.spmember.down {
+  border-color: var(--bad);
+}
+.spmhead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--head);
+  font-size: 22px;
+  color: var(--bright);
+}
+.spmhead svg {
+  width: 28px;
+  height: 28px;
+}
+.splv {
+  font-size: 18px;
+  color: var(--dim);
+}
+.spbig {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.spbig .lab {
+  color: var(--dim);
+}
+.spbig b {
+  font-family: var(--head);
+  font-size: 30px;
+  font-weight: normal;
+  color: var(--bright);
+}
+.spbig b small {
+  font-size: 18px;
+  color: var(--dim);
+}
+.spbig .bar {
+  height: 14px;
+}
+.spline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+.spline b,
+.spxp b {
+  color: var(--bright);
+  font-weight: normal;
+}
+.spxp .bar {
+  height: 6px;
+  margin-top: 3px;
+}
+.spspecial {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+.spsp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3px 0;
+  border: 1px solid var(--line);
+}
+.spsp small {
+  font-size: calc(var(--fs-s) * 0.9);
+  color: var(--dim);
+}
+.spsp b {
+  font-family: var(--head);
+  font-size: 22px;
+  font-weight: normal;
+  color: var(--bright);
+}
+.spsect .tl {
+  display: block;
+  font-size: calc(var(--fs-s) * 0.9);
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 3px;
+}
+.spitems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.spitem {
+  padding: 2px 7px;
+  border: 1px solid var(--line);
+  font-size: var(--fs-s);
+}
+.spitem.w {
+  border-color: var(--ink);
+  color: var(--bright);
+}
+.spitem small {
+  color: var(--dim);
+}
+.spmember .icons {
+  display: flex;
+  gap: 6px;
+}
+.spmember .icb {
+  flex: 1;
+  min-height: 40px;
+}
+/* the party board takes the whole screen; the combat log is on the LOG button until the fight */
+.spboard.noside {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "map rail";
+}
+@media (max-width: 599px) {
+  .spboard.noside {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto !important;
+    grid-template-areas: "map" "rail";
+  }
+  .spmembers {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

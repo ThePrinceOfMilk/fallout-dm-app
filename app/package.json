@@ -4,7 +4,11 @@
   "description": "Dev tooling for Fallout DM App.html. The app itself needs none of this.",
   "scripts": {
     "build": "python build.py",
-    "test": "node --test tests/engine.test.js",
+    "bible": "node dump_wiki.js && python make_wiki.py && python build.py",
+    "format": "npx prettier@3.3.3 --write src/ui/*.js src/engine.js src/rules.js src/combat_text.js src/icons.js src/style.css",
+    "test": "node tests/run_all.js",
+    "test:engine": "node --test tests/engine.test.js",
+    "test:online": "node tests/run_all.js --online",
     "e2e": "node tests/e2e.js"
   },
   "devDependencies": {
