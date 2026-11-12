@@ -165,7 +165,7 @@ test("XP and levels", () => {
 });
 
 test("status and item text become numbers", () => {
-  assert.deepStrictEqual(E.parseEffect("Zapped: -1 AP / -10% acc, x2 Damage to Robots/PA", false), { ap: -1, acc: -0.1 });
+  assert.deepStrictEqual(E.parseEffect("Zapped: -1 AP / -10% acc, x2 Damage to Robots/PA", false), { ap: -1, acc: -0.1, robotDmgTaken: 1 });
   assert.deepStrictEqual(E.parseEffect("1 AP to focus, otherwise -10% Hit Chance/flee", false), { acc: -0.1 });
   assert.deepStrictEqual(E.parseEffect("1+ STR, 1+ CHA, -1 INT"), { S: 1, C: 1, I: -1 });
   assert.deepStrictEqual(E.parseEffect("Chilled:+1 AP to movement, attack, and items", false), { apCost: 1 });
@@ -805,4 +805,34 @@ test("implants: their effects, slots, the odds, and the Failed Surgery status an
   const fs = E.derive({ ...pc, statuses: [{ n: "Failed Surgery", tier: 1 }] }, c2);
   assert.deepStrictEqual([fs.sp.S, fs.sp.E, fs.sp.A], [4, 4, 4], "Failed Surgery: -1 STR, END, AGI");
   assert.ok(data.items.find((i) => i.n === "Doctor's Bag").use.removes.includes("Failed Surgery"), "a Doctor's Bag cures it");
+});
+test("12 Nov fixes: vague statuses get numbers, traits match their words, Cyborg and IDF Soldier work", () => {
+  const c2 = { db, rules: DEFAULT_RULES, scene: {}, ov: {} };
+  const st = (n) => data.statuses.find((s) => s.n === n);
+  assert.deepStrictEqual(st("Blinded by Rage").fx[2], { dam: 0.3, acc: -0.3, turns: 3 });
+  assert.strictEqual(st("FEV Infection").fx[4].S, 3);
+  assert.ok(/Hunger/.test(st("Craving Satisfaction").tiers[0]));
+  assert.strictEqual(st("Spun Out").fx[1]["resist:Bleeding"], -2, "bleed resist is read");
+  const pc = (traits, extra = {}) => ({ id: "p", kind: "pc", level: 1, special: [5, 5, 5, 5, 5, 5, 5], skills: {}, gear: { acc: [] }, weapons: [], statuses: [], effects: [], inv: [], ov: {}, traits, perks: [], ...extra });
+  const code = (n) => data.traits.find((t) => t.n === n || t.evo === n || t.rep === n).code;
+  const base = E.derive(pc([]), c2);
+  const honest = E.derive(pc([code("Honest to a Fault")]), c2);
+  assert.strictEqual(honest.skills.SNK, base.skills.SNK, "no Sneak");
+  assert.ok(honest.skills.SPE > base.skills.SPE, "Speech instead");
+  const bliss = E.derive(pc([code("Blissful Ignorance")], { evolved: { [code("Blissful Ignorance")]: "E" } }), c2);
+  assert.ok((bliss.m.enemyAcc || 0) <= -0.15 + 1e-9, "enemies are worse at hitting, not better: " + bliss.m.enemyAcc);
+  const fd = code("Fear of Death");
+  const full = E.derive(pc([fd]), c2);
+  assert.ok(full.skills.MED - base.skills.MED >= 15, "+15 Medicine (INT +2 adds a little more)");
+  // Cyborg halves the implant failure chance
+  const syn = code("Cyborg");
+  const cy = E.derive(pc([syn], { evolved: { [syn]: "R" } }), c2);
+  const plain = E.derive(pc([syn]), c2);
+  const fail0 = 1 - E.implantOdds(pc([syn]), plain, DEFAULT_RULES, false);
+  const fail1 = 1 - E.implantOdds(pc([syn], { evolved: { [syn]: "R" } }), cy, DEFAULT_RULES, false);
+  assert.ok(Math.abs(fail1 - fail0 / 2) < 0.011, `${fail0} -> ${fail1}`);
+  // Electrocuted: power armor takes x2
+  const pa = data.armor.find((a) => /power/i.test(`${a.type || ""} ${a.n}`));
+  const z = E.derive(pc([], { gear: { armor: pa.n, acc: [] }, statuses: [{ n: "Electrocuted", tier: 1 }] }), c2);
+  assert.strictEqual(z.m.dmgTaken, 1);
 });

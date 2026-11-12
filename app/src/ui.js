@@ -811,6 +811,9 @@ function addStatus(e, name, tier0 = 1, turns = null) {
     cur.tier = tier;
     cur.turns = t;
   } else e.statuses.push({ n: canon, tier, turns: t });
+  const on = ((S.rules.statusTiers || {})[canon] || [])[tier - 1];
+  if (on && on.heal) e.hp = Math.min(der(e).hp, (e.hp || 0) + on.heal);
+  if (on && on.removes) e.statuses = e.statuses.filter((s) => !on.removes.includes(s.n));
 }
 function revive(e, how) {
   e.dbno = false;
@@ -3366,6 +3369,14 @@ function mapLegend() {
     <b>Tokens</b><span class="lg"><svg viewBox="0 0 20 14"><circle class="lgb pc" cx="10" cy="7" r="5"/></svg>Party</span><span class="lg"><svg viewBox="0 0 20 14"><circle class="lgb ally" cx="10" cy="7" r="5"/></svg>Ally</span><span class="lg"><svg viewBox="0 0 20 14"><rect class="lgb npc" x="6" y="3" width="8" height="8" transform="rotate(45 10 7)"/></svg>Enemy</span>
     <b>Accuracy ring</b><span class="lg ringkey">${ring}</span><span class="lg">low to high · clear = no shot</span></div>`;
 }
+// How a queued move happens: the meters, the pace, and what slows it
+function moveHow(e, m) {
+  const d = Math.round(dist(posOf(m.id), m) * 10) / 10;
+  const mult = moveMult(e),
+    add = der(e).m.moveAdd || 0;
+  const slow = [mult > 1 ? `slowed x${fmt(Math.round(mult * 100) / 100)}` : "", add ? `+${fmt(add)} AP per move` : ""].filter(Boolean).join(", ");
+  return { d, text: `walks ${fmt(d)} m at ${fmt(E.fix(speedOf(e)))} m per AP (AGI ${der(e).sp.A})${slow ? `, ${slow}` : ""}` };
+}
 function mapExtras() {
   if (ui.throwing) return throwBar();
   if (ui.keyMove && ent(ui.keyMove.id)) {
@@ -3380,7 +3391,8 @@ function mapExtras() {
     const left = (pm.ap || 0) - m.cost;
     const tgt = ui.atk && ui.atk.tgt && ui.atk.att === m.id && ent(ui.atk.tgt);
     const newR = tgt ? bandFor(dist(m, posOf(tgt.id))) : null;
-    return `<div class="moveconfirm"><span class="bright">Move ${h(pm.name)}?</span><span><b>${fmt(m.cost)}</b> AP</span><span><b>${fmt(left)}</b> left</span>${tgt ? `<span>${h(tgt.name)}: <b>R${rangeOf(m.id, tgt.id)} to R${newR}</b></span>` : ""}<span class="spacer"></span><button class="btn primary tiny" data-primary="1" data-a="moveConfirm" data-v="">${kbd("Enter")}Confirm</button><button class="btn tiny" data-a="moveCancel" data-v="">${kbd("Esc")}Cancel</button></div>`;
+    const how = moveHow(pm, m);
+    return `<div class="moveconfirm"><span class="bright">Move ${h(pm.name)}?</span><span><b>${fmt(how.d)}</b> m</span><span><b>${fmt(m.cost)}</b> AP</span><span class="s dim">${h(how.text)}</span><span><b>${fmt(left)}</b> left</span>${tgt ? `<span>${h(tgt.name)}: <b>R${rangeOf(m.id, tgt.id)} to R${newR}</b></span>` : ""}<span class="spacer"></span><button class="btn primary tiny" data-primary="1" data-a="moveConfirm" data-v="">${kbd("Enter")}Confirm</button><button class="btn tiny" data-a="moveCancel" data-v="">${kbd("Esc")}Cancel</button></div>`;
   }
   const sel = ui.mapSel && S.scene.objects.find((o) => o.id === ui.mapSel);
   return `${
@@ -4262,7 +4274,8 @@ function mapSvg() {
   if (ui.pendingMove && ent(ui.pendingMove.id)) {
     const m = ui.pendingMove,
       a = posOf(m.id);
-    extra += `<line class="movepath" x1="${a.x}" y1="${a.y}" x2="${m.x}" y2="${m.y}"/><g class="ghost" transform="translate(${m.x} ${m.y}) scale(${k2})"><circle cy="-.42" r=".27"/><path d="M-.46 .4 A.46 .62 0 0 1 .46 .4 Z"/><text style="font-size:${labU * 1.2}px" y="-.85">${fmt(m.cost)} AP</text></g>`;
+    const len = Math.round(dist(a, m) * 10) / 10;
+    extra += `<line class="movepath" x1="${a.x}" y1="${a.y}" x2="${m.x}" y2="${m.y}"/><text class="movelen" style="font-size:${labU * 1.1}px" x="${(a.x + m.x) / 2}" y="${(a.y + m.y) / 2}" dy="-.3">${fmt(len)} m</text><g class="ghost" transform="translate(${m.x} ${m.y}) scale(${k2})"><circle cy="-.42" r=".27"/><path d="M-.46 .4 A.46 .62 0 0 1 .46 .4 Z"/><text style="font-size:${labU * 1.2}px" y="-.85">${fmt(m.cost)} AP</text></g>`;
   }
   if (k && fightPhase() && actorId() && !isSpec()) {
     const a = posOf(actorId());
@@ -7378,7 +7391,7 @@ const ACT = {
       e.ap = Math.max(0, (e.ap || 0) - m.cost);
       c.moved = true;
       if (k.phase === "stealth") k.stealthDue = e.id;
-      log("status", `${e.name} moves ${fmt(m.cost)} AP. ${e.ap} left.`);
+      log("status", `${e.name} moves ${fmt(m.cost)} AP: ${moveHow(e, m).text}. ${e.ap} left.`);
       touchObjects(e.id);
       ui.focus = "#roll";
     });

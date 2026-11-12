@@ -1262,6 +1262,109 @@
    "moveMaxM": 2
   }
  },
+ "statusTiers": {
+  "Blinded by Rage": [
+   {
+    "text": "Lose control: +10% Damage, -10% Hit Chance (1 turn)",
+    "fx": {
+     "dam": 0.1,
+     "acc": -0.1,
+     "turns": 1
+    }
+   },
+   {
+    "text": "Lose control: +20% Damage, -20% Hit Chance (2 turns)",
+    "fx": {
+     "dam": 0.2,
+     "acc": -0.2,
+     "turns": 2
+    }
+   },
+   {
+    "text": "Lose control: +30% Damage, -30% Hit Chance (3 turns)",
+    "fx": {
+     "dam": 0.3,
+     "acc": -0.3,
+     "turns": 3
+    }
+   },
+   {
+    "text": "Lose control: +40% Damage, -40% Hit Chance (4 turns)",
+    "fx": {
+     "dam": 0.4,
+     "acc": -0.4,
+     "turns": 4
+    }
+   },
+   {
+    "text": "Lose control: +50% Damage, -50% Hit Chance (5 turns)",
+    "fx": {
+     "dam": 0.5,
+     "acc": -0.5,
+     "turns": 5
+    }
+   }
+  ],
+  "FEV Infection": [
+   {
+    "text": "Exposure: +1 STR, -1 INT",
+    "fx": {
+     "S": 1,
+     "I": -1
+    }
+   },
+   {
+    "text": "Exposure: +1 STR, -1 INT, -1 CHA",
+    "fx": {
+     "S": 1,
+     "I": -1,
+     "C": -1
+    }
+   },
+   {
+    "text": "Infection: +2 STR, -2 INT, -1 CHA, +10 Max HP",
+    "fx": {
+     "S": 2,
+     "I": -2,
+     "C": -1,
+     "hp": 10
+    }
+   },
+   {
+    "text": "Infection: +2 STR, -2 INT, -2 CHA, +15 Max HP",
+    "fx": {
+     "S": 2,
+     "I": -2,
+     "C": -2,
+     "hp": 15
+    }
+   },
+   {
+    "text": "Transformation: +3 STR, -3 INT, -3 CHA, +20 Max HP. The DM gives the Super Mutant trait.",
+    "fx": {
+     "S": 3,
+     "I": -3,
+     "C": -3,
+     "hp": 20
+    }
+   }
+  ],
+  "Craving Satisfaction": [
+   {
+    "text": "Heals 10 HP and removes Hunger and Flesh Craving; +1 END, +5% Damage for 3 turns",
+    "fx": {
+     "E": 1,
+     "dam": 0.05,
+     "turns": 3
+    },
+    "heal": 10,
+    "removes": [
+     "Hunger",
+     "Flesh Craving"
+    ]
+   }
+  ]
+ },
  "traitRules": {
   "Loyal Party Member": [
    {
@@ -1344,6 +1447,21 @@
     "when": {
      "afterFirst": true
     }
+   },
+   {
+    "fx": {
+     "SNK": 5,
+     "enemyAcc": -0.05,
+     "pri": -100
+    }
+   },
+   {
+    "fx": {
+     "ap": -4
+    },
+    "when": {
+     "firstTurn": true
+    }
    }
   ],
   "Fear of Death": [
@@ -1351,10 +1469,61 @@
     "fx": {
      "C": 2,
      "I": 2,
+     "MED": 15
+    }
+   },
+   {
+    "fx": {
      "acc": 0.2
     },
     "when": {
-     "hpAbove": 0.5
+     "hpAbove": 0.9
+    }
+   }
+  ],
+  "Blissful Ignorance": [
+   {
+    "fx": {
+     "enemyAcc": -0.15
+    }
+   }
+  ],
+  "Honest to a Fault": [
+   {
+    "fx": {
+     "SNK": 0,
+     "SPE": 10
+    }
+   }
+  ],
+  "Coward": [
+   {
+    "fx": {
+     "S": -5,
+     "P": -5,
+     "E": -5,
+     "C": -5,
+     "I": -5,
+     "A": -5,
+     "L": -5
+    }
+   }
+  ],
+  "Cyborg": [
+   {
+    "fx": {
+     "implantFail": -0.5
+    }
+   }
+  ],
+  "IDF Soldier": [
+   {
+    "fx": {
+     "dam": 0.1,
+     "dt": 5
+    },
+    "when": {
+     "armor": "Riot"
     }
    }
   ],

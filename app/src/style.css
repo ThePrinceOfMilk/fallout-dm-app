@@ -2715,6 +2715,16 @@ label.btn {
   text-anchor: middle;
   text-shadow: none;
 }
+/* the queued move's length, on its dashed line */
+:is(#map, #mmSvg) .movelen {
+  fill: #ffe14d;
+  stroke: #000;
+  stroke-width: 0.12px;
+  paint-order: stroke;
+  text-anchor: middle;
+  font-weight: 700;
+  pointer-events: none;
+}
 
 /* map: zoom controls, real-size objects */
 .mapwrap {

@@ -1272,6 +1272,21 @@
     "when": {
      "afterFirst": true
     }
+   },
+   {
+    "fx": {
+     "SNK": 5,
+     "enemyAcc": -0.05,
+     "pri": -100
+    }
+   },
+   {
+    "fx": {
+     "ap": -4
+    },
+    "when": {
+     "firstTurn": true
+    }
    }
   ]
  },
@@ -1323,10 +1338,15 @@
     "fx": {
      "C": 2,
      "I": 2,
+     "MED": 15
+    }
+   },
+   {
+    "fx": {
      "acc": 0.2
     },
     "when": {
-     "hpAbove": 0.5
+     "hpAbove": 0.9
     }
    }
   ]

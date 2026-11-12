@@ -130,6 +130,8 @@ const E = (() => {
     // "1 PRI" is initiative. "ignore Tier 3 adverse effects" switches off harmful statuses up to that tier.
     for (const [, n] of t.matchAll(/(\d+) PRI\b/g)) add("pri", Number(n));
     for (const [, n] of t.matchAll(/([+-]?\d+) implant slots?/gi)) add("implantSlots", Number(n)); // perks, traits and events can add slots
+    for (const [, n] of t.matchAll(/-(\d+) bleed resist/gi)) add("resist:Bleeding", -Number(n)); // Spun Out: bleeding lands a tier higher
+    for (const [, x] of t.matchAll(/x(\d+) Damage to Robots/gi)) add("robotDmgTaken", Number(x) - 1); // Electrocuted
     const ig = t.match(/ignore Tier (\d)/i);
     if (ig) m.ignoreTier = Number(ig[1]);
     const healUp = t.match(/Healing \+(\d+)%/i);
@@ -214,8 +216,13 @@ const E = (() => {
         add(t.n);
         for (const x of t.rows || []) rows.push({ n: t.n, cat: "Trait", mods: x.fx, when: x.when });
         const st = (e.evolved || {})[code];
-        if (st === "E" && t.evo) add(t.evo);
-        if (st === "R" && t.rep) add(t.rep);
+        // an evolved or reputation form with no workbook row takes its numbers from the rule table
+        const addForm = (n) => {
+          if (db.sc.has(low(n))) return add(n);
+          for (const x of (ctx.rules.traitRules || {})[n] || []) rows.push({ n, cat: "Trait Evolution", mods: x.fx, when: x.when });
+        };
+        if (st === "E" && t.evo) addForm(t.evo);
+        if (st === "R" && t.rep) addForm(t.rep);
       }
       for (const v of e.variants || []) add(v);
       for (const p of e.perks || []) {
@@ -344,6 +351,12 @@ const E = (() => {
     }
     for (const fx of e.effects || []) bump(fx.mods || {});
     for (const im of implantsOf(e, r)) bump(im.fx);
+    // Electrocuted: robots and power armor take far more damage
+    if (m.robotDmgTaken) {
+      const arm = get(ctx, (e.gear || {}).armor);
+      if ((e.kind !== "pc" && enemyType(e, r) === "robot") || (arm && /power/i.test(`${arm.o.type || ""} ${arm.o.n}`)))
+        m.dmgTaken = fix((m.dmgTaken || 0) + m.robotDmgTaken);
+    }
     const ov = e.ov || {};
     const sp = {};
     SPECIAL.forEach((k, i) => {
@@ -439,7 +452,8 @@ const E = (() => {
     const k = self ? I.self : I.doctor;
     const med = (d.skills && d.skills.MED) || 0;
     if (self && med < k.minMed) return 0;
-    const p = k.base + k.end * (d.sp.E || 0) + k.lck * (d.sp.L || 0) + (self ? k.med * (med - k.minMed) : 0) - I.perImplant * (e.implants || []).length;
+    let p = k.base + k.end * (d.sp.E || 0) + k.lck * (d.sp.L || 0) + (self ? k.med * (med - k.minMed) : 0) - I.perImplant * (e.implants || []).length;
+    if (d.m.implantFail) p = 1 - (1 - p) * Math.max(0, 1 + d.m.implantFail); // Cyborg: half the failure chance
     return fix(Math.max(I.min, Math.min(I.max, p)));
   }
   function saveTarget(lck, survival, mod, revived, r) {
@@ -2772,6 +2786,12 @@ const E = (() => {
           return m;
         });
       s.fxFrom = src;
+      const st = (r.statusTiers || {})[s.n];
+      if (st) {
+        s.tiers = st.map((x) => x.text);
+        s.fx = st.map((x) => ({ ...x.fx }));
+        s.fxFrom = JSON.stringify(s.tiers);
+      }
       const tiers = (s.tiers || []).filter(Boolean);
       if (!tiers.length) skipped.push(["Status", s.n, "Blank in the workbook, so it has no numbers. It can still be applied and removed."]);
       else if (s.fx.every((f) => !worth(f))) skipped.push(["Status", s.n, `Text only, needs the DM: "${tiers[0].slice(0, 60)}"`]);

@@ -640,22 +640,27 @@
   "counters": "Downers (depressants)",
   "fx": [
    {
-    "E": -1
+    "E": -1,
+    "resist:Bleeding": -1
    },
    {
-    "E": -2
+    "E": -2,
+    "resist:Bleeding": -2
    },
    {
     "E": -3,
-    "heal": -0.25
+    "heal": -0.25,
+    "resist:Bleeding": -3
    },
    {
     "E": -4,
-    "heal": -0.5
+    "heal": -0.5,
+    "resist:Bleeding": -4
    },
    {
     "E": -5,
-    "heal": -0.75
+    "heal": -0.75,
+    "resist:Bleeding": -5
    }
   ],
   "fxFrom": "[\"Spun: -1 END, -1 bleed resist\",\"(NAME): -2 END, -2 bleed resist\",\"Wired: -3 END, -25% healing, -3 bleed resist\",\"Overstimulated: -4 END, -50% healing, -4 bleed resist\",\"Tweaking: -5 END, -75% healing, -5 bleed resist\"]"
@@ -841,31 +846,41 @@
   "src": "Item Eff",
   "desc": "Uncontrollable Anger",
   "tiers": [
-   "Player: Lose control, Mob: Target all (1 Turn)",
-   "Player: Lose control, Mob: Target all (2 Turns)",
-   "Player: Lose control, Mob: Target all (3 Turns)",
-   "Player: Lose control, Mob: Target all (4 Turns)",
-   "Player: Lose control, Mob: Target all (5 Turn)"
+   "Lose control: +10% Damage, -10% Hit Chance (1 turn)",
+   "Lose control: +20% Damage, -20% Hit Chance (2 turns)",
+   "Lose control: +30% Damage, -30% Hit Chance (3 turns)",
+   "Lose control: +40% Damage, -40% Hit Chance (4 turns)",
+   "Lose control: +50% Damage, -50% Hit Chance (5 turns)"
   ],
   "counters": "Depressants",
   "fx": [
    {
+    "dam": 0.1,
+    "acc": -0.1,
     "turns": 1
    },
    {
+    "dam": 0.2,
+    "acc": -0.2,
     "turns": 2
    },
    {
+    "dam": 0.3,
+    "acc": -0.3,
     "turns": 3
    },
    {
+    "dam": 0.4,
+    "acc": -0.4,
     "turns": 4
    },
    {
+    "dam": 0.5,
+    "acc": -0.5,
     "turns": 5
    }
   ],
-  "fxFrom": "[\"Player: Lose control, Mob: Target all (1 Turn)\",\"Player: Lose control, Mob: Target all (2 Turns)\",\"Player: Lose control, Mob: Target all (3 Turns)\",\"Player: Lose control, Mob: Target all (4 Turns)\",\"Player: Lose control, Mob: Target all (5 Turn)\"]"
+  "fxFrom": "[\"Lose control: +10% Damage, -10% Hit Chance (1 turn)\",\"Lose control: +20% Damage, -20% Hit Chance (2 turns)\",\"Lose control: +30% Damage, -30% Hit Chance (3 turns)\",\"Lose control: +40% Damage, -40% Hit Chance (4 turns)\",\"Lose control: +50% Damage, -50% Hit Chance (5 turns)\"]"
  },
  {
   "n": "Rage",
@@ -1140,23 +1155,28 @@
   "fx": [
    {
     "ap": -1,
-    "acc": -0.1
+    "acc": -0.1,
+    "robotDmgTaken": 1
    },
    {
     "ap": -2,
-    "acc": -0.2
+    "acc": -0.2,
+    "robotDmgTaken": 3
    },
    {
     "ap": -4,
-    "acc": -0.3
+    "acc": -0.3,
+    "robotDmgTaken": 5
    },
    {
     "ap": -6,
-    "acc": -0.4
+    "acc": -0.4,
+    "robotDmgTaken": 7
    },
    {
     "ap": -10,
-    "acc": -0.5
+    "acc": -0.5,
+    "robotDmgTaken": 9
    }
   ],
   "fxFrom": "[\"Zapped: -1 AP / -10% acc, x2 Damage to Robots/PA\",\"Shocked: -2 AP / -20% acc, x4 Damage to Robots/PA\",\"Jolted: -4 AP / -30% acc, x6 Damage to Robots/PA\",\"Overloaded: -6 AP / -40% acc, x8 Damage to Robots/PA\",\"Convulsing: -10 AP / -50% acc, x10 Damage to Robots/PA\"]"
@@ -1199,20 +1219,42 @@
   "tone": "Negative",
   "src": "Inflicted",
   "tiers": [
-   "Exposure:",
-   "",
-   "Infection:",
-   "",
-   "Transformation:"
+   "Exposure: +1 STR, -1 INT",
+   "Exposure: +1 STR, -1 INT, -1 CHA",
+   "Infection: +2 STR, -2 INT, -1 CHA, +10 Max HP",
+   "Infection: +2 STR, -2 INT, -2 CHA, +15 Max HP",
+   "Transformation: +3 STR, -3 INT, -3 CHA, +20 Max HP. The DM gives the Super Mutant trait."
   ],
   "fx": [
-   {},
-   {},
-   {},
-   {},
-   {}
+   {
+    "S": 1,
+    "I": -1
+   },
+   {
+    "S": 1,
+    "I": -1,
+    "C": -1
+   },
+   {
+    "S": 2,
+    "I": -2,
+    "C": -1,
+    "hp": 10
+   },
+   {
+    "S": 2,
+    "I": -2,
+    "C": -2,
+    "hp": 15
+   },
+   {
+    "S": 3,
+    "I": -3,
+    "C": -3,
+    "hp": 20
+   }
   ],
-  "fxFrom": "[\"Exposure:\",\"\",\"Infection:\",\"\",\"Transformation:\"]"
+  "fxFrom": "[\"Exposure: +1 STR, -1 INT\",\"Exposure: +1 STR, -1 INT, -1 CHA\",\"Infection: +2 STR, -2 INT, -1 CHA, +10 Max HP\",\"Infection: +2 STR, -2 INT, -2 CHA, +15 Max HP\",\"Transformation: +3 STR, -3 INT, -3 CHA, +20 Max HP. The DM gives the Super Mutant trait.\"]"
  },
  {
   "n": "Frozen",
@@ -1988,20 +2030,16 @@
   "src": "Trait",
   "desc": "trait",
   "tiers": [
-   "10 HP, , removes Hunger",
-   "",
-   "",
-   "",
-   ""
+   "Heals 10 HP and removes Hunger and Flesh Craving; +1 END, +5% Damage for 3 turns"
   ],
   "fx": [
-   {},
-   {},
-   {},
-   {},
-   {}
+   {
+    "E": 1,
+    "dam": 0.05,
+    "turns": 3
+   }
   ],
-  "fxFrom": "[\"10 HP, , removes Hunger\",\"\",\"\",\"\",\"\"]"
+  "fxFrom": "[\"Heals 10 HP and removes Hunger and Flesh Craving; +1 END, +5% Damage for 3 turns\"]"
  },
  {
   "n": "Gambler's High",

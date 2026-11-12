@@ -510,6 +510,21 @@ upd(8, D12, "Aiming costs no AP", "Was: a limb shot cost 1 more AP and a head sh
 upd(20, D12, "Low-tier animal bosses are easier to hurt", "New: creatures at tier 1-3 that are bosses lose 30% of their DT (rounded down).", bl(
     "Bosses are the named ones (an alpha, mother, bull, queen, king, leader, legendary...) and any creature the DM makes a boss. Robots don't count.",
     "Today that changes Coyote Den Mother (DT 5 to 3) and Coyote Pack Alpha (2 to 1); Bighorner Bull has no DT. Settings: the share and the highest tier."))
+upd(27, D12, "Vague statuses get numbers", "Was: Blinded by Rage, FEV Infection and Craving Satisfaction were words only. Now they have numbers.", bl(
+    "Blinded by Rage, tier 1-5: +10% Damage and -10% Hit Chance per tier, lasting as many turns as its tier. The DM still decides who the character attacks.",
+    "FEV Infection: Exposure (tiers 1-2) +1 STR, -1 INT (tier 2 also -1 CHA); Infection (3-4) +2 STR, -2 INT, -1/-2 CHA, +10/+15 Max HP; Transformation (5) +3 STR, -3 INT, -3 CHA, +20 Max HP, and the DM gives the Super Mutant trait.",
+    "Craving Satisfaction: heals 10 HP and removes Hunger and Flesh Craving when it lands, then +1 END and +5% Damage for 3 turns.",
+    "Spun Out's 'bleed resist' now counts: Bleeding lands that many tiers higher. Electrocuted's 'x2 Damage to Robots/PA' now counts on robots and anyone in power armor."))
+upd(24, D12, "Traits that didn't do what they said", "Was: some traits applied different numbers from their text. Now they match.", bl(
+    "Blissful Ignorance: enemies get -15% to hit you (it was +15%).",
+    "Honest to a Fault: +10 Speech (it gave +10 Sneak).",
+    "Coward: the -5 to every SPECIAL in combat now applies.",
+    "Fear of Death: +2 CHA, +2 INT and +15 Medicine always; the +20% hit chance only above 90% health (it was 50%, and Medicine was missing).",
+    "Lethargic: +5 Sneak, enemies -5% to hit you, always last in initiative, and -4 AP on the first round, as written.",
+    "Cyborg halves the chance an implant fails. IDF Soldier gets +10% Damage and +5 DT in riot gear.",
+    "Still DM-run: Redpilled's damage against the opposite sex (the app doesn't know anyone's sex), and the quest and story traits."))
+upd(12, D12, "The queued move shows its length", "New: the dashed line of a queued move shows its length in meters, and the Move bar says how the character moves.", bl(
+    "For example: '12.4 m, 3 AP, walks 12.4 m at 6 m per AP (AGI 5), slowed x1.25'. The log line says the same."))
 upd(39, D12, "Implants", "New: nine implants (the New Vegas set): one for each S.P.E.C.I.A.L. stat (+1, 4000 caps), Sub-Dermal Armor (+4 DT, 8000) and Monocyte Breeder (1 HP back each round of a fight, 12000).", bl(
     "Every character has 4 implant slots. Perks, traits and events can add more ('+1 implant slot'; the DM also has an Extra slots box). They're in Health, at the bottom.",
     "By a doctor: the chance is 60% + 4% per END + 2% per Luck. Paid only if it works.",

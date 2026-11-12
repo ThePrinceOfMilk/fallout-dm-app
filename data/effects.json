@@ -3140,7 +3140,14 @@
   "cat": "Trait",
   "mods": {
    "hp": 10,
-   "enemyAcc": -0.15
+   "enemyAcc": -0.15,
+   "S": -5,
+   "P": -5,
+   "E": -5,
+   "C": -5,
+   "I": -5,
+   "A": -5,
+   "L": -5
   },
   "noteFrom": "During combat",
   "parsed": true,
@@ -3324,10 +3331,15 @@
   "cat": "Trait",
   "mods": {
    "BAR": -10,
-   "SNK": 10
+   "SNK": 0,
+   "SPE": 10
   },
   "noteFrom": "",
-  "parsed": true
+  "parsed": true,
+  "sheetMods": {
+   "BAR": -10,
+   "SNK": 10
+  }
  },
  {
   "n": "Impatient",
@@ -4349,10 +4361,13 @@
   "n": "Blissful Ignorance",
   "cat": "Trait Evolution",
   "mods": {
-   "enemyAcc": 0.15
+   "enemyAcc": -0.15
   },
   "noteFrom": "",
-  "parsed": true
+  "parsed": true,
+  "sheetMods": {
+   "enemyAcc": 0.15
+  }
  },
  {
   "n": "Napoleon Complex (Party)",

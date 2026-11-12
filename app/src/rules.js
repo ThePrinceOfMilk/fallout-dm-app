@@ -313,6 +313,28 @@ const DEFAULT_RULES = {
   },
   // Effects on a status that its text doesn't spell out in numbers. Added to every tier.
   statusRules: { Blinded: { acc: -1, moveMaxM: 2 } },
+  // 12 Nov: statuses the workbook left vague: each tier's text and numbers. heal and removes happen when the status lands.
+  statusTiers: {
+    "Blinded by Rage": [1, 2, 3, 4, 5].map((t) => ({
+      text: `Lose control: +${t * 10}% Damage, -${t * 10}% Hit Chance (${t} turn${t > 1 ? "s" : ""})`,
+      fx: { dam: t / 10, acc: -t / 10, turns: t },
+    })),
+    "FEV Infection": [
+      { text: "Exposure: +1 STR, -1 INT", fx: { S: 1, I: -1 } },
+      { text: "Exposure: +1 STR, -1 INT, -1 CHA", fx: { S: 1, I: -1, C: -1 } },
+      { text: "Infection: +2 STR, -2 INT, -1 CHA, +10 Max HP", fx: { S: 2, I: -2, C: -1, hp: 10 } },
+      { text: "Infection: +2 STR, -2 INT, -2 CHA, +15 Max HP", fx: { S: 2, I: -2, C: -2, hp: 15 } },
+      { text: "Transformation: +3 STR, -3 INT, -3 CHA, +20 Max HP. The DM gives the Super Mutant trait.", fx: { S: 3, I: -3, C: -3, hp: 20 } },
+    ],
+    "Craving Satisfaction": [
+      {
+        text: "Heals 10 HP and removes Hunger and Flesh Craving; +1 END, +5% Damage for 3 turns",
+        fx: { E: 1, dam: 0.05, turns: 3 },
+        heal: 10,
+        removes: ["Hunger", "Flesh Craving"],
+      },
+    ],
+  },
   // Traits and evolutions the workbook only describes in words.
   traitRules: {
     "Loyal Party Member": [{ fx: { weaponSkill: 15 }, when: { nameRe: "Chinese|Russian|Soviet" } }],
@@ -323,8 +345,20 @@ const DEFAULT_RULES = {
     Vengeful: [{ fx: { vengeful: 1 } }],
     Peacock: [{ fx: { C: 2, pri: 100 } }],
     "Petulant Snob": [{ fx: { I: 3 } }],
-    Lethargic: [{ fx: { ap: 2, acc: 0.05 }, when: { afterFirst: true } }],
-    "Fear of Death": [{ fx: { C: 2, I: 2, acc: 0.2 }, when: { hpAbove: 0.5 } }],
+    Lethargic: [
+      { fx: { ap: 2, acc: 0.05 }, when: { afterFirst: true } },
+      { fx: { SNK: 5, enemyAcc: -0.05, pri: -100 } }, // always last in initiative
+      { fx: { ap: -4 }, when: { firstTurn: true } },
+    ],
+    // 12 Nov: as written: CHA, INT and Medicine always; the hit bonus only above 90% health
+    "Fear of Death": [{ fx: { C: 2, I: 2, MED: 15 } }, { fx: { acc: 0.2 }, when: { hpAbove: 0.9 } }],
+    // 12 Nov: the workbook rows had the sign flipped / the wrong skill / the drawback missing
+    "Blissful Ignorance": [{ fx: { enemyAcc: -0.15 } }],
+    "Honest to a Fault": [{ fx: { SNK: 0, SPE: 10 } }],
+    Coward: [{ fx: { S: -5, P: -5, E: -5, C: -5, I: -5, A: -5, L: -5 } }],
+    // 12 Nov: evolved and reputation forms the workbook only describes in words
+    Cyborg: [{ fx: { implantFail: -0.5 } }],
+    "IDF Soldier": [{ fx: { dam: 0.1, dt: 5 }, when: { armor: "Riot" } }],
     Ogrish: [{ fx: { setC: 1 } }],
     "New Gen Synth": [{ fx: { dmgTaken: 0.1 }, when: { attackerTabs: ["EW"] } }],
     "Old Gen Synth": [{ fx: { dmgTaken: 0.2 }, when: { attackerTabs: ["EW"] } }],
