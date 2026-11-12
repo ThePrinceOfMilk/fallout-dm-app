@@ -1942,18 +1942,18 @@
   },
   {
    "id": "messy",
-   "n": "Messy Success",
-   "short": "Messy",
+   "n": "Partial Progress",
+   "short": "Partial",
    "xp": 0.75,
-   "pass": true,
-   "desc": "Done, with mistakes and complications."
+   "pass": false,
+   "desc": "It fails, but you get somewhere: a clue, a little ground, a way to try again."
   },
   {
    "id": "close",
-   "n": "Close Call",
+   "n": "Near Miss",
    "xp": 0.9,
-   "pass": true,
-   "desc": "Almost clean: done, with one complication."
+   "pass": false,
+   "desc": "It fails by a hair, and you get a little out of it."
   },
   {
    "id": "success",

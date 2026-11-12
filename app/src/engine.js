@@ -825,7 +825,7 @@ const E = (() => {
     }
     return runs;
   }
-  // Chance in percent that a check counts as done (Messy Success and up).
+  // Chance in percent that a check counts as done (Success and up).
   const checkPassOdds = (needed, r) => checkTierRuns(needed, r).reduce((n, x) => n + (x.tier.pass ? x.to - x.from + 1 : 0), 0) * 5;
 
   // ---- XP

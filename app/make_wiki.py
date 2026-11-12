@@ -563,6 +563,10 @@ upd(7, D12, "Every roll has an outcome", "Was: a check passed or failed. Now: th
     "XP: the check's XP (difficulty x 0.25, plus the INT bonus) times the outcome: Total Failure x0.1, Disaster x0.25, Setback x0.5, Messy Success x0.75, Close Call x0.9, Success x1, Strong Success x1.25, Triumph x1.5, Perfect x2. A 10 XP check pays 1 on a Total Failure and 20 on a Perfect.",
     "The skill check shows each person's bands as a strip, marks the roll, and names the outcome. A revive works on Messy Success or better.",
     "To decide: whether Messy Success and Close Call should count as done (they do now) or fail with a consolation."))
+upd(7, D12, "Near misses are failures", "Was: Messy Success (8-9 with 11 needed) and Close Call (10) counted as done, so a check needing a natural 20 got done 35% of the time. Now: they are failures that still make a little progress, renamed Partial Progress and Near Miss, and a check gets done only at Success or better.", bl(
+    "Partial Progress: it fails, but you get somewhere (a clue, a little ground, a way to try again). Near Miss: it fails by a hair, and you get a little out of it. The DM says what the progress is.",
+    "Their XP is unchanged: x0.75 and x0.9 of the check's XP.",
+    "Done odds are the plain chance again: 50% when 11 is needed, 5% when only a 20 will do. A revive needs Success or better."))
 upd(25, D12, "Skill perks branch", "Was: every skill perk opened when the skill passed its rank. Now: each skill's perks form a tree. A Proficiency perk leads to its own Expertise perks, and those to their own Mastery perks, and a perk below the first rank needs the one it branches from.", bl(
     "The branches come from the workbook's layout: each row holds a Proficiency, an Expertise and a Mastery cell, and a blank cell means the one above. So Repair splits into Mechanic (Jumpsuit Johnny, Torbjorn, then their Mastery perks) and Technician (Weaponsmith and its Mastery perks).",
     "The skill tree is drawn as a real tree, with buttons along the top to show one skill at a time. Each perk shows its effect in short.",

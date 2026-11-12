@@ -12,7 +12,7 @@ function checkBody() {
       const need = E.checkNeeded(v, num(m.target, 0), S.rules);
       const r = m.res[e.id];
       const used = S.scene.checks[e.id] || 0;
-      return `<tr class="${e.dbno ? "faint" : ""}"><td class="${r ? "" : "bright"}">${h(e.name)}${!k && used >= S.rules.checksPerPlayer ? ` <span class="tag warn" title="Pre-combat checks used">${used}/${S.rules.checksPerPlayer}</span>` : ""}</td><td>${fmt(v)}</td><td class="faint" title="Chance it gets done (Messy Success or better)">${E.checkPassOdds(need, S.rules)}%</td><td style="width:74px" class="nowrap">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.roll}</span>` : numBox(`id="chk-${e.id}" maxlength="2" data-enter="chkRoll" data-id="${e.id}" placeholder="d20" aria-label="d20 for ${h(e.name)}"`, "", "cell")}${diceBtn(`chk-${e.id}`, "d20")}</td><td class="nowrap">${r ? `${tierWord(r)}${r.xp ? ` <span class="s dim" title="XP for this outcome">+${fmt(r.xp)}</span>` : ""}` : ""}</td></tr><tr class="tierrow"><td colspan="5">${tierStrip(need, r && r.roll)}</td></tr>`;
+      return `<tr class="${e.dbno ? "faint" : ""}"><td class="${r ? "" : "bright"}">${h(e.name)}${!k && used >= S.rules.checksPerPlayer ? ` <span class="tag warn" title="Pre-combat checks used">${used}/${S.rules.checksPerPlayer}</span>` : ""}</td><td>${fmt(v)}</td><td class="faint" title="Chance it gets done (Success or better)">${E.checkPassOdds(need, S.rules)}%</td><td style="width:74px" class="nowrap">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.roll}</span>` : numBox(`id="chk-${e.id}" maxlength="2" data-enter="chkRoll" data-id="${e.id}" placeholder="d20" aria-label="d20 for ${h(e.name)}"`, "", "cell")}${diceBtn(`chk-${e.id}`, "d20")}</td><td class="nowrap">${r ? `${tierWord(r)}${r.xp ? ` <span class="s dim" title="XP for this outcome">+${fmt(r.xp)}</span>` : ""}` : ""}</td></tr><tr class="tierrow"><td colspan="5">${tierStrip(need, r && r.roll)}</td></tr>`;
     })
     .join("");
   const any = Object.keys(m.res).length;
@@ -24,7 +24,7 @@ function checkBody() {
         `<button class="opt ${num(m.target) === x ? "on" : ""}" data-a="chkPreset" data-v="${x}" title="${h(n)}">${h(n[0] === "V" ? "VH" : n[0] === "E" && n[1] === "x" ? "X" : n[0])}${x}</button>`,
     )
     .join("")}</div>
-   <table class="t chktab"><tr><th>Who</th><th>Has</th><th title="Chance it gets done: Messy Success or better">Done</th><th>d20</th><th>Outcome</th></tr>${rows}</table>
+   <table class="t chktab"><tr><th>Who</th><th>Has</th><th title="Chance it gets done: Success or better">Done</th><th>d20</th><th>Outcome</th></tr>${rows}</table>
    <div class="tierkey s">${S.rules.checkTiers.map((t) => `<span class="ct ct-${t.id}" title="${h(t.n)}: ${h(t.desc)} XP x${t.xp}"><span class="kfull">${h(t.n)}</span><span class="kshort">${h(t.short || t.n)}</span></span>`).join("")}</div>
    ${any ? `<div class="row s dim" style="margin-top:2px">${btn("chkClear", "", "New check", "", "tiny")}<span class="spacer"></span>XP to passers ${numBox(`id="chkXp" style="width:36px" data-u="chk.xp" data-enter="chkXp"`, m.xp)}${btn("chkXp", "", "Add", "", "tiny")}</div>` : ""}`;
 }

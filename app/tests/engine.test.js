@@ -778,6 +778,10 @@ test("12 Nov: skill check outcome tiers scale with the roll needed, and XP goes 
     assert.strictEqual(rr[rr.length - 1].tier.id, "perfect");
     assert.strictEqual(rr.reduce((n, x) => n + x.to - x.from + 1, 0), 20, "every face has a tier");
   }
+  assert.strictEqual(E.checkPassOdds(11, r), 50, "an even check gets done half the time");
+  assert.strictEqual(E.checkPassOdds(20, r), 5, "a natural-20 check, 5%");
+  assert.strictEqual(E.checkTier(10, 11, r).pass, false, "a Near Miss is a failure");
+  assert.strictEqual(E.checkTier(8, 11, r).pass, false, "and so is Partial Progress");
   assert.strictEqual(E.checkTier(1, 11, r).xp * 10, 1, "a 10 XP check pays 1 XP on a Total Failure");
   assert.strictEqual(E.checkTier(20, 11, r).xp * 10, 20, "and 20 XP on a Perfect");
 });

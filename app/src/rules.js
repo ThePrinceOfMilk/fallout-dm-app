@@ -462,16 +462,24 @@ const DEFAULT_RULES = {
   // 9 Nov 2026 additions. Skill checks: a pass gives target x checkXpMul XP (INT bonus on top).
   checkXpMul: 0.25,
   // 12 Nov: every skill check roll lands on an outcome tier, scaled to the roll the check needs (N). The numbers between
-  // 1 and N fail or half-succeed: from the top, checkFailCut of them are a Close Call, then Messy Success, then Setback,
+  // 1 and N fail: from the top, checkFailCut of them are a Near Miss, then Partial Progress (both fail with a little
+  // progress), then Setback,
   // the rest Disaster. From N to 19, checkPassCut splits Success, Strong Success and Triumph. 1 and 20 stand alone.
-  // With N = 11: 1 Total Failure, 2-5 Disaster, 6-7 Setback, 8-9 Messy Success, 10 Close Call, 11-13 Success,
+  // With N = 11: 1 Total Failure, 2-5 Disaster, 6-7 Setback, 8-9 Partial Progress, 10 Near Miss, 11-13 Success,
   // 14-17 Strong Success, 18-19 Triumph, 20 Perfect. XP is the check's XP times the tier's xp.
   checkTiers: [
     { id: "total", n: "Total Failure", short: "Total Fail", xp: 0.1, pass: false, desc: "Everything goes wrong, and it costs you." },
     { id: "terrible", n: "Disaster", xp: 0.25, pass: false, desc: "It fails and makes things worse." },
     { id: "bad", n: "Setback", xp: 0.5, pass: false, desc: "It doesn't work, and there's a price." },
-    { id: "messy", n: "Messy Success", short: "Messy", xp: 0.75, pass: true, desc: "Done, with mistakes and complications." },
-    { id: "close", n: "Close Call", xp: 0.9, pass: true, desc: "Almost clean: done, with one complication." },
+    {
+      id: "messy",
+      n: "Partial Progress",
+      short: "Partial",
+      xp: 0.75,
+      pass: false,
+      desc: "It fails, but you get somewhere: a clue, a little ground, a way to try again.",
+    },
+    { id: "close", n: "Near Miss", xp: 0.9, pass: false, desc: "It fails by a hair, and you get a little out of it." },
     { id: "success", n: "Success", xp: 1, pass: true, desc: "Done without much trouble." },
     { id: "strong", n: "Strong Success", short: "Strong", xp: 1.25, pass: true, desc: "Done faster or better than expected." },
     { id: "triumph", n: "Triumph", xp: 1.5, pass: true, desc: "Done at no cost, and you find more than you looked for." },

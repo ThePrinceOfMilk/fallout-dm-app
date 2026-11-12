@@ -96,7 +96,7 @@ function fresh() {
     log: [],
     seq: 1,
     notesList: [],
-    rulesRev: 3,
+    rulesRev: 4,
     tables: {},
     tableRev: 0,
     vendor: { tier: 1, barter: 50, stock: null },
@@ -150,6 +150,11 @@ function normalize(p) {
     p.rules.checkPassCut = clone(DEFAULT_RULES.checkPassCut);
     p.rules.creatureIcons = clone(DEFAULT_RULES.creatureIcons); // the new creature and robot icons
     p.rulesRev = 3;
+  }
+  if (p.rulesRev < 4) {
+    // 12 Nov, late: Partial Progress and Near Miss (were Messy Success and Close Call) are failures with a little progress
+    p.rules.checkTiers = clone(DEFAULT_RULES.checkTiers);
+    p.rulesRev = 4;
   }
   p.vendor = p.vendor || { tier: 1, barter: 50, stock: null };
   for (const c of p.chars) c.inv = (c.inv || []).filter((l) => !/^\(no /i.test(l.n));
