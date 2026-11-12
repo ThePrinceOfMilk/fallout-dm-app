@@ -74,3 +74,4 @@ Hangover,P,Negative,Withdrawal,,"["""","""","""","""",""""]",,"[{},{},{},{},{}]"
 Fixer,S,Positive,Item Eff,From fixer,"["""","""","""","""",""""]",,"[{},{},{},{},{}]","["""","""","""","""",""""]",
 System Flushed,P,Negative,Item Eff,"From fixer, radaway, poison remedies","["""","""","""","""",""""]",,"[{},{},{},{},{}]","["""","""","""","""",""""]",
 Immunity,P,Positive,Inflicted,,"["""","""","""","""",""""]",,"[{},{},{},{},{}]","["""","""","""","""",""""]",
+Failed Surgery,P,Negative,Implant surgery,A botched implant. Lasts until a doctor fixes it or a Doctor's Bag is used on yourself.,"[""-1 STR, -1 END, -1 AGI""]",,"[{""S"":-1,""E"":-1,""A"":-1}]","[""-1 STR, -1 END, -1 AGI""]",

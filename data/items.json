@@ -3128,7 +3128,9 @@
    "reduces": {
     "Injured Limb (Leg/Arm)": 5
    },
-   "removes": [],
+   "removes": [
+    "Failed Surgery"
+   ],
    "fx": {},
    "after": {
     "n": "Fatigue",
@@ -5553,6 +5555,163 @@
    "fx": {},
    "after": null,
    "repairDiv": 20
+  }
+ },
+ {
+  "n": "Strength Implant",
+  "cat": "Implant",
+  "tier": "5",
+  "lb": 0.5,
+  "val": 4000,
+  "effect": "+1 Strength",
+  "useFrom": "+1 Strength",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Perception Implant",
+  "cat": "Implant",
+  "tier": "5",
+  "lb": 0.5,
+  "val": 4000,
+  "effect": "+1 Perception",
+  "useFrom": "+1 Perception",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Endurance Implant",
+  "cat": "Implant",
+  "tier": "5",
+  "lb": 0.5,
+  "val": 4000,
+  "effect": "+1 Endurance",
+  "useFrom": "+1 Endurance",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Charisma Implant",
+  "cat": "Implant",
+  "tier": "5",
+  "lb": 0.5,
+  "val": 4000,
+  "effect": "+1 Charisma",
+  "useFrom": "+1 Charisma",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Intelligence Implant",
+  "cat": "Implant",
+  "tier": "5",
+  "lb": 0.5,
+  "val": 4000,
+  "effect": "+1 Intelligence",
+  "useFrom": "+1 Intelligence",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Agility Implant",
+  "cat": "Implant",
+  "tier": "5",
+  "lb": 0.5,
+  "val": 4000,
+  "effect": "+1 Agility",
+  "useFrom": "+1 Agility",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
+  }
+ },
+ {
+  "n": "Luck Implant",
+  "cat": "Implant",
+  "tier": "5",
+  "lb": 0.5,
+  "val": 4000,
+  "effect": "+1 Luck",
+  "useFrom": "+1 Luck",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "L": 1
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Sub-Dermal Armor",
+  "cat": "Implant",
+  "tier": "5",
+  "lb": 0.5,
+  "val": 8000,
+  "effect": "+4 DT",
+  "useFrom": "+4 DT",
+  "use": {
+   "heal": null,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {
+    "dt": 4
+   },
+   "after": null
+  }
+ },
+ {
+  "n": "Monocyte Breeder",
+  "cat": "Implant",
+  "tier": "5",
+  "lb": 0.5,
+  "val": 12000,
+  "effect": "Heals 1 HP each round in a fight",
+  "useFrom": "Heals 1 HP each round in a fight",
+  "use": {
+   "heal": true,
+   "applies": [],
+   "reduces": {},
+   "removes": [],
+   "fx": {},
+   "after": null
   }
  }
 ]

@@ -2286,5 +2286,23 @@
    {}
   ],
   "fxFrom": "[\"\",\"\",\"\",\"\",\"\"]"
+ },
+ {
+  "n": "Failed Surgery",
+  "mp": "P",
+  "tone": "Negative",
+  "src": "Implant surgery",
+  "desc": "A botched implant. Lasts until a doctor fixes it or a Doctor's Bag is used on yourself.",
+  "tiers": [
+   "-1 STR, -1 END, -1 AGI"
+  ],
+  "fx": [
+   {
+    "S": -1,
+    "E": -1,
+    "A": -1
+   }
+  ],
+  "fxFrom": "[\"-1 STR, -1 END, -1 AGI\"]"
  }
 ]

@@ -785,3 +785,24 @@ test("worn armor gives 15% less DT, rounded down", () => {
   const pc = { id: "p", kind: "pc", level: 1, special: [5, 5, 5, 5, 5, 5, 5], skills: {}, gear: { armor: armor.n, acc: [] }, weapons: [], statuses: [], effects: [], inv: [], ov: {}, traits: [], perks: [] };
   assert.strictEqual(E.derive(pc, c2).dt, Math.floor(armor.dt * 0.85 + 1e-9));
 });
+test("implants: their effects, slots, the odds, and the Failed Surgery status and cure", () => {
+  const c2 = { db, rules: DEFAULT_RULES, scene: {}, ov: {} };
+  const pc = { id: "p", kind: "pc", level: 1, special: [5, 5, 5, 5, 5, 5, 5], skills: {}, gear: { acc: [] }, weapons: [], statuses: [], effects: [], inv: [], ov: {}, traits: [], perks: [] };
+  const d0 = E.derive(pc, c2);
+  const withI = { ...pc, implants: ["Strength Implant", "Sub-Dermal Armor"] };
+  const d1 = E.derive(withI, c2);
+  assert.strictEqual(d1.sp.S, d0.sp.S + 1, "+1 STR");
+  assert.strictEqual(d1.dt, d0.dt + 4, "+4 DT, not cut like worn armor");
+  assert.strictEqual(E.implantSlots(pc, d0, DEFAULT_RULES), 4);
+  assert.strictEqual(E.implantSlots({ ...pc, implantSlotsAdd: 1 }, d0, DEFAULT_RULES), 5, "events add slots");
+  // doctor: 60% + 5 END x 4% + 5 LCK x 2% = 90%; the second implant 85%
+  assert.strictEqual(E.implantOdds(pc, d0, DEFAULT_RULES, false), 0.9);
+  assert.strictEqual(E.implantOdds({ ...pc, implants: ["Luck Implant"] }, d0, DEFAULT_RULES, false), 0.85);
+  assert.strictEqual(E.implantOdds(pc, d0, DEFAULT_RULES, true), 0, "self-install needs Medicine 85");
+  const doc = { ...d0, skills: { ...d0.skills, MED: 95 } };
+  assert.strictEqual(E.implantOdds(pc, doc, DEFAULT_RULES, true), 0.8, "40% + 20% + 10% + 10 Medicine over 85");
+  assert.ok(data.items.some((i) => i.n === "Monocyte Breeder" && i.cat === "Implant"), "implants are items");
+  const fs = E.derive({ ...pc, statuses: [{ n: "Failed Surgery", tier: 1 }] }, c2);
+  assert.deepStrictEqual([fs.sp.S, fs.sp.E, fs.sp.A], [4, 4, 4], "Failed Surgery: -1 STR, END, AGI");
+  assert.ok(data.items.find((i) => i.n === "Doctor's Bag").use.removes.includes("Failed Surgery"), "a Doctor's Bag cures it");
+});

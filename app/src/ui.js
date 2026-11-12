@@ -835,7 +835,7 @@ function rankByName(list, q, nameOf = (x) => x.n) {
   return list.filter((x) => score(x) < 3).sort((a, b) => score(a) - score(b));
 }
 const CONSUMABLE_CATS = ["Healing", "Chem/Drug", "Alcohol", "Drink", "Food", "Tobacco", "Poison", "Resistance", "Counter"];
-const usable = (item) => item && (item.effect || item.ap != null || CONSUMABLE_CATS.includes(item.cat));
+const usable = (item) => item && item.cat !== "Implant" && (item.effect || item.ap != null || CONSUMABLE_CATS.includes(item.cat)); // implants go in through Health
 
 // ---------- combat flow
 const order = () => [...K().cbs].sort((a, b) => (b.init == null ? -99 : b.init) - (a.init == null ? -99 : a.init) || (b.base || 0) - (a.base || 0));
@@ -1174,6 +1174,11 @@ function tickRound() {
   for (const c of K().cbs) {
     if (!alive(c)) continue;
     const e = ent(c.id);
+    const ir = E.implantsOf(e, S.rules).reduce((t, im) => t + (im.fx.regen || 0), 0); // Monocyte Breeder
+    if (ir && e.hp < der(e).hp) {
+      e.hp = Math.min(der(e).hp, e.hp + ir);
+      log("status", `${e.name} heals ${ir} HP (implant).`);
+    }
     e.statuses = (e.statuses || []).filter((st) => {
       const i = E.statusInfo(ctx(), st);
       if (i.mods.dot) {
@@ -2885,7 +2890,44 @@ function healthBody() {
     ? `<div class="stsum">${sum.map(([n, v, bad]) => `<div class="${bad ? "neg" : "pos"}"><b>${h(v)}</b><span>${h(n)}</span></div>`).join("")}</div>`
     : `<div class="s dim">Nothing is changing their numbers right now.</div>`;
   return `<div class="hlayout"><div class="hfig">${bodyMap(c)}</div><div class="hright"><div class="geartop"><div class="bigdt"><b>${fmt(c.hp)}/${d.hp}</b><span>HEALTH</span></div><div class="grow">${hpBar(c.hp, d.hp)}<div class="s dim" style="margin-top:4px">AP ${fmt(c.ap)}/${d.ap} · DT ${fmt(d.dt)} · Save ${saveNeed(d.save)}+${c.dbno ? ' · <span class="bad">DOWN (DBNO)</span>' : ""}${c.timesRevived ? ` · Revived ${c.timesRevived}x` : ""}</div></div></div><h3>All statuses together</h3>${summary}</div></div>
-   <h3>Statuses <small class="dim">${rows.length}</small></h3>${table}<div class="line"><input class="grow" id="addSt-${c.id}" list="dl-status" placeholder="Add status: type, Enter" data-enter="addStatusFromInput" data-id="${c.id}"></div>`;
+   <h3>Statuses <small class="dim">${rows.length}</small></h3>${table}<div class="line"><input class="grow" id="addSt-${c.id}" list="dl-status" placeholder="Add status: type, Enter" data-enter="addStatusFromInput" data-id="${c.id}"></div>${c.kind === "pc" ? implantsBox(c, d) : ""}`;
+}
+// Implants, at the bottom of Health: slots, what's in, and the odds of each way to put one in.
+function implantsBox(c, d) {
+  const I = S.rules.implants;
+  if (!I) return "";
+  const have = c.implants || [];
+  const slots = E.implantSlots(c, d, S.rules);
+  const free = have.length < slots;
+  const busy = fightPhase();
+  const dm = !isSpec();
+  const pDoc = E.implantOdds(c, d, S.rules, false),
+    pSelf = E.implantOdds(c, d, S.rules, true);
+  const failed = (c.statuses || []).some((s) => s.n === I.failStatus);
+  const rows = I.list
+    .map((im, i) => {
+      const inn = have.some((n) => E.low(n) === E.low(im.n));
+      const carry = (c.inv || []).some((l) => E.low(l.n) === E.low(im.n) && l.q > 0);
+      const why = (ok, msg) => (ok ? "" : msg);
+      const docNo = why(free, "No free slot") || why(!busy, "Not during a fight") || why((c.caps || 0) >= im.cost, `Needs ${fmt(im.cost)} caps`);
+      const selfNo =
+        why(free, "No free slot") ||
+        why(!busy, "Not during a fight") ||
+        why(carry, "Carry the implant to put it in yourself") ||
+        why(pSelf > 0, `Needs Medicine ${I.self.minMed}`);
+      const acts = inn
+        ? `<span class="tag">Installed</span>${dm ? btn("implantOut", `${c.id}|${i}`, "Remove", "", "tiny", "Take it out (no refund)") : ""}`
+        : dm
+          ? `${btn("implantIn", `${c.id}|${i}|doc`, `Doctor ${fmt(im.cost)}c · ${fmt(E.pct(pDoc))}%`, "", `tiny${docNo ? " na" : ""}`, docNo || "A doctor puts it in. Paid only if it works.")}${btn("implantIn", `${c.id}|${i}|self`, `Self · ${fmt(E.pct(pSelf))}%`, "", `tiny${selfNo ? " na" : ""}`, selfNo || "Put it in yourself. The implant is used only if it works.")}`
+          : `<span class="s dim">${carry ? "Carried" : ""}</span>`;
+      return `<tr class="${inn ? "st-beneficial" : ""}"><td class="bright">${h(im.n)}</td><td class="dim">${h(im.text)}</td><td class="tn">${fmt(im.cost)}</td><td><div class="opts">${acts}</div></td></tr>`;
+    })
+    .join("");
+  const slotsCtl = dm ? `<span class="s dim">Extra slots</span>${bindNum(c.id, "implantSlotsAdd", c.implantSlotsAdd || 0)}` : "";
+  const fix = failed
+    ? `<div class="line"><span class="bad">${h(I.failStatus)}</span><span class="s dim">-1 STR, END, AGI until fixed: pay a doctor, or use a Doctor's Bag on yourself.</span>${dm ? btn("surgeryFix", c.id, `Doctor fixes it · ${fmt(I.doctorFix)}c`, "", `tiny${(c.caps || 0) < I.doctorFix ? " na" : ""}`) : ""}</div>`
+    : "";
+  return `<h3>Implants <small class="dim">${have.length}/${slots} slots</small></h3><div class="line"><span class="s dim">Chance now: by a doctor ${fmt(E.pct(pDoc))}% (END and Luck) · by yourself ${pSelf ? fmt(E.pct(pSelf)) + "%" : `needs Medicine ${I.self.minMed}`} (Medicine, END and Luck). Each implant already in makes the next ${fmt(E.pct(I.perImplant))}% harder.</span><span class="spacer"></span>${slotsCtl}</div>${fix}<table class="t sttab"><tr><th>Implant</th><th>Effect</th><th>Caps</th><th></th></tr>${rows}</table>`;
 }
 // ----- vendor
 // Barter sets the base. Perks with buy or sell variables move it from there.
@@ -7942,6 +7984,56 @@ const ACT = {
     act(`Status: ${n}`, () => {
       keepFull(e, () => addStatus(e, n, 1));
       log("status", `${e.name} gains ${n}.`);
+    });
+  },
+  implantIn(v) {
+    const [id, i, how] = splitV(v);
+    const e = ent(id),
+      I = S.rules.implants,
+      im = I.list[Number(i)];
+    const d = der(e),
+      self = how === "self";
+    const have = e.implants || [];
+    if (!im || have.length >= E.implantSlots(e, d, S.rules) || fightPhase()) return;
+    const line = self ? (e.inv || []).find((l) => E.low(l.n) === E.low(im.n) && l.q > 0) : null;
+    if (self ? !line : (e.caps || 0) < im.cost) return;
+    const p = E.implantOdds(e, d, S.rules, self);
+    if (!p) return;
+    act(`Implant: ${im.n}`, () => {
+      const roll = Math.floor(Math.random() * 100);
+      const need = Math.round(p * 100);
+      if (roll < need) {
+        e.implants = [...have, im.n];
+        if (self) {
+          line.q--;
+          if (line.q <= 0) e.inv = e.inv.filter((l) => l !== line);
+        } else e.caps -= im.cost;
+        log("check", `${e.name}: ${im.n} ${self ? "self-installed" : "put in by a doctor"} (rolled ${roll}, needed under ${need}). ${im.text}.`);
+      } else {
+        addStatus(e, I.failStatus, 1, null);
+        log(
+          "check",
+          `${e.name}: the ${im.n} surgery fails (rolled ${roll}, needed under ${need}). ${self ? "The implant is kept" : "The caps are refunded"}; ${I.failStatus} until fixed.`,
+        );
+      }
+    });
+  },
+  implantOut(v) {
+    const [id, i] = splitV(v);
+    const e = ent(id),
+      im = S.rules.implants.list[Number(i)];
+    act(`Remove implant: ${im.n}`, () => {
+      e.implants = (e.implants || []).filter((n) => E.low(n) !== E.low(im.n));
+    });
+  },
+  surgeryFix(id) {
+    const e = ent(id),
+      I = S.rules.implants;
+    if ((e.caps || 0) < I.doctorFix) return;
+    act(`${I.failStatus} fixed`, () => {
+      e.caps -= I.doctorFix;
+      e.statuses = (e.statuses || []).filter((s) => s.n !== I.failStatus);
+      log("check", `A doctor fixes ${e.name}'s failed surgery for ${I.doctorFix} caps.`);
     });
   },
   delStatus(v) {

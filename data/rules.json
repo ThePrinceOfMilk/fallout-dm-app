@@ -122,6 +122,103 @@
   ]
  ],
  "armorDtCut": 0.15,
+ "implants": {
+  "slots": 4,
+  "list": [
+   {
+    "n": "Strength Implant",
+    "fx": {
+     "S": 1
+    },
+    "cost": 4000,
+    "text": "+1 Strength"
+   },
+   {
+    "n": "Perception Implant",
+    "fx": {
+     "P": 1
+    },
+    "cost": 4000,
+    "text": "+1 Perception"
+   },
+   {
+    "n": "Endurance Implant",
+    "fx": {
+     "E": 1
+    },
+    "cost": 4000,
+    "text": "+1 Endurance"
+   },
+   {
+    "n": "Charisma Implant",
+    "fx": {
+     "C": 1
+    },
+    "cost": 4000,
+    "text": "+1 Charisma"
+   },
+   {
+    "n": "Intelligence Implant",
+    "fx": {
+     "I": 1
+    },
+    "cost": 4000,
+    "text": "+1 Intelligence"
+   },
+   {
+    "n": "Agility Implant",
+    "fx": {
+     "A": 1
+    },
+    "cost": 4000,
+    "text": "+1 Agility"
+   },
+   {
+    "n": "Luck Implant",
+    "fx": {
+     "L": 1
+    },
+    "cost": 4000,
+    "text": "+1 Luck"
+   },
+   {
+    "n": "Sub-Dermal Armor",
+    "fx": {
+     "dt": 4
+    },
+    "cost": 8000,
+    "text": "+4 DT"
+   },
+   {
+    "n": "Monocyte Breeder",
+    "fx": {
+     "regen": 1
+    },
+    "cost": 12000,
+    "text": "Heals 1 HP each round in a fight"
+   }
+  ],
+  "doctor": {
+   "base": 0.6,
+   "end": 0.04,
+   "lck": 0.02
+  },
+  "self": {
+   "minMed": 85,
+   "base": 0.4,
+   "end": 0.04,
+   "lck": 0.02,
+   "med": 0.01
+  },
+  "perImplant": 0.05,
+  "min": 0.05,
+  "max": 0.95,
+  "failStatus": "Failed Surgery",
+  "doctorFix": 250,
+  "cureItems": [
+   "Doctor's Bag"
+  ]
+ },
  "prayer": {
   "traits": [
    "082"

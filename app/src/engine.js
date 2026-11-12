@@ -129,6 +129,7 @@ const E = (() => {
     for (const [, n] of t.matchAll(/Crit Chance \+(\d+)%/gi)) add("crit", Number(n) / 100);
     // "1 PRI" is initiative. "ignore Tier 3 adverse effects" switches off harmful statuses up to that tier.
     for (const [, n] of t.matchAll(/(\d+) PRI\b/g)) add("pri", Number(n));
+    for (const [, n] of t.matchAll(/([+-]?\d+) implant slots?/gi)) add("implantSlots", Number(n)); // perks, traits and events can add slots
     const ig = t.match(/ignore Tier (\d)/i);
     if (ig) m.ignoreTier = Number(ig[1]);
     const healUp = t.match(/Healing \+(\d+)%/i);
@@ -342,6 +343,7 @@ const E = (() => {
       bump(i.mods);
     }
     for (const fx of e.effects || []) bump(fx.mods || {});
+    for (const im of implantsOf(e, r)) bump(im.fx);
     const ov = e.ov || {};
     const sp = {};
     SPECIAL.forEach((k, i) => {
@@ -425,6 +427,21 @@ const E = (() => {
   }
 
   /** Roll at or under this on a d20. Times Revived costs a share of the die. */
+  // ---- implants
+  const implantsOf = (e, r) => {
+    const list = (r && r.implants && r.implants.list) || [];
+    return (e.implants || []).map((n) => list.find((x) => low(x.n) === low(n))).filter(Boolean);
+  };
+  const implantSlots = (e, d, r) => ((r.implants && r.implants.slots) || 0) + ((d && d.m.implantSlots) || 0) + (e.implantSlotsAdd || 0);
+  /** Chance an implant takes: END and Luck always; a self-install also needs Medicine (0 below the minimum). Each implant already in makes the next harder. */
+  function implantOdds(e, d, r, self) {
+    const I = r.implants;
+    const k = self ? I.self : I.doctor;
+    const med = (d.skills && d.skills.MED) || 0;
+    if (self && med < k.minMed) return 0;
+    const p = k.base + k.end * (d.sp.E || 0) + k.lck * (d.sp.L || 0) + (self ? k.med * (med - k.minMed) : 0) - I.perImplant * (e.implants || []).length;
+    return fix(Math.max(I.min, Math.min(I.max, p)));
+  }
   function saveTarget(lck, survival, mod, revived, r) {
     const raw = Math.floor((lck * 0.1 + survival / 2 / 100 / 2) * 20 + 1e-9) - 1;
     return Math.min(raw, r.saveCap) + mod - revived * r.revivePenalty;
@@ -2721,6 +2738,21 @@ const E = (() => {
     const worth = (o) => Object.keys(o).filter((k) => k !== "turns").length > 0;
     // ---- statuses: one set of variables per tier. Cover moved to the rules (Settings) since the map handles it now.
     data.statuses = data.statuses.filter((s) => s.n !== "Cover");
+    // 12 Nov: implants are items you can carry or buy, and a botched surgery is a status
+    const imp = r.implants;
+    if (imp) {
+      for (const im of imp.list || [])
+        if (!data.items.some((x) => low(x.n) === low(im.n))) data.items.push({ n: im.n, cat: "Implant", tier: "5", lb: 0.5, val: im.cost, effect: im.text });
+      if (imp.failStatus && !data.statuses.some((s) => low(s.n) === low(imp.failStatus)))
+        data.statuses.push({
+          n: imp.failStatus,
+          mp: "P",
+          tone: "Negative",
+          src: "Implant surgery",
+          desc: "A botched implant. Lasts until a doctor fixes it or a Doctor's Bag is used on yourself.",
+          tiers: ["-1 STR, -1 END, -1 AGI"],
+        });
+    }
     const uniq = new Set((r.uniques || []).map(low));
     for (const w of data.weapons) if (uniq.has(low(w.n))) w.unique = true; // named one-offs stay out of gear, shops and loot
     // 12 Nov: every tier-1 weapon asks for tier1Req skill, so starting characters are well over it. The sheet's number is kept in req0.
@@ -2792,6 +2824,7 @@ const E = (() => {
       if (/counters disoriented/i.test(t)) use.removes.push("Disoriented");
       if (/heal limb damage/i.test(t)) use.reduces["Injured Limb (Leg/Arm)"] = 1;
       if (/revive downed ally/i.test(t)) use.revive = true; // Surgeon's Kit is the one item the workbook says can stand someone up
+      if (r.implants && (r.implants.cureItems || []).includes(i.n)) use.removes.push(r.implants.failStatus);
       const adds = t.match(/^Adds (\d+) (.+)$/i);
       if (adds) use.gives = [adds[2], Number(adds[1])];
       const healBoost = t.match(/Healing \+(\d+)%/i);
@@ -3045,6 +3078,9 @@ const E = (() => {
 
   return {
     floorOf,
+    implantsOf,
+    implantSlots,
+    implantOdds,
     ammoClass,
     blastDamage,
     layoutReach,

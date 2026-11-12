@@ -510,6 +510,14 @@ upd(8, D12, "Aiming costs no AP", "Was: a limb shot cost 1 more AP and a head sh
 upd(20, D12, "Low-tier animal bosses are easier to hurt", "New: creatures at tier 1-3 that are bosses lose 30% of their DT (rounded down).", bl(
     "Bosses are the named ones (an alpha, mother, bull, queen, king, leader, legendary...) and any creature the DM makes a boss. Robots don't count.",
     "Today that changes Coyote Den Mother (DT 5 to 3) and Coyote Pack Alpha (2 to 1); Bighorner Bull has no DT. Settings: the share and the highest tier."))
+upd(39, D12, "Implants", "New: nine implants (the New Vegas set): one for each S.P.E.C.I.A.L. stat (+1, 4000 caps), Sub-Dermal Armor (+4 DT, 8000) and Monocyte Breeder (1 HP back each round of a fight, 12000).", bl(
+    "Every character has 4 implant slots. Perks, traits and events can add more ('+1 implant slot'; the DM also has an Extra slots box). They're in Health, at the bottom.",
+    "By a doctor: the chance is 60% + 4% per END + 2% per Luck. Paid only if it works.",
+    "By yourself: needs Medicine 85 to try. The chance is 40% + 4% per END + 2% per Luck + 1% per Medicine point over 85. The implant item is used only if it works.",
+    "Each implant already in makes the next 5% harder. The chance stays between 5% and 95%. Example: END 5, Luck 5 at a doctor: 90% for the first, 85% for the second.",
+    "A failure costs nothing (caps or the implant back) but gives Failed Surgery: -1 STR, END and AGI until a doctor fixes it (250 caps) or you use a Doctor's Bag on yourself.",
+    "Implants are items too, so a vendor can stock them and they can be found. Settings has every number."))
+upd(27, D12, "Failed Surgery", "New status: -1 STR, -1 END, -1 AGI after a failed implant surgery. No time limit: a doctor (250 caps) or a Doctor's Bag used on yourself removes it.")
 upd(10, D12, "Worn armor gives 15% less DT", "Was: armor gave the workbook's DT. Now: helmets, body armor and accessories give 15% less, rounded down (DT 14 to 11).", bl(
     "For everyone wearing it: the party and enemy humans. A creature's own hide (its base DT) is unchanged.",
     "Why: with tier 4-5 armor most early guns took 10-30 turns to get through. A start; Settings: 'Worn armor gives this much less DT'."))

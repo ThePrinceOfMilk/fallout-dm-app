@@ -108,7 +108,7 @@ Splint,1,6,Counter,,,Crippled Limb -1 Tier,"{""heal"":null,""applies"":[],""redu
 Medical Brace,2,6,Counter,,,Crippled Limb -2 Tier,"{""heal"":null,""applies"":[],""reduces"":{""Injured Limb (Leg/Arm)"":2},""removes"":[],""fx"":{},""after"":null}",3,,Crippled Limb -2 Tier,,,,25.0,20
 Cast-in-a-Can,3,1,Counter,,,Crippled Limb -3 Tier,"{""heal"":null,""applies"":[],""reduces"":{""Injured Limb (Leg/Arm)"":3},""removes"":[],""fx"":{},""after"":null}",1,,Crippled Limb -3 Tier,,,,50.0,40
 Nurse's Bag,4,9,Counter,,,Crippled Limb -4 Tier,"{""heal"":null,""applies"":[],""reduces"":{""Injured Limb (Leg/Arm)"":4},""removes"":[],""fx"":{},""after"":null}",4,,Crippled Limb -4 Tier,,,,75.0,75
-Doctor's Bag,5,10,Counter,"Stitches: *2 bleed chance, Shock level 2",,Crippled Limb -5 Tier,"{""heal"":null,""applies"":[],""reduces"":{""Injured Limb (Leg/Arm)"":5},""removes"":[],""fx"":{},""after"":{""n"":""Fatigue"",""tier"":1}}",5,,Crippled Limb -5 Tier,,,,Medicine 90,100
+Doctor's Bag,5,10,Counter,"Stitches: *2 bleed chance, Shock level 2",,Crippled Limb -5 Tier,"{""heal"":null,""applies"":[],""reduces"":{""Injured Limb (Leg/Arm)"":5},""removes"":[""Failed Surgery""],""fx"":{},""after"":{""n"":""Fatigue"",""tier"":1}}",5,,Crippled Limb -5 Tier,,,,Medicine 90,100
 Static Shock Releaser,1,1,Counter,,,Electrocuted -1 Tier,"{""heal"":null,""applies"":[],""reduces"":{""Electrocuted"":1},""removes"":[],""fx"":{},""after"":null}",1,,Electrocuted -1 Tier,,,,10.0,10
 Battery Recharger,2,1,Counter,,,Electrocuted -2 Tier,"{""heal"":null,""applies"":[],""reduces"":{""Electrocuted"":2},""removes"":[],""fx"":{},""after"":null}",1,,Electrocuted -2 Tier,,,,25.0,20
 Portable Lightning Rod,3,5,Counter,,,Electrocuted -3 Tier,"{""heal"":null,""applies"":[],""reduces"":{""Electrocuted"":3},""removes"":[],""fx"":{},""after"":null}",1,,Electrocuted -3 Tier,,,,50.0,40
@@ -235,3 +235,12 @@ Blood Draw Kit,,0,Tool,Shock +1,,Adds 1 Blood Pack,"{""heal"":null,""applies"":[
 Stealth Boy,,0,Tool,,,Sneak +100,"{""heal"":null,""applies"":[],""reduces"":{},""removes"":[],""fx"":{""SNK"":100},""after"":null}",,,Sneak +100,,,,,
 Sterilized Blood Draw Kit,,0,Tool,,,Adds 1 Sterilized Blood Pack,"{""heal"":null,""applies"":[],""reduces"":{},""removes"":[],""fx"":{},""after"":null,""gives"":[""Sterilized Blood Pack"",1]}",,,Adds 1 Sterilized Blood Pack,,,,,
 Weapon Repair Kit,,0,Tool,,,Improves Weapon Con by Rep/20,"{""heal"":null,""applies"":[],""reduces"":{},""removes"":[],""fx"":{},""after"":null,""repairDiv"":20}",,,Improves Weapon Con by Rep/20,,,,,
+Strength Implant,5,0.5,Implant,,,+1 Strength,"{""heal"":null,""applies"":[],""reduces"":{},""removes"":[],""fx"":{},""after"":null}",,,+1 Strength,,,,,4000
+Perception Implant,5,0.5,Implant,,,+1 Perception,"{""heal"":null,""applies"":[],""reduces"":{},""removes"":[],""fx"":{},""after"":null}",,,+1 Perception,,,,,4000
+Endurance Implant,5,0.5,Implant,,,+1 Endurance,"{""heal"":null,""applies"":[],""reduces"":{},""removes"":[],""fx"":{},""after"":null}",,,+1 Endurance,,,,,4000
+Charisma Implant,5,0.5,Implant,,,+1 Charisma,"{""heal"":null,""applies"":[],""reduces"":{},""removes"":[],""fx"":{},""after"":null}",,,+1 Charisma,,,,,4000
+Intelligence Implant,5,0.5,Implant,,,+1 Intelligence,"{""heal"":null,""applies"":[],""reduces"":{},""removes"":[],""fx"":{},""after"":null}",,,+1 Intelligence,,,,,4000
+Agility Implant,5,0.5,Implant,,,+1 Agility,"{""heal"":null,""applies"":[],""reduces"":{},""removes"":[],""fx"":{},""after"":null}",,,+1 Agility,,,,,4000
+Luck Implant,5,0.5,Implant,,,+1 Luck,"{""heal"":null,""applies"":[],""reduces"":{},""removes"":[],""fx"":{""L"":1},""after"":null}",,,+1 Luck,,,,,4000
+Sub-Dermal Armor,5,0.5,Implant,,,+4 DT,"{""heal"":null,""applies"":[],""reduces"":{},""removes"":[],""fx"":{""dt"":4},""after"":null}",,,+4 DT,,,,,8000
+Monocyte Breeder,5,0.5,Implant,,,Heals 1 HP each round in a fight,"{""heal"":true,""applies"":[],""reduces"":{},""removes"":[],""fx"":{},""after"":null}",,,Heals 1 HP each round in a fight,,,,,12000
