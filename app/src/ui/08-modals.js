@@ -326,7 +326,10 @@ const GUIDE = [
 ];
 function guideBody() {
   const i = clamp(ui.guide, 0, GUIDE.length - 1);
-  return `<div class="opts" style="margin-bottom:6px">${GUIDE.map(([t], n) => `<button class="opt ${n === i ? "on" : ""}" data-a="guideGo" data-v="${n}">${n + 1}. ${h(t)}</button>`).join("")}</div><h3>${h(GUIDE[i][0])}</h3><div class="txt guide">${h(GUIDE[i][1])}</div><div class="acts" style="margin-top:8px">${i > 0 ? btn("guideGo", i - 1, "Back") : ""}${i < GUIDE.length - 1 ? primary("guideGo", i + 1, "Next", "Enter") : primary("closeModal", "", "Done", "Enter")}</div>`;
+  const tour = isSpec()
+    ? ""
+    : `<div class="tourcall"><span class="grow"><b>New here?</b> The interactive tour walks you through a check, rewards and a fight, lighting up each thing to use and ticking it off when you've done it. It uses a practice campaign; yours comes back after.</span>${btn("tutStart", "", "Start the interactive tour", "", "primary")}</div>`;
+  return `<div class="opts" style="margin-bottom:6px">${GUIDE.map(([t], n) => `<button class="opt ${n === i ? "on" : ""}" data-a="guideGo" data-v="${n}">${n + 1}. ${h(t)}</button>`).join("")}</div>${tour}<h3>${h(GUIDE[i][0])}</h3><div class="txt guide">${h(GUIDE[i][1])}</div><div class="acts" style="margin-top:8px">${i > 0 ? btn("guideGo", i - 1, "Back") : ""}${i < GUIDE.length - 1 ? primary("guideGo", i + 1, "Next", "Enter") : primary("closeModal", "", "Done", "Enter")}</div>`;
 }
 // ----- step-by-step character creation
 const rollTrait = (not = []) => {

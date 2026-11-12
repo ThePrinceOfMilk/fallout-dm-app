@@ -53,6 +53,7 @@ function render() {
   });
   if (isSpec()) specLock();
   document.querySelectorAll(".tierkey").forEach(fitLine);
+  tutAfter(); // the tour's light and coach card follow the redraw
   if (ui.autoScroll) {
     ui.autoScroll = false;
     const ap = document.querySelector(".autoplan");

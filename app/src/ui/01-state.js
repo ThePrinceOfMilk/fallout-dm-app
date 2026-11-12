@@ -254,6 +254,7 @@ const statusText = () =>
   (saveFailed ? "SAVE FAILED: USE BACKUP FILE" : dirty ? "UNSAVED CHANGES" : lastSaved ? "SAVED " + lastSaved.toLocaleTimeString() : "NOTHING NEW TO SAVE");
 function save() {
   if (isSpec()) return; // a spectator's own campaign on this device stays as it was
+  if (tut) return; // the tour plays on a practice campaign; the real one is never overwritten by it
   lastSaveTry = Date.now();
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify(S));

@@ -6775,3 +6775,84 @@ table.t th {
     display: inline;
   }
 }
+
+/* ----- 12 Nov: the interactive tour. A pulsing light around the thing to use, the rest of the screen dimmed, and a coach card. */
+#tut .tutring {
+  position: fixed;
+  z-index: 9990;
+  border: 3px solid #ffe14d;
+  border-radius: 6px;
+  box-shadow:
+    0 0 0 9999px rgba(0, 0, 0, 0.5),
+    0 0 18px 4px rgba(255, 225, 77, 0.85);
+  pointer-events: none; /* clicks go through to the thing being lit */
+  animation: tutpulse 1.2s ease-in-out infinite;
+}
+#tut .tutshade {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  background: rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+@keyframes tutpulse {
+  50% {
+    box-shadow:
+      0 0 0 9999px rgba(0, 0, 0, 0.5),
+      0 0 30px 10px rgba(255, 225, 77, 0.95);
+  }
+}
+#tut .tutcard {
+  position: fixed;
+  z-index: 9995;
+  padding: 10px 12px;
+  border: 2px solid #ffe14d;
+  background: var(--win, #031006);
+  color: var(--ink);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.8);
+}
+#tut .tuthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fs-s);
+  color: #ffe14d;
+  letter-spacing: 0.08em;
+}
+#tut h4 {
+  margin: 6px 0 4px;
+  color: var(--bright);
+  font-family: var(--head);
+  font-size: 20px;
+  font-weight: normal;
+}
+#tut p {
+  margin: 0 0 6px;
+  line-height: 1.35;
+}
+#tut .tutwait {
+  color: #ffe14d;
+}
+#tut .tutok {
+  display: inline-block;
+  padding: 0 8px;
+  background: var(--bright);
+  color: #000;
+  font-weight: bold;
+}
+#tut .tutbtns {
+  margin-top: 8px;
+}
+.tourcall {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border: 1px solid #ffe14d;
+}
+@media (prefers-reduced-motion: reduce) {
+  #tut .tutring {
+    animation: none;
+  }
+}

@@ -9,6 +9,7 @@ const suites = [
   ["browser", ["tests/e2e.js"]],
   ["pinch and touch", ["tests/pinch.e2e.js"]],
   ["12 Nov features", ["tests/ui12.e2e.js"]],
+  ["interactive tour", ["tests/tour.e2e.js"]],
   ["shared table", ["tests/table.e2e.js"]],
   ["spectators", ["tests/spec.e2e.js"]],
   ["spectator self-service", ["tests/specself.e2e.js"]],
