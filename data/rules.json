@@ -31,6 +31,13 @@
   "Limb": 0.75,
   "Head": 2
  },
+ "locHit": {
+  "Body": 1,
+  "Limb": 1.25,
+  "Head": 0.5
+ },
+ "pelletShareMin": 0.5,
+ "coverInset": 0.1,
  "critMult": {
   "Hit": 1,
   "Crit": 2,
@@ -39,7 +46,7 @@
  "superDefault": 0.01,
  "critMode": "weapon",
  "jamMode": "weapon",
- "pelletMode": "combined",
+ "pelletMode": "spread",
  "critAllBullets": true,
  "targetAP": {
   "Body": 0,
@@ -1572,7 +1579,7 @@
  "defeatXpPct": 0,
  "levelXpStep": 50,
  "maxLevel": 30,
- "activePct": 0.25,
+ "activePct": 0.65,
  "activeTiers": [
   1,
   1.25,

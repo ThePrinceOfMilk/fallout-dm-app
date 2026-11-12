@@ -5570,3 +5570,233 @@ table.t th {
 .bp-Head {
   border-radius: 6px;
 }
+
+/* 11 Nov: the skill tree reads top down, one column per skill, and scrolls and zooms */
+.ttreewrap {
+  overflow: auto;
+  max-height: 68vh;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 10px;
+}
+.ttree {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: max-content;
+}
+.tskill {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 190px;
+  flex: none;
+}
+.tshead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid var(--line2);
+  background: var(--win3);
+  margin-bottom: 8px;
+}
+.tshead .vic {
+  width: 22px;
+  height: 22px;
+  color: var(--ink);
+}
+.tshead .tval {
+  font-family: var(--head);
+  font-size: 22px;
+  color: var(--bright);
+}
+.ttier {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  border: 1px dashed var(--line);
+}
+.ttier.open {
+  border-style: solid;
+  border-color: var(--line2);
+}
+.tthead {
+  font-size: var(--fs-s);
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.ttier .pnode {
+  min-width: 0;
+  max-width: none;
+}
+.tdown {
+  text-align: center;
+  color: var(--line2);
+  line-height: 1;
+  padding: 3px 0;
+}
+.tzoom {
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+/* 12 Nov: the skill tree is a real tree. The character at the root, a branch per skill type, a column per skill, lines between. */
+.stree {
+  --tl: var(--line2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max-content;
+}
+.snode {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--tl);
+  background: var(--win3);
+  color: var(--bright);
+  font-family: var(--head);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.sroot svg {
+  width: 20px;
+  height: 20px;
+}
+/* a line down from every node that has children */
+.sroot::after,
+.stype::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  height: 14px;
+  border-left: 2px solid var(--tl);
+}
+.skids {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin-top: 14px;
+}
+.skids > * {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 7px 0;
+}
+/* the bar across the children, and a stub down to each one */
+.skids > *::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-top: 2px solid var(--tl);
+}
+.skids > *:first-child::before {
+  left: 50%;
+}
+.skids > *:last-child::before {
+  right: 50%;
+}
+.skids > *:only-child::before {
+  display: none;
+}
+.skids > *::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 14px;
+  border-left: 2px solid var(--tl);
+}
+.sbranch {
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+}
+.sleaf .tskill {
+  width: 170px;
+}
+.sleaf .tshead {
+  margin-bottom: 0;
+}
+.tdown {
+  width: 0;
+  height: 12px;
+  margin: 0 auto;
+  padding: 0;
+  border-left: 2px dashed var(--line);
+}
+.tdown.open {
+  border-left: 2px solid var(--line2);
+}
+
+/* 12 Nov, phones (checked in WebKit as an iPhone 14 and in Edge): less clutter */
+/* a bar that has no room shrinks instead of spilling onto the AP label beside it (every screen) */
+.hpline .grow {
+  min-width: 0;
+  overflow: hidden;
+}
+@media (max-width: 1000px) {
+  /* the map's buttons sat over half the map: keep Key, zoom and Fit in one small row; the grid choice stays in Settings */
+  .zoombar {
+    left: auto !important;
+    width: auto !important;
+    flex-wrap: nowrap;
+  }
+  .zoombar .scale,
+  .zoombar [data-a="setGrid"] {
+    display: none !important;
+  }
+  .zoombar .btn {
+    min-width: 36px !important;
+    padding: 0 6px !important;
+  }
+  /* the top bar fits one row: Refresh is not needed (tables redraw on their own) and the rest scrolls sideways if it must */
+  .devbar {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .devbar [data-a="refresh"] {
+    display: none !important;
+  }
+  .devbar .btn {
+    flex: none;
+  }
+  /* in a fight the targeting panel gets the most room */
+  .board.fight .stage {
+    grid-template-rows: auto var(--r-map, minmax(0, 30fr)) var(--r-act, minmax(0, 44fr)) var(--r-pf, minmax(0, 26fr)) !important;
+  }
+}
+@media (max-width: 599px) {
+  .devbar .brand {
+    flex: none;
+    white-space: nowrap;
+  }
+  /* key hints mean nothing without a keyboard */
+  .btn kbd {
+    display: none;
+  }
+}
+@media (max-width: 599px) {
+  /* the opened Dev list still drops onto its own row */
+  .devbar:has(.devlist.open) {
+    flex-wrap: wrap !important;
+    overflow-x: visible;
+  }
+}
+/* phones held sideways and other short screens: the map keeps its room */
+@media (max-height: 500px) and (max-width: 1000px) {
+  .maphint {
+    display: none !important;
+  }
+}

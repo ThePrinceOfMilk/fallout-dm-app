@@ -1056,6 +1056,22 @@ async function launch() {
     assert.match(await p2.locator(".dialog").innerText(), /archetype/i);
     await p2.reload(); assert.strictEqual(await p2.evaluate(() => S.chars.length), 0, "still opens after a reload"); await ctx2.close();
   });
+  await ok("Clear log: combat and recent events clear separately, and Undo brings them back", async () => {
+    const r = await page.evaluate(() => {
+      S.log.push({ k: "turn", x: "combat line", r: 2, id: S.seq++ }, { k: "status", x: "calm line", r: 0, id: S.seq++ });
+      const before = S.log.length;
+      ACT.clearLog("combat");
+      const afterCombat = { combat: S.log.filter((l) => l.r > 0).length, recent: S.log.filter((l) => !l.r).length };
+      undo();
+      const back = S.log.length === before;
+      ACT.clearLog("recent");
+      const afterRecent = S.log.filter((l) => !l.r).length;
+      undo();
+      return { afterCombat, back, afterRecent, buttons: document.querySelectorAll('[data-a="clearLog"]').length };
+    });
+    assert.strictEqual(r.afterCombat.combat, 0); assert.ok(r.afterCombat.recent > 0, "recent events stay"); assert.ok(r.back, "undo restores");
+    assert.strictEqual(r.afterRecent, 0); assert.ok(r.buttons >= 1, "a Clear button is on screen");
+  });
   await ok("Long campaigns: the log is trimmed and undo memory is capped", async () => {
     const r = await page.evaluate(() => {
       for (let i = 0; i < 2500; i++) S.log.push({ k: "story o-hit", x: "line " + i, r: 1, id: S.seq++, more: ["detail"] });

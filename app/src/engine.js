@@ -526,7 +526,7 @@ const E = (() => {
   const loadsFor = (ctx, caliber) => ctx.db.data.ammo.filter((a) => low(a.cal) === low(caliber));
 
   // ---- hit chance
-  function hitChance(att, A, target, T, v, range, ctx, cover) {
+  function hitChance(att, A, target, T, v, range, ctx, cover, loc) {
     const r = ctx.rules;
     const rng = Math.min(10, Math.max(1, range || 1));
     const parts = [];
@@ -552,8 +552,11 @@ const E = (() => {
     if (mods) parts.push(["mods", mods]);
     // Cover: the tier the aiming line crosses. "open" adds nothing.
     if (cover && cover.hit) parts.push([`cover ${cover.tier}`, cover.hit]);
-    const raw = fix(parts.reduce((t, [, x]) => t + x, 0));
-    return { hit: Math.min(raw, r.maxHit), raw, parts, range: rng, capped: raw > r.maxHit };
+    const sum = parts.reduce((t, [, x]) => t + x, 0);
+    // Aimed part: limbs are easier to hit, the head harder. It scales the whole chance, before the cap.
+    const lh = (loc && r.locHit && r.locHit[loc]) || 1;
+    const raw = fix(sum > 0 ? sum * lh : sum);
+    return { hit: Math.min(raw, r.maxHit), raw, parts, range: rng, capped: raw > r.maxHit, locMul: lh !== 1 ? { loc, x: lh } : null };
   }
   const pct = (x) => fix(x * 100);
   const sgn = (x) => (x >= 0 ? "+" : "−") + Math.abs(pct(x));
@@ -561,7 +564,9 @@ const E = (() => {
     hc.noData
       ? hc.parts[0]
       : `${pct(hc.hit)}% = ` +
+        (hc.locMul ? "(" : "") +
         hc.parts.map(([k, x], i) => (i === 0 ? `${k} ${pct(x)}` : `${k} ${sgn(x)}`)).join(", ") +
+        (hc.locMul ? `) × ${hc.locMul.loc} ${hc.locMul.x}` : "") +
         (hc.capped ? ` (capped from ${pct(hc.raw)})` : "");
 
   // ---- attack roll bands. Numbers are percent thresholds on the 00-99 roll.
@@ -627,6 +632,27 @@ const E = (() => {
     return Math.max(1, Math.min(count, 1 + Math.floor(fix(roll - b.hitAt) / fix(step))));
   }
 
+  /** How far this range band is from the weapon's best: its base hit over the best band's, 0 to 1. Unknown range counts as best. */
+  function pelletShare(v, range) {
+    if (!range || !v.hitBase || v.melee) return 1;
+    const all = [];
+    for (let r = 1; r <= 10; r++) {
+      const x = v.hitBase(r);
+      if (typeof x === "number") all.push(x);
+    }
+    const best = Math.max(...all),
+      cur = v.hitBase(Math.min(10, Math.max(1, range)));
+    if (!(best > 0) || typeof cur !== "number") return 1;
+    return Math.min(1, Math.max(0, cur / best));
+  }
+  /** Pellets landed: pellets x range share x (pelletShareMin + roll quality), at least 1. Quality is 0 on a bare hit, 1 at the super crit. */
+  function pelletsLanded(roll, b, pellets, outcome, share, rules) {
+    const span = b.superAt - b.hitAt;
+    const q = outcome === "super" || span <= 0 ? 1 : Math.min(1, Math.max(0, (roll - b.hitAt) / span));
+    const min = rules.pelletShareMin != null ? rules.pelletShareMin : 0.5;
+    return Math.max(1, Math.min(pellets, Math.ceil(pellets * share * (min + q) - 1e-9)));
+  }
+
   function damage(base, pen, dt, locMult, critMult, floor = 0.2) {
     const x = base * locMult * critMult;
     const raw = pen >= dt ? Math.max(1, x) : Math.max(1, (x * pen) / dt, Math.max(1, x) * floor);
@@ -652,7 +678,10 @@ const E = (() => {
     const lm = rules.loc[loc] + (loc === "Head" ? sm.headMult || 0 : 0) + (loc === "Limb" ? (p.taken && p.taken.limbMult) || 0 : 0); // limbMult: hurt less in the limbs
     const avail = p.available != null ? p.available : v.count;
     res.bullets = Math.min(p.bulletsOv != null ? p.bulletsOv : bullets(roll, b, v.count, outcome, rules), Math.max(1, avail));
-    const pel = v.pellets || 0;
+    const shells = v.pellets || 0;
+    // Spread: like a burst, a better roll lands more pellets, and the weapon's best range lands the most.
+    const pel = shells && rules.pelletMode === "spread" ? pelletsLanded(roll, b, shells, outcome, pelletShare(v, p.range), rules) : shells;
+    if (shells) res.pellets = pel;
     const floor = p.floor != null ? p.floor : rules.damageFloor; // the target's armor sets the floor
     const hitOf = (m) => {
       if (pel && rules.pelletMode === "each") {
@@ -676,7 +705,7 @@ const E = (() => {
       res.kill = true;
       res.total = Math.max(res.total, 99999);
     } // perks that instantly kill on a super crit
-    const baseText = pel ? `${fix(v.base)}x${pel}` : String(fix(v.base));
+    const baseText = pel ? `${fix(v.base)}x${pel}${pel !== shells ? ` (${pel} of ${shells} pellets)` : ""}` : String(fix(v.base));
     res.math =
       `${baseText} × ${loc} ${lm} × ${critName} ${cm} = ${fix(dmg.x)}; Pen ${fix(v.pen)} ${v.pen >= dt ? "≥" : "<"} DT ${dt} → ${dmg.final}` +
       (mult !== 1 && p.damageOv == null ? ` × ${fix(mult)} (cover, resistances) = ${res.each}` : "") +
@@ -1164,9 +1193,14 @@ const E = (() => {
     const c = r && r.mapItems && r.mapItems[o.item];
     return (c && c.trunk) || (!o.item && o.kind === "tree" ? 0.2 : 0);
   };
+  // coverInset trims each side so a shot that only clips an edge goes through (peeking round a corner); never below half size.
   const shotBox = (o, r) => {
     const t = trunkOf(o, r);
-    return t ? { x: o.x, y: o.y, w: (o.w || 1) * t, h: (o.h || 1) * t } : o;
+    const box = t ? { x: o.x, y: o.y, w: (o.w || 1) * t, h: (o.h || 1) * t, angle: o.angle } : o;
+    const k = (r && r.coverInset) || 0;
+    if (!k) return box;
+    const trim = (s) => Math.max(s / 2, s - 2 * k);
+    return { ...box, w: trim(box.w || 1), h: trim(box.h || 1) };
   };
   // A turned object: spin the points the opposite way around its center, then treat it as an unturned box.
   function unturn(p, o) {
@@ -1213,33 +1247,42 @@ const E = (() => {
   };
   const coverTier = (o, r) => o.cover || r.coverByKind[o.kind] || "open";
   /** The worst cover between shooter and target. Something the shooter stands inside doesn't count: they can shoot out of a bush. */
-  // With coverStack on, every object the line crosses adds its penalty (capped at -100%); fade(o) scales one by the health it has left.
+  // With coverStack on, objects count in order along the line: the first one's hit penalty is the shot's, and each one cuts the damage
+  // still getting through by its damage penalty at half the strength of the one before (x1, x0.5, x0.25...). Impenetrable stops it outright.
+  // fade(o) scales one object by the health it has left.
   function lineCover(a, b, objects, r, fade) {
     const rank = Object.keys(r.cover);
     let best = "open",
       by = null;
     if (r.coverStack) {
-      let hit = 0,
-        dam = 0;
-      const names = [];
+      const crossed = [];
       for (const o of objects || []) {
         const t = coverTier(o, r);
         const box = shotBox(o, r);
-        if (t === "open" || inside(a, box) || !crosses(a, b, box)) continue;
+        if (t === "open" || inside(a, box)) continue;
+        const at = entryT(a, b, box);
+        if (at >= 0) crossed.push({ o, t, at });
+      }
+      crossed.sort((x, y) => x.at - y.at);
+      let hit = 0,
+        through = 1;
+      const names = [];
+      crossed.forEach(({ o, t }, i) => {
         const f = fade ? fade(o) : 1;
-        hit += r.cover[t].hit * f;
-        dam += r.cover[t].dam * f;
+        if (i === 0) hit = r.cover[t].hit * f;
+        through *= 1 + r.cover[t].dam * f * Math.pow(0.5, i);
         names.push(o.label || (r.mapItems[o.item] || {}).n || t);
         if (rank.indexOf(t) > rank.indexOf(best)) {
           best = t;
           by = o;
         }
-      }
+      });
+      if (best === "impenetrable") (hit = -1), (through = 0); // a wall stops the shot wherever it is in the line
       return {
         tier: best,
         n: r.cover[best].n + (names.length > 1 ? ` x${names.length}` : ""),
         hit: Math.max(-1, fix(hit)),
-        dam: Math.max(-1, fix(dam)),
+        dam: Math.max(-1, fix(through - 1)),
         by: names.join(", "),
         id: by ? by.id : null,
         stacked: names.length,
@@ -2966,6 +3009,8 @@ const E = (() => {
     loadsFor,
     hitChance,
     hitLine,
+    pelletShare,
+    pelletsLanded,
     bands,
     classify,
     bandSpans,

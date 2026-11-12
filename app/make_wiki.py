@@ -19,8 +19,8 @@ PDF = os.path.join(ROOT, "Fallout TTRPG Game Bible.pdf"); BASE = os.path.join(HE
 if not os.path.exists(BASE): shutil.copy(PDF, BASE)
 D = json.load(open(os.path.join(HERE, "tests", "wiki.json"), encoding="utf8"))
 R = D["rules"]
-D8, D9, D10, D11 = "8 Nov 2026", "9 Nov 2026", "10 Nov 2026", "11 Nov 2026"
-LATEST = "11 November 2026"
+D8, D9, D10, D11, D12 = "8 Nov 2026", "9 Nov 2026", "10 Nov 2026", "11 Nov 2026", "12 Nov 2026"
+LATEST = "12 November 2026"
 
 # ---- the bible's own look: Segoe UI when Windows has it, else Helvetica
 FONTS = "C:/Windows/Fonts"
@@ -346,11 +346,12 @@ upd(29, D10, "Unique weapons stay out of shops, gear and loot", "Was: only weapo
     "The list is uniques in rules.js, so the DM can add or remove names."))
 
 # ---------------------------------------------------------------- 11 Nov 2026 review round
-upd(8, D11, "Cover stacks", "Was: only the worst cover between shooter and target counted. Now: every object the shot passes through adds its penalty, down to -100%.", bl(
-    "Two bushes and a crate in the way: concealment -10%, concealment -10% and soft cover -25%, so -45% to hit. The damage penalties add the same way.",
-    "Worn concealment and soft cover still count for the health they have left, each one on its own.",
-    "Something the shooter stands inside doesn't count: they can shoot out of a bush.",
-    "Settings, Cover: 'Cover stacks' switches back to the old rule, where only the worst one counts."))
+upd(8, D11, "Layered cover: the first object sets the odds, every object cuts the damage", "Was: only the worst cover between shooter and target counted, for both hit and damage. Now: objects count in order along the shot.", bl(
+    "Hit chance: only the first object the shot passes through lowers it, by that object's hit penalty.",
+    "Damage: each object cuts the damage still getting through by its own damage penalty, the first in full, the second at half strength, the third at a quarter, and so on.",
+    "Example: three pieces of hard cover (-50% damage each) let through 50%, then 75% of that, then 87.5% of that: about 33% of the damage, with the hit chance down only 50%.",
+    "Impenetrable cover anywhere in the line stops the shot. Worn concealment and soft cover count for the health they have left. Something the shooter stands inside doesn't count.",
+    "The accuracy ring shows the hit chance, so it drops past the first object only. Settings, Cover tiers: 'Layered cover' switches back to worst-only."))
 upd(11, D11, "A grenade lands near where it's thrown, not on it", "Was: a grenade landed exactly on the spot picked. Now: it lands somewhere random inside a circle around that spot.", bl(
     f"The circle's radius is {R['throwScatter']['base']}m less 1m for every {R['throwScatter']['perSkill']} points of Explosives, never under {R['throwScatter']['min']}m. Explosives 20 gives {max(R['throwScatter']['min'], R['throwScatter']['base'] - 20 / R['throwScatter']['perSkill'])}m; 100 gives {max(R['throwScatter']['min'], R['throwScatter']['base'] - 100 / R['throwScatter']['perSkill'])}m.",
     "Every point in the circle is as likely as any other. The blast, its damage, its Bleeding and the cover it wrecks all count from where it lands. The log says how far off it landed.",
@@ -373,6 +374,10 @@ upd(12, D11, "How full a room gets", "New: Sparse, Normal or Cluttered next to R
     "Indoor plans (home, office, factory, warehouse, police) are laid out room by room, so Cluttered adds little to them; it shows most on open ground and the spread-out settings."))
 upd(12, D11, "The accuracy ring uses the target picked", "Was: the ring always measured against someone with no modifiers of their own. Now: with a target picked, it uses that target's own modifiers, as the attack panel does.", bl(
     "Its hover text names the target. With nobody picked it works as before. The cover shading on top is unchanged."))
+upd(28, D11, "More can be carried before it slows you down", "Was: the active weight limit was 25% of Carry. Now: 65%.", bl(
+    "Worn armor, held weapons and everything ticked Active count toward it. At STR 6 the limit goes from 53 lb to 138 lb.",
+    "Why: tier 4-5 body armor alone (35-45 lb) put players at Encumbered III-V, losing 30-50% of their AP, while enemies in the same armor lost nothing. The balance test had tier-5 players winning 0% of duels against tier-5 humans.",
+    "Settings, Enemies and inventory: 'Active inventory share of Carry'."))
 upd(17, D11, "A fight ends by itself", "Was: with one side down, rounds went on until someone pressed End. Now: at the end of a round, a side with nobody left ends the fight.", bl(
     "No enemy standing: the after-action screen opens.",
     "Nobody in the party standing, allies included: the defeat screen opens.",
@@ -388,6 +393,78 @@ upd(27, D11, "Knives cause Bleeding", "New.", bl(
 upd(35, D11, "Shrapnel causes Bleeding", "New.", bl(
     f"Someone hurt by a Frag Grenade and still standing bleeds: Bleeding {R['blastBleedMax']} in the innermost meter, one tier less for each meter out, never under 1.",
     "Resistance to Bleeding (Cut Gloves and the like) lowers it as usual."))
+
+
+# ---------------------------------------------------------------- 12 Nov 2026
+upd(8, D12, "Limbs are easier to hit, the head harder", "Was: the part aimed at changed only the damage and the AP. Now: it changes the hit chance too.", bl(
+    f"The hit chance is multiplied by the part's number: Body x{R['locHit']['Body']}, a limb x{R['locHit']['Limb']}, the head x{R['locHit']['Head']}. It applies before the {round(R['maxHit'] * 100)}% cap.",
+    "Example: 60% at the body is 75% at a leg and 30% at the head.",
+    "A chance at 0% or below stays as it is: the multiplier never makes a bad shot better.",
+    "The attack panel's Aim tile shows it under the part's name, and the hit line ends in x Limb 1.25 or x Head 0.5. The accuracy ring uses the part picked.",
+    "Settings, Accuracy: the three multipliers can be changed. All three at 1 is the old rule."))
+upd(9, D12, "Buckshot spreads: the roll and the range set how many pellets land", "Was: pellet loads such as 12 Gauge Buckshot (2x10) hit as one lump of all their pellets, at any range and any roll. Now: like a burst, a better roll lands more pellets, and the gun's best range lands the most.", bl(
+    "Roll quality runs from 0 on a bare hit to 1 at the super crit line. A super crit always counts as 1.",
+    "Range share: the gun's base hit at this range over its base hit at its best range, so the best band is 1 and worse bands less.",
+    f"Pellets landed = pellets x range share x ({R['pelletShareMin']} + roll quality), rounded up, at least 1 and at most all of them.",
+    "At the best range a bare hit lands half the pellets and any roll in the top half of the hit band lands all of them. At a range where the gun has half its best odds, even a super crit lands three quarters.",
+    "The landed pellets hit as one lump (damage x pellets landed), so Pen, DT and the damage floor work on the total as before. Crits multiply it as before.",
+    "The log's math shows it, such as 2x6 (6 of 10 pellets). The attack panel's note says how many can land at the current range.",
+    "Settings, Accuracy: 'Pellet ammo' can go back to One hit (the old rule) or Each pellet."), flags=["UF-04"])
+upd(12, D12, "A shot that only clips an object goes past it", "Was: a shot touching any part of an object's box counted that object as cover. Now: every object's box is a little smaller for shots.", bl(
+    f"Each side is pulled in by {R['coverInset']} m, so a line that grazes an edge or corner is clear. It stands for peeking round a corner, and for the odd object that just doesn't block.",
+    "An object is never shrunk below half its size, so thin things like fences and tree trunks still block.",
+    "Only shots, cover and the accuracy ring use the smaller box. Walking, placing and drawing use the full size.",
+    "Settings, Cover tiers: 'Object hitbox smaller by'. 0 is the old rule."))
+
+# The register's own update: what the app has settled since the book was compiled, and where everything else stands.
+def _register_rows():
+    d = fitz.open(BASE); rows = {}
+    for i in range(146, 154):  # the register's own pages, 147-154
+        for m in re.finditer(r"^((?:UF|BG|US|UX|CF)-\d\d)\n([^\n]+)\n(\d+)\n([^\n]+)", d[i].get_text("text"), re.M):
+            rows.setdefault(m.group(1), (m.group(2), m.group(4)))
+    return rows
+_REG = _register_rows()
+# flags the app settles outright, with where; they read RESOLVED in the register and their chapters
+_SETTLED = {
+    "CF-03": "No PER or STR penalties for now (perPenalty, strGun, strMelee 0; chapter 8). The app has both formulas if wanted.",
+    "CF-04": "Crit is the weapon's % straight, as the brief says (critMode 'weapon'). The sheet's version is a Settings choice.",
+    "CF-05": "Jam is the weapon's % straight, as the brief says (jamMode 'weapon'). The sheet's version is a Settings choice.",
+    "BG-01": "The app's melee STR penalty works when it is switched on (strMelee); it is 0 for now.",
+    "US-05": "Bands are read as whole dice faces, rounding the line up (82.5 means 83 and over).",
+    "CF-06": "Cover is read from the map for every shot (8 Nov), layered since 11 Nov. The checkbox and the action are gone.",
+    "BG-11": "140 named weapons are flagged unique (10 Nov, chapter 29).",
+    "UX-09": "Super Crit Roll and Super Fail Roll widen the super crit and jam bands by that many dice faces.",
+    "UX-10": "Crit D, Crit Mult, Super Crit Mult, Head Mult and Limb Mult are read by the attack math.",
+    "US-25": "Active means worn armor, held weapons and anything ticked Active; its limit is 65% of Carry (11 Nov, chapter 28).",
+}
+_PARTLY = {
+    "UF-29": "Vendors, stock and buy/sell prices exist (chapter 29). Haggling and stolen goods do not.",
+    "US-26": "Vendor prices now use Barter against the vendor's barter level (chapter 29).",
+    "UF-32": "Looting is rolled per body from the best looter's Survival and Luck (10 Nov, chapter 19).",
+    "UF-21": "Skill checks pay XP (10 Nov). The Action XP tab's own rows are still blank.",
+    "UF-27": "Crits, grenades and knives now apply statuses. There is still no general chance-to-inflict rule.",
+    "UX-22": "Armor type now sets the damage floor (40/30/20/10/5%), close to these labels.",
+    "UF-17": "A downed character makes a saving throw at the end of each round. What a pass does beyond staying alive is still open.",
+    "BG-07": "The app reads weapon-type conditions itself, so this sheet bug does not touch it. Worth a check per perk.",
+    "BG-08": "The app reads every situation row; the sheet's cut-off does not apply.",
+    "BG-09": "The app looks crit modifiers up by name; the sheet's fixed rows do not apply.",
+    "BG-17": "The app reads enemy caps as ranges and undoes Excel dates on import.",
+}
+_DATA = "BG-15 BG-19 UF-09 UF-10 UF-22 UF-23 UF-24 UF-25 UF-28 UF-33 UF-34 UF-35 UF-36 UF-37 UF-38 UF-39 UF-40 UF-41 UF-42 UF-43 UX-19 UX-26 BG-14 BG-16 BG-18 BG-20 BG-21 BG-22 BG-23 BG-24 BG-25 UX-17 UX-23 UX-25 BG-04 BG-05 BG-06 BG-10 BG-12 BG-13".split()
+_resolved_before = {f for ch in U for u in U[ch] if u[0] != D12 for f in u[4]}
+_today = {f for ch in U for u in U[ch] if u[0] == D12 for f in u[4]}
+_open = sorted(k for k in _REG if k not in _resolved_before and k not in _today and k not in _SETTLED)
+_short = lambda t: (t.split(". ")[0] + ".")[:150]
+upd(45, D12, "Where the register stands", f"Was: each item marked only where a dated change settled it. Now: one list of everything still open, sorted by who acts on it. {len(_REG)} items in all; {len(_resolved_before & set(_REG))} were settled before today, {len(_today & set(_REG)) + len(_SETTLED)} today (UF-04 in chapter 9, the rest here), {len(_open)} are still open.",
+    p("<b>Settled by how the app already works.</b> These now read RESOLVED."),
+    tbl(["Item", "How it's settled"], [[k, v] for k, v in sorted(_SETTLED.items())], [0.8, 6.2]),
+    p("<b>Partly settled by the app.</b> Still open for the part named."),
+    tbl(["Item", "What's settled, what's left"], [[k, v] for k, v in sorted(_PARTLY.items()) if k in _open], [0.8, 6.2]),
+    p("<b>Rules to decide.</b> The book or the brief leaves these open; the app either skips them or uses the reading named in the item's chapter."),
+    tbl(["Item", "Kind", "Summary"], [[k, _REG[k][0], _short(_REG[k][1])] for k in _open if k not in _PARTLY and k not in _DATA], [0.8, 0.9, 5.3]),
+    p("<b>Workbook data to fill or fix.</b> Blank rows, mismatched names and sheet-only formula bugs. The app works around most of them; filling them in removes the workaround."),
+    tbl(["Item", "Kind", "Summary"], [[k, _REG[k][0], _short(_REG[k][1])] for k in _open if k in _DATA], [0.8, 0.9, 5.3]),
+    flags=sorted(_SETTLED))
 
 
 starts, parts, titles = {}, [], {}
@@ -438,7 +515,7 @@ def put(page, x, y, text, size, bold=False, color=GREEN, right=False):  # y is t
     if right: x -= tlen(text, size, bold)
     page.insert_text((x, y), text, fontsize=size, fontname=name, fontfile=ff, color=tuple(int(color[i:i + 2], 16) / 255 for i in (1, 3, 5)))
 
-newest = lambda ch: max((u[0] for u in U[ch]), key=[D8, D9, D10, D11].index)
+newest = lambda ch: max((u[0] for u in U[ch]), key=[D8, D9, D10, D11, D12].index)
 put(base[0], 54, 570.5, f"Updated {LATEST}. Changes sit in the chapters they affect, on lettered pages such as {labels[12][0]}.", 8.2, color=GREY)
 for ch in U:
     pg = base[first[ch] - 1]

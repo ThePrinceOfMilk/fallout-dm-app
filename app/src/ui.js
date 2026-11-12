@@ -1096,7 +1096,7 @@ function atkView() {
   // Cover is a flag on every shot, from the line between the two of them. OVR can set it by hand.
   const lc = T ? lineCoverNow(posOf(A.id), posOf(T.id)) : { tier: "open", n: "Open", hit: 0, dam: 0, by: "" };
   const cov = a.ov.cover ? { ...S.rules.cover[a.ov.cover], tier: a.ov.cover, by: "DM set" } : lc;
-  const hc = E.hitChance(A, dA, T || A, dT, v, range, c, cov);
+  const hc = E.hitChance(A, dA, T || A, dT, v, range, c, cov, a.loc);
   const hit = num(a.ov.hit) != null ? num(a.ov.hit) / 100 : hc.hit * (1 + (dA.m.accMul || 0));
   const b = E.bands(hit, v.jam, v.crit, dA.superCrit, { rules: S.rules, lck: dA.sp.L == null ? 5 : dA.sp.L, cond: slot && slot.cond != null ? slot.cond : 10 });
   // Super Crit Roll and Super Fail Roll widen those bands by that many numbers on the dice.
@@ -1116,7 +1116,7 @@ function atkView() {
   if (v.melee && range > 1 && !dA.m.lunge) warn.push(`Melee at R${range}: only reaches R1 unless a perk says otherwise.`);
   if (v.pellets)
     warn.push(
-      `Pellet ammo (${fmt(v.base)}x${v.pellets}) counts as ${S.rules.pelletMode === "each" ? "one roll per pellet" : "one combined hit"}. Change in Settings.`,
+      `Pellet ammo (${fmt(v.base)}x${v.pellets}) counts as ${S.rules.pelletMode === "each" ? "one roll per pellet" : S.rules.pelletMode === "spread" ? `one hit; up to ${Math.max(1, Math.ceil(v.pellets * E.pelletShare(v, range) * (1 + (S.rules.pelletShareMin ?? 0.5)) - 1e-9))} of ${v.pellets} land at R${range}, more on a better roll` : "one combined hit"}. Change in Settings.`,
     );
   return { a, A, T, dA, dT, slot, v, range, hc, hit, b, cost, swap, extra, warn, cov, spans: E.bandSpans(b) };
 }
@@ -1175,6 +1175,7 @@ function fire() {
       dt: dT.dt,
       floor: E.floorOf(T, ctx()),
       loc: a.loc,
+      range: p.range,
       rules: S.rules,
       available: v.usesAmmo ? Math.floor((slot.mag || 0) / (v.perShot || 1)) : null,
       bulletsOv: num(a.ov.bullets),
@@ -1550,6 +1551,7 @@ const combatLogWin = () =>
       S.log.filter((l) => l.r > 0),
       40,
     )}</div>`,
+    { tools: btn("clearLog", "combat", "Clear", "", "tiny", "Clear the combat log (Undo brings it back)") },
   );
 const skillWin = () =>
   win("w-check", "Skill check", "", checkBody(), { tools: btn("chkGen", "", "Random", "", "tiny", "Generate a random skill and difficulty") });
@@ -1562,6 +1564,7 @@ function recentWin() {
       S.log.filter((l) => !l.r),
       30,
     )}</div>`,
+    { tools: btn("clearLog", "recent", "Clear", "", "tiny", "Clear recent events (Undo brings them back)") },
   );
 }
 function notesWin() {
@@ -1629,7 +1632,7 @@ function hints() {
 }
 function logFloat() {
   const rows = S.log.slice(-300).reverse().map(logRow).join("") || `<div class="dim">Nothing yet.</div>`;
-  return `<section class="win float floatlog" data-dlg="log" style="${dlgStyle("log")}"><header class="wt">${pix("log")}<span>Log</span><span class="spacer"></span><button class="btn tiny" data-a="toggleLog" data-v="">${kbd("F4")}Close</button></header><div class="wb loglist" data-scroll="floatlog">${rows}</div></section>`;
+  return `<section class="win float floatlog" data-dlg="log" style="${dlgStyle("log")}"><header class="wt">${pix("log")}<span>Log</span><span class="spacer"></span><button class="btn tiny" data-a="clearLog" data-v="all" title="Clear the whole log (Undo brings it back)">Clear all</button><button class="btn tiny" data-a="toggleLog" data-v="">${kbd("F4")}Close</button></header><div class="wb loglist" data-scroll="floatlog">${rows}</div></section>`;
 }
 
 // ----- party
@@ -2139,15 +2142,27 @@ function saveToBody() {
    <button class="btn ${packFile ? "" : "primary"}" ${packFile ? "" : 'data-primary="1"'} data-a="saveToFile" data-v="new">${pick ? "Save to a new location…" : coarse ? "Save a copy to this device" : "Download a copy"}</button>${btn("closeModal", "", "Not now")}</div>
    <div class="s dim" style="margin-top:6px">${pick ? "The file you pick, or the pack you loaded, is remembered for this session." : "This browser can't remember a file location, so a copy is downloaded instead."}</div>`;
 }
-// The health figure: a small head, a long narrow body, long thin arms at its sides and legs under it.
+// The health and inventory figure: the targeting body's boxes (.bp-* in style.css, an 84 x 146 box), moved by (78, 13), same sizes and corners.
 // Each part is green when fine and red with stripes when something is wrong; its label sits off to the side on a line.
+const FIG_BOX = {
+  Head: [30, 0, 24, 24, 6],
+  Body: [20, 27, 44, 56, 4],
+  LArm: [4, 27, 13, 58, 4],
+  RArm: [67, 27, 13, 58, 4],
+  LLeg: [22, 86, 18, 60, 4],
+  RLeg: [44, 86, 18, 60, 4],
+};
+const figRect = (id) => {
+  const [x, y, w, hh, r] = FIG_BOX[id];
+  return `<rect x="${x + 78}" y="${y + 13}" width="${w}" height="${hh}" rx="${r}"/>`;
+};
 const FIG_PARTS = {
-  Head: [`<rect x="109" y="11" width="22" height="22" rx="4"/>`, [132, 22], [176, 18], "r"],
-  Body: [`<rect x="104" y="37" width="32" height="66" rx="6"/>`, [136, 58], [176, 50], "r"],
-  LArm: [`<rect x="88" y="37" width="13" height="48" rx="4"/>`, [89, 60], [64, 64], "l"],
-  RArm: [`<rect x="139" y="37" width="13" height="48" rx="4"/>`, [151, 74], [176, 86], "r"],
-  LLeg: [`<rect x="104" y="106" width="15" height="56" rx="4"/>`, [105, 138], [64, 142], "l"],
-  RLeg: [`<rect x="121" y="106" width="15" height="56" rx="4"/>`, [135, 148], [176, 132], "r"],
+  Head: [figRect("Head"), [132, 25], [176, 18], "r"],
+  Body: [figRect("Body"), [142, 60], [176, 50], "r"],
+  LArm: [figRect("LArm"), [82, 62], [64, 64], "l"],
+  RArm: [figRect("RArm"), [158, 76], [176, 86], "r"],
+  LLeg: [figRect("LLeg"), [100, 140], [64, 142], "l"],
+  RLeg: [figRect("RLeg"), [140, 148], [176, 132], "r"],
 };
 function bodyMap(c) {
   const r = S.rules;
@@ -3345,10 +3360,10 @@ function ringHits(id) {
         const v2 = E.weaponView(slot, A, dA2, c, ui.atk.mode);
         if (v2.melee && r > 1 && !dA2.m.lunge) return -1;
         const dT = E.forShot(der(T), T, { o: tO, round, attackerO: o, attackerMob: !!A.mob, range: r, part: ui.atk.loc }, c);
-        const hc2 = E.hitChance(A, dA2, T, dT, v2, r, c, open);
+        const hc2 = E.hitChance(A, dA2, T, dT, v2, r, c, open, ui.atk.loc);
         return hc2.noData ? -1 : hc2.hit * (1 + (dA2.m.accMul || 0));
       }
-      const hc = E.hitChance(A, dA, A, d0, v, r, c, open);
+      const hc = E.hitChance(A, dA, A, d0, v, r, c, open, ui.atk && ui.atk.att === id ? ui.atk.loc : null);
       return hc.noData ? -1 : hc.hit;
     } catch (e) {
       return -1;
@@ -3369,11 +3384,12 @@ function rayPieces(a, ang, hits, objs) {
     if (r1 - r0 < 1e-6) continue;
     const band = bandFor((r0 + r1) / 2) - 1;
     let pen = 0;
-    for (const x of hitBy)
-      if (x.d <= r0 + 1e-6) {
-        const cv = S.rules.cover[x.tier].hit * coverLeft(x.o);
-        pen = S.rules.coverStack ? pen + cv : Math.min(pen, cv);
-      }
+    const passed = hitBy.filter((x) => x.d <= r0 + 1e-6);
+    if (S.rules.coverStack) {
+      // layered cover: the first object sets the hit penalty; anything impenetrable stops it entirely
+      if (passed.length) pen = S.rules.cover[passed[0].tier].hit * coverLeft(passed[0].o);
+      if (passed.some((x) => x.tier === "impenetrable")) pen = -1;
+    } else for (const x of passed) pen = Math.min(pen, S.rules.cover[x.tier].hit * coverLeft(x.o));
     const ch = hits[band] < 0 ? 0 : Math.round((hits[band] + pen) * 100) / 100;
     const last = out[out.length - 1];
     if (last && last[2] === ch) last[1] = r1;
@@ -3444,7 +3460,7 @@ function accRing(id) {
         if (inn(A0, mid) !== inn(B0, mid)) edges += `<path class="ringedge" d="M${P(pts[j], k)}L${P(pts[j + 1], k)}"/>`;
       }
     });
-  return `<g class="accring"><title>Hit chance by range on open ground${ui.atk && ui.atk.att === id && ent(ui.atk.tgt) ? ` against ${h(ent(ui.atk.tgt).name)}` : ""}: ${hits.map((x, i) => `R${i + 1} ${Math.max(0, Math.round(x * 100))}%`).join(", ")}. Past cover it drops by the cover's penalty.</title>${fills}${edges}</g>`;
+  return `<g class="accring"><title>Hit chance by range on open ground${ui.atk && ui.atk.att === id && ent(ui.atk.tgt) ? ` against ${h(ent(ui.atk.tgt).name)}` : ""}: ${hits.map((x, i) => `R${i + 1} ${Math.max(0, Math.round(x * 100))}%`).join(", ")}. Past cover it drops by the first object's penalty; more cover cuts damage, not the odds.</title>${fills}${edges}</g>`;
 }
 // Ctrl while dragging on a turn: the token snaps to the middle of the range band it's in, measured from the target (or the nearest foe).
 function snapRange(id, p) {
@@ -3679,7 +3695,7 @@ function bodyFig(a, T) {
   const b = (id, lab) => {
     const [name, loc] = PARTS[id];
     const x = S.rules.targetAP[loc];
-    return `<button class="bp bp-${id} ${a.part === id ? "on" : ""} ${hurt.has(id) ? "hurt" : ""}" data-a="atkPart" data-v="${id}" aria-label="${name}" title="${name}: damage x${S.rules.loc[loc]}${x ? `, +${x} AP` : ""}">${lab}</button>`;
+    return `<button class="bp bp-${id} ${a.part === id ? "on" : ""} ${hurt.has(id) ? "hurt" : ""}" data-a="atkPart" data-v="${id}" aria-label="${name}" title="${name}: damage x${S.rules.loc[loc]}${(S.rules.locHit || {})[loc] && S.rules.locHit[loc] !== 1 ? `, hit chance x${S.rules.locHit[loc]}` : ""}${x ? `, +${x} AP` : ""}">${lab}</button>`;
   };
   const friendly = T && sideOf(a.att) === sideOf(T.id); // bright green for your own side, bright red for the other side
   return `<div class="body ${friendly ? "friendly" : "hostile"}">${b("Head", "H")}${b("LArm", "")}${b("Body", "B")}${b("RArm", "")}${b("LLeg", "")}${b("RLeg", "")}</div>`;
@@ -3749,7 +3765,7 @@ function attackPanel() {
    }`;
   const tile = (lab, val, sub, cls = "", tip = "") =>
     `<div class="ttile ${cls}"${tip ? ` title="${h(tip)}"` : ""}><span class="tl">${lab}</span><b>${val}</b><small>${sub}</small></div>`;
-  const tiles = `<div class="ttiles">${tile("Hit", `${hitPct}%`, num(a.ov.hit) != null ? "DM SET" : "chance", `hitt ${hitPct <= 0 ? "zero" : ""}`)}${tile("Aim", `x${S.rules.loc[a.loc]}`, h(PARTS[a.part][0]), "", "Damage multiplier for the part aimed at. Click the body to change it.")}${tile("Cost", `${fmt(p.cost)} AP`, `${fmt(Math.max(0, (A.ap || 0) - p.cost))} left`, `costbig ${p.cost > (A.ap || 0) && !a.ov.free ? "over" : ""}`)}${tile("Cover", h(p.cov.n), `${p.cov.hit ? `${fmt(E.pct(p.cov.hit))}% hit` : "no penalty"}${p.cov.dam ? ` ${fmt(E.pct(p.cov.dam))}% dmg` : ""}`, `covflag tier-${p.cov.tier}`, p.cov.by ? "Blocked by: " + p.cov.by : "Nothing in the way")}${tile("Range", `<button class="xb" data-a="atkRange" data-v="-1" title="Closer">-</button>R${range}<button class="xb" data-a="atkRange" data-v="1" title="Farther">+</button>`, `${T ? `${dist(posOf(A.id), posOf(T.id)).toFixed(1)}m · ` : ""}${k.ranges[pairKey(a.att, a.tgt)] != null ? "DM set" : "from map"}`, "rng")}${tile("Damage", `${v.pellets ? `${fmt(v.base)}x${v.pellets}` : fmt(v.base)}`, `Pen ${fmt(v.pen)}${v.count > 1 ? ` · burst ${v.count}` : ""}`)}</div>`;
+  const tiles = `<div class="ttiles">${tile("Hit", `${hitPct}%`, num(a.ov.hit) != null ? "DM SET" : "chance", `hitt ${hitPct <= 0 ? "zero" : ""}`)}${tile("Aim", `x${S.rules.loc[a.loc]}`, `${h(PARTS[a.part][0])}${(S.rules.locHit || {})[a.loc] && S.rules.locHit[a.loc] !== 1 ? ` · hit x${S.rules.locHit[a.loc]}` : ""}`, "", "Damage multiplier for the part aimed at; limbs are easier to hit and the head harder. Click the body to change it.")}${tile("Cost", `${fmt(p.cost)} AP`, `${fmt(Math.max(0, (A.ap || 0) - p.cost))} left`, `costbig ${p.cost > (A.ap || 0) && !a.ov.free ? "over" : ""}`)}${tile("Cover", h(p.cov.n), `${p.cov.hit ? `${fmt(E.pct(p.cov.hit))}% hit` : "no penalty"}${p.cov.dam ? ` ${fmt(E.pct(p.cov.dam))}% dmg` : ""}`, `covflag tier-${p.cov.tier}`, p.cov.by ? "Blocked by: " + p.cov.by : "Nothing in the way")}${tile("Range", `<button class="xb" data-a="atkRange" data-v="-1" title="Closer">-</button>R${range}<button class="xb" data-a="atkRange" data-v="1" title="Farther">+</button>`, `${T ? `${dist(posOf(A.id), posOf(T.id)).toFixed(1)}m · ` : ""}${k.ranges[pairKey(a.att, a.tgt)] != null ? "DM set" : "from map"}`, "rng")}${tile("Damage", `${v.pellets ? `${fmt(v.base)}x${v.pellets}` : fmt(v.base)}`, `Pen ${fmt(v.pen)}${v.count > 1 ? ` · burst ${v.count}` : ""}`)}</div>`;
   const targeting = `<div class="atkmid">${T ? bodyFig(a, T) : ""}<div class="atkinfo">${tgt}${tiles}
      <div class="math">HIT ${h(E.hitLine(hc))}${num(a.ov.hit) != null ? ` <span class="warn">DM SET ${h(a.ov.hit)}%</span>` : ""}${p.extra || p.swap ? ` · AP ${fmt(v.ap)}${p.extra ? ` +${p.extra} aimed` : ""}${p.swap ? ` +${p.swap} swap` : ""}` : ""}</div></div></div>`;
   const short = {
@@ -5154,6 +5170,13 @@ function mapMakerBody() {
   return `<div class="mmwrap">${side}${svg}</div>`;
 }
 // PERK TREES: a folder tab per player. Skill perks grow in three ranks per skill (Proficiency, Expertise, Mastery); level perks by level.
+// Skill tree branches. A skill not listed here lands in an Other branch.
+const SKILL_TYPES = [
+  ["Combat", ["SG", "BG", "EW", "MW", "EXP"]],
+  ["Technical", ["LPK", "REP", "SCI", "MED"]],
+  ["Social and survival", ["BAR", "SPE", "SNK", "SUR"]],
+];
+const treeZ = () => ui.treeZoom || (small() ? 0.6 : 1); // phones start zoomed out
 function treeModal(mode) {
   const pcs = S.chars;
   if (!pcs.length) return `<div class="dim">No characters yet.</div>`;
@@ -5164,21 +5187,35 @@ function treeModal(mode) {
   const tabs = `<div class="ftabs">${pcs.map((c) => `<button class="ftab ${c.id === e.id ? "on" : ""}" data-a="treeTab" data-v="${c.id}" aria-pressed="${c.id === e.id}">${iconSvg(c.icon)}${h(c.name)}${c.perkDue ? `<b>${c.perkDue}</b>` : ""}</button>`).join("")}</div>`;
   const node = (p, state, sub, kind) =>
     `<button class="pnode ${state}" ${state === "can" ? `data-a="levelPerk" data-v="${e.id}|${h(p.n)}|${kind}"` : `data-a="noop" data-v=""`} title="${h(p.effect || "No effect written.")}${state === "can" ? " Click to take it." : state === "lock" ? " Not yet." : ""}"><span class="pn">${h(p.n)}</span><span class="s dim">${h(sub)}</span></button>`;
-  const skills = E.SKILLS.map(([k, n]) => {
+  const skillCol = ([k, n]) => {
     const ranks = DATA.skillPerks.filter((p) => p.group === n).sort((a, b) => a.need - b.need);
     if (!ranks.length) return "";
     const val = d.skills[k] || 0;
     const tiers = [...new Set(ranks.map((p) => p.need))];
-    return `<div class="trow"><div class="tlabel">${vicon(k)}<span class="bright grow">${h(n)}</span><span class="tval">${val}</span></div><div class="tranks">${tiers
+    const RANK = ["Proficiency", "Expertise", "Mastery"];
+    return `<div class="tskill"><div class="tshead">${vicon(k)}<span class="bright grow">${h(n)}</span><span class="tval">${val}</span></div>${tiers
       .map(
         (need, i) =>
-          `${i ? `<span class="tlink">&#9654;</span>` : ""}<div class="tcol">${ranks
+          `${i ? `<div class="tdown ${val > need ? "open" : ""}" aria-hidden="true"></div>` : ""}<div class="ttier ${val > need ? "open" : ""}"><div class="tthead">${RANK[i] || "Rank " + (i + 1)} · over ${need}</div>${ranks
             .filter((p) => p.need === need)
             .map((p) => node(p, owned.has(E.low(p.n)) ? "have" : val > p.need ? "can" : "lock", "", "skill"))
             .join("")}</div>`,
       )
-      .join("")}</div></div>`;
-  }).join("");
+      .join("")}</div>`;
+  };
+  // A real tree: the character at the root, one branch per skill type, a column per skill under it, ranks down each column.
+  const byKey = Object.fromEntries(E.SKILLS.map((s) => [s[0], s]));
+  const skills = `<div class="stree"><div class="snode sroot">${iconSvg(e.icon)}<span>${h(e.name)}</span></div><div class="skids">${[
+    ...SKILL_TYPES,
+    ["Other", E.SKILLS.map((s) => s[0]).filter((k) => !SKILL_TYPES.some(([, ks]) => ks.includes(k)))],
+  ]
+    .map(([type, keys]) => {
+      const cols = keys.map((k) => (byKey[k] ? skillCol(byKey[k]) : "")).filter(Boolean);
+      return cols.length
+        ? `<div class="sbranch"><div class="snode stype">${h(type)}</div><div class="skids">${cols.map((c) => `<div class="sleaf">${c}</div>`).join("")}</div></div>`
+        : "";
+    })
+    .join("")}</div></div>`;
   const levels = [...new Set(DATA.levelPerks.map((p) => num(p.level)).filter((x) => x != null))].sort((a, b) => a - b);
   const lv = levels
     .map(
@@ -5194,7 +5231,7 @@ function treeModal(mode) {
     .join("");
   const head = `<div class="s dim" style="margin-bottom:6px">${h(e.name)} · level ${e.level}${mode === "level" && e.perkDue ? ` · <span class="warn">${e.perkDue} level perk${e.perkDue === 1 ? "" : "s"} to pick</span>` : ""}. Bright: taken. Outlined: open to take. Faint: locked.</div>`;
   return mode === "skill"
-    ? `${tabs}<div class="fpane">${head}<div class="trow thead"><div></div><div class="tranks"><div class="tcol s dim">PROFICIENCY · over 60</div><span class="tlink"></span><div class="tcol s dim">EXPERTISE · over 80</div><span class="tlink"></span><div class="tcol s dim">MASTERY · over 100</div></div></div>${skills}</div>`
+    ? `${tabs}<div class="fpane">${head}<div class="row tzoom"><span class="s dim">Zoom</span><button class="btn tiny" data-a="treeZoom" data-v="-1" title="Zoom out (or Ctrl + scroll)">-</button><span class="s">${Math.round(treeZ() * 100)}%</span><button class="btn tiny" data-a="treeZoom" data-v="1" title="Zoom in (or Ctrl + scroll)">+</button><button class="btn tiny" data-a="treeZoom" data-v="0" title="Back to 100%">100%</button><span class="s dim">Scroll to move around.</span></div><div class="ttreewrap" data-scroll="ttree"><div class="ttree" style="zoom:${treeZ()}">${skills}</div></div></div>`
     : `${tabs}<div class="fpane">${head}${lv}</div>`;
 }
 function moveSpot(att, tgt, r) {
@@ -6268,6 +6305,11 @@ const ACT = {
       e.fam = { ...(e.fam || {}), [E.low(el.dataset.n)]: t };
     });
   },
+  treeZoom(v) {
+    const z = treeZ();
+    ui.treeZoom = Number(v) === 0 ? 1 : clamp(Math.round((z + Number(v) * 0.15) * 100) / 100, 0.4, 1.75);
+    render();
+  },
   treeTab(v) {
     ui.treeId = v;
     render();
@@ -6308,6 +6350,13 @@ const ACT = {
     ui.modal = { type: v };
     ui.focus = v === "items" ? "#brQ" : v === "notes" ? "#noteText" : null;
     render();
+  },
+  clearLog(v) {
+    const keep = { combat: (l) => !(l.r > 0), recent: (l) => l.r > 0, all: () => false }[v];
+    if (!keep) return;
+    act(v === "combat" ? "Clear combat log" : v === "recent" ? "Clear recent events" : "Clear log", () => {
+      S.log = S.log.filter(keep);
+    });
   },
   toggleLog() {
     ui.logOpen = !ui.logOpen;
@@ -7815,6 +7864,7 @@ function render() {
   document.querySelectorAll("[data-scroll]").forEach((el) => {
     if (scrolls[el.dataset.scroll]) el.scrollTop = scrolls[el.dataset.scroll];
     if (keepX[el.dataset.scroll]) el.scrollLeft = keepX[el.dataset.scroll];
+    else if (el.dataset.scroll === "ttree" && !(el.dataset.scroll in keepX)) el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2; // a freshly opened skill tree starts at its root
   });
   if (ui.focus) {
     const el = document.querySelector(ui.focus);
@@ -8616,6 +8666,10 @@ let wheelQueued = false;
 document.addEventListener(
   "wheel",
   (ev) => {
+    if (ev.ctrlKey && ev.target.closest && ev.target.closest(".ttreewrap")) {
+      ev.preventDefault(); // Ctrl + scroll zooms the skill tree instead of the page
+      return ACT.treeZoom((ev.deltaY || 0) < 0 ? 1 : -1);
+    }
     const svg = ev.target.closest && ev.target.closest("#map");
     if (!svg) return;
     ev.preventDefault();

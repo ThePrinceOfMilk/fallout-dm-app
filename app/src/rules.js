@@ -23,11 +23,14 @@ const DEFAULT_RULES = {
   strGun: 0,
   strMelee: 0, // accuracy is skill and weapon only for now. The sheet's values are 0.05, 0.0125 and 0.05.
   loc: { Body: 1, Limb: 0.75, Head: 2 },
+  locHit: { Body: 1, Limb: 1.25, Head: 0.5 }, // 12 Nov: hit chance x this for the part aimed at
+  pelletShareMin: 0.5, // 12 Nov, spread pellets: share landed = range share x (this + roll quality)
+  coverInset: 0.1, // 12 Nov: object hitboxes are this many meters smaller on each side, so a shot clipping an edge goes through
   critMult: { Hit: 1, Crit: 2, Super: 3 },
   superDefault: 0.01,
   critMode: "weapon",
   jamMode: "weapon",
-  pelletMode: "combined",
+  pelletMode: "spread",
   critAllBullets: true,
   targetAP: { Body: 0, Limb: 1, Head: 2 },
   swapAP: 1,
@@ -377,7 +380,7 @@ const DEFAULT_RULES = {
   coverRound: 11,
   objBlastMul: 3,
   coverFade: ["concealment", "soft"],
-  coverStack: true, // 11 Nov: each object a shot passes through adds its cover penalty, instead of only the worst one
+  coverStack: true, // 11 Nov: hit penalty from the first object the shot passes; damage cut by each, each at half the strength of the one before
   // Looting: score = Survival + lootLuck x Luck, from the best looter in the party. Below lootFull only weapons, loaded ammo and armor are sure.
   lootLuck: 10,
   lootFull: 120,
@@ -388,7 +391,7 @@ const DEFAULT_RULES = {
   defeatXpPct: 0,
   levelXpStep: 50,
   maxLevel: 30,
-  activePct: 0.25,
+  activePct: 0.65, // 11 Nov: was 0.25; worn armor alone put tier 4-6 players at Encumbered III-V
   activeTiers: [1, 1.25, 1.5, 1.75, 2],
   totalTiers: [1, 1.2, 1.4, 1.5],
   passiveHealPct: 0.1,
@@ -1690,11 +1693,16 @@ const RULE_SCHEMA = [
         "pelletMode",
         "Pellet ammo (2x10)",
         [
+          ["spread", "Spread: roll and range set pellets landed"],
           ["combined", "One hit"],
           ["each", "Each pellet"],
         ],
         "flag",
       ],
+      ["pelletShareMin", "Spread: share landed on a bare hit at best range", "pct"],
+      ["locHit.Body", "Body shot hit chance x", "num", "flag"],
+      ["locHit.Limb", "Limb shot hit chance x", "num"],
+      ["locHit.Head", "Head shot hit chance x", "num"],
       ["overskillCap", "Skill counted at most", "num"],
       ["perPenalty", "PER penalty per range point", "pct"],
       ["strGun", "Gun STR penalty factor", "pct"],
@@ -1803,7 +1811,8 @@ const RULE_SCHEMA = [
   [
     "Cover tiers",
     [
-      ["coverStack", "Cover stacks: every object a shot passes through counts", "bool", "flag"],
+      ["coverStack", "Layered cover: first object sets the hit penalty, each one cuts damage (halving)", "bool", "flag"],
+      ["coverInset", "Object hitbox smaller by (m, each side)", "num", "flag"],
       ["throwScatter.base", "Grenade scatter: meters off with Explosives 0", "num", "flag"],
       ["throwScatter.perSkill", "Grenade scatter: Explosives points per meter less", "num", "flag"],
       ["throwScatter.min", "Grenade scatter: the least it can be", "num", "flag"],
@@ -1899,6 +1908,11 @@ const RULE_RANGE = {
   "loc.Body": [0.5, 1.5],
   "loc.Limb": [0.25, 1],
   "loc.Head": [1, 3],
+  "locHit.Body": [0.75, 1.25],
+  "locHit.Limb": [0.75, 1.5],
+  "locHit.Head": [0.25, 1],
+  pelletShareMin: [25, 100],
+  coverInset: [0, 0.3],
   "critMult.Crit": [1.25, 3],
   "critMult.Super": [2, 5],
   meleeApMul: [1, 2],

@@ -12,7 +12,7 @@ const skippedList = E.standardize(data, DEFAULT_RULES);
 const db = E.makeDb(data);
 const rules = JSON.parse(JSON.stringify(DEFAULT_RULES));
 Object.assign(rules, { perPenalty: 0.05, strGun: 0.0125, strMelee: 0.05, conditions: false,
-  gunHitAdd: 0, skillHitMul: 1, meleeHeavyBase: null, meleeApMul: 1, punchAP: null, burstAP: 0, burstMode: "steps", creaturePen: 0, armorFloors: null, pcHpPerLevel: 1, pcHpMul: 1, npcHpPerTier: 6 });  // fixtures come from the sheet; the 9 Nov balance pass is tested on its own below
+  gunHitAdd: 0, skillHitMul: 1, meleeHeavyBase: null, meleeApMul: 1, punchAP: null, burstAP: 0, burstMode: "steps", creaturePen: 0, armorFloors: null, pcHpPerLevel: 1, pcHpMul: 1, npcHpPerTier: 6, pelletMode: "combined", locHit: null, coverInset: 0 });  // fixtures come from the sheet; the 9 Nov balance pass is tested on its own below
 const ctx = { db, rules, scene: { time: "Daytime", weather: "Clear", env: "Grassland", effects: [] }, ov: {} };
 const near = (a, b, msg) => assert.ok(Math.abs(a - b) < 1e-6, `${msg}: got ${a}, sheet says ${b}`);
 const gecko = E.spawn(db.enemies.get("gecko"), "e1", ctx, () => 0.5);
@@ -660,7 +660,7 @@ test("cover: beds, campfires and other low things are open ground", () => {
   assert.strictEqual(rules.mapItems.kitchenTable.cover, "concealment");
 });
 // ---------- 11 Nov review round
-test("cover stacks: two bushes and a crate add up, capped at -100%; off, only the worst counts", () => {
+test("layered cover: the first object sets the hit penalty, each cuts damage at half the strength of the one before", () => {
   const r = { ...DEFAULT_RULES, coverStack: true };
   const objs = [
     { id: "a", kind: "cover", item: "bush", cover: "concealment", x: 3, y: 0, w: 1, h: 1 },
@@ -668,11 +668,16 @@ test("cover stacks: two bushes and a crate add up, capped at -100%; off, only th
     { id: "c", kind: "cover", item: "crate", cover: "soft", x: 7, y: 0, w: 1, h: 1 },
   ];
   const on = E.lineCover({ x: 0, y: 0 }, { x: 10, y: 0 }, objs, r);
-  assert.strictEqual(on.hit, E.fix(-0.1 - 0.1 - 0.25)); assert.strictEqual(on.tier, "soft"); assert.strictEqual(on.stacked, 3);
+  assert.strictEqual(on.hit, -0.1, "hit penalty from the first bush only"); assert.strictEqual(on.tier, "soft"); assert.strictEqual(on.stacked, 3);
+  assert.strictEqual(on.dam, E.fix((1 - 0) * (1 - 0 * 0.5) * (1 - 0.1 * 0.25) - 1), "the crate, third in line, cuts damage at a quarter");
+  const hard3 = [1, 2, 3].map((i) => ({ id: "h" + i, kind: "hard", cover: "hard", x: i * 2, y: 0, w: 0.5, h: 2 }));
+  const h3 = E.lineCover({ x: 0, y: 0 }, { x: 10, y: 0 }, hard3, r);
+  assert.strictEqual(h3.hit, -0.5); assert.strictEqual(h3.dam, E.fix(0.5 * 0.75 * 0.875 - 1), "three hard covers: -50%, then -25% and -12.5% of what's left");
   const off = E.lineCover({ x: 0, y: 0 }, { x: 10, y: 0 }, objs, { ...r, coverStack: false });
   assert.strictEqual(off.hit, -0.25);
-  const walls = [1, 2, 3].map((i) => ({ id: "w" + i, kind: "hard", cover: "hard", x: i * 2, y: 0, w: 0.5, h: 2 }));
-  assert.strictEqual(E.lineCover({ x: 0, y: 0 }, { x: 10, y: 0 }, walls, r).hit, -1, "never past -100%");
+  const wall = [objs[0], { id: "w", kind: "wall", cover: "impenetrable", x: 8, y: 0, w: 0.5, h: 2 }];
+  const ww = E.lineCover({ x: 0, y: 0 }, { x: 10, y: 0 }, wall, r);
+  assert.strictEqual(ww.hit, -1, "a wall anywhere in the line stops the shot"); assert.strictEqual(ww.dam, -1);
   assert.strictEqual(E.lineCover({ x: 3, y: 0 }, { x: 10, y: 0 }, objs, r).stacked, 2, "the bush you stand in doesn't count");
 });
 test("line of sight: a ray lists what it runs into, nearest first", () => {
@@ -683,7 +688,7 @@ test("line of sight: a ray lists what it runs into, nearest first", () => {
   ];
   const hits = E.rayCover({ x: 0, y: 0 }, 0, 20, objs, DEFAULT_RULES);
   assert.deepStrictEqual(hits.map((x) => x.o.id), ["near", "far"]);
-  assert.ok(Math.abs(hits[0].d - 2.5) < 1e-6, "enters the bush at its near face");
+  assert.ok(Math.abs(hits[0].d - (2.5 + DEFAULT_RULES.coverInset)) < 1e-6, "enters the bush at its near face, less the inset");
 });
 test("new settings lay out with lines and one-only things, and every new item is in the catalog", () => {
   for (const id of ["raiderCamp", "hospital", "subway", "diner", "checkpoint", "church"]) {
@@ -701,4 +706,39 @@ test("new settings lay out with lines and one-only things, and every new item is
   }
   assert.strictEqual(DEFAULT_RULES.knifeBleed.super, 5, "a knife super crit is the worst bleed");
   assert.ok(DEFAULT_RULES.throwables["Frag Grenade"].bleed);
+});
+
+test("12 Nov: aimed part scales hit chance, limbs x1.25, head x0.5", () => {
+  const R = { ...rules, locHit: DEFAULT_RULES.locHit };
+  const c = data.party[0], d = E.derive(c, { ...ctx, rules: R });
+  const v = E.weaponView({ n: fx.players[0].w1, ammo: fx.players[0].load }, c, d, { ...ctx, rules: R });
+  const at = (loc) => E.hitChance(c, d, gecko, Tg, v, 2, { ...ctx, rules: R }, false, loc).raw;
+  const body = at("Body");
+  assert.ok(body > 0);
+  near(at("Limb"), E.fix(body * 1.25), "limb");
+  near(at("Head"), E.fix(body * 0.5), "head");
+  assert.ok(/× Head 0.5/.test(E.hitLine(E.hitChance(c, d, gecko, Tg, v, 2, { ...ctx, rules: R }, false, "Head"))));
+});
+
+test("12 Nov: spread pellets land by roll quality and range", () => {
+  const R = { ...rules, pelletMode: "spread", pelletShareMin: 0.5 };
+  const hit = [0.9, 0.9, 0.6, 0.3];
+  const v = { base: 2, pen: 3, count: 1, pellets: 10, hitBase: (r) => hit[r - 1] };
+  const b = { hitAt: 10, critAt: 90, jamAt: 0, superAt: 99 };
+  const go = (roll, range) => E.resolve({ v, b, roll, range, dt: 0, loc: "Body", rules: R });
+  assert.strictEqual(go(10, 1).pellets, 5, "bare hit at best range lands half");
+  assert.strictEqual(go(60, 1).pellets, 10, "a good roll at best range lands all");
+  assert.strictEqual(go(99, 1).pellets, 10, "super crit lands all");
+  assert.ok(go(60, 4).pellets < go(60, 3).pellets && go(60, 3).pellets < go(60, 1).pellets, "worse ranges land fewer");
+  assert.strictEqual(go(10, 4).pellets, 2, "1/3 share x 0.5 = 1.67, rounded up");
+  assert.strictEqual(E.resolve({ v, b, roll: 50, range: 4, dt: 0, loc: "Body", rules: { ...R, pelletMode: "combined" } }).total, 20, "combined ignores range");
+});
+
+test("12 Nov: object hitboxes are inset, a shot clipping an edge goes through", () => {
+  const R = { ...rules, coverStack: true };
+  const crate = [{ id: 1, x: 5, y: 5, w: 2, h: 2, kind: "crate", cover: "hard" }];
+  const graze = [{ x: 0, y: 4.05 }, { x: 10, y: 4.05 }];
+  assert.strictEqual(E.lineCover(graze[0], graze[1], crate, { ...R, coverInset: 0 }).tier, "hard");
+  assert.strictEqual(E.lineCover(graze[0], graze[1], crate, { ...R, coverInset: 0.1 }).tier, "open");
+  assert.strictEqual(E.lineCover({ x: 0, y: 5 }, { x: 10, y: 5 }, crate, { ...R, coverInset: 0.1 }).tier, "hard", "straight through still counts");
 });

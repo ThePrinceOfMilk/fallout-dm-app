@@ -16,9 +16,11 @@ if (knob("BAL_CREATUREPEN")) for (const e of data.enemies) if (e.mob) for (const
 if (process.env.BAL_TABS) { const keep = process.env.BAL_TABS.split(","); data.weapons = data.weapons.filter((w) => !w.tier || keep.includes(w.tab)); }
 if (knob("BAL_CRITALL") === 0) rules.critAllBullets = false;
 if (knob("BAL_FLOOR") != null) rules.damageFloor = knob("BAL_FLOOR");
+if (knob("BAL_ACTIVEPCT") != null) rules.activePct = knob("BAL_ACTIVEPCT"); // what-if: share of Carry that can be worn and held without slowing down
 if (knob("BAL_MELEEAP")) for (const w of data.weapons) if (w.tab === "MW" && w.tier) { if (w.ap) w.ap = Math.ceil(w.ap * knob("BAL_MELEEAP")); if (w.ap2) w.ap2 = Math.ceil(w.ap2 * knob("BAL_MELEEAP")); }
 if (knob("BAL_BURSTAP")) for (const w of data.weapons) if (w.tab !== "MW" && (w.count || 1) > 1 && w.ap) w.ap += knob("BAL_BURSTAP");
 if (knob("BAL_MOBHP")) for (const e of data.enemies) if (e.mob && e.tier >= 5 && e.hp) e.hp = Math.round(e.hp * knob("BAL_MOBHP"));
+E.standardize(data, rules); // the app does this to the workbook before anything else; without it the numbers aren't the app's
 const db = E.makeDb(data);
 // Rule what-ifs that live in code: BAL_PCHP (player HP per level), BAL_PCAP (extra player AP), BAL_NPCHP (enemy human HP per tier, now 6), BAL_NPCDT (enemy human DT multiplier), BAL_SKILLDIV (skill slope divisor, now 200)
 const derive0 = E.derive;
