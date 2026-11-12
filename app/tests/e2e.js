@@ -1252,6 +1252,61 @@ async function launch() {
     assert.deepStrictEqual(r.layout, [true, true, false, "w-enc"], "skill check sits under the enemy list; the encounter panel can be resized");
     assert.deepStrictEqual(r.geo, [true, true, true], "the encounter panel has the middle to itself");
   });
+  await ok("12 Nov: auto turn, bleeding countdown, enemy kits and load, clutter, vendor stock, bible search in a terminal", async () => {
+    const r = await page.evaluate(async () => {
+      const out = {};
+      S = fresh(); applyData(); render();
+      // clutter is remembered, not applied: what the DM placed stays
+      ACT.setupOpen("1"); ACT.randomRoom(); const n0 = S.scene.objects.length; ACT.setDensity("cluttered"); out.clutter = [S.scene.density, S.scene.objects.length === n0];
+      // generated enemies carry spare magazines and are slowed by load like players
+      ACT.addPick(allTemplates().find((t) => !t.mob).n); const e = S.scene.npcs[0];
+      out.kit = (e.inv || []).some((l) => l.active && E.get(ctx(), l.n) && E.get(ctx(), l.n).cat === "ammo");
+      out.load = der(e).enc.active > 0;
+      // Auto: plan, see it, confirm: one undo step, one log line, the turn moves on
+      ACT.beginC(""); beginRounds(); startTurn(e.id); render();
+      out.autoBtn = !!document.querySelector('[data-a="autoPlan"]');
+      const u0 = undoStack.length, l0 = S.log.length;
+      ACT.autoPlan(); out.planned = !!ui.autoPlan && !!document.querySelector(".autoplan");
+      ACT.autoConfirm();
+      out.oneStep = undoStack.length - u0;
+      out.oneLine = S.log.slice(l0).filter((l) => /auto/.test(l.k)).length;
+      out.moved = K().turnId !== e.id;
+      undo(); out.undone = K().turnId === e.id;
+      // a player's turn has no Auto button
+      startTurn(S.chars[0].id); render(); out.noAutoForPc = !document.querySelector('[data-a="autoPlan"]');
+      // Bleeding drops a tier a round; tier 1 runs bleedT1Rounds rounds
+      const c = S.chars[0]; c.hp = 40; addStatus(c, "Bleeding", 3);
+      const tiers = [];
+      for (let i = 0; i < 9; i++) { tickRound(); const b = (c.statuses || []).find((s) => s.n === "Bleeding"); tiers.push(b ? b.tier : 0); }
+      out.bleed = tiers;
+      // the vendor's stock is rolled in an action when it opens
+      ACT.endCombat(); ACT.finishCombat(); ui.end = null; S.vendor.stock = null; const u1 = undoStack.length;
+      ACT.railGo("vendor"); out.vendor = [S.vendor.stock.length > 0, undoStack.length - u1];
+      ui.modal = null;
+      // search finds rules inside the bible and opens them as a terminal
+      out.bible = bibleIdx().length;
+      ui.modal = { type: "search", q: "bleeding", i: 0 }; render();
+      const hits = searchHits("bleeding"); const bi = hits.findIndex(([k]) => k === "Bible");
+      ACT.searchPick(bi); render(); out.term = [!!document.querySelector(".robco"), document.querySelectorAll(".robco mark").length > 0];
+      ui.modal = { type: "search", q: "stimpak", i: 0 }; ACT.searchPick(0); render(); out.termItem = document.querySelectorAll(".termrow").length > 3;
+      ui.modal = null;
+      // the Size window has the ring brightness and the S.P.E.C.I.A.L. style
+      ui.modal = { type: "uiScale" }; render(); out.display = [!!document.querySelector("#ringOp"), !!document.querySelector('[data-a="setSpStyle"]')];
+      ui.modal = null; S = fresh(); applyData(); render(); save();
+      return out;
+    });
+    assert.deepStrictEqual(r.clutter, ["cluttered", true], "clutter is remembered without re-rolling the room");
+    assert.ok(r.kit && r.load, "enemies carry spare ammo, and it weighs");
+    assert.ok(r.autoBtn && r.planned, "Auto shows the plan first");
+    assert.deepStrictEqual([r.oneStep, r.oneLine, r.moved, r.undone], [1, 1, true, true], "one undo step, one log line, the turn moves on, Undo brings it back");
+    assert.ok(r.noAutoForPc, "players play their own turns");
+    assert.deepStrictEqual(r.bleed, [2, 1, 1, 1, 1, 1, 0, 0, 0], "Bleeding 3 -> 2 -> 1, then five rounds at 1, then gone");
+    assert.deepStrictEqual(r.vendor, [true, 1], "vendor stock is rolled in one undoable action");
+    assert.ok(r.bible > 30, "the bible's chapters are searchable: " + r.bible);
+    assert.deepStrictEqual(r.term, [true, true], "a bible hit opens as a terminal with the words lit");
+    assert.ok(r.termItem, "an item opens as a terminal readout");
+    assert.deepStrictEqual(r.display, [true, true], "display options in the Size window");
+  });
   await ok("Map creator, new settings and maps, whole names on tokens, panel sizes that follow the screen", async () => {
     await page.evaluate(() => { S = fresh(); Object.assign(ui, { atk: null, modal: null, end: null, def: null, sel: S.chars[0].id, setup: null }); applyData(); ACT.setupOpen("1"); });
     // draw a map with the mouse: open the creator, name it, drag out a building and a wall, place an item, save

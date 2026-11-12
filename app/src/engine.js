@@ -376,7 +376,8 @@ const E = (() => {
       d.hp = Math.floor(
         (15 + En * 2 + lvlHp + (m.hp || 0)) * (m.hpMul ? m.hpMul : 1) * (1 + (m.hpPct || 0)) * (e.hpMult || 1) * (e.kind === "pc" ? r.pcHpMul || 1 : 1) + 1e-9,
       );
-      if (e.kind === "pc")
+      if (e.kind === "pc" || r.npcEncumbrance)
+        // 12 Nov: enemy humans are slowed by what they carry too
         for (const name of [d.enc.activeTier, d.enc.totalTier]) if (name) for (const row of ctx.db.sc.get(low(name)) || []) if (row.mods) bump(row.mods);
       d.ap = Math.max(0, Math.floor((5 + A + (m.ap || 0)) * (1 + (m.apMul || 0))));
       d.pri = (A + P) / 2 + (m.pri || 0);
@@ -784,7 +785,7 @@ const E = (() => {
     return s;
   }
   function pickArmor(ctx, locs, tier, rng) {
-    const all = ctx.db.data.armor.filter((a) => locs.includes(a.loc) && a.dt > 0 && a.tier > 0 && a.tier < 100 && !a.faction);
+    const all = ctx.db.data.armor.filter((a) => locs.includes(a.loc) && a.dt > 0 && a.tier > 0 && a.tier < 100 && !a.faction && !isUnique(a));
     for (let t = tier; t >= 1; t--) {
       const p = all.filter((a) => a.tier === t);
       if (p.length) return pick(p, rng).n;
@@ -815,7 +816,19 @@ const E = (() => {
     const best = (atTier.length ? atTier : ranged).reduce((a, b) => (b[1] + rng() * 10 > a[1] ? b : a));
     const main = keep && tmpl.w1 && get(ctx, tmpl.w1) ? get(ctx, tmpl.w1).o : pick(poolFor(ctx, [best[0]], tier), rng);
     if (main) out.push(slotFor(ctx, main, tier, rng));
-    const side = keep && tmpl.w2 && get(ctx, tmpl.w2) ? get(ctx, tmpl.w2).o : keep ? null : pick(poolFor(ctx, ["MW"], tier), rng);
+    const g0 = ctx.rules.genInv || {};
+    const sidearms = () => poolFor(ctx, ["SG"], tier).filter((w) => /pistol|revolver/i.test(w.type || "") && (!main || w.n !== main.n));
+    const roll2 = rng();
+    const side =
+      keep && tmpl.w2 && get(ctx, tmpl.w2)
+        ? get(ctx, tmpl.w2).o
+        : keep
+          ? null
+          : roll2 < (g0.sidearm != null ? g0.sidearm : 0.25) && sidearms().length
+            ? pick(sidearms(), rng)
+            : roll2 < 1 - (g0.noSide != null ? g0.noSide : 0.1)
+              ? pick(poolFor(ctx, ["MW"], tier), rng)
+              : null; // 12 Nov: some variety in the second slot
     if (side) out.push(slotFor(ctx, side, tier, rng));
     e.weapons = out;
     e.activeW = 0;
@@ -828,18 +841,51 @@ const E = (() => {
           vanity: "",
         };
     e.caps = rollCaps(e.capsRange, rng);
+    e.inv = genInventory(ctx, out, tier, rng);
+  }
+  /** A carried inventory for a generated human, like a player's kit: spare magazines for each gun (on hand), often a healing item and a
+   * bandage (on hand), a few other consumables, and some junk in the pack. Weights count, so enemies are slowed by load like players. */
+  function genInventory(ctx, slots, tier, rng) {
+    const g = ctx.rules.genInv || {};
     const inv = [];
-    for (const s of out) {
+    const add = (n, q, active) => {
+      const l = inv.find((x) => low(x.n) === low(n));
+      if (l) l.q += q;
+      else inv.push({ n, q, ...(active ? { active: true } : {}) });
+    };
+    for (const s of slots) {
       const w = get(ctx, s.n);
       const res = s.ammo || (w && w.o.ammo !== "N/A" && !w.o.thrown && w.o.mag ? w.o.ammo : null);
-      if (res) inv.push({ n: res, q: Math.max(1, s.mag || 1) });
+      if (!res) continue;
+      const mag = Math.max(1, (w && w.o.mag) || s.mag || 1);
+      const [lo, hi] = g.mags || [2, 3];
+      const mags = lo + Math.floor(rng() * (hi - lo + 1));
+      add(res, mag <= 2 ? g.tinyMag || 10 : mag * mags, true); // a one- or two-shot gun carries a handful of loose rounds
     }
-    const cons = ctx.db.data.items.filter(
-      (i) => i.effect && Number(i.tier) && Number(i.tier) <= tier && ["Healing", "Chem/Drug", "Drink", "Food", "Alcohol"].includes(i.cat),
-    );
-    const n = Math.floor(rng() * (ctx.rules.genLootMax + 1));
-    for (let i = 0; i < n && cons.length; i++) inv.push({ n: pick(cons, rng).n, q: 1 });
-    e.inv = inv;
+    const items = ctx.db.data.items.filter((i) => i.effect && Number(i.tier) && Number(i.tier) <= tier);
+    const of = (cats) => items.filter((i) => cats.includes(i.cat));
+    const heal = of(["Healing"]),
+      counter = items.filter((i) => i.cat === "Counter" && /bleed/i.test(i.effect)),
+      other = of(["Chem/Drug", "Drink", "Food", "Alcohol"]);
+    if (heal.length && rng() < (g.healChance != null ? g.healChance : 0.6)) add(pick(heal, rng).n, 1 + (rng() < 0.3 ? 1 : 0), true);
+    if (counter.length && rng() < (g.bandageChance != null ? g.bandageChance : 0.4)) add(pick(counter, rng).n, 1, true);
+    const n = Math.floor(rng() * ((ctx.rules.genLootMax || 0) + 1));
+    for (let i = 0; i < n && other.length; i++) {
+      const o = pick(other, rng);
+      add(o.n, 1, o.cat === "Chem/Drug"); // chems are kept on hand for the fight; food and drink go in the pack
+    }
+    // a magazine of a different load for the main gun: surplus, hollow point, junk... whatever the caliber has at this tier
+    const main = slots[0] && get(ctx, slots[0].n);
+    if (main && main.o.ammo && main.o.mag && rng() < (g.altLoad != null ? g.altLoad : 0.3)) {
+      const alts = loadsFor(ctx, main.o.ammo).filter((a) => a.ok && !a.pellets && (a.tier || 1) <= tier && low(a.n) !== low(slots[0].ammo || ""));
+      if (alts.length) add(pick(alts, rng).n, Math.max(1, main.o.mag), true);
+    }
+    const nades = Object.keys(ctx.rules.throwables || {}).filter((nm) => get(ctx, nm));
+    if (nades.length && tier >= 2 && rng() < (g.grenade != null ? g.grenade : 0.15)) add(pick(nades, rng), 1, true);
+    const junk = (ctx.db.data.materials || []).filter((m) => m.cat !== "Casing" && Number(m.tier || 1) <= tier);
+    const nj = Math.floor(rng() * ((g.junkMax != null ? g.junkMax : 2) + 1));
+    for (let i = 0; i < nj && junk.length; i++) add(pick(junk, rng).n, 1 + Math.floor(rng() * 2), false);
+    return inv;
   }
   /** What a typical weapon of this skill and tier asks for: the 75th percentile requirement, from the nearest tier that has any. */
   function tierReq(ctx, skill, tier) {
@@ -2651,6 +2697,11 @@ const E = (() => {
     data.statuses = data.statuses.filter((s) => s.n !== "Cover");
     const uniq = new Set((r.uniques || []).map(low));
     for (const w of data.weapons) if (uniq.has(low(w.n))) w.unique = true; // named one-offs stay out of gear, shops and loot
+    // 12 Nov: every tier-1 weapon asks for tier1Req skill, so starting characters are well over it. The sheet's number is kept in req0.
+    for (const w of data.weapons) {
+      if (w.req0 == null && w.req != null) w.req0 = w.req;
+      if (w.req0 != null) w.req = r.tier1Req != null && w.tier === 1 ? r.tier1Req : w.req0;
+    }
     for (const s of data.statuses) {
       const src = JSON.stringify(s.tiers || []);
       if (!s.fx || s.fxFrom !== src)

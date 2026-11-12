@@ -273,6 +273,31 @@ for title, lst in (("Traits", [t["n"] for t in traits]), ("Trait evolutions", [t
 rep += ["### Statuses", "", "Tier text is parsed for numbers (AP, DT, SPECIAL, hit chance, initiative, damage per round). Anything else is shown as a reminder.", "", "- **Ignore (no tier text):** " + ", ".join(s["n"] for s in statuses if not any(s.get("tiers", []))), ""]
 open(os.path.join(HERE, "data_report.md"), "w", encoding="utf8").write("\n".join(rep))
 
+# The bible's text by chapter (and each chapter's change pages), compressed, so Search can find words inside the rules.
+def bible_index():
+    p = os.path.join(ROOT, "Fallout TTRPG Game Bible.pdf")
+    try:
+        import fitz, zlib
+    except ImportError:
+        return ""
+    if not os.path.exists(p):
+        return ""
+    d = fitz.open(p)
+    toc = sorted([(pg, lvl, t) for lvl, t, pg in d.get_toc() if lvl in (2, 3)])
+    out, parent = [], ""
+    for i, (pg, lvl, t) in enumerate(toc):
+        end = toc[i + 1][0] - 1 if i + 1 < len(toc) else d.page_count
+        if lvl == 2:
+            parent = t
+        name = t if lvl == 2 else f"{parent}: changes"
+        text = " ".join(d[j].get_text("text") for j in range(pg - 1, max(pg, end)))
+        text = re.sub(r"Fallout Homebrew TTRPG · Game Bible", " ", text)
+        text = re.sub(r"\s+", " ", text).strip()
+        out.append([name, d[pg - 1].get_label() or str(pg), text])
+    z = zlib.compressobj(9, zlib.DEFLATED, -15)  # raw deflate: the app's own unzip reads it
+    raw = z.compress(json.dumps(out, ensure_ascii=False).encode("utf8")) + z.flush()
+    return base64.b64encode(raw).decode("ascii")
+
 # Inline everything into one file
 src = lambda f: open(os.path.join(HERE, "src", f), encoding="utf8").read()
 b64 = lambda p: base64.b64encode(open(p, "rb").read()).decode("ascii") if os.path.exists(p) else ""
@@ -282,6 +307,7 @@ if os.path.exists(os.path.join(HERE, "src", "shell.html")):
     html = src("shell.html").replace("/*STYLE*/", src("style.css")).replace("/*FONT*/", b64(os.path.join(HERE, "src", "fonts", "vt323.woff2"))).replace("/*FONT2*/", b64(os.path.join(HERE, "src", "fonts", "sharetech.woff2")))
     html = html.replace("/*RULES*/", src("combat_text.js") + "\n" + src("rules.js")).replace("/*ENGINE*/", src("engine.js")).replace("/*UI*/", src("icons.js") + "\n" + src("ui.js"))
     html = html.replace("/*DATA*/", blob)
+    html = html.replace('"/*BIBLETXT*/"', json.dumps(bible_index()))  # the bible's text, for Search
     hosted = html.replace("/*WIKI*/", "")  # the hosted page opens the PDF that sits beside it, so it doesn't carry a copy
     html = html.replace("/*WIKI*/", b64(os.path.join(ROOT, "Fallout TTRPG Game Bible.pdf")))
     out = os.path.join(ROOT, "Fallout DM App.html")

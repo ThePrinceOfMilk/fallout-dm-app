@@ -6040,3 +6040,205 @@ table.t th {
     grid-template-rows: auto var(--r-act, minmax(0, 60fr)) var(--r-pf, minmax(0, 40fr)) !important;
   }
 }
+/* 12 Nov: the accuracy ring's brightness comes from the Size window (--ringop) */
+:is(#map, #mmSvg) .ringfill {
+  fill-opacity: var(--ringop, 0.3);
+}
+:is(#map, #mmSvg) .ringedge {
+  stroke-opacity: calc(0.25 + var(--ringop, 0.3));
+}
+/* 12 Nov: on touch screens small buttons are at least 24 px tall, so they're easy to hit */
+@media (pointer: coarse) {
+  .btn.tiny,
+  .xb {
+    min-height: 24px;
+    min-width: 24px;
+  }
+}
+/* 12 Nov: automated turn */
+.autobtn {
+  align-self: center;
+  margin-right: 6px;
+}
+.autoplan {
+  margin: 4px 0 6px;
+  padding: 6px 8px;
+  border: 1px dashed var(--warn);
+  background: rgba(255, 176, 0, 0.06);
+}
+.autoplan b {
+  color: var(--warn);
+  letter-spacing: 0.08em;
+}
+.autoplan .acts {
+  margin-top: 4px;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 12 Nov: a search entry opens as a RobCo terminal screen */
+.robco {
+  position: relative;
+  padding: 14px 18px 10px;
+  border: 1px solid #1f6b35;
+  border-radius: 10px;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse at center, #072b12 0%, #021207 70%, #010a04 100%);
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.85),
+    0 0 18px rgba(43, 255, 106, 0.12);
+  color: #39ff7a;
+  font-family: var(--head);
+  font-size: 20px;
+  line-height: 1.25;
+  text-shadow: 0 0 6px rgba(57, 255, 122, 0.55);
+  max-height: 64vh;
+  overflow: auto;
+}
+.termhd {
+  text-align: center;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed rgba(57, 255, 122, 0.4);
+}
+.termln {
+  margin: 4px 0 8px;
+}
+.termrow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.termrow .k {
+  flex: none;
+  opacity: 0.8;
+}
+.termrow .dots {
+  flex: 1;
+  min-width: 12px;
+  border-bottom: 2px dotted rgba(57, 255, 122, 0.35);
+  transform: translateY(-4px);
+}
+.termrow .v {
+  flex: 0 1 auto;
+  max-width: 70%;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.termtext {
+  font-size: 18px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.robco mark {
+  background: #39ff7a;
+  color: #021207;
+  text-shadow: none;
+}
+.termcur {
+  animation: termblink 1s steps(1) infinite;
+}
+@keyframes termblink {
+  50% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .termcur {
+    animation: none;
+  }
+}
+
+/* 12 Nov, from the user's iPhone: windows and the inventory fit a phone */
+.spcell .spabbr {
+  display: none;
+}
+@media (max-width: 760px) {
+  /* S.P.E.C.I.A.L. tiles: STR, PER... instead of names that run into each other */
+  .spcell .spfull {
+    display: none;
+  }
+  .spcell .spabbr {
+    display: inline;
+  }
+  .spcell b {
+    font-size: 30px;
+  }
+  .spcell .spi {
+    width: 26px;
+    height: 26px;
+  }
+  /* inventory: weapons on top at full width, then the figure with its gear boxes, then the vanity boxes side by side */
+  .gearmenu {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .gearmenu > .gfig {
+    justify-self: center;
+  }
+  .gearmenu > .gcol:last-child {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+  /* the floating log is a solid sheet over the screen, not a see-through box beside it */
+  .floatlog {
+    left: 8px !important;
+    right: 8px !important;
+    top: 8px !important;
+    bottom: 8px !important;
+    width: auto !important;
+    height: auto !important;
+    resize: none;
+    background: var(--win) !important;
+  }
+}
+/* party card buttons: just the symbols when the labels don't fit (the titles still name them) */
+@media (max-width: 1000px) {
+  .card .icons .icb span,
+  .spcard .icb span {
+    display: none;
+  }
+  .card .icons .icb,
+  .spcard .icb {
+    justify-content: center;
+    min-height: 30px;
+  }
+}
+/* every window stays on the screen, whatever the UI size */
+@media (max-width: 1000px) {
+  .dialog.float,
+  .scrim > .dialog {
+    max-width: calc(100vw / var(--z, 1) - 16px) !important;
+    left: 8px !important;
+    right: auto !important;
+  }
+  .dialog .opts,
+  .dialog .scalegrid,
+  .guidetabs {
+    flex-wrap: wrap;
+  }
+}
+/* spectators on a phone held upright: more of the screen for the map */
+@media (max-width: 599px) {
+  .spboard {
+    grid-template-rows: minmax(0, 66fr) minmax(0, 34fr) auto !important;
+  }
+}
+@media (max-width: 599px) {
+  /* the map title stays on one line, and the board reaches the bottom of the screen (no tab bar to leave room for) */
+  .spmap > .wt .spacer,
+  .spmap > .wt > .s {
+    display: none;
+  }
+  .spmap > .wt > span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dash.spec {
+    padding: 6px 6px max(6px, env(safe-area-inset-bottom)) !important;
+  }
+  .dash.spec .spboard {
+    height: 100%;
+  }
+}

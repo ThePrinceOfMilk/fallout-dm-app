@@ -297,6 +297,8 @@ const SPEC_UI = new Set([
   "toggleLog",
   "setScale",
   "guideGo",
+  "setSpStyle",
+  "setRingOp",
 ]);
 const SPEC_ASK = new Set(["useSelf", "itemUse", "gearEquip", "invActive"]);
 const SPEC_RAIL = ["log", "skillTree", "wiki", "uiScale", "guide"];
@@ -356,7 +358,7 @@ const SPEC_HIDE = [
 function specLock() {
   for (const el of document.querySelectorAll(SPEC_HIDE.map((s) => ".dash.spec " + s).join(","))) el.remove();
   for (const el of document.querySelectorAll(".dash.spec input, .dash.spec select, .dash.spec textarea")) {
-    if (el.dataset.u || el.dataset.a === "invActive") continue;
+    if (el.dataset.u || el.dataset.a === "invActive" || SPEC_UI.has(el.dataset.c)) continue;
     if (el.tagName === "INPUT" && el.type !== "checkbox") el.readOnly = true;
     else el.disabled = true;
   }
@@ -513,6 +515,7 @@ function pushUndo(label) {
   while (undoStack.length > 1 && (undoStack.length > UNDO_MAX || undoChars > UNDO_CHARS)) undoChars -= undoStack.shift().snap.length;
 }
 function act(label, fn) {
+  if (actBatch) return fn(); // inside an automated turn: one undo step for all of it
   pushUndo(label);
   redoStack.length = 0;
   fn();
@@ -521,6 +524,7 @@ function act(label, fn) {
   scheduleRender();
 }
 function afterTimeTravel() {
+  ui.autoPlan = null;
   ui.modal = null;
   ui.end = null;
   ui.def = null;
@@ -603,8 +607,18 @@ function hpBar(cur, max) {
   return `<div class="bar ${p <= 0.25 ? "low" : p <= 0.55 ? "mid" : ""}"><i style="width:${p * 100}%"></i></div>`;
 }
 const field = (label, input) => `<label class="f">${label}${input}</label>`;
+// A box with no title of its own is named from what it changes (data-c="setQty" reads "Qty"), so screen readers don't just say "edit text".
+const boxName = (attrs) => {
+  const m = attrs.match(/data-(?:c|bind)="(?:[^"]*:)?([^"]+)"/);
+  return m
+    ? m[1]
+        .replace(/^set(?=[A-Z])/, "")
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        .replace(/\./g, " ")
+    : "Number";
+};
 const numBox = (attrs, val, cls = "") =>
-  `<input type="text" inputmode="decimal" autocomplete="off" class="${cls}" ${attrs} value="${h(val == null ? "" : val)}">`;
+  `<input type="text" inputmode="decimal" autocomplete="off" class="${cls}" ${attrs}${/title=|aria-label=/.test(attrs) ? "" : ` aria-label="${h(boxName(attrs))}"`} value="${h(val == null ? "" : val)}">`;
 const bindNum = (id, path, val, attrs = "", cls = "") => numBox(`data-t="num" data-bind="${id}:${path}" ${attrs}`, val, cls);
 const bindText = (id, path, val, list = "", attrs = "") =>
   `<input type="text" autocomplete="off" data-bind="${id}:${path}" value="${h(val == null ? "" : val)}"${list ? ` list="${list}"` : ""} ${attrs}>`;
@@ -889,7 +903,7 @@ function partySpots() {
     u = unit(),
     n = S.chars.length,
     rows = Math.ceil(n / 2);
-  const gap = Math.max(1.2, u); // at least a person's width apart, however small the room is
+  const gap = Math.max(2, u); // 2 m apart at least, so names don't run into each other in small rooms
   S.chars.forEach((c, i) => {
     if (!S.scene.pos[c.id])
       S.scene.pos[c.id] = { x: E.fix(-M.w / 2 + gap * (0.8 + (i % 2) * 1.2)), y: E.fix((Math.floor(i / 2) - (rows - 1) / 2) * gap * 1.15) };
@@ -1049,6 +1063,7 @@ function startFirstTurn() {
   else enterRoundEnd();
 }
 function startTurn(id) {
+  ui.autoPlan = null;
   const k = K(),
     e = ent(id);
   const me = cbOf(id);
@@ -1092,6 +1107,16 @@ function tickRound() {
         e.hp = Math.min(der(e).hp, e.hp + i.mods.regen);
         log("status", `${e.name} gains ${i.mods.regen} HP from ${st.n}.`);
         syncDown(e);
+      }
+      // 12 Nov: bleeding clots. Each round it drops a tier; at tier 1 it bleeds bleedT1Rounds more rounds, then stops. Treatment still lowers it.
+      if (st.n === "Bleeding" && S.rules.bleedDecay) {
+        if (st.tier > 1) {
+          st.tier--;
+          st.turns = st.tier === 1 ? S.rules.bleedT1Rounds || 5 : null;
+          log("status", `${e.name}'s bleeding slows to Bleeding ${st.tier}.`);
+          return true;
+        }
+        if (st.turns == null) st.turns = S.rules.bleedT1Rounds || 5;
       }
       if (st.turns != null) {
         st.turns--;
@@ -1497,6 +1522,237 @@ function fire() {
   const shown = document.querySelector(".result");
   if (shown) shown.scrollIntoView({ block: "nearest" });
 }
+// ---------- automated turn (12 Nov). One standard way of playing for every enemy and ally; dispositions can come later.
+// Auto plans the turn without changing anything, shows it on the map and in the turn panel, and Confirm plays it with real dice
+// as one undo step and one combat log entry, then ends the turn. Thresholds are in rules.autoTurn.
+var actBatch = 0; // while above 0, act() runs its change inside the surrounding one: a whole automated turn is one undo step
+const autoRules = () => ({ healBelow: 0.4, bleedAt: 2, shootAt: 0.25, minShot: 0.1, maxAttacks: 3, ...(S.rules.autoTurn || {}) });
+// The attack panel's own numbers for this shooter, target and weapon, as if the shooter stood at `at`. Nothing is changed.
+function autoEval(id, tgt, w, at) {
+  const k = K(),
+    c = cbOf(id),
+    keep = { x: c.x, y: c.y },
+    atk = ui.atk,
+    ranges = k.ranges;
+  try {
+    if (at) {
+      c.x = at.x;
+      c.y = at.y;
+      k.ranges = Object.fromEntries(Object.entries(ranges).filter(([key]) => !key.split("|").includes(id))); // a DM-set range no longer applies once they move
+    }
+    ui.atk = { att: id, tgt, w, mode: "pr", roll: "", ov: {}, res: null, err: "" };
+    setPart(ui.atk, "Body");
+    const p = atkView();
+    if (!p || p.hc.noData || (p.v.melee && p.range > 1 && !p.dA.m.lunge) || !p.v.ok || p.v.noLoad) return null;
+    const per = (p.v.base || 0) * (p.v.pellets || 1) * Math.max(1, p.v.count || 1);
+    return { hit: Math.max(0, p.hit), cost: p.cost, value: Math.max(0, p.hit) * per, v: p.v, slot: p.slot, range: p.range };
+  } finally {
+    c.x = keep.x;
+    c.y = keep.y;
+    k.ranges = ranges;
+    ui.atk = atk;
+  }
+}
+// Where to stand: on the line to the target, at the middle of the weapon's best range band (melee: next to them), as far as AP allows.
+function autoSpot(e, tgt, v, budget) {
+  const A = posOf(e.id),
+    T = posOf(tgt);
+  const d = dist(A, T);
+  const bm = S.rules.bandMeters;
+  let best = 1,
+    bh = -Infinity;
+  if (!v.melee)
+    for (let r = 1; r <= bm.length; r++) {
+      const x = v.hitBase(r);
+      if (typeof x === "number" && x > bh) (bh = x), (best = r);
+    }
+  const want = v.melee ? Math.min(bm[0] * 0.6, 1.2) : best === 1 ? bm[0] * 0.6 : (bm[best - 2] + bm[best - 1]) / 2;
+  if (d <= want + 0.3) return null; // close enough already: no backing off
+  const goal = { x: T.x + ((A.x - T.x) / d) * want, y: T.y + ((A.y - T.y) / d) * want };
+  const side = { x: -(goal.y - A.y) / d, y: (goal.x - A.x) / d }; // a step to either side, when the straight line is blocked
+  for (const f of [1, 0.85, 0.7, 0.55, 0.4, 0.25, 0.12])
+    for (const off of [0, 1.5, -1.5, 3, -3]) {
+      const p = inMap({ x: E.fix(A.x + (goal.x - A.x) * f + side.x * off), y: E.fix(A.y + (goal.y - A.y) * f + side.y * off) });
+      const cost = moveCost(A, p, e);
+      if (cost > budget || cost === Infinity) continue;
+      if (E.pathBlocked(A, p, S.scene.objects) || standBlocked(p)) continue;
+      return { x: p.x, y: p.y, cost, m: E.fix(dist(A, p)) };
+    }
+  return null;
+}
+function planTurn(id) {
+  const e = ent(id);
+  const k = K();
+  if (!e || !k || e.dbno) return null;
+  const R = autoRules();
+  const d = der(e);
+  let ap = e.ap || 0;
+  const steps = [],
+    say = [];
+  // 1. patch up: a healing item when badly hurt, something for bleeding when it's bad
+  const bleed = (e.statuses || []).find((s) => s.n === "Bleeding");
+  const useable = (pred) =>
+    (e.inv || [])
+      .map((l, i) => ({ l, i, it: E.get(ctx(), l.n) }))
+      .find((x) => x.it && x.it.cat === "item" && usable(x.it.o) && pred(x.it.o) && (x.it.o.ap || 0) <= ap);
+  const need = [];
+  if (bleed && bleed.tier >= R.bleedAt) need.push((o) => o.cat === "Counter" && /bleed/i.test(o.effect || ""));
+  if (e.hp < d.hp * R.healBelow) need.push((o) => o.cat === "Healing");
+  for (const pred of need) {
+    const x = useable(pred);
+    if (x && !steps.some((s) => s.t === "use" && s.i === x.i)) {
+      steps.push({ t: "use", i: x.i, n: x.l.n });
+      ap -= x.it.o.ap || 0;
+      say.push(`use ${x.l.n}`);
+    }
+  }
+  // 2. the best shot from here: every weapon against every target still standing on the other side
+  const foesOf = targetsFor(id).filter((t) => sideOf(t) !== sideOf(id) && !ent(t).dbno);
+  const options = [];
+  for (const t of foesOf)
+    (e.weapons || []).forEach((s, w) => {
+      if (s.jammed) return;
+      const here = autoEval(id, t, w);
+      const vv = here ? here.v : E.weaponView(s, e, d, ctx());
+      options.push({ t, w, here, v: vv });
+    });
+  if (!options.length) return { id, steps, say: say.length ? say : ["nothing to shoot at"], tgt: null };
+  options.sort((a, b) => (b.here ? b.here.value : 0) - (a.here ? a.here.value : 0) || dist(posOf(id), posOf(a.t)) - dist(posOf(id), posOf(b.t)));
+  let pick = options[0];
+  let at = null,
+    shot = pick.here;
+  // 3. too far for a decent shot: walk toward the weapon's best range, keeping enough AP for one attack
+  if (!shot || shot.hit < R.shootAt) {
+    const nearest = [...options].sort((a, b) => dist(posOf(id), posOf(a.t)) - dist(posOf(id), posOf(b.t)))[0];
+    const cand = shot ? pick : nearest;
+    const cost1 = shot ? shot.cost : Math.max(1, cand.v.ap || 1);
+    let spot = autoSpot(e, cand.t, cand.v, Math.max(0, ap - cost1)),
+      there = spot && autoEval(id, cand.t, cand.w, spot);
+    // still no usable shot from there: spend the whole turn walking in instead of saving AP for a shot that can't land
+    if (!there || there.hit < R.minShot) {
+      const far = autoSpot(e, cand.t, cand.v, ap);
+      if (far) (spot = far), (there = autoEval(id, cand.t, cand.w, far));
+    }
+    if (spot) {
+      if (!shot || shot.hit < R.minShot || (there && there.hit > shot.hit + 0.05)) {
+        at = spot;
+        pick = cand;
+        shot = there;
+        ap -= spot.cost;
+        steps.push({ t: "move", x: spot.x, y: spot.y, cost: spot.cost, m: Math.round(spot.m), to: ent(cand.t).name });
+        say.push(`move ${Math.round(spot.m)} m toward ${ent(cand.t).name}`);
+      }
+    }
+  }
+  // 4. reload an empty gun if there's ammo and AP for it, then attack while it's worth it
+  if (shot && shot.hit >= R.minShot) {
+    const slot = e.weapons[pick.w];
+    const v = shot.v;
+    let mag = slot.mag || 0;
+    if (v.usesAmmo && mag < (v.perShot || 1) && ammoHeld(e, v.reserve) > 0 && ap >= v.reload + shot.cost) {
+      steps.push({ t: "reload", w: pick.w });
+      ap -= v.reload;
+      mag = Math.min(v.cap, ammoHeld(e, v.reserve));
+      say.push(`reload`);
+    }
+    let n = 0;
+    while (n < R.maxAttacks && ap >= shot.cost && (!v.usesAmmo || mag >= (v.perShot || 1) * (v.count || 1) || (mag > 0 && n === 0))) {
+      n++;
+      ap -= shot.cost;
+      if (v.usesAmmo) mag -= (v.perShot || 1) * (v.count || 1);
+    }
+    if (n) {
+      steps.push({ t: "attack", tgt: pick.t, w: pick.w, n });
+      say.push(
+        `${v.melee ? "attack" : "shoot"} ${ent(pick.t).name} ${n === 1 ? "once" : n === 2 ? "twice" : n + " times"} with ${v.n} (${Math.round(shot.hit * 100)}%)`,
+      );
+    }
+  }
+  if (!steps.length) say.push("hold: no worthwhile shot or move");
+  return { id, steps, say, tgt: pick.t, at, k: k.round };
+}
+function autoBox(A) {
+  const p = ui.autoPlan;
+  if (!p || p.id !== A.id) return "";
+  return `<div class="autoplan"><div class="s"><b>AUTO TURN</b> ${h(A.name)} will ${h(p.say.join(", then "))}.</div><div class="acts">${btn("autoConfirm", "", "Confirm", "Enter", "primary tiny")}${btn("autoCancel", "", "Cancel", "Esc", "tiny")}<span class="s dim">Dice are rolled when you confirm. The turn then ends.</span></div></div>`;
+}
+const AUTO_ACT = {
+  autoPlan() {
+    const id = actorId();
+    if (!id || ent(id).kind === "pc") return;
+    ui.autoPlan = planTurn(id);
+    ui.pendingMove = null;
+    ui.autoScroll = true; // the plan sits at the top of the turn panel: bring it into view
+    ui.focus = null; // and don't jump down to the roll box, or back to it
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    render();
+  },
+  autoCancel() {
+    ui.autoPlan = null;
+    render();
+  },
+  autoConfirm() {
+    const p = ui.autoPlan;
+    ui.autoPlan = null;
+    if (!p || p.id !== actorId()) return render();
+    const e = ent(p.id),
+      c = cbOf(p.id),
+      k = K();
+    act(`Auto turn: ${e.name}`, () => {
+      actBatch++;
+      const start = S.log.length;
+      const did = [];
+      try {
+        for (const s of p.steps) {
+          if (s.t === "use") {
+            const l = (e.inv || [])[s.i];
+            const i = l && E.low(l.n) === E.low(s.n) ? s.i : (e.inv || []).findIndex((x) => E.low(x.n) === E.low(s.n));
+            if (i < 0) continue;
+            const keep = ui.modal;
+            ACT.useSelf(`${e.id}|${i}`);
+            ui.modal = keep;
+            did.push(`uses ${s.n}`);
+          } else if (s.t === "move") {
+            c.x = s.x;
+            c.y = s.y;
+            for (const key of Object.keys(k.ranges)) if (key.split("|").includes(e.id)) delete k.ranges[key];
+            e.ap = Math.max(0, (e.ap || 0) - s.cost);
+            c.moved = true;
+            touchObjects(e.id);
+            did.push(`moves ${s.m} m toward ${s.to}`);
+          } else if (s.t === "reload") {
+            reloadWeapon(e.id, s.w);
+            did.push("reloads");
+          } else if (s.t === "attack") {
+            for (let i = 0; i < s.n; i++) {
+              const T = ent(s.tgt);
+              if (!T || T.hp <= 0 || T.dbno || !alive(cbOf(s.tgt))) break;
+              makeAttack(e.id, s.tgt);
+              ui.atk.w = s.w;
+              setPart(ui.atk, "Body");
+              ui.atk.roll = String(Math.floor(Math.random() * 100)).padStart(2, "0");
+              const before = S.log.length;
+              fire();
+              if (S.log.length === before) break; // the attack was refused (no AP, no ammo): stop there
+            }
+          }
+        }
+        // the whole turn as one combat log line; every detail one click away
+        const lines = S.log.splice(start);
+        const stories = lines.filter((l) => /^story/.test(l.k)).map((l) => l.x);
+        const more = lines.flatMap((l) => [l.x, ...(l.more || [])]);
+        const opener = did;
+        const text =
+          `${e.name} ${opener.length ? opener.join(", ") + (stories.length ? ". " : ".") : ""}${stories.join(" ") || (opener.length ? "" : "holds position.")}`.trim();
+        S.log.push({ k: `story auto`, x: text, r: k.round, id: S.seq++, more });
+        ui.atk = null;
+        nextTurn();
+      } finally {
+        actBatch--;
+      }
+    });
+  },
+};
 // Applies status effects from a hit: crits by body part, and whatever the weapon's Status column says. Undo takes them back with the attack.
 function hitStatuses(res, T, v, part, shot = {}) {
   const out = { auto: [], manual: null };
@@ -2216,7 +2472,17 @@ function blastHits(at, t) {
 }
 // MAP EFFECTS: short animations for shots, throws and item use. Each is kept in ui.fx with its start time and drawn with a negative
 // animation-delay, so a re-render halfway through carries on where it was instead of starting over. Off when the system asks for less motion.
+// 12 Nov: every effect also goes into S.fxq (the last 8, by id), so other screens in a session play it when the game reaches them.
 function addFx(f) {
+  if (!isSpec()) {
+    const id = Math.random().toString(36).slice(2, 10);
+    S.fxq = [...(S.fxq || []).slice(-7), { id, f }];
+    (ui.fxSeen = ui.fxSeen || new Set()).add(id);
+    if (table.on) tableSend();
+  }
+  playFx(f);
+}
+function playFx(f) {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const now = performance.now();
   ui.fx = (ui.fx || []).filter((x) => now - x.t0 < x.dur);
@@ -2457,7 +2723,7 @@ function turnBar() {
 }
 function vendorWin() {
   const v = S.vendor;
-  if (!v.stock) v.stock = E.vendorStock(ctx(), v.tier);
+  if (!v.stock) v.stock = []; // stock is rolled in an action when the shop opens (railGo), so it's undoable and shared; never while drawing
   const c = ent(ui.sel);
   const bar = c ? der(c).skills.BAR : 0;
   const f = priceFactors(c, v.barter);
@@ -2495,7 +2761,7 @@ function specialRow(c, d) {
   const b0 = baseStats(c);
   return `<div class="spbig">${E.SPECIAL.map(
     (k) =>
-      `<div class="spcell ${moved(d.sp[k], b0.sp[k])}" title="${E.SPECIAL_NAMES[k]}: ${d.sp[k]}${d.sp[k] !== b0.sp[k] ? ` (base ${b0.sp[k]})` : ""}">${vicon(k, "spi")}<b>${d.sp[k]}</b><span>${E.SPECIAL_NAMES[k]}</span></div>`,
+      `<div class="spcell ${moved(d.sp[k], b0.sp[k])}" title="${E.SPECIAL_NAMES[k]}: ${d.sp[k]}${d.sp[k] !== b0.sp[k] ? ` (base ${b0.sp[k]})` : ""}">${vicon(k, "spi")}<b>${d.sp[k]}</b><span class="spfull">${E.SPECIAL_NAMES[k]}</span><span class="spabbr">${E.SPECIAL_NAMES[k].slice(0, 3)}</span></div>`,
   ).join("")}</div>`;
 }
 function statList(c, d) {
@@ -2785,7 +3051,7 @@ function encounterWin(open) {
     `<label class="f">Style<select id="themeId" data-c="setTheme">${options(
       [...(customMap(M.id) ? [["asBuilt", "As built"]] : []), ...Object.entries(S.rules.roomThemes).map(([id, t]) => [id, t.n])],
       sc.theme,
-    )}</select></label><div class="egbtns"><button class="btn primary" data-a="randomRoom" data-v="" title="New furniture for this location and style">Randomize room</button><select id="roomDensity" data-c="setDensity" title="How full the room gets when randomized">${options(
+    )}</select></label><div class="egbtns"><button class="btn primary" data-a="randomRoom" data-v="" title="New furniture for this location and style">Randomize room</button><select id="roomDensity" data-c="setDensity" title="How full the room gets the next time you press Randomize room">${options(
       [
         ["sparse", "Sparse"],
         ["normal", "Normal"],
@@ -3754,10 +4020,19 @@ function mapSvg() {
     const r = reachOf(ent(actorId()));
     if (r) extra += `<circle class="reach" cx="${a.x}" cy="${a.y}" r="${r}"/>`;
   }
-  if (ui.atk && ui.atk.tgt && ent(ui.atk.tgt)) {
+  if (ui.atk && ui.atk.tgt && ent(ui.atk.tgt) && !ui.autoPlan) {
     const a = posOf(ui.atk.att),
       b = posOf(ui.atk.tgt);
     extra += aimLine(a, b);
+  }
+  // an automated turn waiting for Confirm: where they'll walk, and who they'll shoot
+  if (ui.autoPlan && ent(ui.autoPlan.id) && !isSpec()) {
+    const p = ui.autoPlan,
+      a = posOf(p.id),
+      to = p.at || a;
+    if (p.at)
+      extra += `<line class="movepath" x1="${a.x}" y1="${a.y}" x2="${to.x}" y2="${to.y}"/><g class="ghost" transform="translate(${to.x} ${to.y}) scale(${k2})"><circle cy="-.42" r=".27"/><path d="M-.46 .4 A.46 .62 0 0 1 .46 .4 Z"/></g>`;
+    if (p.tgt && ent(p.tgt) && p.steps.some((s) => s.t === "attack")) extra += aimLine(to, posOf(p.tgt));
   }
   const zoomed = ui.zoom ? ui.zoom.k : 1;
   return `<div class="mapwrap"><svg id="map" class="${ui.place ? "placing" : ""}" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of ${h(M.n)}, ${M.w} by ${M.h} meters"><rect class="floor" x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/><defs><clipPath id="floorclip"><rect x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/></clipPath></defs><path class="grid" clip-path="url(#floorclip)" d="${grid}" style="stroke-opacity:${hex ? 0.8 : v.w > 120 ? 0.35 : v.w > 60 ? 0.6 : 1}"/>${ring}${objs}${extra}${throwOverlay()}${people}${fxLayer(k2, v.w)}</svg>${ui.legend ? mapLegend() : ""}<div class="zoombar"><button class="btn tiny ${ui.legend ? "on" : ""}" data-a="legendToggle" data-v="" title="What the colors, outlines and shapes on the map mean">Key</button><span class="scale s">${hex ? `${S.rules.hexM}m hexes` : S.rules.gridMode === "none" ? "No grid" : `${step}m grid`} · ${Math.round(v.w)}m across</span><button class="btn tiny ${!hex && S.rules.gridMode !== "none" ? "on" : ""}" data-a="setGrid" data-v="square" title="${step}m squares">&#9633;</button><button class="btn tiny ${hex ? "on" : ""}" data-a="setGrid" data-v="hex" title="Hexes ${S.rules.hexM}m across">Hex</button><button class="btn tiny ${S.rules.gridMode === "none" ? "on" : ""}" data-a="setGrid" data-v="none" title="No grid">Off</button><button class="btn tiny" data-a="mapZoom" data-v="1.5" title="Zoom in (or scroll)">+</button><button class="btn tiny" data-a="mapZoom" data-v="0.667" title="Zoom out (or scroll)">-</button><button class="btn tiny ${zoomed > 1 ? "on" : ""}" data-a="mapZoom" data-v="0" title="Show the whole map">Fit</button></div></div>`;
@@ -3844,7 +4119,7 @@ function turnStage() {
   const na = (cost) => (cost > (A.ap || 0) ? "na" : "");
   const free = S.rules.moveAP[1] > (A.ap || 0) ? "na" : "";
   const cons = (A.inv || []).map((l, i) => ({ l, i, it: E.get(ctx(), l.n) })).filter((x) => x.it && x.it.cat === "item" && usable(x.it.o));
-  const head = `<div class="turnhead ${A.kind === "pc" ? "" : A.ally ? "ally" : "foe"}"><div class="turnwho"><span class="turnlabel">ROUND ${k.round} // ACTING</span><span class="actname">${h(A.name)}</span></div><div class="turnap"><span class="turnlabel">ACTION POINTS</span><span class="apbig">${fmt(A.ap)}<small>/${d.ap}</small></span>${apPips(A.ap || 0, d.ap)}${ui.atk && atkView() ? `<span class="apafter">after this shot: ${fmt(Math.max(0, (A.ap || 0) - atkView().cost))}</span>` : ""}</div><button class="btn primary endturn" data-a="next" data-v="">${kbd("N")}End turn</button></div>`;
+  const head = `<div class="turnhead ${A.kind === "pc" ? "" : A.ally ? "ally" : "foe"}"><div class="turnwho"><span class="turnlabel">ROUND ${k.round} // ACTING</span><span class="actname">${h(A.name)}</span></div><div class="turnap"><span class="turnlabel">ACTION POINTS</span><span class="apbig">${fmt(A.ap)}<small>/${d.ap}</small></span>${apPips(A.ap || 0, d.ap)}${ui.atk && atkView() ? `<span class="apafter">after this shot: ${fmt(Math.max(0, (A.ap || 0) - atkView().cost))}</span>` : ""}</div>${A.kind !== "pc" ? `<button class="btn autobtn" data-a="autoPlan" data-v="" title="Plan this turn for ${h(A.name)}: heal if hurt, move into range, shoot. You see the plan first, then Confirm.">Auto</button>` : ""}<button class="btn primary endturn" data-a="next" data-v="">${kbd("N")}End turn</button></div>`;
   const actions = `<div class="acts">${btn("reload", "", `Reload${v && v.usesAmmo ? ` ${fmt(v.reload)}` : ""}`, "R", v && v.usesAmmo ? na(v.reload) : "na")}${btn("swap", "", `Swap ${S.rules.swapAP}`, "", na(S.rules.swapAP))}${btn("moveModal", "", "Move", "M", free)}${slot && slot.jammed ? btn("clearJamBtn", "", `Clear jam ${v.clearJam}`, "", `primary ${na(v.clearJam)}`) : ""}${btn("check", "", "Skill check")}${btn("reviveChk", "", "Revive", "", S.chars.some((x) => x.dbno) ? "" : "na")}${btn("statusModal", "", "Status")}${d.m.inspire ? btn("inspire", "", "Inspire 2", "", na(2)) : ""}</div>`;
   const throws = (A.inv || []).filter((l) => (S.rules.throwables || {})[l.n]);
   const throwBtns = throws
@@ -3861,7 +4136,7 @@ function turnStage() {
             `<button class="opt" data-a="useItemFrom" data-v="${A.id}|${x.i}" title="${h(x.it.o.effect || "")}">${itemIcon(x.l.n)} ${h(x.l.n)} x${fmt(x.l.q)}${x.it.o.ap ? ` <small>${x.it.o.ap}AP</small>` : ""}</button>`,
         )
         .join("") || `<span class="s dim">None carried.</span>`;
-  return `${head}${banners.join("")}<div class="segs">${ui.atk ? attackPanel() : seg("Attack", `<span class="s dim">${h(A.name)} has no weapon.</span>`)}${seg("Actions", actions, "half")}${seg("Consumables", `<div class="row wrap">${consBody}</div>`, "half")}${d.notes.length ? seg(`For the DM <small>${d.notes.length}</small>`, fold(`rem:${A.id}`, "Reminders", d.notes.map((n) => `<div class="txt s">${h(n)}</div>`).join("")), "half") : ""}${(S.scene.effects || []).length ? seg("Carried over", S.scene.effects.map((f) => `<div class="txt s">${h(f.label)}${f.hit ? `: ${f.who} ${E.pct(f.hit)}% to hit` : ""}</div>`).join(""), "half") : ""}</div>`;
+  return `${head}${autoBox(A)}${banners.join("")}<div class="segs">${ui.atk ? attackPanel() : seg("Attack", `<span class="s dim">${h(A.name)} has no weapon.</span>`)}${seg("Actions", actions, "half")}${seg("Consumables", `<div class="row wrap">${consBody}</div>`, "half")}${d.notes.length ? seg(`For the DM <small>${d.notes.length}</small>`, fold(`rem:${A.id}`, "Reminders", d.notes.map((n) => `<div class="txt s">${h(n)}</div>`).join("")), "half") : ""}${(S.scene.effects || []).length ? seg("Carried over", S.scene.effects.map((f) => `<div class="txt s">${h(f.label)}${f.hit ? `: ${f.who} ${E.pct(f.hit)}% to hit` : ""}</div>`).join(""), "half") : ""}</div>`;
 }
 function lastResult() {
   const l = [...S.log].reverse().find((x) => ["hit", "miss", "jam"].includes(x.k));
@@ -4049,8 +4324,12 @@ function lootRows() {
     const caps = Math.round((e.caps || 0) * share * (1 + Math.max(0, ...S.chars.map((x) => der(x).m.capsMul || 0))));
     if (caps) rows.push({ key: `${e.id}:caps`, n: "Caps", q: caps, from: e.name, caps: true });
     // Extra finds: mostly consumables and ammo, some junk. A higher score finds more, and better things.
-    const n = Math.min(S.rules.lootFindMax || 0, Math.floor(score * (S.rules.lootFind || 0) * (0.5 + rng() * 0.5)));
-    const cap = (e.tier || 1) + Math.floor(score / 100);
+    // a good d20 loot roll on the end screen adds a find or two to each body, a tier better
+    const lr = num((ui.end || {}).lootRoll),
+      LB = S.rules.lootRollBonus || {};
+    const bonus = lr == null ? 0 : lr >= (LB.great || 20) ? 2 : lr >= (LB.good || 17) ? 1 : 0;
+    const n = Math.min(S.rules.lootFindMax || 0, Math.floor(score * (S.rules.lootFind || 0) * (0.5 + rng() * 0.5))) + bonus;
+    const cap = (e.tier || 1) + Math.floor(score / 100) + (bonus ? 1 : 0);
     const tries = 1 + Math.floor(score / 80);
     const best = (pool) => {
       let pick = null;
@@ -4073,7 +4352,7 @@ function lootRows() {
         it = { n: partyAmmo[Math.floor(rng() * partyAmmo.length)] };
         q = 3 + Math.floor(rng() * (score / 10));
       } else it = best(junk);
-      if (it) rows.push({ key: `${e.id}:f${i}`, n: it.n, q, from: `${e.name}, found` });
+      if (it) rows.push({ key: `${e.id}:f${i}`, n: it.n, q, from: `${e.name}, ${i >= n - bonus ? "good roll" : "found"}` });
     }
   }
   return rows;
@@ -4326,11 +4605,13 @@ function mirrorNarrowRules() {
   st.textContent = css;
   document.head.appendChild(st);
 }
+const RING_OP = 0.3; // 12 Nov: the accuracy ring's fill, dimmer than the old 0.55 so it doesn't pull the eye; the Size window has a slider
 function applyScale() {
   const z = prefs.uiScale || 1;
   const root = document.documentElement;
   root.style.zoom = z === 1 ? "" : z;
   root.style.setProperty("--z", z);
+  root.style.setProperty("--ringop", prefs.ringOp != null ? prefs.ringOp : RING_OP);
   if (z > 1) mirrorNarrowRules();
   const w = innerWidth / z; // the width the layout actually gets
   root.classList.toggle("lt1000", z > 1 && w <= 1000);
@@ -4349,7 +4630,17 @@ addEventListener("resize", () => {
 });
 function scaleBody() {
   const cur = prefs.uiScale || 1;
-  return `<div class="s dim" style="margin-bottom:6px">Everything gets bigger or smaller together. This browser remembers it.</div><div class="scalegrid">${UI_SCALES.map((z) => `<button class="btn ${z === cur ? "on" : ""}" data-a="setScale" data-v="${z}" aria-pressed="${z === cur}">${z * 100}%</button>`).join("")}</div>`;
+  const sp = prefs.spStyle || "symbols";
+  const ring = Math.round((prefs.ringOp != null ? prefs.ringOp : RING_OP) * 100);
+  return `<div class="s dim" style="margin-bottom:6px">Everything gets bigger or smaller together. This browser remembers it.</div><div class="scalegrid">${UI_SCALES.map((z) => `<button class="btn ${z === cur ? "on" : ""}" data-a="setScale" data-v="${z}" aria-pressed="${z === cur}">${z * 100}%</button>`).join("")}</div>
+  <h3 style="margin-top:12px">Party cards: S.P.E.C.I.A.L.</h3><div class="opts">${[
+    ["symbols", "Symbols"],
+    ["text", "Letters"],
+    ["both", "Both"],
+  ]
+    .map(([v, n]) => `<button class="btn ${sp === v ? "on" : ""}" data-a="setSpStyle" data-v="${v}" aria-pressed="${sp === v}">${n}</button>`)
+    .join("")}</div>
+  <h3 style="margin-top:12px">Accuracy ring</h3><label class="row" style="align-items:center;gap:8px"><span class="s">Faint</span><input type="range" id="ringOp" min="10" max="80" step="5" value="${ring}" data-c="setRingOp" aria-label="Accuracy ring brightness"><span class="s">Bright</span><b class="s">${ring}%</b></label>`;
 }
 function autoBody() {
   const iv = prefs.interval;
@@ -5185,7 +5476,7 @@ function renderModal() {
   const size =
     m.type === "dev" || m.type === "mapmaker"
       ? "full"
-      : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard", "vendor", "skillTree", "levelPerks"].includes(m.type)
+      : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard", "vendor", "skillTree", "levelPerks", "detail"].includes(m.type)
         ? "big"
         : ["autoWin", "move", "uiScale", "saveTo"].includes(m.type)
           ? "tiny"
@@ -5818,11 +6109,43 @@ const SEARCH_LIST = () => [
   ...DATA.traits.map((o) => ["Trait", o]),
   ...DATA.statuses.map((o) => ["Status", o]),
 ];
-const searchHits = (q) => (E.low(q) ? rankByName(SEARCH_LIST(), q, (x) => x[1].n).slice(0, 30) : []);
+const BIBLE_Z = "/*BIBLETXT*/";
+let bibleCache = null;
+function bibleIdx() {
+  if (bibleCache) return bibleCache;
+  try {
+    const bin = atob(BIBLE_Z);
+    const raw = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) raw[i] = bin.charCodeAt(i);
+    bibleCache = JSON.parse(new TextDecoder().decode(inflate(raw))).map(([n, page, text]) => ({ n, page, text }));
+  } catch (e) {
+    bibleCache = []; // a build without the bible text (tests, or the PDF missing)
+  }
+  return bibleCache;
+}
+// Bible hits: every word of the search must appear in the chapter. A match in the chapter's title ranks first.
+function bibleHits(q) {
+  const words = E.low(q)
+    .split(/\s+/)
+    .filter((w) => w.length > 1);
+  if (!words.length || E.low(q).length < 3) return [];
+  return bibleIdx()
+    .map((b) => {
+      const t = E.low(b.text);
+      if (!words.every((w) => t.includes(w) || E.low(b.n).includes(w))) return null;
+      const at = t.indexOf(words[0]);
+      const snip = at < 0 ? b.text.slice(0, 90) : (at > 40 ? "…" : "") + b.text.slice(Math.max(0, at - 40), at + 70) + "…";
+      return ["Bible", { ...b, snip, score: (words.every((w) => E.low(b.n).includes(w)) ? 100 : 0) + words.reduce((s, w) => s + t.split(w).length - 1, 0) }];
+    })
+    .filter(Boolean)
+    .sort((a, b) => b[1].score - a[1].score)
+    .slice(0, 12);
+}
+const searchHits = (q) => (E.low(q) ? [...rankByName(SEARCH_LIST(), q, (x) => x[1].n).slice(0, 30), ...bibleHits(q)] : []);
 function searchModal() {
   const m = ui.modal;
   const hits = searchHits(m.q);
-  return `<input id="searchQ" autocomplete="off" style="width:100%" placeholder="Items, enemies, perks, traits, statuses" data-u="modal.q" value="${h(m.q)}" data-enter="searchOpen"><div class="results" style="max-height:60vh">${hits.map(([c, o], i) => `<button class="rowbtn ${i === (m.i || 0) ? "on" : ""}" data-a="searchPick" data-v="${i}"><span class="tag">${c.toUpperCase()}</span><span class="grow">${h(o.n)}</span></button>`).join("") || `<div class="dim" style="padding:4px">${m.q ? "No matches." : "Start typing. Up and down to move, Enter to open."}</div>`}</div>`;
+  return `<input id="searchQ" autocomplete="off" style="width:100%" placeholder="Items, enemies, perks, traits, statuses, rules in the bible" data-u="modal.q" value="${h(m.q)}" data-enter="searchOpen"><div class="results" style="max-height:60vh">${hits.map(([c, o], i) => `<button class="rowbtn ${i === (m.i || 0) ? "on" : ""}" data-a="searchPick" data-v="${i}"><span class="tag">${c.toUpperCase()}</span><span class="grow">${h(o.n)}${c === "Bible" ? ` <span class="s dim">p.${h(o.page)} · ${h(o.snip)}</span>` : ""}</span></button>`).join("") || `<div class="dim" style="padding:4px">${m.q ? "No matches." : "Start typing. Up and down to move, Enter to open."}</div>`}</div>`;
 }
 function detailModal() {
   const m = ui.modal;
@@ -5852,7 +6175,79 @@ function detailModal() {
         )}</div>`,
     )
     .join("");
-  return `${lines}<div class="acts" style="margin-top:6px">${acts.join("")}${btn("search", m.q || "", "Back to search")}</div>`;
+  return `${termView(c, o, m.q, lines)}<div class="acts" style="margin-top:6px">${acts.join("")}${btn("search", m.q || "", "Back to search")}</div>`;
+}
+// A RobCo terminal: header, the query typed at a prompt, the entry's fields as dotted rows (or a bible chapter's text with the
+// search words lit up), and a blinking cursor. Same data as before, only drawn as a terminal screen.
+const TERM_KEYS = {
+  lb: "Weight (lb)",
+  val: "Value (caps)",
+  cat: "Category",
+  ap: "AP",
+  dmg: "Damage",
+  pen: "Pen",
+  req: "Skill needed",
+  hit: "Hit by range",
+  mag: "Magazine",
+  ammo: "Ammo",
+  tab: "Type",
+  type: "Kind",
+  tier: "Tier",
+  effect: "Effect",
+  dt: "DT",
+  loc: "Worn on",
+  crit: "Crit chance",
+  jam: "Jam chance",
+  reload: "Reload AP",
+  count: "Burst",
+  str: "STR needed",
+  skill: "Skill",
+  hp: "HP",
+  xp: "XP",
+  caps: "Caps",
+  faction: "Faction",
+  group: "Group",
+  dur: "Duration",
+  uses: "Uses",
+  mob: "Creature",
+  pri: "Initiative",
+};
+const TERM_SKIP = new Set([
+  "use",
+  "useFrom",
+  "fx",
+  "fxFrom",
+  "req0",
+  "unique",
+  "rows",
+  "when",
+  "ok",
+  "tiers",
+  "special",
+  "skills",
+  "w1",
+  "w2",
+  "capsRange",
+  "src",
+]);
+function termView(c, o, q, lines) {
+  const words = E.low(q || "")
+    .split(/\s+/)
+    .filter((w) => w.length > 1)
+    .map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const lit = (s) => (words.length ? h(s).replace(new RegExp(`(${words.join("|")})`, "gi"), "<mark>$1</mark>") : h(s));
+  let body;
+  if (c === "Bible") {
+    let first = true;
+    body = `<div class="termtext">${lit(o.text).replace(/<mark>/, () => (first ? ((first = false), '<mark id="termhit">') : "<mark>"))}</div>`;
+    ui.termScroll = true;
+  } else
+    body = lines.replace(/<div class="s"><span class="dim">([^<]*):<\/span>\s*([\s\S]*?)<\/div>/g, (_, k, v) => {
+      const key = k.trim();
+      if (TERM_SKIP.has(key) || /^[\[{]/.test(v.trim())) return ""; // internal fields and raw data stay out of the readout
+      return `<div class="termrow"><span class="k">${(TERM_KEYS[key] || key).toUpperCase()}</span><span class="dots"></span><span class="v">${v}</span></div>`;
+    });
+  return `<div class="robco"><div class="termhd">ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL<br>${c === "Bible" ? `GAME BIBLE // PAGE ${h(o.page)}` : `DATABASE // ${h(c.toUpperCase())}`}</div><div class="termln">&gt; ${q ? `QUERY "${h(q)}"` : "OPEN"}<br>&gt; ENTRY: ${h(String(o.n).toUpperCase())}</div>${body}<div class="termln">&gt; <span class="termcur">&#9608;</span></div></div>`;
 }
 
 // ---------- actions
@@ -6175,6 +6570,17 @@ const ACT = {
     el.dispatchEvent(new Event("change", { bubbles: true }));
     toast(`Rolled ${val}`);
     if (enter && ACT[enter]) ACT[enter](val, el); // the same as typing it and pressing Enter
+  },
+  setSpStyle(v) {
+    prefs.spStyle = v === "symbols" ? undefined : v; // unset is symbols
+    savePrefs();
+    render();
+  },
+  setRingOp(v) {
+    prefs.ringOp = clamp(Number(v) / 100, 0.1, 0.8);
+    savePrefs();
+    applyScale();
+    render();
   },
   setScale(v) {
     prefs.uiScale = Number(v) || 1;
@@ -6521,6 +6927,10 @@ const ACT = {
   },
   railGo(v) {
     ui.railMore = false;
+    if (v === "vendor" && !isSpec() && !(S.vendor.stock || []).length)
+      act("Stock vendor", () => {
+        S.vendor.stock = E.vendorStock(ctx(), S.vendor.tier);
+      });
     if (isSpec() && !SPEC_RAIL.includes(v)) return;
     if (v === "wiki") return ACT.wiki();
     if (v === "saveNow") return ACT.saveNow();
@@ -6852,7 +7262,7 @@ const ACT = {
     act("Room clutter", () => {
       S.scene.density = val === "normal" ? "" : val;
     });
-    ACT.randomRoom();
+    toast("Clutter set. It applies the next time you press Randomize room."); // never throws away what the DM placed
   },
   setSpawn(val) {
     act("Enemy distance", () => {
@@ -7767,6 +8177,7 @@ const ACT = {
   },
   finishCombat() {
     const u = ui.end || { xp: {}, heal: {}, loot: {}, add: {}, extra: [] };
+    ui.endLootTo = ""; // 'Loot all to' is for this fight only
     act("Finish combat", () => {
       const k = K();
       const rows = lootRows();
@@ -8046,6 +8457,17 @@ function render() {
     else if (el.dataset.scroll === "ttree" && !(el.dataset.scroll in keepX)) el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2; // a freshly opened skill tree starts at its root
   });
   if (isSpec()) specLock();
+  if (ui.autoScroll) {
+    ui.autoScroll = false;
+    const ap = document.querySelector(".autoplan");
+    const wb = ap && ap.closest(".wb");
+    if (wb) wb.scrollTop = 0; // the plan is at the top of the turn panel
+  }
+  if (ui.termScroll) {
+    ui.termScroll = false;
+    const hit = document.getElementById("termhit");
+    if (hit) hit.scrollIntoView({ block: "center" });
+  }
   if (ui.focus) {
     const el = document.querySelector(ui.focus);
     const roll = ui.focus === "#roll";
@@ -8168,7 +8590,7 @@ document.addEventListener("input", (e) => {
 document.addEventListener("change", (e) => {
   const el = e.target;
   if (el.dataset.u || el.dataset.initroll || el.dataset.note) return;
-  if (isSpec()) return render();
+  if (isSpec() && !SPEC_UI.has(el.dataset.c)) return render();
   deferRender = true;
   try {
     if (el.dataset.bind) {
@@ -8191,8 +8613,20 @@ document.addEventListener("change", (e) => {
         if (!S.combat) for (const c of S.chars) c.ap = der(c).ap;
       });
     else if (el.dataset.rule) {
-      const v = el.type === "checkbox" ? el.checked : el.dataset.rt === "pct" ? num(el.value, 0) / 100 : el.dataset.rt === "num" ? num(el.value, 0) : el.value;
-      act("Change rule", () => setPath(S.rules, el.dataset.rule, v));
+      const blankNull = el.dataset.rule === "tier1Req" && String(el.value).trim() === ""; // blank: the workbook's own requirements
+      const v = blankNull
+        ? null
+        : el.type === "checkbox"
+          ? el.checked
+          : el.dataset.rt === "pct"
+            ? num(el.value, 0) / 100
+            : el.dataset.rt === "num"
+              ? num(el.value, 0)
+              : el.value;
+      act("Change rule", () => {
+        setPath(S.rules, el.dataset.rule, v);
+        if (el.dataset.rule === "tier1Req") S.tableRev = (S.tableRev || 0) + 1; // the weapon data is rebuilt with it, on every screen
+      });
     } else if (el.dataset.pref) {
       const k = el.dataset.pref;
       if (k === "seconds") prefs.interval = Math.max(0, num(el.value, 0));
@@ -8293,6 +8727,10 @@ const KEYS = {
 document.addEventListener("keydown", (e) => {
   if (isSpec() && e.key !== "Escape") return; // no shortcuts on a spectator screen
   const t = e.target;
+  if (ui.autoPlan && !(t.matches && t.matches("input,select,textarea")) && (e.key === "Enter" || e.key === "Escape")) {
+    e.preventDefault();
+    return e.key === "Enter" ? ACT.autoConfirm() : ACT.autoCancel();
+  }
   const k = e.key.toLowerCase();
   const typing = t.matches && t.matches("input,select,textarea");
   // Q and E turn the object you're holding or have selected: Q counter-clockwise, E clockwise, 15 degrees a press
@@ -9013,9 +9451,18 @@ function tableTake(msg) {
   } catch (e) {
     return;
   }
+  const had = new Set((S.fxq || []).map((x) => x.id)),
+    first = !table.gotState;
   S = p;
   table.rev = msg.rev;
   table.gotState = true;
+  // play the effects that came with this update (none on joining: those already happened)
+  ui.fxSeen = ui.fxSeen || new Set();
+  for (const x of S.fxq || [])
+    if (!had.has(x.id) && !ui.fxSeen.has(x.id)) {
+      ui.fxSeen.add(x.id);
+      if (!first) playFx(x.f);
+    }
   // shortcut: undo only covers your own changes since the last remote update; upgrade to a shared server-side undo if the user asks.
   undoStack.length = redoStack.length = undoChars = 0;
   if (!ent(ui.sel)) ui.sel = (S.chars[0] || {}).id;
@@ -9052,7 +9499,10 @@ async function tableJoin() {
   if (hello.role) table.role = hello.role;
   if (hello.links) table.links = hello.links;
   if (hello.s) table.specLinks = room ? [table.links[0].replace(/&t=[^&]*/, `&t=${hello.s}`) + "&v=s"] : (hello.specLinks || []).map((l) => l + "&v=s");
-  if (!hello.hasState && !isSpec()) tablePost(); // first DM device in: its campaign becomes the table's
+  if (!hello.hasState && !isSpec()) {
+    table.gotState = true; // this screen's game is the table's, so the next update is a real change (its effects play)
+    tablePost(); // first DM device in: its campaign becomes the table's
+  }
   const es = new EventSource(tableUrl("events"));
   const status = () => {
     saveStatus();
@@ -9085,4 +9535,5 @@ async function tableJoin() {
   };
   render();
 }
+Object.assign(ACT, AUTO_ACT);
 tableJoin();

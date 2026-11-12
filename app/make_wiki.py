@@ -416,6 +416,38 @@ upd(12, D12, "A shot that only clips an object goes past it", "Was: a shot touch
     "Only shots, cover and the accuracy ring use the smaller box. Walking, placing and drawing use the full size.",
     "Settings, Cover tiers: 'Object hitbox smaller by'. 0 is the old rule."))
 
+upd(27, D12, "Bleeding slows down by itself", "Was: Bleeding lasted until treated, and enemies never treat it, so any bleed on an enemy was permanent. Now: it drops a tier each round.", bl(
+    f"At the end of each round Bleeding goes down one tier: Bleeding 5 becomes 4, then 3, then 2, then 1. Bleeding 1 lasts {R['bleedT1Rounds']} more rounds and then stops.",
+    f"So the most a bleed can do untreated is 10 + 6 + 4 + 2 + {R['bleedT1Rounds']} x 1 = {22 + R['bleedT1Rounds']} damage (from Bleeding 5), not a slow death.",
+    "Treatment still lowers it at once (Bandage, Military Bandage and the like), and a new wound that bleeds worse than the current one raises it again.",
+    "Settings, Cover tiers: 'Bleeding drops one tier each round' (off is the old rule) and how long Bleeding 1 lasts."))
+upd(28, D12, "Enemies are slowed by their load too", "Was: encumbrance applied to players only. Now: enemy humans pay it the same way.", bl(
+    "An enemy's worn armor, held weapons and on-hand inventory count toward its active limit (65% of its Carry), and everything toward its total, exactly as for a player.",
+    "Creatures don't carry gear and are not affected.",
+    "Settings, Enemies and inventory: 'Enemy humans are slowed by their load'."))
+upd(20, D12, "Enemies carry real inventories", "Was: one magazine's worth of ammo and up to two random consumables. Now: a carried kit, like a player's.", bl(
+    f"Each gun comes with {R['genInv']['mags'][0]} to {R['genInv']['mags'][1]} spare magazines, on hand. A gun that holds one or two rounds carries {R['genInv']['tinyMag']} loose.",
+    f"{round(R['genInv']['healChance'] * 100)}% carry a healing item of their tier or lower (sometimes two), and {round(R['genInv']['bandageChance'] * 100)}% something for bleeding. Both are on hand, so they can be used in a fight.",
+    f"Up to {R['genLootMax']} other consumables and up to {R['genInv']['junkMax']} kinds of junk (crafting materials) in the pack.",
+    "All of it has weight, so it counts toward encumbrance, and all of it can be looted.",
+    f"More variety: the second weapon is a melee weapon most of the time, a sidearm (pistol or revolver) {round(R['genInv']['sidearm'] * 100)}% of the time, and nothing {round(R['genInv']['noSide'] * 100)}% of the time. {round(R['genInv']['altLoad'] * 100)}% carry a magazine of another load for their main gun, chems are kept on hand, and from tier 2 {round(R['genInv']['grenade'] * 100)}% carry a grenade.",
+    "Unique weapons and armor are never handed out to generated enemies."))
+upd(19, D12, "A good loot roll finds a little more", "Was: the d20 loot roll on the after-action screen only showed a tier shift. Now: a good roll adds finds.", bl(
+    f"Loot is still what the enemies carried (their weapons, ammo, armor, consumables and junk), scaled by the best looter's Survival and Luck.",
+    f"A loot roll of {R['lootRollBonus']['good']} or more adds one extra find to each body, {R['lootRollBonus']['great']} adds two. These finds are a tier better than the usual ones, and the list marks them 'good roll'.",
+    "Settings, Enemies and inventory: the two roll numbers."))
+upd(8, D12, "Tier 1 weapons need skill 1", f"Was: tier 1 weapons asked for their workbook skill (often 10-25), so starting characters were barely over it. Now: every tier 1 weapon asks for {R['tier1Req']}.", bl(
+    "A starting character with skill 10 to 20 is now 9 to 19 points over, which adds about 7 to 14% to hit with the current skill multiplier.",
+    "It makes the early fights, where the odds were 3 to 30% at range, quicker and less frustrating. Higher tiers are unchanged.",
+    "The workbook's own number is kept. Settings, Attack roll: 'Tier 1 weapons need this much skill'. Blank goes back to the workbook's."))
+upd(17, D12, "Auto: the app can play an enemy's turn", "New. Optional: unless Auto is pressed, the DM plays the enemy as before.", bl(
+    "On an enemy's or ally's turn an Auto button sits next to End turn. It plans the turn and shows it: where they'll walk (a ghost at the end of a dashed line), who they'll shoot and the odds. Nothing has happened yet.",
+    f"Confirm (or Enter) plays it with real dice and ends the turn. Cancel (or Esc) drops it. The whole turn is one combat log line, with every roll a click away, and one Undo.",
+    f"The plan is the same for every enemy for now: if HP is below {round(R['autoTurn']['healBelow'] * 100)}% use a healing item; at Bleeding {R['autoTurn']['bleedAt']} or worse use something for bleeding. Then pick the target and weapon with the best expected damage.",
+    f"If the odds are {round(R['autoTurn']['shootAt'] * 100)}% or better, shoot from where they stand. Otherwise walk toward the weapon's best range band, keeping enough AP for a shot; if no shot is possible even then, spend the whole turn walking in.",
+    f"Reload an empty gun first if there's ammo and AP for it. Attack up to {R['autoTurn']['maxAttacks']} times, never at under {round(R['autoTurn']['minShot'] * 100)}%, stopping if the target goes down.",
+    "Settings, Enemies and inventory: the five Auto numbers. Dispositions (cowardly, reckless and so on) can be added later."))
+
 # The register's own update: what the app has settled since the book was compiled, and where everything else stands.
 def _register_rows():
     d = fitz.open(BASE); rows = {}

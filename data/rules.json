@@ -1744,6 +1744,35 @@
  "bossMax": 0.3,
  "genArmor": true,
  "genLootMax": 2,
+ "genInv": {
+  "mags": [
+   2,
+   3
+  ],
+  "tinyMag": 10,
+  "healChance": 0.6,
+  "bandageChance": 0.4,
+  "junkMax": 2,
+  "sidearm": 0.25,
+  "noSide": 0.1,
+  "altLoad": 0.3,
+  "grenade": 0.15
+ },
+ "npcEncumbrance": true,
+ "tier1Req": 1,
+ "lootRollBonus": {
+  "good": 17,
+  "great": 20
+ },
+ "bleedDecay": true,
+ "bleedT1Rounds": 5,
+ "autoTurn": {
+  "healBelow": 0.4,
+  "bleedAt": 2,
+  "shootAt": 0.25,
+  "minShot": 0.1,
+  "maxAttacks": 3
+ },
  "genExclude": [],
  "sceneDefaults": {
   "time": "Daytime",

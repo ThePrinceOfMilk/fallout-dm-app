@@ -8,11 +8,11 @@ const E = require("../src/engine.js");
 const { DEFAULT_RULES } = require("../src/rules.js");
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, "data.json"), "utf8"));
 const fx = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures.json"), "utf8"));
-const skippedList = E.standardize(data, DEFAULT_RULES);
+const skippedList = E.standardize(data, { ...DEFAULT_RULES, tier1Req: null }); // the fixtures use the sheet's requirements
 const db = E.makeDb(data);
 const rules = JSON.parse(JSON.stringify(DEFAULT_RULES));
 Object.assign(rules, { perPenalty: 0.05, strGun: 0.0125, strMelee: 0.05, conditions: false,
-  gunHitAdd: 0, skillHitMul: 1, meleeHeavyBase: null, meleeApMul: 1, punchAP: null, burstAP: 0, burstMode: "steps", creaturePen: 0, armorFloors: null, pcHpPerLevel: 1, pcHpMul: 1, npcHpPerTier: 6, pelletMode: "combined", locHit: null, coverInset: 0 });  // fixtures come from the sheet; the 9 Nov balance pass is tested on its own below
+  gunHitAdd: 0, skillHitMul: 1, meleeHeavyBase: null, meleeApMul: 1, punchAP: null, burstAP: 0, burstMode: "steps", creaturePen: 0, armorFloors: null, pcHpPerLevel: 1, pcHpMul: 1, npcHpPerTier: 6, pelletMode: "combined", locHit: null, coverInset: 0, npcEncumbrance: false });  // fixtures come from the sheet; the 9 Nov balance pass is tested on its own below
 const ctx = { db, rules, scene: { time: "Daytime", weather: "Clear", env: "Grassland", effects: [] }, ov: {} };
 const near = (a, b, msg) => assert.ok(Math.abs(a - b) < 1e-6, `${msg}: got ${a}, sheet says ${b}`);
 const gecko = E.spawn(db.enemies.get("gecko"), "e1", ctx, () => 0.5);
