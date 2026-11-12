@@ -368,7 +368,16 @@ const E = (() => {
       d.hp = Math.floor(((e.baseHp || 0) + (m.hp || 0)) * (e.hpMult || 1));
       d.ap = Math.floor((e.baseAp || 0) + (m.ap || 0));
       d.pri = (e.basePri || 0) + (m.pri || 0);
-      d.dt = (e.baseDt || 0) + (m.dt || 0);
+      d.dt = Math.floor((e.baseDt || 0) + (m.dt || 0) + 1e-9); // DT is a whole number, rounded down
+      const bc = r.bossDtCut;
+      if (
+        bc &&
+        bc.pct &&
+        (e.tier || 1) <= bc.maxTier &&
+        enemyType(e, r) !== "robot" &&
+        (e.boss || new RegExp(`\\b(${bc.names})\\b`, "i").test(e.tmpl || e.n || e.name || ""))
+      )
+        d.dt = Math.floor(d.dt * (1 - bc.pct) + 1e-9); // low-tier animal bosses are easier to hurt
       d.save = 0;
     } else {
       const lvlHp =
@@ -387,8 +396,10 @@ const E = (() => {
         pieces.reduce((t, n) => {
           const h = get(ctx, n);
           return t + ((h && h.o.dt) || 0);
-        }, 0) + (m.dt || 0);
-      d.dt = fix(d.dt * (1 + (m.dtPct || 0))); // Plasma Melt and similar remove a share of DT
+        }, 0) *
+          (1 - (r.armorDtCut || 0)) +
+        (m.dt || 0);
+      d.dt = Math.floor(d.dt * (1 + (m.dtPct || 0)) + 1e-9); // Plasma Melt and similar remove a share of DT; DT is rounded down
       d.save = saveTarget(L, skills.SUR, m.save || 0, e.timesRevived || 0, r);
     }
     d.pts = 10 + Math.floor((sp.I || 0) / 2) + (m.pts || 0);
@@ -501,7 +512,7 @@ const E = (() => {
         v.caliber = w.ammo;
         v.load = slot.ammo;
         if (a) {
-          v.base = a.o.dam;
+          v.base = a.o.dam * (1 + (ctx.rules.ammoDamAdd || 0)); // 12 Nov: every caliber's load hits this much harder
           v.pen = a.o.pen;
           v.pellets = a.o.pellets;
           v.ammoNote = a.o.note;
@@ -522,6 +533,7 @@ const E = (() => {
     v.base = fix((v.base || 0) * dm);
     v.pen = (v.pen || 0) + (d.m.pen || 0);
     v.clearJam = Math.max(0, v.clearJam + (d.m.clearJamAdd || 0)); // Quick Repair Harness
+    v.tier = Number(w.tier) || 0;
     return v;
   }
   const loadsFor = (ctx, caliber) => ctx.db.data.ammo.filter((a) => low(a.cal) === low(caliber));
@@ -539,6 +551,7 @@ const E = (() => {
       sk = ((skill - v.req) / 2) * mul;
     parts.push(["skill", (mul === 1 ? sk : Math.floor(sk + 1e-9)) / 100]);
     if (!v.melee && !v.thrown && r.gunHitAdd) parts.push(["gun", r.gunHitAdd]);
+    if (v.tier && r.tierHitAdd && r.tierHitAdd[v.tier]) parts.push([`tier ${v.tier}`, r.tierHitAdd[v.tier]]);
     if (r.perPenalty && !v.melee && A.sp.P != null && A.sp.P < rng) parts.push(["PER", -(rng - A.sp.P) * r.perPenalty]);
     if ((v.melee || v.thrown ? r.strMelee : r.strGun) && A.sp.S != null && A.sp.S < v.str)
       parts.push(["STR", -(v.str - A.sp.S) * v.str * (v.melee || v.thrown ? r.strMelee : r.strGun)]);
@@ -1364,6 +1377,19 @@ const E = (() => {
       if (lo >= 0) out.push({ d: lo * len, tier: t, o });
     }
     return out.sort((x, y) => x.d - y.d);
+  }
+  /** Meters walked per AP at this Agility: a straight line through the rule's points (AGI 1 = 5, 10 = 8), carried on past the ends. */
+  function moveSpeed(agl, r) {
+    const pts = (r && r.moveSpeed) || [
+      [1, 3],
+      [5, 6],
+      [10, 12],
+    ];
+    let i = 0;
+    while (i < pts.length - 2 && agl > pts[i + 1][0]) i++;
+    const [a0, s0] = pts[i],
+      [a1, s1] = pts[i + 1];
+    return Math.max(0.5, s0 + ((agl - a0) * (s1 - s0)) / (a1 - a0));
   }
   /** Does walking this path hit something solid, like a building? */
   const pathBlocked = (a, b, objects) => (objects || []).some((o) => o.block && crosses(a, b, o));
@@ -2555,7 +2581,7 @@ const E = (() => {
         else m[k] = fix((m[k] || 0) + x);
       }
     }
-    return { ...d, m, skills, sp, dt: d.dt + extraDt, ap: d.ap + extraAp };
+    return { ...d, m, skills, sp, dt: Math.floor(d.dt + extraDt + 1e-9), ap: d.ap + extraAp };
   }
 
   // ---- one list of every effect the rules can apply automatically. The Variables dev window shows this table.
@@ -3037,6 +3063,7 @@ const E = (() => {
     enemyType,
     lineCover,
     rayCover,
+    moveSpeed,
     shotBox,
     pathBlocked,
     generateRoom,

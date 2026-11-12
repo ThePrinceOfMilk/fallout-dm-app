@@ -6242,3 +6242,129 @@ table.t th {
     height: 100%;
   }
 }
+
+/* 11 Nov evening: spectator enemy list and the DM's aim line */
+.spfoes {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.spfoe {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.spfoe svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.spfhp {
+  width: 70px;
+}
+:is(#map) .aim.aimspec {
+  stroke: #ffe14d;
+  stroke-dasharray: 6 4;
+}
+
+/* 11 Nov evening: consumables with their effects, keyboard walking arrow, party order buttons */
+.conslist {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.consopt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  text-align: left;
+  padding: 4px 8px;
+}
+.consopt .consn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.consopt .consfx {
+  font-size: var(--fs-s);
+  color: var(--dim);
+  white-space: normal;
+}
+:is(#map) .karrow {
+  stroke: #ffe14d;
+  stroke-width: 3px;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 6 3;
+  pointer-events: none;
+}
+:is(#map) .karrowhead {
+  fill: #ffe14d;
+  stroke: #000;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+.ordb {
+  padding: 0 3px !important;
+  min-width: 0;
+}
+
+/* 11 Nov evening: magnifier markers for tokens zoomed out, the odds table on weapons, the rewards tool */
+:is(#map) .lens .lensline {
+  stroke: var(--bright);
+  stroke-width: 1.5px;
+  vector-effect: non-scaling-stroke;
+}
+:is(#map) .lens .lensc {
+  fill: rgba(0, 0, 0, 0.75);
+  stroke-width: 2.5px;
+  vector-effect: non-scaling-stroke;
+}
+:is(#map) .tok.pc .lensc {
+  stroke: #4dff7c;
+}
+:is(#map) .tok.ally .lensc {
+  stroke: #4da6ff;
+  stroke-dasharray: 5 3;
+}
+:is(#map) .tok.npc .lensc {
+  stroke: #ff4d4d;
+}
+.hitt {
+  border-collapse: collapse;
+  margin-top: 4px;
+  font-size: var(--fs-s);
+  width: 100%;
+}
+.hitt th,
+.hitt td {
+  padding: 1px 3px;
+  text-align: center;
+  border: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  font-weight: normal;
+}
+.hitt th {
+  color: var(--dim);
+}
+.hitt td.good {
+  color: var(--bright);
+}
+.hitt td.zero {
+  color: var(--faint);
+}
+.hitt td.dim {
+  color: var(--dim);
+}
+.rwrow {
+  gap: 4px;
+  margin-bottom: 4px;
+  align-items: center;
+}
+.rwrow .cell,
+.rwrow input {
+  width: 46px;
+}
+.rewt td {
+  padding: 2px 4px;
+}

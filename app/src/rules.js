@@ -32,7 +32,7 @@ const DEFAULT_RULES = {
   jamMode: "weapon",
   pelletMode: "spread",
   critAllBullets: true,
-  targetAP: { Body: 0, Limb: 1, Head: 2 },
+  targetAP: { Body: 0, Limb: 0, Head: 0 }, // 11 Nov: aiming costs no AP; the part changes the odds instead (locHit)
   swapAP: 1,
   jamSpendsAP: true,
   clearJamDefault: 2,
@@ -79,7 +79,16 @@ const DEFAULT_RULES = {
     "P-S": 1,
     Hand: 1,
   },
-  moveAP: [0, 1, 2, 3, 4, 5, 7, 9, 12, 15],
+  moveAP: [0, 1, 2, 3, 4, 5, 7, 9, 12, 15], // before 11 Nov: AP by range band. Now unused; kept so older saves load
+  // 11 Nov: walking is linear. Meters per AP by Agility, a straight line through these points: AGI 1 = 3, AGI 5 = 6, AGI 10 = 12.
+  moveSpeed: [
+    [1, 5],
+    [10, 8],
+  ],
+  // 12 Nov: worn armor (head, body, accessories) gives this much less DT, rounded down
+  armorDtCut: 0.15,
+  // 11 Nov: Prayer (Strict Religious Rites, code 082): costs the rest of the turn's AP and gives the Prayer status for this many rounds
+  prayer: { traits: ["082"], status: "Prayer", rounds: 3 },
   bandMeters: [0.5, 1, 3, 5, 10, 25, 50, 75, 100, 150],
   autoStatus: true,
   autoWeaponStatus: true,
@@ -549,6 +558,12 @@ const DEFAULT_RULES = {
   genLootMax: 2,
   genInv: { mags: [2, 3], tinyMag: 10, healChance: 0.6, bandageChance: 0.4, junkMax: 2, sidearm: 0.25, noSide: 0.1, altLoad: 0.3, grenade: 0.15 }, // 12 Nov: generated enemy inventories
   npcEncumbrance: true,
+  // 12 Nov: tier-1 weapons are this much easier to hit with (a line of its own in the hit math)
+  tierHitAdd: { 1: 0.1 },
+  // 12 Nov: every ammo load (all calibers) does this much more damage; the workbook's numbers stay as they are
+  ammoDamAdd: 0.2,
+  // 12 Nov: low-tier animal bosses (named alphas, mothers, bulls... and any creature the DM makes a boss) lose this share of their DT
+  bossDtCut: { maxTier: 3, pct: 0.3, names: "alpha|mother|bull|queen|king|leader|legendary|matriarch|patriarch" },
   tier1Req: 1, // 12 Nov: every tier-1 weapon needs only this much skill; null keeps the workbook's numbers
   lootRollBonus: { good: 17, great: 20 }, // 12 Nov: a good d20 loot roll finds a little extra on each body, a tier better
   bleedDecay: true, // 12 Nov: Bleeding drops one tier each round; tier 1 lasts bleedT1Rounds rounds
@@ -1695,6 +1710,10 @@ const RULE_SCHEMA = [
       ["critAllBullets", "Old burst mode: a crit lands every bullet", "bool"],
       ["gunHitAdd", "Gun hit bonus, every range", "pct", "flag"],
       ["tier1Req", "Tier 1 weapons need this much skill (blank: the workbook's)", "num", "flag"],
+      ["tierHitAdd.1", "Tier 1 weapons: extra hit chance", "pct", "flag"],
+      ["ammoDamAdd", "All ammo: extra damage", "pct", "flag"],
+      ["bossDtCut.pct", "Low-tier animal bosses lose this share of DT", "pct", "flag"],
+      ["bossDtCut.maxTier", "Low-tier animal bosses: up to this tier", "num", "flag"],
       ["skillHitMul", "Skill above requirement counts x", "num", "flag"],
       ["meleeBase", "Melee base hit", "pct", "flag"],
       ["meleeHeavyBase", "Heavy melee base hit", "pct", "flag"],
@@ -1743,6 +1762,10 @@ const RULE_SCHEMA = [
       ["punchAP", "First punch in a turn", "num", "flag"],
       ["punchStep", "Each later punch costs this much more", "num", "flag"],
       ["burstAP", "Extra AP for a burst", "num", "flag"],
+      ["prayer.rounds", "Prayer lasts this many rounds", "num", "flag"],
+      ["moveSpeed.0.1", "Walking: meters per AP at Agility 1", "num", "flag"],
+      ["moveSpeed.1.1", "Walking: meters per AP at Agility 10", "num", "flag"],
+      ["armorDtCut", "Worn armor gives this much less DT", "pct", "flag"],
       ["targetAP.Body", "Body shot extra AP", "num", "flag"],
       ["targetAP.Limb", "Limb shot extra AP", "num"],
       ["targetAP.Head", "Head shot extra AP", "num"],

@@ -170,7 +170,9 @@ async function launch() {
     await page.locator('.gpick [data-a="gearEquip"]', { hasText: armor.n }).click();
     let c = (await state()).chars[0];
     assert.strictEqual(c.gear.armor, armor.n); assert.ok(!c.inv.some((l) => l.n === armor.n), "left the pack");
-    assert.strictEqual(await page.evaluate(() => der(S.chars[0]).dt), dt0 + armor.dt, "DT goes up");
+    const dt1 = await page.evaluate(() => der(S.chars[0]).dt);
+    assert.ok(dt1 > dt0, "DT goes up");
+    if (dt0 === 0) assert.strictEqual(dt1, await page.evaluate((x) => Math.floor(x * (1 - (S.rules.armorDtCut || 0)) + 1e-9), armor.dt), "by the armor's DT less the armor cut");
     assert.strictEqual(await page.evaluate(() => der(S.chars[0]).skills.BG), bg0 + 10, "armor bonus applies");
     await has("TOTAL DT", ".geartop"); await has("Big Guns +10", ".geartop");
     await page.locator(".dialog .gb-armor").hover(); assert.ok(await page.locator(".dialog .gb-armor .gtip").isVisible(), "hover text");
@@ -323,7 +325,7 @@ async function launch() {
     await page.waitForTimeout(30);
     const t1 = await size(treeSel), p1 = await size('[data-tok="c1"] path.b');
     assert.ok(t1 > t0 * 2, `objects grow with zoom: ${t0} to ${t1}`); assert.ok(p1 < t1, "people stay smaller");
-    assert.strictEqual(await page.evaluate(() => tokenScale(1000) > tokenScale(40)), true); assert.strictEqual(await page.evaluate(() => tokenScale(3)), 0.55, "about life size up close");
+    assert.strictEqual(await page.evaluate(() => tokenScale(1000) === tokenScale(3)), true, "real size at every zoom"); assert.strictEqual(await page.evaluate(() => tokenScale(3)), 0.58, "a 1 m base");
     const box = await page.locator("#map").boundingBox(); await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.wheel(0, -300); await page.waitForTimeout(80);
     const zk = await page.evaluate(() => ui.zoom.k); assert.ok(zk > 2.25, "scrolling zooms in");
     await page.evaluate(() => { S.scene.objects = S.scene.objects.filter((o) => E.trunkOf(o, S.rules)); S.scene.objects.forEach((o) => { if (Math.hypot(o.x, o.y) < 8) o.x += 12; }); render(); });  // leaves are click-through, so only a trunk could catch this drag
@@ -347,7 +349,7 @@ async function launch() {
     at = await onMap(s.scene.objects[0].x, s.scene.objects[0].y); await page.mouse.click(at.x, at.y, { button: "right" });
     assert.strictEqual((await state()).scene.objects.length, 0);
     const id = (await state()).scene.npcs[0].id; const c1 = await page.evaluate(() => posOf("c1"));
-    await dragTo(await center(`[data-tok="${id}"]`), await onMap(c1.x + 20, c1.y));
+    await dragTo(await center(`[data-tok="${id}"] .base`), await onMap(c1.x + 20, c1.y));
     assert.strictEqual(await page.evaluate((i) => rangeOf("c1", i), id), 6, "20m is R6");
     await page.locator('[data-a="mapPlace"][data-v="hard"]').click(); at = await onMap(-30, -40); await page.mouse.click(at.x, at.y);
     await page.keyboard.press("Escape"); await blur();
@@ -418,11 +420,11 @@ async function launch() {
     const red = await page.locator(".body").evaluate((e) => e.classList.contains("hostile"));
     assert.ok(red, "enemy target: bright red body");
     await page.evaluate(() => { const c = cbOf("c2"); c.y += 30; render(); });  // an earlier step parks an enemy on top of this ally
-    { const p = await center('[data-tok="c2"]'); await page.mouse.click(p.x, p.y); await page.waitForTimeout(40); }
+    { const p = await center('[data-tok="c2"] .base'); await page.mouse.click(p.x, p.y); await page.waitForTimeout(40); }
     assert.ok(await page.locator(".body").evaluate((e) => e.classList.contains("friendly")), "own side: bright green body");
     assert.strictEqual(await page.evaluate(() => getComputedStyle(document.querySelector(".body .bp-Body")).backgroundColor), "rgb(43, 255, 106)");
     const foe = await page.evaluate(() => targetsFor("c1").find((i) => sideOf(i) === "npc"));
-    { const p = await center(`[data-tok="${foe}"]`); await page.mouse.click(p.x, p.y); await page.waitForTimeout(40); }
+    { const p = await center(`[data-tok="${foe}"] .base`); await page.mouse.click(p.x, p.y); await page.waitForTimeout(40); }
     assert.strictEqual(await page.evaluate(() => getComputedStyle(document.querySelector(".body .bp-Body")).backgroundColor), "rgb(255, 42, 42)");
     const stops = await page.locator("#aimg stop").evaluateAll((l) => l.map((x) => x.getAttribute("stop-color")));
     assert.ok(stops.length >= 2 && stops.every((c) => /^hsl/.test(c)), "the aim line is a gradient");
@@ -489,13 +491,13 @@ async function launch() {
     assert.strictEqual(await page.evaluate(() => ui.atk.tgt), foes[0], "clicking in the enemy list starts an attack on it");
     await has(`R${await page.evaluate(([a, b]) => rangeOf(a, b), [me, foes[0]])}`, ".ttiles");
     await has(`${await page.evaluate(([a, b]) => dist(posOf(a), posOf(b)).toFixed(1), [me, foes[0]])}m`, ".rng");
-    await page.mouse.click(...Object.values(await center(`[data-tok="${foes[1]}"]`)));
+    await page.mouse.click(...Object.values(await center(`[data-tok="${foes[1]}"] .base`)));
     assert.strictEqual(await page.evaluate(() => ui.atk.tgt), foes[1], "clicking on the map changes target");
     const auto = await page.evaluate(([a, b]) => bandFor(dist(posOf(a), posOf(b))), [me, foes[1]]);
     assert.strictEqual(await page.evaluate(() => atkView().range), auto, "range comes from the map");
     await page.locator('[data-a="atkPart"][data-v="Head"]').click();
     assert.deepStrictEqual(await page.evaluate(() => [ui.atk.part, ui.atk.loc]), ["Head", "Head"]);
-    const cost = await page.evaluate(() => atkView()); assert.strictEqual(cost.extra, 2, "aimed head shot costs extra AP");
+    const cost = await page.evaluate(() => atkView()); assert.strictEqual(cost.extra, 0, "aiming costs no extra AP"); assert.ok(cost.hit <= (await page.evaluate(() => { ui.atk.loc = "Body"; ui.atk.part = "Body"; const h = atkView().hit; ui.atk.loc = "Head"; ui.atk.part = "Head"; return h; })), "a head shot is harder to hit");
     await page.locator('[data-a="atkPart"][data-v="LLeg"]').click();
     assert.deepStrictEqual(await page.evaluate(() => [ui.atk.part, ui.atk.loc]), ["LLeg", "Limb"]);
     await page.locator('[data-a="atkOvToggle"]').click(); assert.strictEqual(await page.locator("#ovHit").count(), 1); await page.locator('[data-a="atkOvToggle"]').click();
@@ -528,7 +530,7 @@ async function launch() {
     assert.match(await page.evaluate(() => ui.atk.err), /Not enough AP/);
     assert.strictEqual((await state()).log.length, logN, "nothing happened");
     await press("Escape"); await blur();
-    const at = await onMap(p0.x + 20, p0.y); await dragTo(await center(`[data-tok="${me}"]`), at);
+    const at = await onMap(p0.x + 20, p0.y); await dragTo(await center(`[data-tok="${me}"] .base`), at);
     const p1 = await page.evaluate((i) => ({ ...posOf(i) }), me);
     assert.deepStrictEqual(p1, p0, "the token stays put");
     await click("swap");
@@ -595,9 +597,9 @@ async function launch() {
   await ok("Moving costs AP: the Move window, dragging, and whose turn it is", async () => {
     await blur(); const id = (await state()).combat.turnId; const tgt = await page.evaluate(() => targetsFor(S.combat.turnId)[0]);
     await page.evaluate(([i, t]) => { const a = cbOf(i), b = cbOf(t); b.x = 0; b.y = 0; a.x = 5; a.y = 0; S.combat.ranges = {}; ent(i).ap = 20; render(); }, [id, tgt]);
-    await press("m"); await page.selectOption("#mvT", tgt); await page.waitForTimeout(20); await press("3");
+    await click("moveModal"); await page.selectOption("#mvT", tgt); await page.waitForTimeout(20); await press("3");
     assert.strictEqual(await page.evaluate(([i, t]) => rangeOf(i, t), [id, tgt]), 3);
-    assert.strictEqual(await page.evaluate((i) => ent(i).ap, id), 18, "2m is 2 AP");
+    assert.strictEqual(await page.evaluate((i) => ent(i).ap, id), await page.evaluate((i) => 20 - Math.ceil(2 / speedOf(ent(i))), id), "2m costs 2 / meters-per-AP, rounded up");
     await page.evaluate((i) => { ent(i).ap = 20; render(); }, id);
     let p = await page.evaluate((i) => ({ ...posOf(i) }), id);
     await dragTo(await onMap(p.x, p.y), await onMap(p.x, p.y + 10));
@@ -606,8 +608,9 @@ async function launch() {
     assert.deepStrictEqual(await page.evaluate((i) => ({ x: posOf(i).x, y: posOf(i).y }), id), { x: p.x, y: p.y }, "the token waits");
     await press("Escape"); assert.strictEqual(await page.locator(".moveconfirm").count(), 0, "Esc cancels"); assert.strictEqual(await page.evaluate((i) => ent(i).ap, id), 20);
     await dragTo(await onMap(p.x, p.y), await onMap(p.x, p.y + 10)); await press("Enter");
-    assert.ok(/moves 4 AP/.test((await state()).log.slice(-1)[0].x), "10m is 4 AP");
-    assert.strictEqual(await page.evaluate((i) => ent(i).ap, id), 16);
+    const c10 = await page.evaluate((i) => Math.ceil(10 / speedOf(ent(i))), id);
+    assert.ok(new RegExp(`moves ${c10} AP`).test((await state()).log.slice(-1)[0].x), "10m costs 10 / meters-per-AP");
+    assert.strictEqual(await page.evaluate((i) => ent(i).ap, id), 20 - c10);
     const other = await page.evaluate((i) => S.combat.cbs.find((c) => c.id !== i && !c.dead).id, id);
     const q0 = await page.evaluate((i) => ({ ...posOf(i) }), other);
     await dragTo(await onMap(q0.x, q0.y), await onMap(q0.x + 25, q0.y));
@@ -619,7 +622,7 @@ async function launch() {
   await ok("Clicking a token during an attack picks the target", async () => {
     await blur(); await press("a");
     const a = await page.evaluate(() => ui.atk); const other = await page.evaluate(() => targetsFor(ui.atk.att).find((x) => x !== ui.atk.tgt));
-    const t = await page.locator(`[data-tok="${other}"]`).boundingBox();
+    const t = await page.locator(`[data-tok="${other}"] .base`).boundingBox();
     await page.mouse.click(t.x + t.width / 2, t.y + t.height / 2);
     assert.strictEqual(await page.evaluate(() => ui.atk.tgt), other); assert.ok(a.tgt !== other);
     await press("Escape");
@@ -1225,7 +1228,7 @@ async function launch() {
     assert.deepStrictEqual(r.guards, [true, 0, 2], "selling with no stock and taking back unspent points are both safe");
     assert.deepStrictEqual(r.bible, [2, true, true], "opening the bible twice uses the same copy");
     const hosted = fs.readFileSync(path.resolve(__dirname, "../../index.html"), "utf8");
-    assert.ok(/id="wiki"><\/script>/.test(hosted) && hosted.length < 1.6e6, "the hosted page carries no copy of the bible");
+    assert.ok(/id="wiki"><\/script>/.test(hosted) && hosted.length < 1.8e6, "the hosted page carries no copy of the bible");
   });
   await ok("Enemy map icons follow faction and creature, and setup gives the encounter the middle", async () => {
     const r = await page.evaluate(() => {

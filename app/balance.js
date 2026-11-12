@@ -185,7 +185,7 @@ function plan(f, foe, dist) {
   let best = null;
   (f.e.weapons || []).forEach((s, i) => {
     const v = E.weaponView(s, f.e, f.d, ctx); if (v.missing || !(v.ap > 0)) return;
-    const move = v.melee && dist > 0.6 ? rules.moveAP[bandFor(dist - 0.5) - 1] : 0;
+    const move = v.melee && dist > 0.6 ? Math.max(1, Math.ceil((dist - 0.5) / E.moveSpeed(f.d.sp.A || 5, rules))) : 0;
     const band = v.melee ? 1 : bandFor(dist);
     const st = attackStats(f.e, f.d, foe.e, foe.d, s, band, foe.d.dt); if (!st) return;
     const n = Math.max(0, Math.floor((f.d.ap - move) / v.ap));

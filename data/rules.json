@@ -50,8 +50,8 @@
  "critAllBullets": true,
  "targetAP": {
   "Body": 0,
-  "Limb": 1,
-  "Head": 2
+  "Limb": 0,
+  "Head": 0
  },
  "swapAP": 1,
  "jamSpendsAP": true,
@@ -111,6 +111,24 @@
   12,
   15
  ],
+ "moveSpeed": [
+  [
+   1,
+   5
+  ],
+  [
+   10,
+   8
+  ]
+ ],
+ "armorDtCut": 0.15,
+ "prayer": {
+  "traits": [
+   "082"
+  ],
+  "status": "Prayer",
+  "rounds": 3
+ },
  "bandMeters": [
   0.5,
   1,
@@ -1759,6 +1777,15 @@
   "grenade": 0.15
  },
  "npcEncumbrance": true,
+ "tierHitAdd": {
+  "1": 0.1
+ },
+ "ammoDamAdd": 0.2,
+ "bossDtCut": {
+  "maxTier": 3,
+  "pct": 0.3,
+  "names": "alpha|mother|bull|queen|king|leader|legendary|matriarch|patriarch"
+ },
  "tier1Req": 1,
  "lootRollBonus": {
   "good": 17,

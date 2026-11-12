@@ -498,6 +498,36 @@ upd(45, D12, "Where the register stands", f"Was: each item marked only where a d
     tbl(["Item", "Kind", "Summary"], [[k, _REG[k][0], _short(_REG[k][1])] for k in _open if k in _DATA], [0.8, 0.9, 5.3]),
     flags=sorted(_SETTLED))
 
+# ---------------------------------------------------------------- 12 Nov 2026, late: walking, aiming, saves, prayer
+upd(11, D12, "Walking is a straight line by Agility", "Was: AP by range band (2 m cost 2 AP, 10 m cost 4, 150 m cost 15). Now: every AP walks the same distance, set by Agility.", bl(
+    "Meters per AP: Agility 1 walks 5 m, Agility 10 walks 8 m, a third of a meter more for each point between (Agility 4: 6 m, Agility 7: 7 m).",
+    "Agility also gives AP (5 + Agility), so a whole turn of walking is 30 m at Agility 1 (6 AP), 60 m at Agility 5 (10 AP) and 120 m at Agility 10 (15 AP).",
+    "Cost = distance / meters per AP, rounded up, at least 1 AP. A hurt leg or a slowing status multiplies it as before.",
+    "Keyboard: M shows an arrow from whoever's turn it is. A and D turn it 15 degrees, W and S add or take away 1 AP of walking, Enter walks, Esc stops. The Move button still opens the Move window.",
+    "Settings, AP costs: meters per AP at Agility 1 and 10."))
+upd(8, D12, "Aiming costs no AP", "Was: a limb shot cost 1 more AP and a head shot 2 more. Now: no extra AP; the part only changes the odds (head x0.5, body x1, limbs x1.25) and the damage.", bl(
+    "The attack panel's AP row shows the shot's cost and the three hit multipliers instead of three AP prices."))
+upd(20, D12, "Low-tier animal bosses are easier to hurt", "New: creatures at tier 1-3 that are bosses lose 30% of their DT (rounded down).", bl(
+    "Bosses are the named ones (an alpha, mother, bull, queen, king, leader, legendary...) and any creature the DM makes a boss. Robots don't count.",
+    "Today that changes Coyote Den Mother (DT 5 to 3) and Coyote Pack Alpha (2 to 1); Bighorner Bull has no DT. Settings: the share and the highest tier."))
+upd(10, D12, "Worn armor gives 15% less DT", "Was: armor gave the workbook's DT. Now: helmets, body armor and accessories give 15% less, rounded down (DT 14 to 11).", bl(
+    "For everyone wearing it: the party and enemy humans. A creature's own hide (its base DT) is unchanged.",
+    "Why: with tier 4-5 armor most early guns took 10-30 turns to get through. A start; Settings: 'Worn armor gives this much less DT'."))
+upd(10, D12, "All ammo does 20% more damage", "Was: each load did the workbook's damage. Now: every load of every caliber does 20% more (10mm Standard 8 to 9.6).", bl(
+    "Pen is unchanged. Enemies firing the same ammo hit 20% harder too.",
+    "Why: the time-to-kill study of 12 Nov. +20% damage makes every fight about 17% shorter without making early fights one-volley; Pen only helps against armor. Settings: 'All ammo: extra damage'."))
+upd(8, D12, "Tier 1 weapons are easier to hit with", "New: +10% hit chance with any tier-1 weapon, shown as its own line in the hit math.", bl(
+    "On top of the gun bonus and the low tier-1 skill requirement. Settings: 'Tier 1 weapons: extra hit chance'."))
+upd(10, D12, "DT is a whole number", "Was: DT could end in a fraction (a status that removes a share of DT, or a part-point bonus). Now: DT is always rounded down to a whole number.", bl(
+    "For example, 15 DT with Plasma Melt taking 25% is 11, not 11.25."))
+upd(18, D12, "Saving throws are rolled high", "Was: roll at or under the save number on a d20. Now: roll the number or more; 20 is always best.", bl(
+    "The number to beat is 21 minus the old one, so the odds are the same: an old save of 15 (at or under) is now 6 or more.",
+    "The sheet still stores the old number; the screens show the new one."))
+upd(24, D12, "Prayer", "New: an action for characters with Strict Religious Rites (or its evolved form, Devout).", bl(
+    f"Pray spends all the AP left this turn and gives the Prayer status (+1 Luck, +1 END, +5% to hit) for {R['prayer']['rounds']} rounds. It also lifts Damnation.",
+    "Only characters with the trait see the button. The length is a guess, since the trait doesn't say; it's in Settings (prayer.rounds)."))
+
+
 
 starts, parts, titles = {}, [], {}
 for b in base[1].get_text("dict")["blocks"]:

@@ -12,7 +12,7 @@ const skippedList = E.standardize(data, { ...DEFAULT_RULES, tier1Req: null }); /
 const db = E.makeDb(data);
 const rules = JSON.parse(JSON.stringify(DEFAULT_RULES));
 Object.assign(rules, { perPenalty: 0.05, strGun: 0.0125, strMelee: 0.05, conditions: false,
-  gunHitAdd: 0, skillHitMul: 1, meleeHeavyBase: null, meleeApMul: 1, punchAP: null, burstAP: 0, burstMode: "steps", creaturePen: 0, armorFloors: null, pcHpPerLevel: 1, pcHpMul: 1, npcHpPerTier: 6, pelletMode: "combined", locHit: null, coverInset: 0, npcEncumbrance: false });  // fixtures come from the sheet; the 9 Nov balance pass is tested on its own below
+  gunHitAdd: 0, skillHitMul: 1, meleeHeavyBase: null, meleeApMul: 1, punchAP: null, burstAP: 0, burstMode: "steps", creaturePen: 0, armorFloors: null, pcHpPerLevel: 1, pcHpMul: 1, npcHpPerTier: 6, pelletMode: "combined", locHit: null, coverInset: 0, npcEncumbrance: false, tierHitAdd: null, bossDtCut: null, ammoDamAdd: 0, armorDtCut: 0 });  // fixtures come from the sheet; the 9 Nov balance pass is tested on its own below
 const ctx = { db, rules, scene: { time: "Daytime", weather: "Clear", env: "Grassland", effects: [] }, ov: {} };
 const near = (a, b, msg) => assert.ok(Math.abs(a - b) < 1e-6, `${msg}: got ${a}, sheet says ${b}`);
 const gecko = E.spawn(db.enemies.get("gecko"), "e1", ctx, () => 0.5);
@@ -251,12 +251,12 @@ test("overridden item data wins over the workbook", () => {
   assert.strictEqual(E.weaponView({ n: "Pipe Flamer" }, c, d, ov).base, 50);
 });
 
-test("default rules: hit chance is base weapon, skill and the gun bonus only", () => {
+test("default rules: hit chance is base weapon, skill, the gun bonus, and the tier-1 bonus for a tier-1 weapon", () => {
   const c = { db, rules: JSON.parse(JSON.stringify(DEFAULT_RULES)), scene: ctx.scene, ov: {} };
   const A = E.derive({ kind: "pc", special: [1, 1, 5, 5, 5, 5, 5], skills: {}, gear: {}, weapons: [] }, c);
   const v = E.weaponView({ n: "Pipe Pistol", ammo: ".32 ACP - Standard" }, { kind: "pc" }, A, c);
   const hc = E.hitChance({ kind: "pc" }, A, { kind: "npc" }, A, v, 8, c, false);
-  assert.deepStrictEqual(hc.parts.map(([k]) => k).filter((k) => k !== "mods"), ["base", "skill", "gun"]);
+  assert.deepStrictEqual(hc.parts.map(([k]) => k).filter((k) => k !== "mods"), ["base", "skill", "gun", "tier 1"]);
 });
 
 // ---------- the 9 Nov 2026 balance pass, on the app's default rules
@@ -741,4 +741,47 @@ test("12 Nov: object hitboxes are inset, a shot clipping an edge goes through", 
   assert.strictEqual(E.lineCover(graze[0], graze[1], crate, { ...R, coverInset: 0 }).tier, "hard");
   assert.strictEqual(E.lineCover(graze[0], graze[1], crate, { ...R, coverInset: 0.1 }).tier, "open");
   assert.strictEqual(E.lineCover({ x: 0, y: 5 }, { x: 10, y: 5 }, crate, { ...R, coverInset: 0.1 }).tier, "hard", "straight through still counts");
+});
+test("walking: meters per AP by Agility on a line from 1 = 5 to 10 = 8", () => {
+  assert.strictEqual(E.moveSpeed(1, DEFAULT_RULES), 5);
+  assert.strictEqual(E.moveSpeed(4, DEFAULT_RULES), 6);
+  assert.strictEqual(E.moveSpeed(7, DEFAULT_RULES), 7);
+  assert.strictEqual(E.moveSpeed(10, DEFAULT_RULES), 8);
+  assert.strictEqual(DEFAULT_RULES.targetAP.Head, 0, "aiming costs no AP");
+});
+test("DT is a whole number, rounded down", () => {
+  const ctx2 = { db, rules: DEFAULT_RULES, scene: {}, ov: {} };
+  const e = { id: "x", kind: "pc", level: 1, special: [5, 5, 5, 5, 5, 5, 5], skills: {}, gear: { acc: [] }, weapons: [], statuses: [], effects: [], inv: [], ov: {}, traits: [], perks: [] };
+  const d0 = E.derive(e, ctx2);
+  assert.ok(Number.isInteger(d0.dt));
+  const mob = { id: "m", kind: "npc", mob: true, baseDt: 7.5, baseHp: 10, baseAp: 5, special: [5, 5, 5, 5, 5, 5, 5], skills: {}, gear: {}, weapons: [], statuses: [], effects: [], inv: [], ov: {} };
+  assert.strictEqual(E.derive(mob, ctx2).dt, 7, "7.5 rounds down to 7");
+});
+test("tier-1 weapons get +10% to hit, and low-tier animal bosses lose 30% of their DT", () => {
+  const c2 = { db, rules: DEFAULT_RULES, scene: {}, ov: {} };
+  const pc = { id: "p", kind: "pc", level: 1, special: [5, 5, 5, 5, 5, 5, 5], skills: { SG: 30 }, gear: { acc: [] }, weapons: [], statuses: [], effects: [], inv: [], ov: {}, traits: [], perks: [] };
+  const d = E.derive(pc, c2);
+  const t1 = data.weapons.find((w) => w.tab === "SG" && w.tier === 1 && w.ok);
+  const v = E.weaponView({ n: t1.n }, pc, d, c2);
+  const hc = E.hitChance(pc, d, pc, d, v, 3, c2, null, "Body");
+  assert.ok(hc.parts.some(([n, x]) => n === "tier 1" && x === 0.1), JSON.stringify(hc.parts));
+  const mk = (n, tier, extra = {}) => ({ id: n, kind: "npc", mob: true, tmpl: n, tier, baseDt: 10, baseHp: 20, baseAp: 6, special: [5, 5, 5, 5, 5, 5, 5], skills: {}, gear: {}, weapons: [], statuses: [], effects: [], inv: [], ov: {}, ...extra });
+  assert.strictEqual(E.derive(mk("Coyote Den Mother", 2), c2).dt, 7, "a named low-tier boss: 10 DT to 7");
+  assert.strictEqual(E.derive(mk("Coyote", 2, { boss: true }), c2).dt, 7, "a creature made a boss by the DM");
+  assert.strictEqual(E.derive(mk("Coyote", 2), c2).dt, 10, "an ordinary creature keeps its DT");
+  assert.strictEqual(E.derive(mk("Deathclaw Alpha Male", 6), c2).dt, 10, "high tiers keep theirs");
+});
+test("every ammo load does 20% more damage than the workbook says", () => {
+  const c2 = { db, rules: DEFAULT_RULES, scene: {}, ov: {} };
+  const pc = { id: "p", kind: "pc", level: 1, special: [5, 5, 5, 5, 5, 5, 5], skills: { SG: 30 }, gear: { acc: [] }, weapons: [], statuses: [], effects: [], inv: [], ov: {}, traits: [], perks: [] };
+  const d = E.derive(pc, c2);
+  const load = data.ammo.find((a) => a.n === "10mm Auto - Standard");
+  const v = E.weaponView({ n: "Classic 10mm pistol", ammo: load.n }, pc, d, c2);
+  assert.strictEqual(v.base, E.fix(load.dam * 1.2));
+});
+test("worn armor gives 15% less DT, rounded down", () => {
+  const c2 = { db, rules: DEFAULT_RULES, scene: {}, ov: {} };
+  const armor = data.armor.find((a) => a.dt >= 10 && a.ok !== false);
+  const pc = { id: "p", kind: "pc", level: 1, special: [5, 5, 5, 5, 5, 5, 5], skills: {}, gear: { armor: armor.n, acc: [] }, weapons: [], statuses: [], effects: [], inv: [], ov: {}, traits: [], perks: [] };
+  assert.strictEqual(E.derive(pc, c2).dt, Math.floor(armor.dt * 0.85 + 1e-9));
 });

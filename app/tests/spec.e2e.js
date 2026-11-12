@@ -83,7 +83,7 @@ const watch = (p, n) => p.on("pageerror", (e) => errs.push(n + ": " + e.message)
     pages[n] = p;
   }
   const B = pages.iphone;
-  // only the map, the party and the log; no DM tools
+  // the map (with the aim circle), the party and the log; no DM tools
   const seen = await B.evaluate(() => ({
     dev: !!document.querySelector(".devbar"),
     enemies: !!document.querySelector(".w-enemies"),
@@ -93,7 +93,7 @@ const watch = (p, n) => p.on("pageerror", (e) => errs.push(n + ": " + e.message)
     log: !!document.querySelector(".w-clog"),
     rail: [...document.querySelectorAll(".sprail [data-v]")].map((b) => b.dataset.v),
   }));
-  assert.deepStrictEqual(seen, { dev: false, enemies: false, console: false, ring: false, party: 4, log: true, rail: ["log", "skillTree", "wiki", "uiScale", "guide"] }, JSON.stringify(seen));
+  assert.deepStrictEqual(seen, { dev: false, enemies: false, console: false, ring: true, party: 4, log: true, rail: ["log", "skillTree", "wiki", "uiScale", "guide"] }, JSON.stringify(seen));
   // the relay refuses a spectator's write
   const st = await B.evaluate(async () => (await fetch(tableUrl("state"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ baseRev: table.rev, from: "x", S }) })).status);
   assert.strictEqual(st, 403, "spectator can't post the game");
