@@ -4247,11 +4247,7 @@ html.lt1000 .win > .wt {
   container-type: inline-size;
 }
 @container (max-width: 330px) {
-  .rcol .w-check table.t th:nth-child(3),
-  .rcol .w-check table.t td:nth-child(3) {
-    display: none;
-  }
-  .rcol .w-check table.t td:first-child {
+  .rcol .w-check table.t td:first-child:not([colspan]) {
     max-width: 84px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -5601,7 +5597,7 @@ table.t th {
 /* 11 Nov: the skill tree reads top down, one column per skill, and scrolls and zooms */
 .ttreewrap {
   overflow: auto;
-  max-height: 68vh;
+  max-height: calc(100vh - 250px);
   border: 1px solid var(--line);
   background: rgba(0, 0, 0, 0.35);
   padding: 10px;
@@ -5612,72 +5608,83 @@ table.t th {
   gap: 14px;
   width: max-content;
 }
-.tskill {
+/* 12 Nov: the skill tree as a traditional tree. Character, then skill types, then skills, then each perk's own branches.
+   Classic connector lines: each child draws half of the bar above it and a stub down to itself. */
+.ptree,
+.ptree ul {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  width: 190px;
-  flex: none;
+  justify-content: center;
+  margin: 0;
+  padding: 16px 0 0;
+  list-style: none;
+  position: relative;
 }
-.tshead {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 8px;
-  border: 1px solid var(--line2);
-  background: var(--win3);
-  margin-bottom: 8px;
+.ptree {
+  padding-top: 0;
 }
-.tshead .vic {
-  width: 22px;
-  height: 22px;
-  color: var(--ink);
-}
-.tshead .tval {
-  font-family: var(--head);
-  font-size: 22px;
-  color: var(--bright);
-}
-.ttier {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 6px;
-  border: 1px dashed var(--line);
-}
-.ttier.open {
-  border-style: solid;
-  border-color: var(--line2);
-}
-.tthead {
-  font-size: var(--fs-s);
-  color: var(--dim);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-.ttier .pnode {
-  min-width: 0;
-  max-width: none;
-}
-.tdown {
-  text-align: center;
-  color: var(--line2);
-  line-height: 1;
-  padding: 3px 0;
-}
-.tzoom {
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-/* 12 Nov: the skill tree is a real tree. The character at the root, a branch per skill type, a column per skill, lines between. */
-.stree {
-  --tl: var(--line2);
+.ptree li {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: max-content;
+  position: relative;
+  padding: 16px 5px 0;
+}
+.ptree > li {
+  padding-top: 0;
+}
+.ptree li::before,
+.ptree li::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 50%;
+  width: 50%;
+  height: 16px;
+  border-top: 2px solid var(--line2);
+}
+.ptree li::after {
+  right: auto;
+  left: 50%;
+  border-left: 2px solid var(--line2);
+}
+.ptree > li::before,
+.ptree > li::after,
+.ptree li:only-child::before {
+  display: none;
+}
+.ptree li:only-child::after {
+  border-top: 0;
+}
+.ptree li:first-child::before,
+.ptree li:last-child::after {
+  border-top: 0;
+}
+.ptree li:last-child::before {
+  border-right: 2px solid var(--line2);
+}
+.ptree li:last-child:not(:only-child)::after {
+  border: 0;
+}
+.ptree ul::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 16px;
+  border-left: 2px solid var(--line2);
+}
+/* each branch line takes its perk's state: taken bright, open to take dashed amber, locked faint */
+.ptree li.have::before,
+.ptree li.have::after {
+  border-color: var(--bright);
+}
+.ptree li.can::after {
+  border-left-style: dashed;
+  border-left-color: var(--warn);
+}
+.ptree li.lock::before,
+.ptree li.lock::after {
+  border-color: var(--line);
 }
 .snode {
   position: relative;
@@ -5685,85 +5692,53 @@ table.t th {
   align-items: center;
   gap: 6px;
   padding: 5px 12px;
-  border: 1px solid var(--tl);
+  border: 1px solid var(--line2);
   background: var(--win3);
   color: var(--bright);
   font-family: var(--head);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 .sroot svg {
   width: 20px;
   height: 20px;
 }
-/* a line down from every node that has children */
-.sroot::after,
-.stype::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  height: 14px;
-  border-left: 2px solid var(--tl);
+.snode.sskill {
+  cursor: pointer;
+  min-width: 150px;
 }
-.skids {
-  display: flex;
-  align-items: flex-start;
-  gap: 0;
-  margin-top: 14px;
+.snode.sskill:hover {
+  border-color: var(--bright);
 }
-.skids > * {
-  position: relative;
-  display: flex;
-  flex-direction: column;
+.ptree .pnode {
+  width: 150px;
+  max-width: 150px;
+  min-width: 0;
+}
+.pnode .pfx {
+  display: block;
+  margin-top: 2px;
+  font-size: calc(var(--fs-s) * 0.85);
+  line-height: 1.2;
+  color: var(--ink);
+  opacity: 0.85;
+}
+.pnode.lock .pfx {
+  color: var(--dim);
+}
+.tskills {
+  gap: 3px;
+  margin: 4px 0 6px;
+}
+.tskills .opt {
+  display: inline-flex;
   align-items: center;
-  padding: 14px 7px 0;
+  gap: 4px;
 }
-/* the bar across the children, and a stub down to each one */
-.skids > *::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  border-top: 2px solid var(--tl);
-}
-.skids > *:first-child::before {
-  left: 50%;
-}
-.skids > *:last-child::before {
-  right: 50%;
-}
-.skids > *:only-child::before {
-  display: none;
-}
-.skids > *::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
+.tskills .opt svg {
+  width: 14px;
   height: 14px;
-  border-left: 2px solid var(--tl);
-}
-.sbranch {
-  padding-left: 14px !important;
-  padding-right: 14px !important;
-}
-.sleaf .tskill {
-  width: 170px;
-}
-.sleaf .tshead {
-  margin-bottom: 0;
-}
-.tdown {
-  width: 0;
-  height: 12px;
-  margin: 0 auto;
-  padding: 0;
-  border-left: 2px dashed var(--line);
-}
-.tdown.open {
-  border-left: 2px solid var(--line2);
 }
 
 /* 12 Nov, phones (checked in WebKit as an iPhone 14 and in Edge): less clutter */
@@ -6467,25 +6442,25 @@ table.t th {
   font-size: 18px;
   color: var(--dim);
 }
-.spbig {
+.spmhp {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.spbig .lab {
+.spmhp .lab {
   color: var(--dim);
 }
-.spbig b {
+.spmhp b {
   font-family: var(--head);
   font-size: 30px;
   font-weight: normal;
   color: var(--bright);
 }
-.spbig b small {
+.spmhp b small {
   font-size: 18px;
   color: var(--dim);
 }
-.spbig .bar {
+.spmhp .bar {
   height: 14px;
 }
 .spline {
@@ -6570,5 +6545,233 @@ table.t th {
   }
   .spmembers {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* 12 Nov: the weapon in use is a full card (magazine, reserve, fire and reload AP); the other weapon is slim */
+.wcard.full {
+  flex: 1 1 260px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 4px 8px;
+}
+.wcard .wtop {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.wcard .wtop .nm {
+  flex: 1;
+  text-align: left;
+}
+.wcard .wtop .fam {
+  background: #111;
+  padding: 0 4px;
+  font-size: var(--fs-s);
+  text-shadow:
+    0 0 2px #fff,
+    0 0 1px #fff; /* dark band colors (Unfamiliar, Expert) stay readable */
+}
+.wstats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.wst {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 58px;
+  padding: 1px 6px;
+  border: 1px solid rgba(0, 0, 0, 0.45);
+}
+.wst small {
+  font-size: calc(var(--fs-s) * 0.85);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.wst b {
+  font-family: var(--head);
+  font-size: 20px;
+  font-weight: normal;
+}
+.wst.bad {
+  background: #000;
+  color: var(--bad);
+}
+.wcard.slim {
+  opacity: 0.85;
+}
+
+/* 12 Nov: skill check outcome tiers. Dark to bright from Total Failure to Perfect, so lightness tells them apart too. */
+.tierstrip {
+  display: flex;
+  gap: 1px;
+  min-width: 190px;
+  margin: 0 0 4px;
+}
+.chktab .tierrow td {
+  padding-top: 0;
+  border-top: 0;
+}
+.tierstrip .ct {
+  min-width: 0;
+  overflow: hidden;
+  text-align: center;
+  font-size: calc(var(--fs-s) * 0.85);
+  padding: 1px 0;
+  color: #000;
+  white-space: nowrap;
+}
+.tierstrip .ct.lit {
+  outline: 2px solid #fff;
+  outline-offset: -2px;
+  font-weight: bold;
+}
+.ct-total {
+  background: #6b0000;
+  color: #ffb3b3 !important;
+}
+.ct-terrible {
+  background: #a51c1c;
+  color: #ffd6d6 !important;
+}
+.ct-bad {
+  background: #b86a1a;
+}
+.ct-messy {
+  background: #c9b23a;
+}
+.ct-close {
+  background: #d8dc7a;
+}
+.ct-success {
+  background: #4dff7c;
+}
+.ct-strong {
+  background: #9dffbb;
+}
+.ct-triumph {
+  background: #d6ffe4;
+}
+.ct-perfect {
+  background: #fff;
+  box-shadow: 0 0 6px #fff;
+}
+.ctword {
+  padding: 0 5px;
+  color: #000;
+  font-weight: bold;
+}
+.tierkey {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 4px;
+}
+.tierkey .ct {
+  padding: 0 5px;
+  color: #000;
+}
+
+/* 12 Nov: a consumable's effect in numbers, under its name in the inventory and the fight's item list */
+.ustat {
+  display: block;
+  font-size: calc(var(--fs-s) * 0.92);
+  color: var(--dim);
+  line-height: 1.2;
+  white-space: normal;
+}
+.rowbtn .ustat {
+  text-align: left;
+}
+
+/* 12 Nov: the enemy list fills its window instead of stopping at 340 px with blank space under it */
+.w-enemies > .wb {
+  display: flex;
+  flex-direction: column;
+}
+.w-enemies .results {
+  flex: 1 1 0;
+  min-height: 120px;
+  max-height: none;
+}
+.w-enemies .cards.one {
+  flex: none;
+}
+
+/* 12 Nov: dialogs center their headline rows instead of leaving the space on the right */
+.dialog .spbig,
+.dialog .ftabs,
+.dialog .sheettabs,
+.dialog .sheetstats,
+.dialog .isort,
+.dialog .tskills,
+.dialog .tierkey,
+.dialog .tchain {
+  justify-content: center;
+}
+.dialog .sheettabs,
+.dialog .sheetstats {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* 12 Nov: the icon picker sorts icons into groups */
+.icongroup {
+  margin: 8px 0 3px;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: var(--fs-s);
+}
+
+/* 12 Nov: token bases are tinted by side, so the icon on top stands out; the outline color and shape still say the side */
+:is(#map, #mmSvg) .tok.pc .base {
+  fill: rgba(6, 42, 16, 0.88);
+}
+:is(#map, #mmSvg) .tok.ally .base {
+  fill: rgba(6, 26, 46, 0.88);
+}
+:is(#map, #mmSvg) .tok.npc .base {
+  fill: rgba(46, 6, 6, 0.88);
+}
+/* in encounter setup the enemy list gets most of the right column; the check and rewards below it scroll inside a smaller share */
+.rcol .w-check {
+  max-height: 30%;
+}
+.rcol .w-reward {
+  flex: none;
+  max-height: 22%;
+}
+.rcol .w-check > .wb,
+.rcol .w-reward > .wb {
+  overflow: auto;
+}
+/* the outcome legend stays on one line: fitLine() in 10-render.js shrinks its text until the whole line fits.
+   A narrow panel uses the short names (the full name and what it means are in each tooltip). */
+.tierkey {
+  flex-wrap: nowrap;
+  gap: 2px;
+  overflow: hidden;
+  container-type: inline-size;
+}
+.tierkey .ct {
+  flex: 1 0 auto;
+  text-align: center;
+  white-space: nowrap;
+  padding: 0 2px;
+  letter-spacing: 0;
+}
+.tierkey .kshort {
+  display: none;
+}
+@container (max-width: 640px) {
+  .tierkey .kfull {
+    display: none;
+  }
+  .tierkey .kshort {
+    display: inline;
   }
 }

@@ -41,7 +41,9 @@ The app carries its data inside the HTML, so it works offline. The files in [dat
 
 ## Rebuilding
 
-All paths are relative to the project folder. You need Python with `openpyxl`, `reportlab` and `pypdf`, and Node.
+All paths are relative to the project folder. You need Python with `reportlab`, `pypdf` and `pymupdf`, and Node.
+
+The app doesn't need the original Excel workbook: all its data is saved in `app/tests/data.json` (with the reviewed enemy list in `app/src/enemies.json`), and `build.py` builds from that. If a newer workbook is put beside the `app` folder, `build.py` reads it in first (that needs `openpyxl`); `python build.py --no-workbook` ignores it.
 
 ```bash
 cd app

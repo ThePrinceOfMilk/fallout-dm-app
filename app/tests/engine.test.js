@@ -12,7 +12,7 @@ const skippedList = E.standardize(data, { ...DEFAULT_RULES, tier1Req: null }); /
 const db = E.makeDb(data);
 const rules = JSON.parse(JSON.stringify(DEFAULT_RULES));
 Object.assign(rules, { perPenalty: 0.05, strGun: 0.0125, strMelee: 0.05, conditions: false,
-  gunHitAdd: 0, skillHitMul: 1, meleeHeavyBase: null, meleeApMul: 1, punchAP: null, burstAP: 0, burstMode: "steps", creaturePen: 0, armorFloors: null, pcHpPerLevel: 1, pcHpMul: 1, npcHpPerTier: 6, pelletMode: "combined", locHit: null, coverInset: 0, npcEncumbrance: false, tierHitAdd: null, bossDtCut: null, ammoDamAdd: 0, armorDtCut: 0 });  // fixtures come from the sheet; the 9 Nov balance pass is tested on its own below
+  gunHitAdd: 0, skillHitMul: 1, meleeHeavyBase: null, meleeApMul: 1, punchAP: null, burstAP: 0, burstMode: "steps", creaturePen: 0, armorFloors: null, pcHpPerLevel: 1, pcHpMul: 1, npcHpPerTier: 6, pelletMode: "combined", locHit: null, coverInset: 0, npcEncumbrance: false, tierHitAdd: null, bossDtCut: null, ammoDamAdd: 0, armorDtCut: 0, famBands: [] });  // fixtures come from the sheet; the 9 Nov balance pass is tested on its own below
 const ctx = { db, rules, scene: { time: "Daytime", weather: "Clear", env: "Grassland", effects: [] }, ov: {} };
 const near = (a, b, msg) => assert.ok(Math.abs(a - b) < 1e-6, `${msg}: got ${a}, sheet says ${b}`);
 const gecko = E.spawn(db.enemies.get("gecko"), "e1", ctx, () => 0.5);
@@ -747,7 +747,39 @@ test("walking: meters per AP by Agility on a line from 1 = 5 to 10 = 8", () => {
   assert.strictEqual(E.moveSpeed(4, DEFAULT_RULES), 6);
   assert.strictEqual(E.moveSpeed(7, DEFAULT_RULES), 7);
   assert.strictEqual(E.moveSpeed(10, DEFAULT_RULES), 8);
-  assert.strictEqual(DEFAULT_RULES.targetAP.Head, 0, "aiming costs no AP");
+});
+test("12 Nov: aiming costs no AP, and familiarity bands add crit and hit chance for the party", () => {
+  assert.strictEqual(DEFAULT_RULES.targetAP, undefined, "no AP for aiming at a part");
+  assert.deepStrictEqual(DEFAULT_RULES.loc, { Body: 1, Limb: 0.75, Head: 2 }, "the part still changes damage");
+  const r = DEFAULT_RULES;
+  const pc = (n) => ({ kind: "pc", fam: { "10mm pistol": n } });
+  const want = { 0: ["Unfamiliar", -0.05, 0], 10: ["Novice", -0.025, 0], 100: ["Familiar", 0, 0.03], 250: ["Proficient", 0.05, 0.07], 750: ["Expert", 0.1, 0.12], 2000: ["Master", 0.15, 0.2] };
+  for (const [n, [word, crit, acc]] of Object.entries(want)) assert.deepStrictEqual(E.famBand(pc(Number(n)), "10mm Pistol", r), { n: Number(n), word, crit, acc });
+  assert.deepStrictEqual(E.famBand({ kind: "npc", fam: {} }, "10mm Pistol", r), { n: 0, word: "Unfamiliar", crit: 0, acc: 0 }, "enemies get no familiarity effect");
+  // it reaches the weapon and the hit chance
+  const ctx2 = { db, rules: r, scene: {}, ov: {} };
+  const e = { id: "x", kind: "pc", level: 1, special: [5, 5, 5, 5, 5, 5, 5], skills: {}, gear: { acc: [] }, weapons: [{ n: "Varmint rifle" }], statuses: [], effects: [], inv: [], ov: {}, traits: [], perks: [], fam: {} };
+  const d = E.derive(e, ctx2);
+  const w0 = E.weaponView(e.weapons[0], e, d, ctx2);
+  e.fam = { "varmint rifle": 2000 };
+  const w1 = E.weaponView(e.weapons[0], e, d, ctx2);
+  assert.ok(Math.abs(w1.crit - Math.max(0, w0.crit + 0.05) - 0.15) < 1e-9 || w0.crit === 0, "Master crit is 20 points over Unfamiliar");
+  const h0 = E.hitChance(e, d, e, d, w0, 3, ctx2, null, "Body"),
+    h1 = E.hitChance(e, d, e, d, w1, 3, ctx2, null, "Body");
+  assert.ok(Math.abs(h1.raw - h0.raw - 0.2) < 1e-9, `Master +20% hit: ${h0.raw} -> ${h1.raw}`);
+});
+test("12 Nov: skill check outcome tiers scale with the roll needed, and XP goes from 0.1x to 2x", () => {
+  const r = DEFAULT_RULES;
+  const runs = (N) => E.checkTierRuns(N, r).map((x) => `${x.from}-${x.to} ${x.tier.id}`).join(" ");
+  assert.strictEqual(runs(11), "1-1 total 2-5 terrible 6-7 bad 8-9 messy 10-10 close 11-13 success 14-17 strong 18-19 triumph 20-20 perfect", "the 50-50 example");
+  for (const N of [2, 5, 11, 15, 19, 20, 25]) {
+    const rr = E.checkTierRuns(N, r);
+    assert.strictEqual(rr[0].tier.id, "total");
+    assert.strictEqual(rr[rr.length - 1].tier.id, "perfect");
+    assert.strictEqual(rr.reduce((n, x) => n + x.to - x.from + 1, 0), 20, "every face has a tier");
+  }
+  assert.strictEqual(E.checkTier(1, 11, r).xp * 10, 1, "a 10 XP check pays 1 XP on a Total Failure");
+  assert.strictEqual(E.checkTier(20, 11, r).xp * 10, 20, "and 20 XP on a Perfect");
 });
 test("DT is a whole number, rounded down", () => {
   const ctx2 = { db, rules: DEFAULT_RULES, scene: {}, ov: {} };

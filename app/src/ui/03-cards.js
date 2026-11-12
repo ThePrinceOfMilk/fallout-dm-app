@@ -118,8 +118,9 @@ const REWARD_FOCUS = [
   ["junk", "Junk"],
   ["mods", "Mods"],
 ];
-// What a cache can hold, by focus and tier. General is every kind together with no weighting.
-function rewardPool(focus, tiers) {
+// What a cache can hold, by kind and tier. General is every kind together with no weighting.
+// 12 Nov: several kinds can be ticked at once (Weapons + Ammo makes a weapon and ammo crate); their pools are pooled.
+function rewardPool(kinds, tiers) {
   const inT = (x) => x.tier == null || tiers.includes(Math.max(1, Math.min(6, Number(x.tier) || 1)));
   const items = (cats) => DATA.items.filter((i) => cats.includes(i.cat) && inT(i)).map((i) => i.n);
   const pools = {
@@ -133,12 +134,18 @@ function rewardPool(focus, tiers) {
     junk: DATA.materials.filter(inT).map((m) => m.n),
     mods: (DATA.mods || []).filter(inT).map((m) => m.n),
   };
-  return focus === "general" ? [...new Set(Object.values(pools).flat())] : pools[focus] || [];
+  const ks = [].concat(kinds);
+  return [...new Set(ks.includes("general") ? Object.values(pools).flat() : ks.flatMap((k) => pools[k] || []))];
 }
-function rewardRoll(focus, tiers, n) {
-  const pool = rewardPool(focus, tiers);
+function rewardRoll(kinds, tiers, n) {
+  // with several kinds ticked each gets its turn, so a Weapons + Ammo crate always holds both, however big each pool is
+  const pools = []
+    .concat(kinds)
+    .map((k) => rewardPool(k, tiers))
+    .filter((p) => p.length);
   const out = [];
-  for (let i = 0; i < n && pool.length; i++) {
+  for (let i = 0; i < n && pools.length; i++) {
+    const pool = pools[i % pools.length];
     const name = pool[Math.floor(Math.random() * pool.length)];
     const it = E.get(ctx(), name);
     const q = !it
@@ -156,23 +163,41 @@ function rewardRoll(focus, tiers, n) {
   }
   return out;
 }
+function rewardState() {
+  const r = (ui.reward = ui.reward || { kinds: ["general"], tiers: [1], n: 5, items: [], to: {}, all: "" });
+  if (!r.kinds) r.kinds = [r.focus || "general"]; // the old single pick
+  return r;
+}
 function rewardWin() {
-  const r = (ui.reward = ui.reward || { focus: "general", tiers: [1], n: 5, items: [], to: {}, all: "" });
+  const r = rewardState();
   const tiers = [1, 2, 3, 4, 5, 6]
     .map((t) => `<button class="opt ${r.tiers.includes(t) ? "on" : ""}" data-a="rewardTier" data-v="${t}" aria-pressed="${r.tiers.includes(t)}">T${t}</button>`)
     .join("");
-  const focus = REWARD_FOCUS.map(([id, n]) => `<button class="opt ${r.focus === id ? "on" : ""}" data-a="rewardFocus" data-v="${id}">${n}</button>`).join("");
-  const who = [["", "Leave it"], ...S.chars.map((c) => [c.id, c.name])];
-  const list = r.items.length
-    ? `<table class="t rewt">${r.items.map((l, i) => `<tr><td>${itemIcon(l.n)}</td><td class="bright">${h(l.n)}</td><td>${fmt(l.q)}</td><td><select id="rwTo${i}" data-u="reward.to.${i}">${options(who, r.to[i] || "")}</select></td></tr>`).join("")}</table>
-       <div class="row wrap" style="margin-top:4px"><select id="rwAll" data-u="reward.all" title="Who gets everything">${options([["", "All to..."], ...S.chars.map((c) => [c.id, c.name])], r.all || "")}</select>${btn("rewardGive", "", "Give out", "", "primary tiny", "Each item goes to who is picked beside it, or everything to the All to pick")}${btn("rewardCache", "", "Leave as a cache", "", "tiny", "Put it all on the map as a container that opens for whoever reaches it")}${btn("rewardClear", "", "Clear", "", "tiny")}</div>`
-    : `<div class="s dim">Pick what kind of loot and which tiers, then Generate.</div>`;
+  const kinds = REWARD_FOCUS.map(
+    ([id, n]) =>
+      `<button class="opt ${r.kinds.includes(id) ? "on" : ""}" data-a="rewardFocus" data-v="${id}" aria-pressed="${r.kinds.includes(id)}">${n}</button>`,
+  ).join("");
   return win(
     "w-reward",
     "Rewards",
     "",
-    `<div class="row wrap rwrow"><span class="s dim">KIND</span>${focus}</div><div class="row wrap rwrow"><span class="s dim">TIERS</span>${tiers}<span class="s dim" style="margin-left:6px">ITEMS</span>${numBox(`id="rwN" data-u="reward.n" title="How many items"`, r.n)}${btn("rewardGen", "", "Generate", "", "primary tiny")}</div>${list}`,
+    `<div class="row wrap rwrow"><span class="s dim">KIND</span>${kinds}</div><div class="row wrap rwrow"><span class="s dim">TIERS</span>${tiers}<span class="s dim" style="margin-left:6px">ITEMS</span>${numBox(`id="rwN" data-u="reward.n" title="How many items"`, r.n)}${btn("rewardGen", "", "Generate", "", "primary tiny")}${r.items.length ? btn("rewardShow", "", `Last roll (${r.items.length})`, "", "tiny", "Open the last roll again") : ""}</div>
+     <div class="s dim">Tick one or more kinds and the tiers, then Generate. The result opens in a window.</div>`,
   );
+}
+// The rolled rewards, in their own window: who gets what, give out, or leave them on the map as a cache.
+function rewardBody() {
+  const r = rewardState();
+  const who = [["", "Leave it"], ...S.chars.map((c) => [c.id, c.name])];
+  const names = r.kinds.map((k) => (REWARD_FOCUS.find(([id]) => id === k) || [k, k])[1]).join(" + ");
+  if (!r.items.length) return `<div class="s dim">Nothing left to hand out.</div>`;
+  return `<div class="s dim" style="margin-bottom:4px">${h(names)} · tiers ${r.tiers.map((t) => "T" + t).join(", ")}</div><table class="t rewt">${r.items
+    .map((l, i) => {
+      const it = E.get(ctx(), l.n);
+      return `<tr><td>${itemIcon(l.n)}</td><td class="bright">${h(l.n)}</td><td>${fmt(l.q)}</td><td class="s dim">${it ? h(statText(it.cat, it.o)) : ""}</td><td><select id="rwTo${i}" data-u="reward.to.${i}">${options(who, r.to[i] || "")}</select></td></tr>`;
+    })
+    .join("")}</table>
+     <div class="row wrap" style="margin-top:6px"><select id="rwAll" data-u="reward.all" title="Who gets everything">${options([["", "All to..."], ...S.chars.map((c) => [c.id, c.name])], r.all || "")}</select>${btn("rewardGive", "", "Give out", "", "primary tiny", "Each item goes to who is picked beside it, or everything to the All to pick")}${btn("rewardCache", "", "Leave as a cache", "", "tiny", "Put it all on the map as a container that opens for whoever reaches it")}${btn("rewardGen", "", "Reroll", "", "tiny")}${btn("rewardClear", "", "Clear", "", "tiny")}</div>`;
 }
 const skillWin = () =>
   win("w-check", "Skill check", "", checkBody(), { tools: btn("chkGen", "", "Random", "", "tiny", "Generate a random skill and difficulty") });
@@ -450,8 +475,8 @@ function sheetBody() {
       ? perksSect(c)
       : m.tab === "traits"
         ? traitsSect(c)
-        : `${d.m.lucky ? `<label class="rr" style="max-width:220px"><span>Lucky Number digit</span>${bindNum(c.id, "luckyDigit", c.luckyDigit != null ? c.luckyDigit : 7)}</label>` : ""}<div class="hpline" style="margin-bottom:3px"><span>DT</span>${ovCell(c, "dt", fmt(d.dt), "Damage Threshold")}<span>INIT</span>${ovCell(c, "pri", fmt(d.pri), "Initiative base")}<span>SAVE</span>${ovCell(c, "save", d.save, `Saving throw: roll ${saveNeed(d.save)} or more on a d20 (the box holds the old at-or-under number)`)}</div>${statList(c, d)}${statsSect(c, d)}${isSpec() ? "" : `<h3>What's changing this character's numbers</h3>${modsSect(c, d)}`}`;
-  return `${specialRow(c, d)}<div class="opts" style="margin:8px 0 6px">${tabs}</div>${body}`;
+        : `${d.m.lucky ? `<label class="rr" style="max-width:220px"><span>Lucky Number digit</span>${bindNum(c.id, "luckyDigit", c.luckyDigit != null ? c.luckyDigit : 7)}</label>` : ""}<div class="hpline sheetstats" style="margin-bottom:3px"><span>DT</span>${ovCell(c, "dt", fmt(d.dt), "Damage Threshold")}<span>INIT</span>${ovCell(c, "pri", fmt(d.pri), "Initiative base")}<span>SAVE</span>${ovCell(c, "save", d.save, `Saving throw: roll ${saveNeed(d.save)} or more on a d20 (the box holds the old at-or-under number)`)}</div>${statList(c, d)}${statsSect(c, d)}${isSpec() ? "" : `<h3>What's changing this character's numbers</h3>${modsSect(c, d)}`}`;
+  return `${specialRow(c, d)}<div class="opts sheettabs" style="margin:8px 0 6px">${tabs}</div>${body}`;
 }
 // A box figure: each body part shows what's wrong with it. Limbs from the statuses that name them, head and body from the crit statuses.
 const diceBtn = (id, kind) =>
@@ -657,15 +682,12 @@ function statusIcon(e, st) {
 const statusIcons = (e) => ((e.statuses || []).length ? `<div class="stirow">${e.statuses.map((st) => statusIcon(e, st)).join("")}</div>` : "");
 // FAMILIARITY with a weapon, from rounds fired. Each band has a word and a color.
 const FAM_COLOR = { Unfamiliar: "#8b0000", Novice: "#ff8fc7", Familiar: "#ffffff", Proficient: "#4da3ff", Expert: "#000000", Master: "#39ff14" };
-function famOf(e, name) {
-  const n = ((e && e.fam) || {})[E.low(name)] || 0;
-  let word = "Unfamiliar";
-  for (const [at, w] of S.rules.famBands || []) if (n >= at) word = w;
-  return { n, word };
-}
+const famOf = (e, name) => E.famBand(e, name, S.rules);
 const famTag = (e, name) => {
   const f = famOf(e, name);
-  return `<span class="fam fam-${f.word.toLowerCase()}" style="color:${FAM_COLOR[f.word] || "inherit"}" title="${fmt(f.n)} rounds fired with this weapon">${f.word}</span>`;
+  const sg = (x) => (x > 0 ? "+" : "") + fmt(E.pct(x));
+  const fx = [f.crit ? `crit ${sg(f.crit)}%` : "", f.acc ? `hit ${sg(f.acc)}%` : ""].filter(Boolean).join(", ");
+  return `<span class="fam fam-${f.word.toLowerCase()}" style="color:${FAM_COLOR[f.word] || "inherit"}" title="${fmt(f.n)} rounds fired with this weapon${fx ? `: ${fx}` : ""}">${f.word}</span>`;
 };
 function blastHits(at, t) {
   const who = K()

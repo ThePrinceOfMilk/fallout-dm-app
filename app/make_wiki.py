@@ -98,7 +98,7 @@ upd(9, D8, "Jams", "Was: nothing said what a jam does (UF-03). Now: the jam uses
 upd(9, D8, "Bursts, burst damage and untargeted shots", "Was: two descriptions of burst hits (US-07), no word on whether DT applies per bullet (US-08), and no rule for untargeted shots (US-09). Now:", bl(
     "In a burst the hit band is cut into Count equal steps, and a higher roll lands more bullets, at least 1. A crit or super crit lands every bullet. (Replaced on 9 Nov: see Burst bullets by roll, below.)",
     "Each bullet's damage is worked out against DT on its own, then multiplied by the bullets that land.",
-    f"A shot with no body part picked hits the Body. Aiming at a limb costs +{R['targetAP']['Limb']} AP, the head +{R['targetAP']['Head']}."), flags=["US-07", "US-08", "US-09"])
+    f"A shot with no body part picked hits the Body. Aiming at a limb costs +1 AP, the head +2 (free from 12 Nov)."), flags=["US-07", "US-08", "US-09"])
 upd(9, D8, "Ammo", "Was: the sheet never counted rounds down (US-06). Now: every shot takes its rounds from the shooter's inventory, enemies included. No rounds, no shot.", flags=["US-06"])
 upd(9, D9, "Burst bullets by roll", "Was: a crit landed the whole burst. Now: the roll decides how many bullets land, and only a super crit lands them all.",
     p("The hit band, from the lowest hit up to the super crit, is cut into Count - 1 steps, widest first. A higher roll lands more bullets. Only the first bullet of a crit or super crit gets the crit multiplier; the rest are plain hits."),
@@ -112,7 +112,7 @@ upd(9, D9, "The combat log", "Was: a block of numbers for every attack. Now: one
 upd(9, D9, "One sentence per attack", "Was: a story line could add extra sentences, such as a wound description, a remark about the ammo, a status, or an opener. Now: each attack is exactly one sentence with the damage, and nothing else.",
     p("Kills fold the outcome into that sentence, for example <i>Spike shoots Aquilius through the eye for 9 DMG, blowing their brains out the back</i>. A player who drops reads <i>..., and Spike goes down</i>. Grenades are one sentence too. The numbers and statuses are still in the details under each line."))
 upd(11, D8, "AP costs and refresh", "Was: the Action AP tab had no costs (UF-07), and nothing said when AP comes back (US-10). Now:",
-    tbl(["Action", "AP"], [["Attack", "the weapon's AP"], ["Aim at a limb / the head", f"+{R['targetAP']['Limb']} / +{R['targetAP']['Head']}"], ["Swap weapon", R["swapAP"]], ["Use an item", "the item's AP column"],
+    tbl(["Action", "AP"], [["Attack", "the weapon's AP"], ["Aim at a limb / the head", "free (12 Nov)"], ["Swap weapon", R["swapAP"]], ["Use an item", "the item's AP column"],
         ["Revive an ally", R["reviveAP"]], ["Clear a jam", "by weapon type (chapter 9)"], ["Throw a Frag Grenade", R["throwables"]["Frag Grenade"]["ap"]], ["Move", "by distance (below)"]], [3, 3]),
     p("AP refills in full at the start of each combatant's turn. Anything that costs AP is refused if it can't be paid. Tick Free under OVR, or hold Shift while dragging, to overrule that."), flags=["UF-07", "US-10"])
 upd(11, D8, "Movement", "Was: two unlabeled AP rows (US-12). Now: AP by distance walked.",
@@ -308,7 +308,7 @@ upd(7, D10, "Passing a check pays XP", "Was: the DM typed an XP amount for the p
 upd(9, D10, "Weapon familiarity", "New.", bl(
     "Each player counts the rounds they have fired with each weapon. A melee swing or a throw counts as 1. A jam counts nothing.",
     f"A crit or super crit counts {R['famCritMul']} times the rounds fired.",
-    "The count shows as one word on the weapon, in the inventory and on the weapon slot: " + ", ".join(f"{w} from {n}" for n, w in R['famBands']) + ".",
+    "The count shows as one word on the weapon, in the inventory and on the weapon slot: " + ", ".join(f"{w} from {n}" for n, w, *_ in R['famBands']) + ".",
     "The DM can type a new count next to the word. For now familiarity is a label only: it changes no numbers."))
 upd(11, D10, "Fists never cost a swap", "Was: after shooting, the first punch cost 1 AP more, the weapon swap. Now: punching never pays to swap, because fists are always ready.")
 upd(12, D10, "Cover has health", "New.", bl(
@@ -549,6 +549,25 @@ upd(18, D12, "Saving throws are rolled high", "Was: roll at or under the save nu
 upd(24, D12, "Prayer", "New: an action for characters with Strict Religious Rites (or its evolved form, Devout).", bl(
     f"Pray spends all the AP left this turn and gives the Prayer status (+1 Luck, +1 END, +5% to hit) for {R['prayer']['rounds']} rounds. It also lifts Damnation.",
     "Only characters with the trait see the button. The length is a guess, since the trait doesn't say; it's in Settings (prayer.rounds)."))
+
+# ---------------------------------------------------------------- 12 Nov 2026, evening: aiming, familiarity, check outcomes, perk branches
+upd(8, D12, "Aiming costs no AP", "Was: in campaigns saved before 11 Nov, aiming at a limb or the head still cost extra AP. Now: aiming never costs AP. The part changes the hit chance (head x0.5, body x1, limbs x1.25) and the damage (head x2, body x1, limbs x0.75).", bl(
+    "Older saves are brought up to date when they load. The aiming AP setting is gone from Settings; the damage and hit multipliers stay there."))
+upd(9, D12, "Familiarity changes crits and hits", "Was: familiarity was a word only. Now: each band changes crit chance and hit chance with that weapon.", bl(
+    "Unfamiliar: crit -5%. Novice: crit -2.5%. Familiar: hit +3%. Proficient: crit +5%, hit +7%. Expert: crit +10%, hit +12%. Master: crit +15%, hit +20%.",
+    "Party members only; enemies don't track familiarity, so they get none. Crit chance can't go below 0.",
+    "The bands still start at 0, 10, 100, 250, 750 and 2000 rounds fired (a crit counts 5). The weapon card in a fight shows the band, and its tooltip the bonus."))
+upd(7, D12, "Every roll has an outcome", "Was: a check passed or failed. Now: the d20 lands on one of nine outcomes, scaled to the roll the check needs, and XP follows the outcome.", bl(
+    "With 11 needed: 1 Total Failure, 2-5 Disaster, 6-7 Setback, 8-9 Messy Success, 10 Close Call, 11-13 Success, 14-17 Strong Success, 18-19 Triumph, 20 Perfect. A harder or easier check stretches or squeezes the bands the same way.",
+    "Messy Success (done, with mistakes and complications) and Close Call (done, with one complication) count as done, so a check that needs 11 gets done 65% of the time instead of 50%. Below them it fails: Setback, Disaster, Total Failure.",
+    "XP: the check's XP (difficulty x 0.25, plus the INT bonus) times the outcome: Total Failure x0.1, Disaster x0.25, Setback x0.5, Messy Success x0.75, Close Call x0.9, Success x1, Strong Success x1.25, Triumph x1.5, Perfect x2. A 10 XP check pays 1 on a Total Failure and 20 on a Perfect.",
+    "The skill check shows each person's bands as a strip, marks the roll, and names the outcome. A revive works on Messy Success or better.",
+    "To decide: whether Messy Success and Close Call should count as done (they do now) or fail with a consolation."))
+upd(25, D12, "Skill perks branch", "Was: every skill perk opened when the skill passed its rank. Now: each skill's perks form a tree. A Proficiency perk leads to its own Expertise perks, and those to their own Mastery perks, and a perk below the first rank needs the one it branches from.", bl(
+    "The branches come from the workbook's layout: each row holds a Proficiency, an Expertise and a Mastery cell, and a blank cell means the one above. So Repair splits into Mechanic (Jumpsuit Johnny, Torbjorn, then their Mastery perks) and Technician (Weaponsmith and its Mastery perks).",
+    "The skill tree is drawn as a real tree, with buttons along the top to show one skill at a time. Each perk shows its effect in short.",
+    "To check: the branches read from the workbook for every skill."))
+
 
 
 

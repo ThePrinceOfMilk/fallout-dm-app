@@ -8,6 +8,54 @@ const SKILL_TYPES = [
   ["Social and survival", ["BAR", "SPE", "SNK", "SUR"]],
 ];
 const treeZ = () => ui.treeZoom || (small() ? 0.6 : 1); // phones start zoomed out
+// A skill's perks as branches. The workbook lays each skill out in rows of Proficiency, Expertise and Mastery cells,
+// with a blank cell meaning "same as above", so a perk's parent is the last perk one rank lower that came before it.
+const PERK_RANKS = ["Proficiency", "Expertise", "Mastery"];
+const perkBranchCache = new Map();
+function perkBranches(group) {
+  if (perkBranchCache.has(group)) return perkBranchCache.get(group);
+  const roots = [],
+    last = {};
+  for (const p of DATA.skillPerks.filter((x) => x.group === group)) {
+    const ri = PERK_RANKS.indexOf(p.rank);
+    const x = { p, kids: [], parent: null };
+    const up = ri > 0 ? last[ri - 1] : null;
+    if (up) {
+      x.parent = up.p;
+      up.kids.push(x);
+    } else roots.push(x);
+    last[ri] = x;
+    for (let j = ri + 1; j < PERK_RANKS.length; j++) delete last[j]; // a new branch starts below this perk
+  }
+  perkBranchCache.set(group, roots);
+  return roots;
+}
+// The parent perk of a skill perk, or null for a first-rank perk.
+function perkParent(name) {
+  const p = DATA.skillPerks.find((x) => E.low(x.n) === E.low(name));
+  if (!p) return null;
+  const walk = (xs) => {
+    for (const x of xs) {
+      if (x.p === p) return x.parent;
+      const r = walk(x.kids);
+      if (r !== undefined) return r;
+    }
+    return undefined;
+  };
+  return walk(perkBranches(p.group)) || null;
+}
+// 12 Nov: the effect in short, under a perk's name: its numbers when the app applies any, else the first words of its text.
+function perkFx(p) {
+  const rows = DATA.sc.filter((r) => E.low(r.n) === E.low(p.n));
+  const rule = (S.rules.perkRules || {})[p.n] || [];
+  const mods = Object.assign({}, ...rows.map((r) => r.mods || {}), ...rule.map((r) => r.fx || {}));
+  const nums = modLine({ mods });
+  if (nums) return nums;
+  const t = String(p.effect || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return t.length > 70 ? t.slice(0, 67).replace(/\s\S*$/, "") + "..." : t;
+}
 function treeModal(mode) {
   const pcs = S.chars;
   if (!pcs.length) return `<div class="dim">No characters yet.</div>`;
@@ -17,36 +65,40 @@ function treeModal(mode) {
   const owned = new Set((e.perks || []).map(E.low));
   const tabs = `<div class="ftabs">${pcs.map((c) => `<button class="ftab ${c.id === e.id ? "on" : ""}" data-a="treeTab" data-v="${c.id}" aria-pressed="${c.id === e.id}">${iconSvg(c.icon)}${h(c.name)}${c.perkDue ? `<b>${c.perkDue}</b>` : ""}</button>`).join("")}</div>`;
   const node = (p, state, sub, kind) =>
-    `<button class="pnode ${state}" ${state === "can" ? `data-a="levelPerk" data-v="${e.id}|${h(p.n)}|${kind}"` : `data-a="noop" data-v=""`} title="${h(p.effect || "No effect written.")}${state === "can" ? " Click to take it." : state === "lock" ? " Not yet." : ""}"><span class="pn">${h(p.n)}</span><span class="s dim">${h(sub)}</span></button>`;
-  const skillCol = ([k, n]) => {
-    const ranks = DATA.skillPerks.filter((p) => p.group === n).sort((a, b) => a.need - b.need);
-    if (!ranks.length) return "";
+    `<button class="pnode ${state}" ${state === "can" ? `data-a="levelPerk" data-v="${e.id}|${h(p.n)}|${kind}"` : `data-a="noop" data-v=""`} title="${h(p.effect || "No effect written.")}${state === "can" ? " Click to take it." : state === "lock" ? " Not yet." : ""}"><span class="pn">${h(p.n)}</span>${sub ? `<span class="s dim">${h(sub)}</span>` : ""}<span class="pfx">${h(perkFx(p))}</span></button>`;
+  // 12 Nov: a real tree. Each skill's perks branch: a Proficiency perk leads to its own Expertise perks, and those to their Mastery perks.
+  // Taking a perk needs the skill over its rank and, below the first rank, the perk it branches from.
+  const RANK_N = { Proficiency: "Prof.", Expertise: "Exp.", Mastery: "Mast." };
+  const skillTree = ([k, n]) => {
     const val = d.skills[k] || 0;
-    const tiers = [...new Set(ranks.map((p) => p.need))];
-    const RANK = ["Proficiency", "Expertise", "Mastery"];
-    return `<div class="tskill"><div class="tshead">${vicon(k)}<span class="bright grow">${h(n)}</span><span class="tval">${val}</span></div>${tiers
-      .map(
-        (need, i) =>
-          `${i ? `<div class="tdown ${val > need ? "open" : ""}" aria-hidden="true"></div>` : ""}<div class="ttier ${val > need ? "open" : ""}"><div class="tthead">${RANK[i] || "Rank " + (i + 1)} · over ${need}</div>${ranks
-            .filter((p) => p.need === need)
-            .map((p) => node(p, owned.has(E.low(p.n)) ? "have" : val > p.need ? "can" : "lock", "", "skill"))
-            .join("")}</div>`,
-      )
-      .join("")}</div>`;
+    const kids = perkBranches(n);
+    const perkLi = (x) => {
+      const p = x.p;
+      const parentOk = !x.parent || owned.has(E.low(x.parent.n));
+      const state = owned.has(E.low(p.n)) ? "have" : val > p.need && parentOk ? "can" : "lock";
+      return `<li class="${state}">${node(p, state, `${RANK_N[p.rank] || p.rank} · over ${p.need}`, "skill")}${x.kids.length ? `<ul>${x.kids.map(perkLi).join("")}</ul>` : ""}</li>`;
+    };
+    return `<li><div class="snode sskill" data-a="treeSkill" data-v="${k}" title="Show only ${h(n)}">${vicon(k)}<span class="grow">${h(n)}</span><span class="tval">${val}</span></div>${kids.length ? `<ul>${kids.map(perkLi).join("")}</ul>` : ""}</li>`;
   };
-  // A real tree: the character at the root, one branch per skill type, a column per skill under it, ranks down each column.
   const byKey = Object.fromEntries(E.SKILLS.map((s) => [s[0], s]));
-  const skills = `<div class="stree"><div class="snode sroot">${iconSvg(e.icon)}<span>${h(e.name)}</span></div><div class="skids">${[
-    ...SKILL_TYPES,
-    ["Other", E.SKILLS.map((s) => s[0]).filter((k) => !SKILL_TYPES.some(([, ks]) => ks.includes(k)))],
-  ]
-    .map(([type, keys]) => {
-      const cols = keys.map((k) => (byKey[k] ? skillCol(byKey[k]) : "")).filter(Boolean);
-      return cols.length
-        ? `<div class="sbranch"><div class="snode stype">${h(type)}</div><div class="skids">${cols.map((c) => `<div class="sleaf">${c}</div>`).join("")}</div></div>`
-        : "";
-    })
-    .join("")}</div></div>`;
+  const types = [...SKILL_TYPES, ["Other", E.SKILLS.map((s) => s[0]).filter((k) => !SKILL_TYPES.some(([, ks]) => ks.includes(k)))]];
+  const focus = ui.treeSkill && byKey[ui.treeSkill] ? ui.treeSkill : null;
+  const skills = focus
+    ? `<ul class="ptree">${skillTree(byKey[focus])}</ul>`
+    : `<ul class="ptree"><li><div class="snode sroot">${iconSvg(e.icon)}<span>${h(e.name)}</span></div><ul>${types
+        .map(([type, keys]) => {
+          const lis = keys.filter((k) => byKey[k] && perkBranches(byKey[k][1]).length).map((k) => skillTree(byKey[k]));
+          return lis.length ? `<li><div class="snode stype">${h(type)}</div><ul>${lis.join("")}</ul></li>` : "";
+        })
+        .join("")}</ul></li></ul>`;
+  const skillBar = `<div class="row wrap tskills"><button class="opt ${focus ? "" : "on"}" data-a="treeSkill" data-v="">All skills</button>${E.SKILLS.filter(
+    ([k, n]) => perkBranches(n).length,
+  )
+    .map(
+      ([k, n]) =>
+        `<button class="opt ${focus === k ? "on" : ""}" data-a="treeSkill" data-v="${k}" title="${h(n)}">${vicon(k)}${h(n)} <b>${d.skills[k] || 0}</b></button>`,
+    )
+    .join("")}</div>`;
   const levels = [...new Set(DATA.levelPerks.map((p) => num(p.level)).filter((x) => x != null))].sort((a, b) => a - b);
   const lv = levels
     .map(
@@ -62,7 +114,7 @@ function treeModal(mode) {
     .join("");
   const head = `<div class="s dim" style="margin-bottom:6px">${h(e.name)} · level ${e.level}${mode === "level" && e.perkDue ? ` · <span class="warn">${e.perkDue} level perk${e.perkDue === 1 ? "" : "s"} to pick</span>` : ""}. Bright: taken. Outlined: open to take. Faint: locked.</div>`;
   return mode === "skill"
-    ? `${tabs}<div class="fpane">${head}<div class="row tzoom"><span class="s dim">Zoom</span><button class="btn tiny" data-a="treeZoom" data-v="-1" title="Zoom out (or Ctrl + scroll)">-</button><span class="s">${Math.round(treeZ() * 100)}%</span><button class="btn tiny" data-a="treeZoom" data-v="1" title="Zoom in (or Ctrl + scroll)">+</button><button class="btn tiny" data-a="treeZoom" data-v="0" title="Back to 100%">100%</button><span class="s dim">Scroll to move around.</span></div><div class="ttreewrap" data-scroll="ttree"><div class="ttree" style="zoom:${treeZ()}">${skills}</div></div></div>`
+    ? `${tabs}<div class="fpane">${head}<div class="row tzoom"><span class="s dim">Zoom</span><button class="btn tiny" data-a="treeZoom" data-v="-1" title="Zoom out (or Ctrl + scroll)">-</button><span class="s">${Math.round(treeZ() * 100)}%</span><button class="btn tiny" data-a="treeZoom" data-v="1" title="Zoom in (or Ctrl + scroll)">+</button><button class="btn tiny" data-a="treeZoom" data-v="0" title="Back to 100%">100%</button><span class="s dim">Scroll to move around.</span></div>${skillBar}<div class="ttreewrap" data-scroll="ttree"><div class="ttree" style="zoom:${treeZ()}">${skills}</div></div></div>`
     : `${tabs}<div class="fpane">${head}${lv}</div>`;
 }
 function moveSpot(att, tgt, r) {
@@ -113,7 +165,7 @@ function itemModal() {
     lines
       .map(
         (x, n) =>
-          `<button class="rowbtn ${m.sel === x.i ? "on" : ""}" data-a="itemPick" data-v="${x.i}">${n < 9 ? kbd(String(n + 1)) : ""}<span class="grow">${h(x.l.n)} <span class="dim">x ${fmt(x.l.q)}</span>${x.l.active ? "" : ` <span class="tag">STOWED</span>`}</span><span class="s dim">${x.it.o.ap != null ? x.it.o.ap + " AP" : ""}</span></button>`,
+          `<button class="rowbtn ${m.sel === x.i ? "on" : ""}" data-a="itemPick" data-v="${x.i}">${n < 9 ? kbd(String(n + 1)) : ""}<span class="grow">${h(x.l.n)} <span class="dim">x ${fmt(x.l.q)}</span>${x.l.active ? "" : ` <span class="tag">STOWED</span>`}<span class="ustat">${h(useStats(x.it.o))}</span></span><span class="s dim">${x.it.o.ap != null ? x.it.o.ap + " AP" : ""}</span></button>`,
       )
       .join("");
   let detail = "";

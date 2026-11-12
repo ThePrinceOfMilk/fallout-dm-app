@@ -560,19 +560,33 @@ const ACT = {
     r.tiers = r.tiers.includes(t) ? (r.tiers.length > 1 ? r.tiers.filter((x) => x !== t) : r.tiers) : [...r.tiers, t].sort();
     render();
   },
+  // General stands alone; any other kind toggles on and off, and with none left it falls back to General.
   rewardFocus(v) {
-    ui.reward.focus = v;
+    const r = rewardState();
+    if (v === "general") r.kinds = ["general"];
+    else {
+      const k = r.kinds.filter((x) => x !== "general");
+      r.kinds = k.includes(v) ? k.filter((x) => x !== v) : [...k, v];
+      if (!r.kinds.length) r.kinds = ["general"];
+    }
     render();
   },
   rewardGen() {
-    const r = ui.reward;
-    r.items = rewardRoll(r.focus, r.tiers, clamp(Math.round(num(r.n, 5)), 1, 30));
+    const r = rewardState();
+    r.items = rewardRoll(r.kinds, r.tiers, clamp(Math.round(num(r.n, 5)), 1, 30));
     r.to = {};
-    if (!r.items.length) toast("Nothing of that kind at those tiers.");
+    r.all = "";
+    if (!r.items.length) return toast("Nothing of that kind at those tiers.");
+    ui.modal = { type: "reward" };
+    render();
+  },
+  rewardShow() {
+    ui.modal = { type: "reward" };
     render();
   },
   rewardClear() {
-    Object.assign(ui.reward, { items: [], to: {}, all: "" });
+    Object.assign(rewardState(), { items: [], to: {}, all: "" });
+    if (ui.modal && ui.modal.type === "reward") ui.modal = null;
     render();
   },
   rewardGive() {
@@ -590,6 +604,7 @@ const ACT = {
     r.items = r.items.filter((l, i) => !(r.all || ent(r.to[i])) || !given.has(l.n));
     r.to = {};
     r.all = "";
+    if (!r.items.length && ui.modal && ui.modal.type === "reward") ui.modal = null;
     render();
   },
   rewardCache() {
@@ -603,6 +618,7 @@ const ACT = {
       log("status", `A cache is left on the map: ${o.loot.map((l) => `${l.q} x ${l.n}`).join(", ")}.`);
     });
     Object.assign(r, { items: [], to: {}, all: "" });
+    if (ui.modal && ui.modal.type === "reward") ui.modal = null;
     render();
   },
   venPublic(v, el) {
@@ -694,6 +710,15 @@ const ACT = {
     act("Familiarity", () => {
       e.fam = { ...(e.fam || {}), [E.low(el.dataset.n)]: t };
     });
+  },
+  treeSkill(v) {
+    ui.treeSkill = v || null;
+    render();
+    const w = document.querySelector("[data-scroll=ttree]");
+    if (w) {
+      w.scrollTop = 0;
+      w.scrollLeft = (w.scrollWidth - w.clientWidth) / 2; // the root sits in the middle
+    }
   },
   treeZoom(v) {
     const z = treeZ();
@@ -1634,19 +1659,20 @@ const ACT = {
     if (m.revive && S.combat && K().turnId === e.id && !canPay(e, S.rules.reviveAP, "revive")) return;
     const { v, label } = checkValue(e, m.use);
     const need = E.checkNeeded(v, num(m.target, 0), S.rules);
-    const res = E.checkResult(r, need);
+    const tier = E.checkTier(r, need, S.rules);
+    const res = { pass: tier.pass, why: r === 1 ? "natural 1" : r === 20 ? "natural 20" : "", tier: tier.id };
     const next = S.chars.find((c) => c.id !== id && !m.res[c.id]);
     ui.focus = next ? `#chk-${next.id}` : null;
     act(`Check: ${e.name}`, () => {
-      log("check", `${e.name}: ${label} vs ${m.target} needs ${need}+, rolled ${r}${res.why ? ` (${res.why})` : ""}: ${res.pass ? "SUCCESS" : "FAILURE"}.`);
+      log("check", `${e.name}: ${label} vs ${m.target} needs ${need}+, rolled ${r}${res.why ? ` (${res.why})` : ""}: ${tier.n.toUpperCase()}. ${tier.desc}`);
       m.res[id] = { ...res, roll: r };
-      // A pass pays XP by difficulty: the target times checkXpMul, plus the INT bonus.
-      const base = Math.round(num(m.target, 0) * (S.rules.checkXpMul || 0));
-      if (res.pass && e.kind === "pc" && !m.revive && base > 0) {
-        const g = E.xpGain(base, der(e).sp.I, S.rules);
+      // Every outcome pays XP by difficulty (the target times checkXpMul) times its tier: 0.1x for a Total Failure up to 2x for Perfect.
+      const base = num(m.target, 0) * (S.rules.checkXpMul || 0) * (tier.xp || 0);
+      if (e.kind === "pc" && !m.revive && base > 0) {
+        const g = E.xpGain(E.fix(base), der(e).sp.I, S.rules);
         e.xp = E.fix((e.xp || 0) + g);
         m.res[id].xp = g;
-        log("check", `${e.name} gains ${g} XP for passing a ${m.target} check.`);
+        log("check", `${e.name} gains ${g} XP for a ${tier.n} on a ${m.target} check.`);
       }
       if (!S.combat && e.kind === "pc") S.scene.checks[e.id] = (S.scene.checks[e.id] || 0) + 1;
       if (m.revive) {
@@ -2257,7 +2283,7 @@ const ACT = {
     toast(`${v} given to ${e.name}`);
   },
   brEnter() {
-    const list = BR_LIST().filter(([c]) => !BR_CATS[ui.brCat] || c === BR_CATS[ui.brCat]);
+    const list = BR_LIST().filter(([c, o]) => (!BR_CATS[ui.brCat] || c === BR_CATS[ui.brCat]) && (!ui.brSub || brTags(c, o).includes(ui.brSub)));
     const top = rankByName(list, ui.brQ, (x) => x[1].n)[0];
     if (top) {
       ui.brOpen = top[1].n;

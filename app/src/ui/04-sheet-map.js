@@ -207,7 +207,7 @@ function invSect(c, d) {
           .map(([l, i]) => {
             const it = E.get(ctx(), l.n);
             const canUse = it && it.cat === "item" && usable(it.o);
-            return `<div class="irow"><span class="iq">${numBox(`data-c="setQty" data-id="${c.id}" data-i="${i}" id="q-${c.id}-${i}" title="How many"`, fmt(l.q), "cell")}</span>${itemIcon(l.n)}<span class="grow" title="${h(it && it.o.effect ? it.o.effect : "")}">${h(l.n)}${it && it.o.effect ? ` <span class="s dim">${h(it.o.effect)}</span>` : ""}${it && it.cat === "weapon" && c.kind === "pc" ? ` ${famTag(c, l.n)} <span class="famedit" title="Rounds fired: the DM can set it">${numBox(`data-c="setFam" data-id="${c.id}" data-n="${h(l.n)}" id="fam-${c.id}-${i}"`, fmt(famOf(c, l.n).n), "cell")}</span>` : ""}</span><span class="s faint">${fmt(E.weightOf(ctx(), l.n) * l.q)}lb</span><label class="chk s" title="Active: on hand during combat"><input type="checkbox" data-a="invActive" data-v="${c.id}|${i}"${l.active ? " checked" : ""}>ACTIVE</label>${canUse ? `<button class="btn tiny primary usebtn" data-a="useSelf" data-v="${c.id}|${i}" title="Use it on ${h(c.name)} right away">Self</button><button class="btn tiny usebtn" data-a="useItemFrom" data-v="${c.id}|${i}" title="Use or give it: pick who, then Use">Use…</button>` : ""}<button class="btn tiny" data-a="invDel" data-v="${c.id}|${i}" title="Remove">X</button></div>`;
+            return `<div class="irow"><span class="iq">${numBox(`data-c="setQty" data-id="${c.id}" data-i="${i}" id="q-${c.id}-${i}" title="How many"`, fmt(l.q), "cell")}</span>${itemIcon(l.n)}<span class="grow" title="${h(it && it.o.effect ? it.o.effect : "")}">${h(l.n)}${canUse ? `<span class="ustat">${h(useStats(it.o))}</span>` : ""}${it && it.cat === "weapon" && c.kind === "pc" ? ` ${famTag(c, l.n)} <span class="famedit" title="Rounds fired: the DM can set it">${numBox(`data-c="setFam" data-id="${c.id}" data-n="${h(l.n)}" id="fam-${c.id}-${i}"`, fmt(famOf(c, l.n).n), "cell")}</span>` : ""}</span><span class="s faint">${fmt(E.weightOf(ctx(), l.n) * l.q)}lb</span><label class="chk s" title="Active: on hand during combat"><input type="checkbox" data-a="invActive" data-v="${c.id}|${i}"${l.active ? " checked" : ""}>ACTIVE</label>${canUse ? `<button class="btn tiny primary usebtn" data-a="useSelf" data-v="${c.id}|${i}" title="Use it on ${h(c.name)} right away">Self</button><button class="btn tiny usebtn" data-a="useItemFrom" data-v="${c.id}|${i}" title="Use or give it: pick who, then Use">Use…</button>` : ""}<button class="btn tiny" data-a="invDel" data-v="${c.id}|${i}" title="Remove">X</button></div>`;
           })
           .join("")}`,
     )
@@ -271,15 +271,121 @@ function modLine(row) {
     apCost: "Attack AP",
     reload: "Reload AP",
     pen: "Pen",
+    failRoll: "Fail roll",
+    enemyFail: "Enemy fail roll",
+    superRoll: "Super crit roll",
+    dmgTaken: "Damage taken %",
+    hpPct: "Max HP %",
+    regen: "HP per turn",
+    implantSlots: "Implant slots",
+    implantFail: "Implant fail %",
+    robotDmgTaken: "Damage from robots %",
+    accMul: "Hit chance %",
+    addict: "Addiction %",
+    apCostMul: "Attack AP %",
+    apOnHit: "AP per hit",
+    auraEnemyAcc: "Nearby enemies' hit %",
+    capsMul: "Caps found %",
+    chemDur: "Chem duration",
+    count: "Shots per burst",
+    critBleed: "Bleeding on a crit",
+    critDam: "Crit damage %",
+    critToSuper: "Crits that turn super %",
+    damFlat: "Damage",
+    debuffAdd: "Status tiers dealt",
+    endHeal: "HP at turn end",
+    enemyInit: "Enemy initiative",
+    healOut: "Healing given %",
+    killAP: "AP per kill",
+    knockChance: "Knockdown %",
+    limbMult: "Limb damage taken",
+    moveAdd: "Move AP",
+    mvm: "Move speed",
+    nightPen: "Night penalty",
+    reloadMul: "Reload AP %",
+    resistMental: "Mental resist",
+    saveMul: "Save %",
+    setC: "CHA set to",
+    traitScale: "Trait effects %",
+    weaponSkill: "Weapon skill",
+    xpMul: "XP %",
   };
-  const pctKeys = new Set(["acc", "enemyAcc", "dam", "crit", "apMul", "carryMul", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10"]);
+  // on-off abilities read as a name, not a number
+  const FLAG = {
+    inspire: "Inspires allies",
+    itemFree: "Free item use",
+    lunge: "Lunge",
+    swapFree: "Free weapon swap",
+    targetFree: "Free aiming",
+    noItems: "Can't use items",
+    lucky: "Lucky number",
+    vengeful: "Vengeful",
+    superKill: "Super crits kill",
+    lightHalf: "Light armor halved",
+  };
+  const pctKeys = new Set([
+    "acc",
+    "enemyAcc",
+    "dam",
+    "crit",
+    "apMul",
+    "carryMul",
+    "dmgTaken",
+    "hpPct",
+    "implantFail",
+    "robotDmgTaken",
+    "accMul",
+    "addict",
+    "apCostMul",
+    "auraEnemyAcc",
+    "capsMul",
+    "critDam",
+    "critToSuper",
+    "healOut",
+    "knockChance",
+    "reloadMul",
+    "saveMul",
+    "traitScale",
+    "xpMul",
+    "r1",
+    "r2",
+    "r3",
+    "r4",
+    "r5",
+    "r6",
+    "r7",
+    "r8",
+    "r9",
+    "r10",
+  ]);
   return Object.entries(row.mods || {})
+    .filter(([k, v]) => (typeof v === "number" && v !== 0) || v === true)
     .map(([k, v]) => {
+      if (k.startsWith("resist:")) return `Resists ${k.slice(7)}${v !== 1 && v !== true ? ` ${v > 0 ? "+" : ""}${v}` : ""}`;
+      if (FLAG[k]) return v === 1 || v === true ? FLAG[k] : `${FLAG[k]} ${v}`;
+      if (v === true) return L[k] || k;
       const label = SP_LABEL[k] || SKILL_NAME[k] || L[k] || (/^r\d+$/.test(k) ? `Hit R${k.slice(1)} %` : k);
       const val = pctKeys.has(k) ? E.pct(v) : v;
       return `${label} ${k === "hpMul" ? val : (val > 0 ? "+" : "") + val}`;
     })
     .join(", ");
+}
+// 12 Nov: a consumable's effect in numbers: healing, what it applies, what it cures, the after-effect and the AP to use it.
+function useStats(o) {
+  const u = o.use || {};
+  const bits = [];
+  if (u.heal) bits.push(`Heals ${((String(o.effect || "").match(/[^,;:]*\bHP\b[^,;]*/) || [""])[0] || "HP").trim()}`);
+  for (const a of u.applies || []) {
+    const st = modLine({ mods: a.fx || {} });
+    bits.push(`${a.n}${a.tier > 1 ? " " + a.tier : ""}${st ? `: ${st}` : ""}`);
+  }
+  const fx = modLine({ mods: u.fx || {} });
+  if (fx) bits.push(fx);
+  for (const [n, t] of Object.entries(u.reduces || {})) bits.push(`${n} -${t} tier${t === 1 ? "" : "s"}`);
+  if ((u.removes || []).length) bits.push(`Cures ${u.removes.join(", ")}`);
+  if (u.after) bits.push(`then ${u.after.n}${u.after.tier > 1 ? " " + u.after.tier : ""}`);
+  if (o.addict) bits.push(`Addiction ${E.pct(o.addict)}%`);
+  return bits.join(" · ") || o.effect || "";
 }
 function modsSect(c, d) {
   return (
@@ -758,9 +864,10 @@ function iconOf(e) {
   if (!e) return "person";
   if (e.kind === "pc" || e.icon) return e.icon || "person";
   const r = S.rules;
+  const name = E.low(e.tmpl || e.name);
+  if (!e.mob) for (const [pattern, icon] of r.roleIcons || []) if (TOKEN_ICONS[icon] && new RegExp(pattern, "i").test(name)) return icon;
   const byFaction = !e.mob && (r.factionIcons || {})[e.faction];
   if (byFaction) return byFaction;
-  const name = E.low(e.tmpl || e.name);
   for (const [pattern, icon] of r.creatureIcons || []) if (new RegExp(pattern, "i").test(name)) return icon;
   return { robot: "robot", insect: "ant", ghoul: "ghoul", animal: "paw" }[E.enemyType(e, r)] || "person";
 }
@@ -1328,7 +1435,7 @@ function mapSvg() {
         tail = `<g class="lens"><line class="lensline" x1="0" y1="-.3" x2="${E.fix(cx)}" y2="${E.fix(cy)}"/><circle class="lensc" cx="${E.fix(cx)}" cy="${E.fix(cy)}" r="${E.fix(R)}"/><g transform="translate(${E.fix(cx)} ${E.fix(cy + R * 0.25)}) scale(${E.fix(R / 1.1)})">${icon}</g><rect class="hpbg" x="${E.fix(cx - R)}" y="${E.fix(cy + R + 2 * LU)}" width="${E.fix(2 * R)}" height="${E.fix(3 * LU)}"/><rect class="hpb" x="${E.fix(cx - R)}" y="${E.fix(cy + R + 2 * LU)}" width="${E.fix(2 * R * pct)}" height="${E.fix(3 * LU)}"/><text class="lab" style="font-size:${labU * 1.8}px" y="${E.fix(cy + R + 5 * LU + labU * 1.8)}">${lines(E.fix(cx))}</text></g>`;
       } else
         tail = `${gone ? `<path class="x" d="M-.4 -.4 L.4 .4 M.4 -.4 L-.4 .4"/>` : `<rect class="hpbg" x="-.6" y=".66" width="1.2" height=".2"/><rect class="hpb" x="-.6" y=".66" width="${(1.2 * pct).toFixed(2)}" height=".2"/>`}<text class="lab" style="font-size:${labU * 1.8}px" y="${0.95 + labU * 1.8}">${lines(0)}</text>`;
-      return `<g class="tok ${cls}" data-tok="${e.id}" transform="translate(${p.x} ${p.y}) scale(${k2})"><title>${h(e.name)}: ${fmt(e.hp)}/${d.hp} HP</title><circle class="hit" r="${Math.max(0.75, (v.w * 0.014) / k2)}"/><g class="tokin ${fx ? fx.cls : ""}" style="${fx ? fx.style : ""}">${e.kind === "pc" || e.ally ? `<circle class="base" cy="-.3" r=".86"/>` : `<rect class="base" x="-.66" y="-.96" width="1.32" height="1.32" transform="rotate(45 0 -.3)"/>`}<g transform="translate(0 -.3) scale(.78) translate(0 .3)">${icon}</g>${fx ? `<circle class="flash" cy="-.3" r=".9" style="${fx.style}"/>` : ""}</g>${tail}<text class="drg" style="font-size:${labU * 1.2}px" y="-.85"></text></g>`;
+      return `<g class="tok ${cls}" data-tok="${e.id}" transform="translate(${p.x} ${p.y}) scale(${k2})"><title>${h(e.name)}: ${fmt(e.hp)}/${d.hp} HP</title><circle class="hit" r="${Math.max(0.75, (v.w * 0.014) / k2)}"/><g class="tokin ${fx ? fx.cls : ""}" style="${fx ? fx.style : ""}">${e.kind === "pc" || e.ally ? `<circle class="base" cy="-.3" r=".86"/>` : `<rect class="base" x="-.66" y="-.96" width="1.32" height="1.32" transform="rotate(45 0 -.3)"/>`}<g transform="translate(0 -.3) scale(.9) translate(0 .3)">${icon}</g>${fx ? `<circle class="flash" cy="-.3" r=".9" style="${fx.style}"/>` : ""}</g>${tail}<text class="drg" style="font-size:${labU * 1.2}px" y="-.85"></text></g>`;
     })
     .join("");
   let extra = "";

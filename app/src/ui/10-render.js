@@ -52,6 +52,7 @@ function render() {
     else if (el.dataset.scroll === "ttree" && !(el.dataset.scroll in keepX)) el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2; // a freshly opened skill tree starts at its root
   });
   if (isSpec()) specLock();
+  document.querySelectorAll(".tierkey").forEach(fitLine);
   if (ui.autoScroll) {
     ui.autoScroll = false;
     const ap = document.querySelector(".autoplan");
@@ -546,3 +547,13 @@ document.addEventListener("keydown", (e) => {
   }
   if (isRoll && k.length === 1) e.preventDefault();
 });
+// Shrinks a one-line row's text until it fits its width (not below 8 px), so a legend never wraps or gets cut.
+function fitLine(el) {
+  el.style.fontSize = "";
+  let fs = parseFloat(getComputedStyle(el).fontSize) || 12;
+  while (el.scrollWidth > el.clientWidth + 1 && fs > 8) {
+    fs -= 0.5;
+    el.style.fontSize = fs + "px";
+  }
+}
+addEventListener("resize", () => document.querySelectorAll(".tierkey").forEach(fitLine));

@@ -12,7 +12,7 @@ function checkBody() {
       const need = E.checkNeeded(v, num(m.target, 0), S.rules);
       const r = m.res[e.id];
       const used = S.scene.checks[e.id] || 0;
-      return `<tr class="${e.dbno ? "faint" : ""}"><td class="${r ? "" : "bright"}">${h(e.name)}${!k && used >= S.rules.checksPerPlayer ? ` <span class="tag warn" title="Pre-combat checks used">${used}/${S.rules.checksPerPlayer}</span>` : ""}</td><td>${fmt(v)}</td><td class="bright nowrap">${checkRange(need)}</td><td class="faint">${E.checkOdds(need)}%</td><td style="width:74px" class="nowrap">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.roll}</span>` : numBox(`id="chk-${e.id}" maxlength="2" data-enter="chkRoll" data-id="${e.id}" placeholder="d20" aria-label="d20 for ${h(e.name)}"`, "", "cell")}${diceBtn(`chk-${e.id}`, "d20")}</td><td style="width:48px">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.pass ? "PASS" : "FAIL"}</span>${r.xp ? ` <span class="s dim" title="XP for passing">+${r.xp}</span>` : ""}` : ""}</td></tr>`;
+      return `<tr class="${e.dbno ? "faint" : ""}"><td class="${r ? "" : "bright"}">${h(e.name)}${!k && used >= S.rules.checksPerPlayer ? ` <span class="tag warn" title="Pre-combat checks used">${used}/${S.rules.checksPerPlayer}</span>` : ""}</td><td>${fmt(v)}</td><td class="faint" title="Chance it gets done (Messy Success or better)">${E.checkPassOdds(need, S.rules)}%</td><td style="width:74px" class="nowrap">${r ? `<span class="${r.pass ? "bright" : "warn"}">${r.roll}</span>` : numBox(`id="chk-${e.id}" maxlength="2" data-enter="chkRoll" data-id="${e.id}" placeholder="d20" aria-label="d20 for ${h(e.name)}"`, "", "cell")}${diceBtn(`chk-${e.id}`, "d20")}</td><td class="nowrap">${r ? `${tierWord(r)}${r.xp ? ` <span class="s dim" title="XP for this outcome">+${fmt(r.xp)}</span>` : ""}` : ""}</td></tr><tr class="tierrow"><td colspan="5">${tierStrip(need, r && r.roll)}</td></tr>`;
     })
     .join("");
   const any = Object.keys(m.res).length;
@@ -24,8 +24,22 @@ function checkBody() {
         `<button class="opt ${num(m.target) === x ? "on" : ""}" data-a="chkPreset" data-v="${x}" title="${h(n)}">${h(n[0] === "V" ? "VH" : n[0] === "E" && n[1] === "x" ? "X" : n[0])}${x}</button>`,
     )
     .join("")}</div>
-   <table class="t"><tr><th>Who</th><th>Has</th><th>d20: fail / pass</th><th>Odds</th><th>d20</th><th></th></tr>${rows}</table>
+   <table class="t chktab"><tr><th>Who</th><th>Has</th><th title="Chance it gets done: Messy Success or better">Done</th><th>d20</th><th>Outcome</th></tr>${rows}</table>
+   <div class="tierkey s">${S.rules.checkTiers.map((t) => `<span class="ct ct-${t.id}" title="${h(t.n)}: ${h(t.desc)} XP x${t.xp}"><span class="kfull">${h(t.n)}</span><span class="kshort">${h(t.short || t.n)}</span></span>`).join("")}</div>
    ${any ? `<div class="row s dim" style="margin-top:2px">${btn("chkClear", "", "New check", "", "tiny")}<span class="spacer"></span>XP to passers ${numBox(`id="chkXp" style="width:36px" data-u="chk.xp" data-enter="chkXp"`, m.xp)}${btn("chkXp", "", "Add", "", "tiny")}</div>` : ""}`;
+}
+// 12 Nov: a strip of the 20 faces, colored by outcome tier, with the rolled face marked. Words carry the meaning; color only helps.
+function tierStrip(need, roll) {
+  return `<div class="tierstrip">${E.checkTierRuns(need, S.rules)
+    .map(
+      (x) =>
+        `<span class="ct ct-${x.tier.id} ${roll >= x.from && roll <= x.to ? "lit" : ""}" style="flex:${x.to - x.from + 1} 0 0" title="${x.from === x.to ? x.from : `${x.from}-${x.to}`}: ${h(x.tier.n)}. ${h(x.tier.desc)}">${x.from === x.to ? x.from : `${x.from}-${x.to}`}</span>`,
+    )
+    .join("")}</div>`;
+}
+function tierWord(r) {
+  const t = S.rules.checkTiers.find((x) => x.id === r.tier) || { id: r.pass ? "success" : "bad", n: r.pass ? "Pass" : "Fail", desc: "" };
+  return `<span class="ctword ct-${t.id}" title="${h(t.desc)}">${h(t.n)}</span>`;
 }
 function stealthStage() {
   const id = actorId();
@@ -100,8 +114,7 @@ function bodyFig(a, T) {
   for (const st of (T && T.statuses) || []) for (const p of st.parts || []) hurt.add(p);
   const b = (id, lab) => {
     const [name, loc] = PARTS[id];
-    const x = S.rules.targetAP[loc];
-    return `<button class="bp bp-${id} ${a.part === id ? "on" : ""} ${hurt.has(id) ? "hurt" : ""}" data-a="atkPart" data-v="${id}" aria-label="${name}" title="${name}: damage x${S.rules.loc[loc]}${(S.rules.locHit || {})[loc] && S.rules.locHit[loc] !== 1 ? `, hit chance x${S.rules.locHit[loc]}` : ""}${x ? `, +${x} AP` : ""}">${lab}</button>`;
+    return `<button class="bp bp-${id} ${a.part === id ? "on" : ""} ${hurt.has(id) ? "hurt" : ""}" data-a="atkPart" data-v="${id}" aria-label="${name}" title="${name}: damage x${S.rules.loc[loc]}, hit chance x${(S.rules.locHit || {})[loc] || 1}">${lab}</button>`;
   };
   const friendly = T && sideOf(a.att) === sideOf(T.id); // bright green for your own side, bright red for the other side
   return `<div class="body ${friendly ? "friendly" : "hostile"}">${b("Head", "H")}${b("LArm", "")}${b("Body", "B")}${b("RArm", "")}${b("LLeg", "")}${b("RLeg", "")}</div>`;
@@ -112,10 +125,24 @@ function attackPanel() {
   const { a, A, T, v, range, hc, spans, warn } = p;
   const k = K();
   const live = /^\d{1,2}$/.test(String(a.roll).trim()) ? E.classify(Number(a.roll), p.b) : "";
+  // 12 Nov: the weapon in use shows its magazine, reserve ammo and the AP to fire and reload; the other one stays slim.
+  const swapAP = a.w !== (A.activeW || 0) && !v.punch ? S.rules.swapAP : 0;
+  const wst = (lab, val, cls = "") => `<span class="wst ${cls}"><small>${lab}</small><b>${val}</b></span>`;
   const weapons = A.weapons
     .map((s, i) => {
-      const w = E.weaponView(s, A, p.dA, ctx());
-      return `<button class="wcard ${a.w === i ? "on" : ""}" data-a="atkW" data-v="${i}" title="${h(s.n)}">${itemIcon(s.n)}<span class="nm">${h(s.n)}</span><small>${fmt(w.ap)}AP${w.usesAmmo ? ` ${s.mag || 0}/${w.cap} +${ammoHeld(A, w.reserve)}` : ""}${s.jammed ? " JAM" : ""}</small></button>`;
+      if (a.w !== i) {
+        const wv = E.weaponView(s, A, p.dA, ctx());
+        return `<button class="wcard slim" data-a="atkW" data-v="${i}" title="Switch to ${h(s.n)}">${itemIcon(s.n)}<span class="nm">${h(s.n)}</span><small>${fmt(wv.ap)} AP${s.jammed ? " · JAM" : ""}</small></button>`;
+      }
+      const stats = [
+        v.usesAmmo ? wst("Mag", `${fmt(s.mag || 0)}/${fmt(v.cap)}`, (s.mag || 0) <= 0 ? "bad" : "") : "",
+        v.usesAmmo ? wst("Reserve", fmt(ammoHeld(A, v.reserve))) : "",
+        wst("Fire", `${fmt(v.ap)} AP`),
+        v.usesAmmo ? wst("Reload", `${fmt(v.reload)} AP`) : "",
+        swapAP ? wst("Swap", `+${fmt(swapAP)} AP`) : "",
+        s.jammed ? wst("Jammed", `${fmt(v.clearJam)} AP`, "bad") : "",
+      ].join("");
+      return `<button class="wcard on full" data-a="atkW" data-v="${i}" title="${h(s.n)}"><span class="wtop">${itemIcon(s.n)}<span class="nm">${h(s.n)}</span>${famTag(A, s.n)}</span><span class="wstats">${stats}</span></button>`;
     })
     .join("");
   const loads = loadsHeld(A, v, p.slot);
@@ -141,23 +168,9 @@ function attackPanel() {
         a.att,
       )}</select></div>`
     : "";
-  // What each kind of attack with this weapon costs: aimed at body, a limb or the head, the other fire mode, plus swap and reload.
-  const swapAP = a.w !== (A.activeW || 0) && !v.punch ? S.rules.swapAP : 0;
-  const tAP = S.rules.targetAP || {};
   const modeAP = (mode) => E.weaponView(p.slot, A, p.dA, ctx(), mode).ap;
-  const LH = S.rules.locHit || {};
-  const apTypes = [
-    ["Shot", v.ap + (tAP[a.loc] || 0)],
-    ["Body", `x${LH.Body != null ? LH.Body : 1} hit`],
-    ["Limb", `x${LH.Limb != null ? LH.Limb : 1} hit`],
-    ["Head", `x${LH.Head != null ? LH.Head : 1} hit`],
-    ...(v.hasSecondary ? [[`${a.mode === "se" ? "1st" : "2nd"} mode`, modeAP(a.mode === "se" ? "pr" : "se")]] : []),
-    ...(swapAP ? [["Swap", `+${swapAP}`]] : []),
-    ...(v.usesAmmo ? [["Reload", v.reload]] : []),
-  ];
-  const apRow = `<div class="aptypes">${apTypes.map(([n, c]) => `<span class="apt ${n === a.loc ? "on" : ""}"><b>${typeof c === "number" ? fmt(c) : c}</b>${h(n)}</span>`).join("")}</div>`;
-  const loadout = `<div class="wcards">${kbd("W")}${weapons}</div>${apRow}
-   ${v.hasSecondary ? `<div class="opts"><button class="opt ${a.mode !== "se" ? "on" : ""}" data-a="atkMode" data-v="pr">1st ${h(w.o.prName || "")}</button><button class="opt ${a.mode === "se" ? "on" : ""}" data-a="atkMode" data-v="se">2nd ${h(w.o.seName || "")}</button></div>` : ""}
+  const loadout = `<div class="wcards">${kbd("W")}${weapons}</div>
+   ${v.hasSecondary ? `<div class="opts"><button class="opt ${a.mode !== "se" ? "on" : ""}" data-a="atkMode" data-v="pr">1st ${h(w.o.prName || "")} · ${fmt(modeAP("pr"))} AP</button><button class="opt ${a.mode === "se" ? "on" : ""}" data-a="atkMode" data-v="se">2nd ${h(w.o.seName || "")} · ${fmt(modeAP("se"))} AP</button></div>` : ""}
    ${
      loads.length
        ? `<select id="atkLoad" style="width:100%" data-c="setLoad" data-id="${A.id}" data-i="${a.w}"><option value="">Choose ammo</option>${options(
@@ -173,9 +186,9 @@ function attackPanel() {
    }`;
   const tile = (lab, val, sub, cls = "", tip = "") =>
     `<div class="ttile ${cls}"${tip ? ` title="${h(tip)}"` : ""}><span class="tl">${lab}</span><b>${val}</b><small>${sub}</small></div>`;
-  const tiles = `<div class="ttiles">${tile("Hit", `${hitPct}%`, num(a.ov.hit) != null ? "DM SET" : "chance", `hitt ${hitPct <= 0 ? "zero" : ""}`)}${tile("Aim", `x${S.rules.loc[a.loc]}`, `${h(PARTS[a.part][0])}${(S.rules.locHit || {})[a.loc] && S.rules.locHit[a.loc] !== 1 ? ` · hit x${S.rules.locHit[a.loc]}` : ""}`, "", "Damage multiplier for the part aimed at; limbs are easier to hit and the head harder. Click the body to change it.")}${tile("Cost", `${fmt(p.cost)} AP`, `${fmt(Math.max(0, (A.ap || 0) - p.cost))} left`, `costbig ${p.cost > (A.ap || 0) && !a.ov.free ? "over" : ""}`)}${tile("Cover", h(p.cov.n), `${p.cov.hit ? `${fmt(E.pct(p.cov.hit))}% hit` : "no penalty"}${p.cov.dam ? ` ${fmt(E.pct(p.cov.dam))}% dmg` : ""}`, `covflag tier-${p.cov.tier}`, p.cov.by ? "Blocked by: " + p.cov.by : "Nothing in the way")}${tile("Range", `<button class="xb" data-a="atkRange" data-v="-1" title="Closer">-</button>R${range}<button class="xb" data-a="atkRange" data-v="1" title="Farther">+</button>`, `${T ? `${dist(posOf(A.id), posOf(T.id)).toFixed(1)}m · ` : ""}${k.ranges[pairKey(a.att, a.tgt)] != null ? "DM set" : "from map"}`, "rng")}${tile("Damage", `${v.pellets ? `${fmt(v.base)}x${v.pellets}` : fmt(v.base)}`, `Pen ${fmt(v.pen)}${v.count > 1 ? ` · burst ${v.count}` : ""}`)}</div>`;
+  const tiles = `<div class="ttiles">${tile("Hit", `${hitPct}%`, num(a.ov.hit) != null ? "DM SET" : "chance", `hitt ${hitPct <= 0 ? "zero" : ""}`)}${tile("Aim", `x${S.rules.loc[a.loc]}`, `${h(PARTS[a.part][0])} dmg · hit x${(S.rules.locHit || {})[a.loc] || 1}`, "", "Damage and hit chance multipliers for the part aimed at: limbs are easier to hit but take less, the head is harder to hit but takes double. Aiming costs no AP. Click the body to change it.")}${tile("Cost", `${fmt(p.cost)} AP`, `${fmt(Math.max(0, (A.ap || 0) - p.cost))} left`, `costbig ${p.cost > (A.ap || 0) && !a.ov.free ? "over" : ""}`)}${tile("Cover", h(p.cov.n), `${p.cov.hit ? `${Math.round(E.pct(p.cov.hit))}% hit` : "no penalty"}${p.cov.dam ? ` ${Math.round(E.pct(p.cov.dam))}% dmg` : ""}`, `covflag tier-${p.cov.tier}`, p.cov.by ? "Blocked by: " + p.cov.by : "Nothing in the way")}${tile("Range", `<button class="xb" data-a="atkRange" data-v="-1" title="Closer">-</button>R${range}<button class="xb" data-a="atkRange" data-v="1" title="Farther">+</button>`, `${T ? `${dist(posOf(A.id), posOf(T.id)).toFixed(1)}m · ` : ""}${k.ranges[pairKey(a.att, a.tgt)] != null ? "DM set" : "from map"}`, "rng")}${tile("Damage", `${v.pellets ? `${fmt(v.base)}x${v.pellets}` : fmt(v.base)}`, `Pen ${fmt(v.pen)}${v.count > 1 ? ` · burst ${v.count}` : ""}`)}</div>`;
   const targeting = `<div class="atkmid">${T ? bodyFig(a, T) : ""}<div class="atkinfo">${tgt}${tiles}
-     <div class="math">HIT ${h(E.hitLine(hc))}${num(a.ov.hit) != null ? ` <span class="warn">DM SET ${h(a.ov.hit)}%</span>` : ""}${p.extra || p.swap ? ` · AP ${fmt(v.ap)}${p.extra ? ` +${p.extra} aimed` : ""}${p.swap ? ` +${p.swap} swap` : ""}` : ""}</div></div></div>`;
+     <div class="math">HIT ${h(E.hitLine(hc))}${num(a.ov.hit) != null ? ` <span class="warn">DM SET ${h(a.ov.hit)}%</span>` : ""}${p.swap ? ` · AP ${fmt(v.ap)} +${p.swap} swap` : ""}</div></div></div>`;
   const short = {
     jam: (s) => `${E.two(s.to + 1)} -`,
     hit: (s) => `${E.two(s.from)} +`,
@@ -380,6 +393,23 @@ const BR_LIST = () => [
   ...DATA.materials.map((o) => ["material", o]),
   ...DATA.mods.map((o) => ["mod", o]),
 ];
+// 12 Nov: subcategories inside each type. A row can sit in two (a weapon's family and its type), so each gives a list of tags.
+const BR_TAB = { SG: "Small Guns", BG: "Big Guns", EW: "Energy Weapons", EX: "Explosives", MW: "Melee Weapons" };
+function brTags(c, o) {
+  if (c === "item") return [o.cat || "Other"];
+  if (c === "weapon") return [BR_TAB[o.tab] || o.tab || "Other", `${BR_TAB[o.tab] || o.tab}: ${o.type || "Other"}`];
+  if (c === "armor") return [String(o.type || "Other").replace(/\s*\(.*$/, "")];
+  if (c === "ammo") return [o.cal || "Other"];
+  if (c === "material") return [o.cat || "Other"];
+  if (c === "mod") return [o.group || "Other"];
+  return [];
+}
+// The subcategory list for one type, with counts. Weapon types sit indented under their family.
+function brSubs(cat, rows) {
+  const n = new Map();
+  for (const [c, o] of rows) if (c === cat) for (const t of brTags(c, o)) n.set(t, (n.get(t) || 0) + 1);
+  return [...n.keys()].sort((a, b) => a.localeCompare(b)).map((t) => [t, `${t.includes(": ") ? "  - " + t.split(": ")[1] : t} (${n.get(t)})`]);
+}
 function statText(c, o) {
   if (c === "weapon")
     return o.ok === false || !o.ok
@@ -396,8 +426,11 @@ function statText(c, o) {
 function itemsBody() {
   const cat = BR_CATS[ui.brCat];
   const merged = (o) => ({ ...o, ...(S.overrides[E.low(o.n)] || {}) });
+  const subs = cat ? brSubs(cat, BR_LIST()) : [];
+  const sub = subs.some(([t]) => t === ui.brSub) ? ui.brSub : ""; // a subcategory from another type doesn't apply
   let rows = BR_LIST()
     .filter(([c]) => !cat || c === cat)
+    .filter(([c, o]) => !sub || brTags(c, o).includes(sub))
     .map(([c, o]) => [c, merged(o)])
     .filter(([, o]) => !ui.brTier || String(o.tier) === String(ui.brTier));
   const q = E.low(ui.brQ);
@@ -420,7 +453,7 @@ function itemsBody() {
     })
     .join("");
   const th = (k, l, w) => `<th style="width:${w}" data-a="brSortBy" data-v="${k}">${l}${ui.brSort === k && !q ? (ui.brDir > 0 ? " ^" : " v") : ""}</th>`;
-  return `<div class="row wrap" style="margin-bottom:3px"><input id="brQ" class="grow" autocomplete="off" placeholder="Search items" data-u="brQ" value="${h(ui.brQ)}" data-enter="brEnter"><select id="brCat" data-u="brCat" title="Type">${options(Object.keys(BR_CATS), ui.brCat)}</select><select id="brTier" data-u="brTier" title="Tier">${options([["", "All T"], ...[1, 2, 3, 4, 5, 6].map((t) => [t, "T" + t])], ui.brTier)}</select><label class="chk s">+ GIVES TO <select id="brWho" data-u="sel" style="margin-left:4px">${options(
+  return `<div class="row wrap" style="margin-bottom:3px"><input id="brQ" class="grow" autocomplete="off" placeholder="Search items" data-u="brQ" value="${h(ui.brQ)}" data-enter="brEnter"><select id="brCat" data-u="brCat" title="Type">${options(Object.keys(BR_CATS), ui.brCat)}</select>${subs.length ? `<select id="brSub" data-u="brSub" title="Subcategory">${options([["", `All ${h(ui.brCat.toLowerCase())}`], ...subs], sub)}</select>` : ""}<select id="brTier" data-u="brTier" title="Tier">${options([["", "All T"], ...[1, 2, 3, 4, 5, 6].map((t) => [t, "T" + t])], ui.brTier)}</select><label class="chk s">+ GIVES TO <select id="brWho" data-u="sel" style="margin-left:4px">${options(
     S.chars.map((c) => [c.id, c.name]),
     ui.sel,
   )}</select></label></div>

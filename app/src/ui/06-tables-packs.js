@@ -767,6 +767,7 @@ function renderModal() {
     char: [`${h((ce || {}).name)}: Inventory`, () => (ce ? invSect(ce, der(ce)) : "")],
     icon: [`${h((ce || {}).name)}: map icon`, iconModal],
     vendor: ["Vendor", vendorWin],
+    reward: ["Rewards rolled", rewardBody],
     skillTree: ["Skill tree", () => treeModal("skill")],
     levelPerks: ["Level perks", () => treeModal("level")],
     mapmaker: [ui.mm && ui.mm.id ? "Map creator: edit" : "Map creator: new map", mapMakerBody],
@@ -786,10 +787,13 @@ function renderModal() {
 function iconModal() {
   const e = ent(ui.modal.id);
   if (!e) return "";
-  return `<div class="s dim" style="margin-bottom:4px">How ${h(e.name)} shows on the map.</div><div class="icongrid">${Object.entries(TOKEN_ICONS)
-    .map(
-      ([id, [n]]) =>
-        `<button class="iconpick ${(e.icon || "person") === id ? "on" : ""}" data-a="iconSet" data-v="${e.id}|${id}" aria-pressed="${(e.icon || "person") === id}">${iconSvg(id, "big")}<span>${h(n)}</span></button>`,
-    )
-    .join("")}</div>`;
+  const cur = e.icon || "person";
+  const pick = (id) =>
+    `<button class="iconpick ${cur === id ? "on" : ""}" data-a="iconSet" data-v="${e.id}|${id}" aria-pressed="${cur === id}">${iconSvg(id, "big")}<span>${h(TOKEN_ICONS[id][0])}</span></button>`;
+  const listed = new Set(ICON_GROUPS.flatMap(([, ids]) => ids));
+  const groups = [...ICON_GROUPS, ["Other", Object.keys(TOKEN_ICONS).filter((id) => !listed.has(id))]];
+  return `<div class="s dim" style="margin-bottom:4px">How ${h(e.name)} shows on the map.</div>${groups
+    .map(([g, ids]) => ids.filter((id) => TOKEN_ICONS[id]))
+    .map((ids, i) => (ids.length ? `<h4 class="icongroup">${h(groups[i][0])}</h4><div class="icongrid">${ids.map(pick).join("")}</div>` : ""))
+    .join("")}`;
 }

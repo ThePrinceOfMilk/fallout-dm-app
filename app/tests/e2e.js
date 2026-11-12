@@ -220,9 +220,9 @@ async function launch() {
     await page.focus("#chkTarget"); await page.keyboard.press("Control+a"); await type("20"); await page.selectOption("#chkUse", "SNK");
     assert.ok(await page.locator(".w-check tr").count() >= 5, "a row per player");
     await page.focus("#chk-c1"); await type("15"); await press("Enter");
-    await has("PASS", ".w-check");
-    const lg = (await state()).log; assert.match(lg.slice(-2)[0].x, /Character 1: .*SUCCESS/);
-    assert.match(lg.slice(-1)[0].x, /Character 1 gains [\d.]+ XP for passing a 20 check/, "a pass pays XP by difficulty");
+    assert.ok(await page.locator(".w-check .ctword").count(), "the outcome is named");
+    const lg = (await state()).log; assert.match(lg.slice(-2)[0].x, /Character 1: .*rolled 15: [A-Z ]+\./, "the log names the outcome");
+    assert.match(lg.slice(-1)[0].x, /Character 1 gains [\d.]+ XP for a [A-Za-z ]+ on a 20 check/, "every outcome pays XP by difficulty and tier");
     assert.strictEqual(await page.evaluate(() => document.activeElement.id), "chk-c2", "moves to the next player");
     await page.locator('[data-a="chkGen"]').click();
     const m = await page.evaluate(() => ui.chk);
@@ -505,7 +505,7 @@ async function launch() {
     assert.strictEqual(await page.evaluate(() => atkView().range), auto, "range comes from the map");
     await page.locator('[data-a="atkPart"][data-v="Head"]').click();
     assert.deepStrictEqual(await page.evaluate(() => [ui.atk.part, ui.atk.loc]), ["Head", "Head"]);
-    const cost = await page.evaluate(() => atkView()); assert.strictEqual(cost.extra, 0, "aiming costs no extra AP"); assert.ok(cost.hit <= (await page.evaluate(() => { ui.atk.loc = "Body"; ui.atk.part = "Body"; const h = atkView().hit; ui.atk.loc = "Head"; ui.atk.part = "Head"; return h; })), "a head shot is harder to hit");
+    const cost = await page.evaluate(() => atkView()); assert.strictEqual(cost.cost, cost.v.ap + cost.swap, "aiming costs no extra AP"); assert.ok(cost.hit <= (await page.evaluate(() => { ui.atk.loc = "Body"; ui.atk.part = "Body"; const h = atkView().hit; ui.atk.loc = "Head"; ui.atk.part = "Head"; return h; })), "a head shot is harder to hit");
     await page.locator('[data-a="atkPart"][data-v="LLeg"]').click();
     assert.deepStrictEqual(await page.evaluate(() => [ui.atk.part, ui.atk.loc]), ["LLeg", "Limb"]);
     await page.locator('[data-a="atkOvToggle"]').click(); assert.strictEqual(await page.locator("#ovHit").count(), 1); await page.locator('[data-a="atkOvToggle"]').click();
@@ -1052,7 +1052,7 @@ async function launch() {
     assert.ok(await p3.evaluate(() => { S.scene.objects = [{ id: "w1", kind: "cover", item: "concreteWall", x: 0, y: 0, w: 6, h: 0.4, cover: "impenetrable", block: true }]; return standBlocked({ x: 0, y: 0 }) && !standBlocked({ x: 0, y: 2 }); }), "walls can't be stood in");
     // the skill check: fail and pass ranges, never below 1 or past 20, and the dice button rolls it
     await p3.evaluate(() => { ui.setup = false; ui.chk.target = 200; render(); });
-    assert.match(await p3.locator(".w-check").innerText(), /fail 1-19 \/ pass 20/i, "a target nobody can reach still passes on a natural 20");
+    assert.match(await p3.locator(".w-check .tierstrip .ct").last().getAttribute("title"), /^20: Perfect/, "a target nobody can reach still gets done on a natural 20");
     await p3.evaluate(() => { ui.chk.target = 0; render(); });
     await p3.locator('[data-a="rollDice"][data-v="chk-c1|d20"]').click(); await p3.waitForTimeout(40);
     const roll = await p3.evaluate(() => ui.chk.res.c1 && ui.chk.res.c1.roll); assert.ok(roll >= 1 && roll <= 20, "the dice button rolled a d20 and checked it: " + roll);
@@ -1244,7 +1244,7 @@ async function launch() {
       const out = {}; const pick = (n) => iconOf(E.spawn(template(n), "x", ctx(), Math.random));
       out.icons = ["Raider", "Fiend", "Soldier", "Legion Soldier", "PA Knight", "Powder Ganger 1", "Great Khan Raider", "Mercenary", "Supermutant", "Protectron", "Military Eyebot", "Giant Soldier Ant", "Radscorpion", "Cazador", "Deathclaw", "Gecko", "Bighorner", "Giant Rat", "Spore Plant", "Dog", "Feral Ghoul"].map(pick);
       const every = allTemplates().map((t) => iconOf(E.spawn(t, "x", ctx(), Math.random)));
-      out.unknown = every.filter((id) => !TOKEN_ICONS[id]); out.mapped = Object.values(S.rules.factionIcons).concat(S.rules.creatureIcons.map((x) => x[1])).filter((id) => !TOKEN_ICONS[id]);
+      out.unknown = every.filter((id) => !TOKEN_ICONS[id]); out.mapped = Object.values(S.rules.factionIcons).concat(S.rules.creatureIcons.map((x) => x[1]), S.rules.roleIcons.map((x) => x[1])).filter((id) => !TOKEN_ICONS[id]);
       out.types = ["Giant Rat", "Spore Plant", "Giant Evolved Centaur", "Giant Soldier Ant"].map((n) => E.enemyType({ tmpl: n, mob: true, kind: "npc" }, S.rules));
       const pc = S.chars[0]; pc.icon = "legion"; out.pc = iconOf(pc); out.choices = Object.keys(TOKEN_ICONS).length;
       ACT.setupOpen("1"); ACT.addPick("Raider"); render();
@@ -1255,7 +1255,7 @@ async function launch() {
       S.scene.npcs = []; ACT.setupOpen(""); S = fresh(); applyData(); render(); save();
       return out;
     });
-    assert.deepStrictEqual(r.icons, ["raider", "fiend", "ncr", "legion", "power", "convict", "khan", "person", "mutant", "robot", "eyebot", "ant", "scorpion", "wasp", "deathclaw", "lizard", "beast", "rat", "plant", "dog", "ghoul"]);
+    assert.deepStrictEqual(r.icons, ["raider", "fiend", "ncr", "legion", "power", "convict", "khan", "person", "mutant", "protectron", "eyebot", "ant", "scorpion", "wasp", "deathclaw", "lizard", "bighorner", "rat", "plant", "dog", "ghoul"]);
     assert.deepStrictEqual([r.unknown, r.mapped], [[], []], "every enemy and every mapping points at an icon that exists");
     assert.deepStrictEqual(r.types, ["animal", "animal", "animal", "insect"], "a Giant Rat is not an insect just because 'giant' ends in 'ant'");
     assert.ok(r.pc === "legion" && r.choices >= 40, "players can pick any icon, the new ones included");

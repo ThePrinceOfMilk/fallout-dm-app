@@ -96,7 +96,7 @@ function fresh() {
     log: [],
     seq: 1,
     notesList: [],
-    rulesRev: 2,
+    rulesRev: 3,
     tables: {},
     tableRev: 0,
     vendor: { tier: 1, barter: 50, stock: null },
@@ -140,6 +140,17 @@ function normalize(p) {
     p.rules.strMelee = 0;
     p.rulesRev = 2;
   } // accuracy became skill and weapon only
+  if (p.rulesRev < 3) {
+    // 12 Nov: aiming costs no AP (the part changes the odds and the damage), and familiarity bands carry their bonuses
+    p.rules.loc = clone(DEFAULT_RULES.loc);
+    delete p.rules.targetAP;
+    p.rules.famBands = clone(DEFAULT_RULES.famBands);
+    p.rules.checkTiers = clone(DEFAULT_RULES.checkTiers);
+    p.rules.checkFailCut = clone(DEFAULT_RULES.checkFailCut);
+    p.rules.checkPassCut = clone(DEFAULT_RULES.checkPassCut);
+    p.rules.creatureIcons = clone(DEFAULT_RULES.creatureIcons); // the new creature and robot icons
+    p.rulesRev = 3;
+  }
   p.vendor = p.vendor || { tier: 1, barter: 50, stock: null };
   for (const c of p.chars) c.inv = (c.inv || []).filter((l) => !/^\(no /i.test(l.n));
   trimLog(p); // shrinks saves made before the log had a working cap
@@ -291,6 +302,7 @@ const SPEC_UI = new Set([
   "noop",
   "treeTab",
   "treeZoom",
+  "treeSkill",
   "railGo",
   "railMore",
   "mapZoom",
@@ -357,7 +369,7 @@ function specMember(c) {
   const more =
     active.length > SPEC_BOARD_ITEMS ? btn("openChar", `${c.id}|inv`, `+${active.length - SPEC_BOARD_ITEMS} more`, "See the whole inventory", "tiny") : "";
   return `<article class="spmember ${c.dbno ? "down" : ""}"><header class="spmhead">${iconSvg(c.icon)}<span class="nm grow">${h(c.name)}</span><span class="splv">LV ${L}</span></header>
-    <div class="spbig"><span class="lab">HP</span><b>${fmt(c.hp)}<small>/${fmt(d.hp)}</small></b><span class="grow">${hpBar(c.hp, d.hp)}</span></div>
+    <div class="spmhp"><span class="lab">HP</span><b>${fmt(c.hp)}<small>/${fmt(d.hp)}</small></b><span class="grow">${hpBar(c.hp, d.hp)}</span></div>
     <div class="spline s"><span>AP <b>${fmt(c.ap)}/${fmt(d.ap)}</b></span><span>DT <b>${fmt(d.dt)}</b></span><span>Caps <b>${fmt(c.caps || 0)}</b></span></div>
     <div class="spxp s"><span>XP <b>${fmt(c.xp || 0)}</b>${L < S.rules.maxLevel ? ` <span class="dim">/ ${fmt(to)} for LV ${L + 1}</span>` : ""}</span><div class="bar xp"><i style="width:${xpP * 100}%"></i></div></div>
     <div class="spspecial">${special}</div>
@@ -597,6 +609,7 @@ const ui = {
   fxHit: "",
   chk: { use: "SPE", target: 40, rolls: {}, res: {}, xp: "", revive: null },
   brCat: "All",
+  brSub: "",
   brQ: "",
   brTier: "",
   brSort: "n",

@@ -745,8 +745,7 @@ function atkView() {
   if (dA.m.superRoll) b.superAt = E.fix(b.superAt - dA.m.superRoll);
   if (dA.m.failRoll) b.jamAt = E.fix(b.jamAt + dA.m.failRoll);
   const swap = a.w !== (A.activeW || 0) && !v.punch ? S.rules.swapAP : 0; // fists are always ready, so punching never pays to swap
-  const extra = dA.m.targetFree ? 0 : S.rules.targetAP[a.loc] || 0;
-  const cost = v.ap + extra + swap;
+  const cost = v.ap + swap; // aiming at a part costs no AP (12 Nov)
   const warn = [];
   if (slot && slot.jammed) warn.push(`Jammed. Press J to clear for ${v.clearJam} AP.`);
   if (v.missing) warn.push("This weapon is not in the item data.");
@@ -760,7 +759,7 @@ function atkView() {
     warn.push(
       `Pellet ammo (${fmt(v.base)}x${v.pellets}) counts as ${S.rules.pelletMode === "each" ? "one roll per pellet" : S.rules.pelletMode === "spread" ? `one hit; up to ${Math.max(1, Math.ceil(v.pellets * E.pelletShare(v, range) * (1 + (S.rules.pelletShareMin ?? 0.5)) - 1e-9))} of ${v.pellets} land at R${range}, more on a better roll` : "one combined hit"}. Change in Settings.`,
     );
-  return { a, A, T, dA, dT, slot, v, range, hc, hit, b, cost, swap, extra, warn, cov, spans: E.bandSpans(b) };
+  return { a, A, T, dA, dT, slot, v, range, hc, hit, b, cost, swap, warn, cov, spans: E.bandSpans(b) };
 }
 function fire() {
   const a = ui.atk;

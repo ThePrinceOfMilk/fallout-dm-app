@@ -462,6 +462,15 @@ const E = (() => {
   }
 
   // ---- weapons
+  // Weapon familiarity (12 Nov): the band from rounds fired with this weapon (e.fam). Party members get its crit and hit
+  // bonus; enemies don't track familiarity, so they get none.
+  function famBand(e, name, r) {
+    const n = ((e && e.fam) || {})[low(name)] || 0;
+    let band = null;
+    for (const b of r.famBands || []) if (n >= b[0]) band = b;
+    const [, word = "Unfamiliar", crit = 0, acc = 0] = band || [];
+    return { n, word, crit: e && e.kind === "pc" ? crit : 0, acc: e && e.kind === "pc" ? acc : 0 };
+  }
   function weaponView(slot, e, d, ctx, mode = "pr") {
     const h = slot && get(ctx, slot.n);
     if (!h || (h.cat !== "weapon" && h.cat !== "custom"))
@@ -490,7 +499,8 @@ const E = (() => {
       tab: w.tab,
       type: w.type,
       skill: w.skill || "MW",
-      crit: (w.crit || 0) + (d.m.crit || 0),
+      crit: Math.max(0, (w.crit || 0) + (d.m.crit || 0) + famBand(e, w.n, ctx.rules).crit),
+      fam: famBand(e, w.n, ctx.rules),
       jam: w.jam || 0,
       str: w.str || 0,
       req: w.req || 0,
@@ -595,6 +605,7 @@ const E = (() => {
       if (fx.who === "all" || fx.who === side || fx.who === att.id) mods += fx.hit;
     }
     if (mods) parts.push(["mods", mods]);
+    if (v.fam && v.fam.acc) parts.push([v.fam.word.toLowerCase(), v.fam.acc]);
     // Cover: the tier the aiming line crosses. "open" adds nothing.
     if (cover && cover.hit) parts.push([`cover ${cover.tier}`, cover.hit]);
     const sum = parts.reduce((t, [, x]) => t + x, 0);
@@ -783,6 +794,39 @@ const E = (() => {
     return { pass: d20 >= needed, why: "" };
   }
   const checkOdds = (needed) => Math.min(19, Math.max(1, 21 - needed)) * 5;
+  // 12 Nov: the outcome tier of a d20 against the roll a check needs. See checkTiers in rules.js.
+  function checkTier(d20, needed, r) {
+    const N = Math.min(20, Math.max(2, needed));
+    let id;
+    if (d20 <= 1) id = "total";
+    else if (d20 >= 20) id = "perfect";
+    else if (d20 < N) {
+      const F = N - 2,
+        gap = N - d20,
+        [a, b, c] = r.checkFailCut;
+      const t1 = Math.max(1, Math.round(F * a));
+      id = gap <= t1 ? "close" : gap <= Math.round(F * b) ? "messy" : gap <= Math.round(F * c) ? "bad" : "terrible";
+    } else {
+      const P = 20 - N,
+        up = d20 - N,
+        [a, b] = r.checkPassCut;
+      id = up < Math.max(1, Math.round(P * a)) ? "success" : up < Math.round(P * b) ? "strong" : "triumph";
+    }
+    return r.checkTiers.find((t) => t.id === id);
+  }
+  // The tier of each face 1-20, grouped into runs: [{ tier, from, to }].
+  function checkTierRuns(needed, r) {
+    const runs = [];
+    for (let d = 1; d <= 20; d++) {
+      const t = checkTier(d, needed, r);
+      const last = runs[runs.length - 1];
+      if (last && last.tier.id === t.id) last.to = d;
+      else runs.push({ tier: t, from: d, to: d });
+    }
+    return runs;
+  }
+  // Chance in percent that a check counts as done (Messy Success and up).
+  const checkPassOdds = (needed, r) => checkTierRuns(needed, r).reduce((n, x) => n + (x.tier.pass ? x.to - x.from + 1 : 0), 0) * 5;
 
   // ---- XP
   const xpFor = (lvl, r) => r.levelXpStep * lvl * (lvl - 1);
@@ -3140,6 +3184,7 @@ const E = (() => {
     derive,
     saveTarget,
     weaponView,
+    famBand,
     loadsFor,
     hitChance,
     hitLine,
@@ -3155,6 +3200,9 @@ const E = (() => {
     checkNeeded,
     checkResult,
     checkOdds,
+    checkTier,
+    checkTierRuns,
+    checkPassOdds,
     xpFor,
     levelForXp,
     xpGain,

@@ -48,11 +48,6 @@
  "jamMode": "weapon",
  "pelletMode": "spread",
  "critAllBullets": true,
- "targetAP": {
-  "Body": 0,
-  "Limb": 0,
-  "Head": 0
- },
  "swapAP": 1,
  "jamSpendsAP": true,
  "clearJamDefault": 2,
@@ -285,7 +280,35 @@
    "eyebot"
   ],
   [
-   "robot|protectron|assaultron|sentry|handy|gutsy|turret|securitron|robobrain|synth",
+   "assaultron",
+   "assaultron"
+  ],
+  [
+   "protectron",
+   "protectron"
+  ],
+  [
+   "sentry",
+   "sentrybot"
+  ],
+  [
+   "securitron",
+   "securitron"
+  ],
+  [
+   "robobrain",
+   "robobrain"
+  ],
+  [
+   "handy|gutsy",
+   "handy"
+  ],
+  [
+   "cyberdog",
+   "cyberdog"
+  ],
+  [
+   "robot|turret|synth",
    "robot"
   ],
   [
@@ -293,11 +316,23 @@
    "scorpion"
   ],
   [
-   "cazador|bloatfly",
+   "cazador",
    "wasp"
   ],
   [
-   "\\bant\\b|mantis|roach",
+   "bloatfly",
+   "bloatfly"
+  ],
+  [
+   "mantis",
+   "mantis"
+  ],
+  [
+   "roach",
+   "radroach"
+  ],
+  [
+   "\\bant\\b",
    "ant"
   ],
   [
@@ -305,12 +340,28 @@
    "deathclaw"
   ],
   [
-   "gecko|lakelurk|lizard",
+   "lakelurk",
+   "lakelurk"
+  ],
+  [
+   "gecko|lizard",
    "lizard"
   ],
   [
-   "bighorner|brahmin|boar",
-   "beast"
+   "bighorner",
+   "bighorner"
+  ],
+  [
+   "brahmin",
+   "brahmin"
+  ],
+  [
+   "boar",
+   "boar"
+  ],
+  [
+   "mole rat",
+   "molerat"
   ],
   [
    "rat\\b",
@@ -321,16 +372,74 @@
    "plant"
   ],
   [
-   "dog|mongrel|coyote|nightstalker",
+   "coyote",
+   "coyote"
+  ],
+  [
+   "nightstalker",
+   "nightstalker"
+  ],
+  [
+   "dog|mongrel",
    "dog"
   ],
   [
-   "ghoul|glowing one",
+   "glowing one",
+   "glowone"
+  ],
+  [
+   "ghoul",
    "ghoul"
   ],
   [
-   "centaur|mutant",
+   "centaur",
+   "centaur"
+  ],
+  [
+   "mutant",
    "mutant"
+  ]
+ ],
+ "roleIcons": [
+  [
+   "sharpshooter|sniper",
+   "sniper"
+  ],
+  [
+   "pyro",
+   "pyro"
+  ],
+  [
+   "chem cook",
+   "chemist"
+  ],
+  [
+   "farmer",
+   "farmer"
+  ],
+  [
+   "\\bscav",
+   "scavenger"
+  ],
+  [
+   "ranger",
+   "ranger"
+  ],
+  [
+   "legion veteran|centurion",
+   "centurion"
+  ],
+  [
+   "paladin",
+   "paladin"
+  ],
+  [
+   "chairman",
+   "chairman"
+  ],
+  [
+   "warlord|ringleader|gang leader|pack leader",
+   "warlord"
   ]
  ],
  "enemyTypes": {
@@ -1808,31 +1917,120 @@
  "downLossHeal": 0.1,
  "reviveShockTier": 1,
  "checkXpMul": 0.25,
+ "checkTiers": [
+  {
+   "id": "total",
+   "n": "Total Failure",
+   "short": "Total Fail",
+   "xp": 0.1,
+   "pass": false,
+   "desc": "Everything goes wrong, and it costs you."
+  },
+  {
+   "id": "terrible",
+   "n": "Disaster",
+   "xp": 0.25,
+   "pass": false,
+   "desc": "It fails and makes things worse."
+  },
+  {
+   "id": "bad",
+   "n": "Setback",
+   "xp": 0.5,
+   "pass": false,
+   "desc": "It doesn't work, and there's a price."
+  },
+  {
+   "id": "messy",
+   "n": "Messy Success",
+   "short": "Messy",
+   "xp": 0.75,
+   "pass": true,
+   "desc": "Done, with mistakes and complications."
+  },
+  {
+   "id": "close",
+   "n": "Close Call",
+   "xp": 0.9,
+   "pass": true,
+   "desc": "Almost clean: done, with one complication."
+  },
+  {
+   "id": "success",
+   "n": "Success",
+   "xp": 1,
+   "pass": true,
+   "desc": "Done without much trouble."
+  },
+  {
+   "id": "strong",
+   "n": "Strong Success",
+   "short": "Strong",
+   "xp": 1.25,
+   "pass": true,
+   "desc": "Done faster or better than expected."
+  },
+  {
+   "id": "triumph",
+   "n": "Triumph",
+   "xp": 1.5,
+   "pass": true,
+   "desc": "Done at no cost, and you find more than you looked for."
+  },
+  {
+   "id": "perfect",
+   "n": "Perfect",
+   "xp": 2,
+   "pass": true,
+   "desc": "Everything goes right: the best possible outcome."
+  }
+ ],
+ "checkFailCut": [
+  0.1111111111111111,
+  0.3333333333333333,
+  0.5555555555555556
+ ],
+ "checkPassCut": [
+  0.3333333333333333,
+  0.7777777777777778
+ ],
  "famCritMul": 5,
  "famBands": [
   [
    0,
-   "Unfamiliar"
+   "Unfamiliar",
+   -0.05,
+   0
   ],
   [
    10,
-   "Novice"
+   "Novice",
+   -0.025,
+   0
   ],
   [
    100,
-   "Familiar"
+   "Familiar",
+   0,
+   0.03
   ],
   [
    250,
-   "Proficient"
+   "Proficient",
+   0.05,
+   0.07
   ],
   [
    750,
-   "Expert"
+   "Expert",
+   0.1,
+   0.12
   ],
   [
    2000,
-   "Master"
+   "Master",
+   0.15,
+   0.2
   ]
  ],
  "coverRounds": {
