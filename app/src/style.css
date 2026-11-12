@@ -5800,3 +5800,243 @@ table.t th {
     display: none !important;
   }
 }
+
+/* 12 Nov: the spectator screen. The map takes most of it; the party and the combat log share a column; a short rail of look-only tools. */
+.dash.spec {
+  grid-template-rows: minmax(0, 1fr);
+}
+.spboard {
+  display: grid;
+  grid-template-columns: minmax(230px, 24%) minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "col map rail";
+  gap: 4px;
+  min-height: 0;
+  height: 100%;
+  padding: 4px;
+}
+.spcol {
+  grid-area: col;
+  display: grid;
+  grid-template-rows: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 4px;
+  min-height: 0;
+}
+.spcol > .win,
+.spmap {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.spcol > .win > .wb,
+.spmap > .wb {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
+}
+.spmap {
+  grid-area: map;
+}
+.spmap > .wb {
+  display: flex;
+  overflow: hidden;
+}
+.spmap .mapwrap {
+  flex: 1 1 0;
+  min-height: 0;
+  height: 100%;
+}
+.sprail {
+  grid-area: rail;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 52px;
+}
+.sprail .railb {
+  width: 100%;
+}
+.spcard .chead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.spcard .chead svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.spcard .hpline b {
+  color: var(--bright);
+  font-weight: normal;
+}
+.spcard .icons {
+  display: flex;
+  gap: 3px;
+}
+.spcard .icb {
+  flex: 1;
+}
+.specoff {
+  display: none !important;
+}
+.spwait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  color: var(--ink);
+  font-family: var(--head);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.spwait b {
+  font-size: 28px;
+  color: var(--bright);
+}
+/* phones held upright: map on top, party and log side by side under it, the tools along the bottom */
+@media (max-width: 599px) {
+  .spboard {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 56fr) minmax(0, 44fr) auto;
+    grid-template-areas: "map" "col" "rail";
+    padding: 0;
+  }
+  .spcol {
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .sprail {
+    flex-direction: row;
+    width: auto;
+  }
+  .sprail .railb {
+    flex: 1;
+  }
+}
+/* phones held sideways and short tablets: a narrow party column, the map fills the rest */
+@media (max-height: 500px) {
+  .spboard {
+    grid-template-columns: minmax(190px, 26%) minmax(0, 1fr) auto;
+    padding: 2px;
+  }
+  .sprail {
+    width: 44px;
+  }
+  .sprail .railb span {
+    font-size: 9px;
+  }
+  .spcard .icb span {
+    display: none; /* icons only: the titles say which */
+  }
+}
+/* the phone layout names grid areas for these windows; in the spectator column they just stack */
+.spcol > .win {
+  grid-area: auto !important;
+  width: auto !important;
+  height: auto !important;
+}
+@media (max-width: 1000px) {
+  .spcol > .win > .wt {
+    min-height: 0 !important;
+    padding: 1px 4px !important;
+  }
+  .spcol > .win > .wt .foldbtn {
+    min-height: 26px !important;
+    min-width: 26px !important;
+  }
+}
+.spstats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin: 8px 0;
+  color: var(--dim);
+}
+.spstats b {
+  color: var(--bright);
+  font-family: var(--head);
+  font-size: 1.3em;
+  font-weight: normal;
+}
+/* spectators: the sort and tier tools and inventory weights are bookkeeping */
+.dash.spec .dialog .irow .s.faint {
+  display: none;
+}
+/* 12 Nov: phones held sideways (and other short screens up to tablet width): side by side instead of stacked */
+@media (max-height: 500px) and (min-width: 600px) and (max-width: 1000px) {
+  .dash:has(.board.fight) .devbar {
+    display: none !important;
+  }
+  .board.fight .stage {
+    grid-template-columns: minmax(0, 40fr) minmax(0, 36fr) minmax(0, 24fr) !important;
+    grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-areas: "bar bar bar" "map act party" "map act foes" !important;
+  }
+  .board.fight .stage:has(.arena.solo) {
+    grid-template-columns: minmax(0, 70fr) minmax(0, 30fr) !important;
+    grid-template-areas: "bar bar" "act party" "act foes" !important;
+  }
+  .board.calm .stage {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+    grid-template-areas: "party enc" "party check" "party notes" !important;
+  }
+  .board.calm .w-recent,
+  .board.calm .w-clog {
+    display: none !important;
+  }
+  .board.setup .stage {
+    grid-template-columns: minmax(0, 62fr) minmax(0, 38fr) !important;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-areas: "enc party" "enc foes" "enc check" !important;
+  }
+  .stage .win > .wt {
+    min-height: 0 !important;
+    padding: 1px 3px !important;
+  }
+  .stage .win > .wt .foldbtn,
+  .stage .win > .wt .btn {
+    min-height: 26px !important;
+    min-width: 26px !important;
+  }
+}
+/* tablets: the attack tiles fit their numbers */
+@media (max-width: 1000px) {
+  .ttile {
+    padding: 4px 5px;
+  }
+  .ttile b {
+    font-size: 20px;
+  }
+}
+@media (max-width: 1000px) {
+  /* the window title already says whose turn it is; this copy collided with the AP number */
+  .turnhead .turnwho {
+    display: none;
+  }
+}
+/* tablets: the panels reach the bottom of the screen instead of stopping where their content ends */
+@media (min-width: 600px) and (max-width: 1000px) {
+  .board,
+  .board.calm,
+  .board.setup,
+  .board.fight {
+    grid-template-rows: minmax(0, 1fr) !important;
+  }
+  .board > .stage {
+    min-height: 0;
+    height: 100%;
+  }
+}
+/* tablets upright: three rows for the three named rows (the phone's four sizes left an empty row at the bottom) */
+@media (min-width: 600px) and (max-width: 1000px) and (min-height: 501px) {
+  .board.fight .stage {
+    grid-template-rows: auto var(--r-map, minmax(0, 62fr)) var(--r-pf, minmax(0, 38fr)) !important;
+  }
+  .board.fight .stage:has(.arena.solo) {
+    grid-template-rows: auto var(--r-act, minmax(0, 60fr)) var(--r-pf, minmax(0, 40fr)) !important;
+  }
+}

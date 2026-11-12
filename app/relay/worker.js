@@ -2,7 +2,9 @@
 // POST /new                      -> { room, t }   (makes a session)
 // GET  /s/ROOM/sync/hello?t=     -> { rev, hasState, n }
 // GET  /s/ROOM/sync/events?t=    -> Server-Sent Events: { rev, from, S?, n }
-// POST /s/ROOM/sync/state?t=     <- { baseRev, from, S }
+// POST /s/ROOM/sync/state?t=     <- { baseRev, from, S }   (DM token only)
+// POST /s/ROOM/sync/ask?t=       <- { id, a, v, from }       a spectator's request, passed to every screen as { ask }
+// Two tokens: t (DM, full) and s (spectator: read the game, send asks, never write it). hello gives a DM the s token.
 // Deploy: cd app/relay && npx wrangler deploy
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type" };
 const json = (o, status = 200) =>
@@ -18,8 +20,8 @@ export default {
     if (u.pathname === "/new" && req.method === "POST") {
       const room = rand(6),
         t = rand(16);
-      await env.ROOMS.get(env.ROOMS.idFromName(room)).fetch("https://room/init", { method: "POST", body: t });
-      return json({ room, t });
+      const r = await (await env.ROOMS.get(env.ROOMS.idFromName(room)).fetch("https://room/init", { method: "POST", body: t })).json();
+      return json({ room, t, s: r.s });
     }
     const m = u.pathname.match(/^\/s\/([0-9a-f]{12})(\/sync\/[a-z]+)$/);
     if (!m) return json({ error: "not found" }, 404);
@@ -66,17 +68,35 @@ export class Room {
   async fetch(req) {
     const u = new URL(req.url);
     if (u.pathname === "/init") {
-      this.meta = { t: await req.text(), rev: 0, parts: 0 };
+      this.meta = { t: await req.text(), s: rand(16), rev: 0, parts: 0 };
       await this.store.put("meta", this.meta);
       await this.store.setAlarm(Date.now() + IDLE_MS);
-      return json({ ok: true });
+      return json({ ok: true, s: this.meta.s });
     }
     await this.load();
     if (!this.meta) return json({ error: "That session has ended or the link is wrong." }, 404);
-    if (u.searchParams.get("t") !== this.meta.t) return json({ error: "bad token" }, 403);
+    if (!this.meta.s) {
+      this.meta.s = rand(16); // rooms made before spectator links
+      await this.store.put("meta", this.meta);
+    }
+    const tok = u.searchParams.get("t");
+    const role = tok === this.meta.t ? "dm" : tok === this.meta.s ? "spec" : "";
+    if (!role) return json({ error: "bad token" }, 403);
     const { rev } = this.meta;
 
-    if (u.pathname === "/sync/hello") return json({ rev, hasState: !!this.S, n: this.streams.size });
+    if (u.pathname === "/sync/hello") return json({ rev, hasState: !!this.S, n: this.streams.size, role, ...(role === "dm" ? { s: this.meta.s } : {}) });
+
+    if (u.pathname === "/sync/ask" && req.method === "POST") {
+      let ask;
+      try {
+        ask = await req.json();
+      } catch (e) {
+        return json({ error: "bad json" }, 400);
+      }
+      if (!ask || typeof ask.a !== "string" || typeof ask.id !== "string" || JSON.stringify(ask).length > 2000) return json({ error: "bad ask" }, 400);
+      for (const s of this.streams) this.send(s, { rev, from: ask.from || "", ask });
+      return json({ ok: true });
+    }
 
     if (u.pathname === "/sync/events") {
       const { readable, writable } = new TransformStream();
@@ -94,6 +114,7 @@ export class Room {
     }
 
     if (u.pathname === "/sync/state" && req.method === "POST") {
+      if (role !== "dm") return json({ error: "spectators can't change the game" }, 403);
       let msg;
       try {
         msg = await req.json();

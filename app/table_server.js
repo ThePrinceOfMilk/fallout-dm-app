@@ -12,6 +12,7 @@ const PORT = Number(process.env.PORT) || 7777;
 const STATE_FILE = process.env.TABLE_STATE || path.join(__dirname, "table_state.json");
 const APP_FILE = path.join(__dirname, "..", "Fallout DM App.html");
 const TOKEN = process.env.TABLE_TOKEN || crypto.randomBytes(16).toString("hex");
+const SPEC = process.env.TABLE_SPEC || crypto.randomBytes(16).toString("hex"); // spectator links: read the game and send asks, never write it
 const MAX_BODY = 200e6;
 
 let rev = 0,
@@ -31,7 +32,7 @@ function broadcast(msg) {
   const data = "data: " + JSON.stringify({ ...msg, n: streams.size }) + "\n\n";
   for (const r of streams) r.write(data);
 }
-const links = () => [...lanIps().map((ip) => `http://${ip}:${PORT}`)].map((u) => `${u}/?t=${TOKEN}`);
+const links = (t = TOKEN) => [...lanIps().map((ip) => `http://${ip}:${PORT}`)].map((u) => `${u}/?t=${t}`);
 function lanIps() {
   return Object.values(os.networkInterfaces())
     .flat()
@@ -50,9 +51,31 @@ const server = http.createServer((req, res) => {
     return fs.createReadStream(APP_FILE).pipe(res);
   }
   if (!u.pathname.startsWith("/sync/")) return json(res, 404, { error: "not found" });
-  if (u.searchParams.get("t") !== TOKEN) return json(res, 403, { error: "bad token" });
+  const role = u.searchParams.get("t") === TOKEN ? "dm" : u.searchParams.get("t") === SPEC ? "spec" : "";
+  if (!role) return json(res, 403, { error: "bad token" });
 
-  if (u.pathname === "/sync/hello") return json(res, 200, { rev, hasState: !!S, n: streams.size, links: links() });
+  if (u.pathname === "/sync/hello")
+    return json(res, 200, { rev, hasState: !!S, n: streams.size, role, ...(role === "dm" ? { links: links(), s: SPEC, specLinks: links(SPEC) } : {}) });
+
+  if (u.pathname === "/sync/ask" && req.method === "POST") {
+    let body = "";
+    req.on("data", (c) => {
+      body += c;
+      if (body.length > 2000) req.destroy();
+    });
+    req.on("end", () => {
+      let ask;
+      try {
+        ask = JSON.parse(body);
+      } catch (e) {
+        return json(res, 400, { error: "bad json" });
+      }
+      if (!ask || typeof ask.a !== "string" || typeof ask.id !== "string") return json(res, 400, { error: "bad ask" });
+      broadcast({ rev, from: ask.from || "", ask });
+      json(res, 200, { ok: true });
+    });
+    return;
+  }
 
   if (u.pathname === "/sync/events") {
     res.writeHead(200, { "Content-Type": "text/event-stream", "Cache-Control": "no-store", Connection: "keep-alive", "X-Accel-Buffering": "no" });
@@ -70,6 +93,7 @@ const server = http.createServer((req, res) => {
   }
 
   if (u.pathname === "/sync/state" && req.method === "POST") {
+    if (role !== "dm") return json(res, 403, { error: "spectators can't change the game" });
     const chunks = [];
     let size = 0;
     req.on("data", (c) => {
@@ -101,6 +125,7 @@ server.listen(PORT, "0.0.0.0", () => {
   console.log(`Table open${S ? ` (resuming saved table, rev ${rev})` : ""}.`);
   console.log(`  You (this PC):   http://localhost:${PORT}/?t=${TOKEN}`);
   for (const ip of lanIps()) console.log(`  Same Wi-Fi:      http://${ip}:${PORT}/?t=${TOKEN}`);
+  for (const ip of lanIps()) console.log(`  Spectators:      http://${ip}:${PORT}/?t=${SPEC}`);
   console.log("If a phone can't connect: allow Node.js on Private networks when Windows Firewall asks (or in Windows Security > Firewall > Allow an app).");
   console.log("For players on other networks, use Open session in the app instead.");
 });

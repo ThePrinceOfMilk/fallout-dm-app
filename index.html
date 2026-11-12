@@ -5806,6 +5806,246 @@ table.t th {
     display: none !important;
   }
 }
+
+/* 12 Nov: the spectator screen. The map takes most of it; the party and the combat log share a column; a short rail of look-only tools. */
+.dash.spec {
+  grid-template-rows: minmax(0, 1fr);
+}
+.spboard {
+  display: grid;
+  grid-template-columns: minmax(230px, 24%) minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "col map rail";
+  gap: 4px;
+  min-height: 0;
+  height: 100%;
+  padding: 4px;
+}
+.spcol {
+  grid-area: col;
+  display: grid;
+  grid-template-rows: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 4px;
+  min-height: 0;
+}
+.spcol > .win,
+.spmap {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.spcol > .win > .wb,
+.spmap > .wb {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
+}
+.spmap {
+  grid-area: map;
+}
+.spmap > .wb {
+  display: flex;
+  overflow: hidden;
+}
+.spmap .mapwrap {
+  flex: 1 1 0;
+  min-height: 0;
+  height: 100%;
+}
+.sprail {
+  grid-area: rail;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 52px;
+}
+.sprail .railb {
+  width: 100%;
+}
+.spcard .chead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.spcard .chead svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.spcard .hpline b {
+  color: var(--bright);
+  font-weight: normal;
+}
+.spcard .icons {
+  display: flex;
+  gap: 3px;
+}
+.spcard .icb {
+  flex: 1;
+}
+.specoff {
+  display: none !important;
+}
+.spwait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  color: var(--ink);
+  font-family: var(--head);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.spwait b {
+  font-size: 28px;
+  color: var(--bright);
+}
+/* phones held upright: map on top, party and log side by side under it, the tools along the bottom */
+@media (max-width: 599px) {
+  .spboard {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 56fr) minmax(0, 44fr) auto;
+    grid-template-areas: "map" "col" "rail";
+    padding: 0;
+  }
+  .spcol {
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .sprail {
+    flex-direction: row;
+    width: auto;
+  }
+  .sprail .railb {
+    flex: 1;
+  }
+}
+/* phones held sideways and short tablets: a narrow party column, the map fills the rest */
+@media (max-height: 500px) {
+  .spboard {
+    grid-template-columns: minmax(190px, 26%) minmax(0, 1fr) auto;
+    padding: 2px;
+  }
+  .sprail {
+    width: 44px;
+  }
+  .sprail .railb span {
+    font-size: 9px;
+  }
+  .spcard .icb span {
+    display: none; /* icons only: the titles say which */
+  }
+}
+/* the phone layout names grid areas for these windows; in the spectator column they just stack */
+.spcol > .win {
+  grid-area: auto !important;
+  width: auto !important;
+  height: auto !important;
+}
+@media (max-width: 1000px) {
+  .spcol > .win > .wt {
+    min-height: 0 !important;
+    padding: 1px 4px !important;
+  }
+  .spcol > .win > .wt .foldbtn {
+    min-height: 26px !important;
+    min-width: 26px !important;
+  }
+}
+.spstats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin: 8px 0;
+  color: var(--dim);
+}
+.spstats b {
+  color: var(--bright);
+  font-family: var(--head);
+  font-size: 1.3em;
+  font-weight: normal;
+}
+/* spectators: the sort and tier tools and inventory weights are bookkeeping */
+.dash.spec .dialog .irow .s.faint {
+  display: none;
+}
+/* 12 Nov: phones held sideways (and other short screens up to tablet width): side by side instead of stacked */
+@media (max-height: 500px) and (min-width: 600px) and (max-width: 1000px) {
+  .dash:has(.board.fight) .devbar {
+    display: none !important;
+  }
+  .board.fight .stage {
+    grid-template-columns: minmax(0, 40fr) minmax(0, 36fr) minmax(0, 24fr) !important;
+    grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-areas: "bar bar bar" "map act party" "map act foes" !important;
+  }
+  .board.fight .stage:has(.arena.solo) {
+    grid-template-columns: minmax(0, 70fr) minmax(0, 30fr) !important;
+    grid-template-areas: "bar bar" "act party" "act foes" !important;
+  }
+  .board.calm .stage {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+    grid-template-areas: "party enc" "party check" "party notes" !important;
+  }
+  .board.calm .w-recent,
+  .board.calm .w-clog {
+    display: none !important;
+  }
+  .board.setup .stage {
+    grid-template-columns: minmax(0, 62fr) minmax(0, 38fr) !important;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-areas: "enc party" "enc foes" "enc check" !important;
+  }
+  .stage .win > .wt {
+    min-height: 0 !important;
+    padding: 1px 3px !important;
+  }
+  .stage .win > .wt .foldbtn,
+  .stage .win > .wt .btn {
+    min-height: 26px !important;
+    min-width: 26px !important;
+  }
+}
+/* tablets: the attack tiles fit their numbers */
+@media (max-width: 1000px) {
+  .ttile {
+    padding: 4px 5px;
+  }
+  .ttile b {
+    font-size: 20px;
+  }
+}
+@media (max-width: 1000px) {
+  /* the window title already says whose turn it is; this copy collided with the AP number */
+  .turnhead .turnwho {
+    display: none;
+  }
+}
+/* tablets: the panels reach the bottom of the screen instead of stopping where their content ends */
+@media (min-width: 600px) and (max-width: 1000px) {
+  .board,
+  .board.calm,
+  .board.setup,
+  .board.fight {
+    grid-template-rows: minmax(0, 1fr) !important;
+  }
+  .board > .stage {
+    min-height: 0;
+    height: 100%;
+  }
+}
+/* tablets upright: three rows for the three named rows (the phone's four sizes left an empty row at the bottom) */
+@media (min-width: 600px) and (max-width: 1000px) and (min-height: 501px) {
+  .board.fight .stage {
+    grid-template-rows: auto var(--r-map, minmax(0, 62fr)) var(--r-pf, minmax(0, 38fr)) !important;
+  }
+  .board.fight .stage:has(.arena.solo) {
+    grid-template-rows: auto var(--r-act, minmax(0, 60fr)) var(--r-pf, minmax(0, 40fr)) !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -11503,6 +11743,7 @@ const statusText = () =>
   (table.on ? (table.up ? `TABLE: ${table.n} CONNECTED / ` : "TABLE: RECONNECTING / ") : "") +
   (saveFailed ? "SAVE FAILED: USE BACKUP FILE" : dirty ? "UNSAVED CHANGES" : lastSaved ? "SAVED " + lastSaved.toLocaleTimeString() : "NOTHING NEW TO SAVE");
 function save() {
+  if (isSpec()) return; // a spectator's own campaign on this device stays as it was
   lastSaveTry = Date.now();
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify(S));
@@ -11529,10 +11770,177 @@ const table = {
   again: false,
   pending: null,
   quiet: false,
+  // "dm" or "spec". A spectator link carries v=s, so the right screen shows before the server answers; hello confirms it.
+  role: new URLSearchParams(location.search).get("v") === "s" ? "spec" : "dm",
+  specLinks: [],
+  gotState: false,
 };
+const isSpec = () => table.role === "spec";
+
+// ---------- spectator screen: the map, the party (look, use consumables, equip and unequip) and the combat log. Nothing else.
+// A spectator never writes the game: use and equip go to the DM's screens as asks (tableAsk), and a DM screen applies them once.
+const SPEC_UI = new Set([
+  "openChar",
+  "sheetTab",
+  "invTab",
+  "invSort",
+  "invDir",
+  "gearSlot",
+  "useItemFrom",
+  "itemPick",
+  "closeModal",
+  "noop",
+  "treeTab",
+  "treeZoom",
+  "railGo",
+  "railMore",
+  "mapZoom",
+  "legendToggle",
+  "fold",
+  "toggleLog",
+  "setScale",
+  "guideGo",
+]);
+const SPEC_ASK = new Set(["useSelf", "itemUse", "gearEquip", "invActive"]);
+const SPEC_RAIL = ["log", "skillTree", "wiki", "uiScale", "guide"];
+const SPEC_MODALS = new Set(["char", "sheet", "health", "item", "skillTree", "uiScale", "guide"]);
+function specCard(c) {
+  const d = der(c);
+  const k = K();
+  const menus = CARD_MENUS.map(
+    ([id, n, ic]) => `<button class="icb" data-a="openChar" data-v="${c.id}|${id}" title="${n}">${pix(ic)}<span>${n}</span></button>`,
+  ).join("");
+  return `<article class="card spcard ${c.dbno ? "down" : ""} ${k && k.turnId === c.id ? "cur" : ""}"><header class="chead">${iconSvg(c.icon)}<span class="nm grow">${h(c.name)}</span><span class="s dim">LV${c.level}</span></header><div class="hpline"><span>HP</span><b>${fmt(c.hp)}/${fmt(d.hp)}</b><span class="grow">${hpBar(c.hp, d.hp)}</span><span>AP</span><b>${fmt(c.ap)}/${fmt(d.ap)}</b></div>${chips(c, true)}<div class="icons">${menus}</div></article>`;
+}
+function specView() {
+  if (ui.modal && !SPEC_MODALS.has(ui.modal.type)) ui.modal = null;
+  ui.atk = null; // no targeting, aim line or ranges on this screen
+  if (!table.gotState)
+    return `<div class="dash spec"><div class="spwait"><b>Spectating</b><span>${table.up ? "Waiting for the DM's game..." : "Connecting to the game..."}</span></div></div>`;
+  ensureMap();
+  partySpots();
+  applySizes();
+  const k = K();
+  const M = mapOf();
+  const turn = k && k.turnId && ent(k.turnId) ? ` · Round ${k.round} · ${h(ent(k.turnId).name)}'s turn` : k ? ` · Round ${k.round}` : "";
+  const map = `<section class="win w-map spmap"><header class="wt"><span>${h(M.n)}<span class="dim">${turn}</span></span><span class="spacer"></span><span class="s ${table.up ? "dim" : "warn"}">${table.up ? "Spectating" : "Reconnecting..."}</span></header><div class="wb" style="padding:0">${mapSvg()}</div></section>`;
+  const party = win(
+    "w-party",
+    `Party ${S.chars.length}`,
+    "",
+    `<div class="cards">${S.chars.map(specCard).join("") || `<div class="empty">No characters yet.</div>`}</div>`,
+  );
+  const log = win(
+    "w-clog",
+    "Combat log",
+    "",
+    `<div class="loglist">${logLines(
+      S.log.filter((l) => l.r > 0),
+      40,
+    )}</div>`,
+  );
+  const rail = `<nav class="sprail">${SPEC_RAIL.map((id) => {
+    const r = RAIL.find((x) => x[0] === id);
+    return `<button class="railb ${(ui.modal && ui.modal.type === id) || (id === "log" && ui.logOpen) ? "on" : ""}" data-a="railGo" data-v="${id}" title="${h(RAIL_TITLE[id] || r[1])}">${pix(r[2])}<span>${r[1]}</span></button>`;
+  }).join("")}</nav>`;
+  return `<div class="dash spec"><div class="spboard"><aside class="spcol">${party}${log}</aside>${map}${rail}</div>${ui.logOpen ? logFloat() : ""}${ui.modal ? renderModal() : ""}</div>`;
+}
+// After drawing: boxes a spectator can't change are read-only, and buttons it can't use are hidden.
+const SPEC_HIDE = [
+  ".isort",
+  ".geartop > .s.dim",
+  'input[placeholder^="Add item"]',
+  '.line:has(input[placeholder^="Add status"])',
+  ".famedit",
+  ".irow .grow > .s.dim",
+  ".geartop > .grow",
+  ".hpline .ovr",
+];
+function specLock() {
+  for (const el of document.querySelectorAll(SPEC_HIDE.map((s) => ".dash.spec " + s).join(","))) el.remove();
+  for (const el of document.querySelectorAll(".dash.spec input, .dash.spec select, .dash.spec textarea")) {
+    if (el.dataset.u || el.dataset.a === "invActive") continue;
+    if (el.tagName === "INPUT" && el.type !== "checkbox") el.readOnly = true;
+    else el.disabled = true;
+  }
+  for (const el of document.querySelectorAll(".dash.spec [data-a]"))
+    if (!SPEC_UI.has(el.dataset.a) && !SPEC_ASK.has(el.dataset.a) && !el.classList.contains("scrim") && !el.classList.contains("dialog"))
+      el.classList.add("specoff");
+}
+// A spectator's use or equip: sent to the DM's screens, which apply it. Nothing changes here until the game comes back.
+async function tableAsk(a, el) {
+  const m = ui.modal || {};
+  const id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+  let ask = null;
+  if (a === "useSelf" || a === "invActive") {
+    const [who, i] = splitV(el.dataset.v);
+    const l = ((ent(who) || {}).inv || [])[i];
+    if (!l) return;
+    ask = { a, v: el.dataset.v, n: l.n, on: a === "invActive" ? !!el.checked : undefined };
+  } else if (a === "itemUse") {
+    const l = ((ent(m.who) || {}).inv || [])[m.sel];
+    if (!l) return;
+    ask = { a, who: m.who, tgt: m.tgt, sel: m.sel, n: l.n };
+    ui.modal = m.back || null;
+  } else if (a === "gearEquip") {
+    if (!m.id || !m.pick) return;
+    ask = { a, id: m.id, slot: m.pick, name: el.dataset.v || "" };
+    m.pick = null;
+  }
+  if (!ask) return;
+  render(); // a ticked box goes back until the DM's screen answers
+  try {
+    const r = await fetch(tableUrl("ask"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...ask, id, from: table.id }),
+    });
+    toast(r.ok ? "Sent to the DM" : "The DM's game didn't take that.");
+  } catch (e) {
+    toast("Not connected. Try again in a moment.");
+  }
+}
+// On a DM screen: apply a spectator's ask once. The ask's id goes into the game, so a second DM screen (or a repeat) skips it.
+function applyAsk(q) {
+  if (!q || !q.id || (S.asksDone || []).includes(q.id)) return;
+  const pc = (id) => {
+    const e = ent(id);
+    return e && e.kind === "pc" ? e : null;
+  };
+  const at = (e, i, n) => (e.inv[i] && E.low(e.inv[i].n) === E.low(n) ? i : (e.inv || []).findIndex((x) => E.low(x.n) === E.low(n))); // the list may have moved
+  const keep = ui.modal;
+  S.asksDone = [...(S.asksDone || []).slice(-49), q.id];
+  try {
+    if (q.a === "useSelf" || q.a === "invActive") {
+      const [who, i0] = splitV(q.v);
+      const e = pc(who);
+      const i = e ? at(e, Number(i0), q.n) : -1;
+      if (i < 0) return;
+      if (q.a === "useSelf") ACT.useSelf(`${who}|${i}`);
+      else ACT.invActive(`${who}|${i}`, { checked: !!q.on });
+    } else if (q.a === "itemUse") {
+      const A = pc(q.who);
+      const i = A ? at(A, Number(q.sel), q.n) : -1;
+      if (i < 0) return;
+      ui.modal = { type: "item", who: q.who, tgt: ent(q.tgt) ? q.tgt : q.who, sel: i };
+      ACT.itemUse();
+    } else if (q.a === "gearEquip") {
+      const e = pc(q.id);
+      if (!e || !GEAR_ASK_SLOT.test(String(q.slot))) return;
+      if (q.name && !(e.inv || []).some((x) => E.low(x.n) === E.low(q.name))) return; // only what they carry
+      ui.modal = { type: "char", id: q.id, pick: q.slot };
+      ACT.gearEquip(q.name);
+    }
+  } finally {
+    ui.modal = keep;
+    touched();
+    scheduleRender();
+  }
+}
+const GEAR_ASK_SLOT = /^(w\d+|head|vanity|armor|acc[0-2])$/;
 function touched() {
   dirty = true;
-  if (table.on && !table.quiet) tableSend();
+  if (table.on && !table.quiet && !isSpec()) tableSend();
   if (prefs.autosave && !prefs.interval) save();
   else saveStatus();
 }
@@ -12778,6 +13186,7 @@ function applySizes() {
   st.setProperty("--mapw", prefs.mapW ? Math.round(prefs.mapW * kx()) + "px" : "46%");
 }
 function view() {
+  if (isSpec()) return specView();
   ensureMap();
   partySpots();
   const k = K();
@@ -12800,10 +13209,17 @@ function view() {
     .join("")}</footer>${ui.logOpen ? logFloat() : ""}${ui.modal ? renderModal() : ""}</div>`;
 }
 const setupOpen = () => (ui.setup != null ? ui.setup : S.scene.npcs.length > 0);
+// A spectator reads the story only: no fold-out numbers, and formulas in brackets come out, e.g. "uses Stimpak: 10 HP + (Medicine/5)." reads "uses Stimpak."
+const specText = (x) =>
+  String(x)
+    .replace(/: [^.:]*\([^)]*\)\./g, ".")
+    .replace(/\s*\([^)]*\)/g, "");
 const logRow = (l) =>
-  l.more && l.more.length
-    ? `<details class="logrow log-${h(l.k)}" data-k="log${l.id}"${ui.open["log" + l.id] ? " open" : ""}><summary>${h(l.x)}</summary><div class="logmore">${l.more.map((x) => `<div>${h(x)}</div>`).join("")}</div></details>`
-    : `<div class="log-${h(l.k)}">${h(l.x)}</div>`;
+  isSpec()
+    ? `<div class="log-${h(l.k)}">${h(specText(l.x))}</div>`
+    : l.more && l.more.length
+      ? `<details class="logrow log-${h(l.k)}" data-k="log${l.id}"${ui.open["log" + l.id] ? " open" : ""}><summary>${h(l.x)}</summary><div class="logmore">${l.more.map((x) => `<div>${h(x)}</div>`).join("")}</div></details>`
+      : `<div class="log-${h(l.k)}">${h(l.x)}</div>`;
 const logLines = (list, n) => list.slice(-n).reverse().map(logRow).join("") || `<div class="dim">Nothing yet.</div>`;
 const combatLogWin = () =>
   win(
@@ -13069,7 +13485,7 @@ function sheetBody() {
       ? perksSect(c)
       : m.tab === "traits"
         ? traitsSect(c)
-        : `${d.m.lucky ? `<label class="rr" style="max-width:220px"><span>Lucky Number digit</span>${bindNum(c.id, "luckyDigit", c.luckyDigit != null ? c.luckyDigit : 7)}</label>` : ""}<div class="hpline" style="margin-bottom:3px"><span>DT</span>${ovCell(c, "dt", fmt(d.dt), "Damage Threshold")}<span>INIT</span>${ovCell(c, "pri", fmt(d.pri), "Initiative base")}<span>SAVE</span>${ovCell(c, "save", d.save, "Saving throw: roll at or under on a d20")}</div>${statList(c, d)}${statsSect(c, d)}<h3>What's changing this character's numbers</h3>${modsSect(c, d)}`;
+        : `${d.m.lucky ? `<label class="rr" style="max-width:220px"><span>Lucky Number digit</span>${bindNum(c.id, "luckyDigit", c.luckyDigit != null ? c.luckyDigit : 7)}</label>` : ""}<div class="hpline" style="margin-bottom:3px"><span>DT</span>${ovCell(c, "dt", fmt(d.dt), "Damage Threshold")}<span>INIT</span>${ovCell(c, "pri", fmt(d.pri), "Initiative base")}<span>SAVE</span>${ovCell(c, "save", d.save, "Saving throw: roll at or under on a d20")}</div>${statList(c, d)}${statsSect(c, d)}${isSpec() ? "" : `<h3>What's changing this character's numbers</h3>${modsSect(c, d)}`}`;
   return `${specialRow(c, d)}<div class="opts" style="margin:8px 0 6px">${tabs}</div>${body}`;
 }
 // A box figure: each body part shows what's wrong with it. Limbs from the statuses that name them, head and body from the crit statuses.
@@ -13595,6 +14011,8 @@ function statList(c, d) {
   }).join("")}</div>`;
 }
 function statsSect(c, d) {
+  if (isSpec())
+    return `<div class="spstats"><span>Level <b>${c.level}</b></span><span>XP <b>${fmt(c.xp)}</b> / ${E.xpFor(c.level + 1, S.rules)}</span><span>Caps <b>${fmt(c.caps)}</b></span></div>`;
   return `<div class="grid">${field("AP now", bindNum(c.id, "ap", c.ap))}${field("Caps", bindNum(c.id, "caps", c.caps))}${field(`XP (next ${E.xpFor(c.level + 1, S.rules)})`, bindNum(c.id, "xp", c.xp))}${field("Level", bindNum(c.id, "level", c.level))}${field("Revived", bindNum(c.id, "timesRevived", c.timesRevived))}${field("Super crit %", numBox(`data-c="setSuper" data-id="${c.id}" id="sc-${c.id}" placeholder="${fmt(E.pct(d.superCrit))}"`, c.superCrit == null ? "" : E.pct(c.superCrit)))}</div>
     <div class="s dim">Carry ${fmt(d.carry)} lb · Active ${fmt(d.enc.active)}/${fmt(d.enc.capActive)} lb · Total ${fmt(d.enc.total)} lb · Skill pts/level ${d.pts}${c.ptsBank ? ` · Unspent ${c.ptsBank}` : ""} · Buy ×${fmt(Math.round(d.buy * 100) / 100)} · Sell ×${fmt(Math.round(d.sell * 100) / 100)}</div>
     ${c.ptsBank ? btn("spendPts", c.id, "Spend skill points", "", "tiny") : ""}
@@ -14797,8 +15215,8 @@ function mapSvg() {
       return `<g class="obj ${o.kind} tier-${tier} m-${MAT_OF[o.item] || "none"} ${o.voidBlock ? "oob" : ""} ${o.loot ? (o.opened ? "opened" : "lootable") : ""} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${hpMax ? `, ${fmt(hpMax - (o.dmg || 0))}/${hpMax} HP` : ""}${o.loot ? (o.opened ? ", opened" : ", opens for whoever is within R1 on their turn") : ""}${trunk ? ", only the trunk stops shots" : ""}${o.block ? ", blocks movement" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle></g>` : ""}${hpBar_}${showName || o.loot ? `<text style="font-size:${label}px" y="${ht / 2 + label}">${h(name)}${o.loot && o.opened ? " (open)" : ""}</text>` : ""}</g>`;
     })
     .join("");
-  const me = k ? (fightPhase() ? actorId() : null) : ui.sel;
-  const ring = k && fightPhase() && actorId() ? accRing(actorId()) : "";
+  const me = isSpec() ? null : k ? (fightPhase() ? actorId() : null) : ui.sel;
+  const ring = !isSpec() && k && fightPhase() && actorId() ? accRing(actorId()) : "";
   const k2 = tokenScale(v.w);
   ui.tokK = k2;
   const labU = label / k2;
@@ -14834,7 +15252,7 @@ function mapSvg() {
       a = posOf(m.id);
     extra += `<line class="movepath" x1="${a.x}" y1="${a.y}" x2="${m.x}" y2="${m.y}"/><g class="ghost" transform="translate(${m.x} ${m.y}) scale(${k2})"><circle cy="-.42" r=".27"/><path d="M-.46 .4 A.46 .62 0 0 1 .46 .4 Z"/><text style="font-size:${labU * 1.2}px" y="-.85">${fmt(m.cost)} AP</text></g>`;
   }
-  if (k && fightPhase() && actorId()) {
+  if (k && fightPhase() && actorId() && !isSpec()) {
     const a = posOf(actorId());
     const r = reachOf(ent(actorId()));
     if (r) extra += `<circle class="reach" cx="${a.x}" cy="${a.y}" r="${r}"/>`;
@@ -17606,6 +18024,7 @@ const ACT = {
   },
   railGo(v) {
     ui.railMore = false;
+    if (isSpec() && !SPEC_RAIL.includes(v)) return;
     if (v === "wiki") return ACT.wiki();
     if (v === "saveNow") return ACT.saveNow();
     if (v === "log") return ACT.toggleLog();
@@ -19129,10 +19548,13 @@ function render() {
     if (keepX[el.dataset.scroll]) el.scrollLeft = keepX[el.dataset.scroll];
     else if (el.dataset.scroll === "ttree" && !(el.dataset.scroll in keepX)) el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2; // a freshly opened skill tree starts at its root
   });
+  if (isSpec()) specLock();
   if (ui.focus) {
     const el = document.querySelector(ui.focus);
+    const roll = ui.focus === "#roll";
     ui.focus = null;
-    if (el) el.focus();
+    // on a touch screen, focusing the roll box pops the keyboard up and scrolls the target out of view: tap it when you're ready
+    if (el && !(roll && matchMedia("(pointer: coarse)").matches)) el.focus();
   } else if (key) {
     const el = document.querySelector(key);
     if (el) {
@@ -19199,12 +19621,17 @@ document.addEventListener("click", (e) => {
   }
   if (el.classList.contains("scrim") && (e.target !== el || !downOnScrim)) return;
   if (el.dataset.a === "noop") return;
+  if (isSpec()) {
+    if (SPEC_ASK.has(el.dataset.a)) return tableAsk(el.dataset.a, el);
+    if (!SPEC_UI.has(el.dataset.a)) return;
+  }
   const fn = ACT[el.dataset.a];
   if (fn) fn(el.dataset.v, el, e);
 });
 const valueOf = (el) => (el.type === "checkbox" ? el.checked : el.dataset.t === "num" ? num(el.value) : el.value);
 document.addEventListener("input", (e) => {
   const el = e.target;
+  if (isSpec() && !el.dataset.u) return;
   if (el.dataset.note) {
     let n = S.notesList.find((x) => x.id === ui.noteId);
     if (!n) {
@@ -19244,6 +19671,7 @@ document.addEventListener("input", (e) => {
 document.addEventListener("change", (e) => {
   const el = e.target;
   if (el.dataset.u || el.dataset.initroll || el.dataset.note) return;
+  if (isSpec()) return render();
   deferRender = true;
   try {
     if (el.dataset.bind) {
@@ -19366,6 +19794,7 @@ const KEYS = {
   fight: { a: ACT.attack, r: ACT.reload, m: ACT.moveModal, i: ACT.itemModal, n: ACT.next },
 };
 document.addEventListener("keydown", (e) => {
+  if (isSpec() && e.key !== "Escape") return; // no shortcuts on a spectator screen
   const t = e.target;
   const k = e.key.toLowerCase();
   const typing = t.matches && t.matches("input,select,textarea");
@@ -19615,7 +20044,7 @@ document.addEventListener("pointerdown", (ev) => {
       ev.preventDefault();
       return;
     }
-    const g = ui.place ? null : ev.target.closest("[data-tok],[data-obj]"); // while placing, any click places, even on top of a rock
+    const g = ui.place || isSpec() ? null : ev.target.closest("[data-tok],[data-obj]"); // while placing, any click places, even on top of a rock; spectators only look
     if (g) {
       const p = svgPoint(svg, ev);
       drag = { kind: "map", svg, g, tok: g.dataset.tok, obj: g.dataset.obj, x0: p.x, y0: p.y, moved: false, p: null };
@@ -19733,7 +20162,7 @@ document.addEventListener("pointerup", (ev) => {
     return;
   }
   if (d.kind === "mapbg") {
-    if (d.panned) return;
+    if (d.panned || isSpec()) return;
     if (ui.throwing) {
       ui.throwing.at = inMap(svgPoint(d.svg, ev));
       return render();
@@ -20027,7 +20456,22 @@ const RELAY = "https://fallout-table.wasteland-relay.workers.dev";
 const APP_URL = "https://theprinceofmilk.github.io/fallout-dm-app/";
 const tableUrl = (k) => `${table.base}/sync/${k}?t=${encodeURIComponent(table.t)}`;
 function tableModal() {
-  return `<div class="s">${table.up ? `${table.n} device${table.n === 1 ? "" : "s"} connected.` : "Reconnecting to the table..."} Anyone with a link below gets this same DM screen, and changes show on every device.</div>${table.links.map((l, i) => `<div class="row" style="margin-top:6px"><input id="tableLink${i}" class="grow" readonly value="${h(l)}" title="${h(l)}">${btn("tableCopy", i, "Copy", "", "tiny")}</div>`).join("")}<div class="s dim" style="margin-top:8px">${table.base ? "The link works from any network. The game is kept online for 14 days after the last change." : "These links work on the same Wi-Fi. To bring your campaign here: Save pack in your usual copy, then Load pack here."}</div>${table.base ? `<div class="acts" style="margin-top:8px">${btn("leaveSession", "", "Leave session", "", "tiny", "Stop syncing on this device. The others keep playing.")}</div>` : ""}`;
+  const kind = ui.linkKind || "dm";
+  const pick = `<div class="row" style="margin-top:6px;align-items:center;gap:6px"><span class="s">Link for</span><select id="linkKind" data-u="linkKind">${options(
+    [
+      ["dm", "DM: the full screen"],
+      ["spec", "Spectator: map, party and log"],
+      ["player", "Player (coming later)"],
+    ],
+    kind,
+  )}</select></div>`;
+  const say = {
+    dm: "Anyone with this link gets this same DM screen, and changes show on every device.",
+    spec: "A spectator sees the map, the party and the combat log. They can open a party member's inventory, sheet and health, use consumables and equip or unequip gear; everything else stays with the DM.",
+    player: "Player links aren't ready yet.",
+  }[kind];
+  const links = kind === "dm" ? table.links : kind === "spec" ? table.specLinks : [];
+  return `<div class="s">${table.up ? `${table.n} device${table.n === 1 ? "" : "s"} connected.` : "Reconnecting to the table..."}</div>${pick}<div class="s dim" style="margin-top:4px">${say}</div>${links.map((l, i) => `<div class="row" style="margin-top:6px"><input id="tableLink${i}" class="grow" readonly value="${h(l)}" title="${h(l)}">${btn("tableCopy", i, "Copy", "", "tiny")}</div>`).join("")}<div class="s dim" style="margin-top:8px">${table.base ? "The link works from any network. The game is kept online for 14 days after the last change." : "These links work on the same Wi-Fi. To bring your campaign here: Save pack in your usual copy, then Load pack here."}</div>${table.base ? `<div class="acts" style="margin-top:8px">${btn("leaveSession", "", "Leave session", "", "tiny", "Stop syncing on this device. The others keep playing.")}</div>` : ""}`;
 }
 function tableSend() {
   clearTimeout(table.timer);
@@ -20074,6 +20518,7 @@ function tableTake(msg) {
   }
   S = p;
   table.rev = msg.rev;
+  table.gotState = true;
   // shortcut: undo only covers your own changes since the last remote update; upgrade to a shared server-side undo if the user asks.
   undoStack.length = redoStack.length = undoChars = 0;
   if (!ent(ui.sel)) ui.sel = (S.chars[0] || {}).id;
@@ -20107,13 +20552,15 @@ async function tableJoin() {
     return room && toast("Could not reach the session. Check the internet connection and reload.");
   }
   Object.assign(table, { on: true, rev: hello.rev });
+  if (hello.role) table.role = hello.role;
   if (hello.links) table.links = hello.links;
-  if (!hello.hasState) tablePost(); // first device in: its campaign becomes the table's
+  if (hello.s) table.specLinks = room ? [table.links[0].replace(/&t=[^&]*/, `&t=${hello.s}`) + "&v=s"] : (hello.specLinks || []).map((l) => l + "&v=s");
+  if (!hello.hasState && !isSpec()) tablePost(); // first DM device in: its campaign becomes the table's
   const es = new EventSource(tableUrl("events"));
   const status = () => {
     saveStatus();
     const b = document.querySelector('[data-a="table"]');
-    if (b && !tableBusy()) scheduleRender(); // the button shows the device count
+    if ((b || isSpec()) && !tableBusy()) scheduleRender(); // the button shows the device count; a spectator's screen shows the connection
   };
   es.onopen = () => {
     table.up = true;
@@ -20128,6 +20575,10 @@ async function tableJoin() {
     const m = JSON.parse(e.data);
     table.up = true;
     if (m.n) table.n = m.n;
+    if (m.ask) {
+      if (!isSpec()) applyAsk(m.ask);
+      return status();
+    }
     if (!m.S) return status();
     if (m.from === table.id) {
       table.rev = Math.max(table.rev, m.rev);
