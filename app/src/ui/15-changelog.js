@@ -4,7 +4,7 @@
 var CHANGELOG = [
   {
     date: "13 Nov 2026",
-    ver: "",
+    ver: "a45bdee",
     title: "Changelog",
     items: ["A Changelog button at the top right lists every version of the app and what it changed."],
   },
