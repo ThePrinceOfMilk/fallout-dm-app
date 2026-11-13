@@ -654,6 +654,12 @@ upd(12, D13, "Terrain", "Was: every map was the same dark green. Now: the ground
     "Outdoors by setting, then map, then environment: grass in forests, woods, fields and farms; sand in a desert or canyon; dirt in camps, scrapyards and outposts; asphalt on city streets and roads; concrete in ruins and courtyards.",
     "A building on open ground lays its own floor inside its walls. Floors are only a picture: they change no rules. The choices are in Settings (terrain)."))
 upd(12, D13, "Resize anything", "Was: an object kept its catalog size. Now: select any object and drag its corner handle, or type its width and height in meters. Shift drags to the centimeter; each resize is one undo step.")
+upd(12, D13, "Objects block by their real shape", "Was: every object blocked shots and sight as a square box, so a shot past the empty corner of a boulder's box counted as cover, and the hit-chance ring's shadows had stepped, blocky edges. Now: each object blocks by its own shape.", bl(
+    "Rocks (small rock, medium rock, boulder) block by the outline the map draws for them.",
+    "Other round things (bushes, logs, stumps and the like) block as the ellipse inside their box. A tree blocks at its round trunk.",
+    "Crates, walls, cars and other boxes stay boxes, turned with the object.",
+    "The hit-chance ring's shadows start at each object's outline, and their sides are straight lines of sight from the shooter.",
+    "Every shape is still trimmed a little at the edges, so a shot that only clips a corner goes through. Walking past things uses the same shapes."))
 upd(17, D13, "Only the acting token takes clicks", "Was: when tokens were bunched up, a click meant for the fighter whose turn it was could land on a neighbor, so a move or action didn't happen. Now: in a fight only the token whose turn it is takes clicks, and it's drawn on top.", bl(
     "While the attack panel is open, every token can be clicked again, to pick a target (an ally too).",
     "Hold Shift to grab any token, as the DM, to move someone out of turn."))

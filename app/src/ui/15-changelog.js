@@ -4,6 +4,17 @@
 var CHANGELOG = [
   {
     date: "13 Nov 2026",
+    ver: "",
+    title: "Objects block by their real shape; a faster map",
+    items: [
+      "Rocks block shots and sight by the outline the map draws; round things (bushes, logs) as ellipses; tree trunks as circles. Boxes stay boxes.",
+      "A shot past the empty corner of an old square box no longer counts as cover.",
+      "The hit-chance ring's shadows start at each object's outline, with straight sight lines instead of stepped edges.",
+      "The ring is only worked out again when the shooter, target or nearby cover changes, and is drawn as a handful of shapes instead of hundreds: busy maps redraw about a quarter faster.",
+    ],
+  },
+  {
+    date: "13 Nov 2026",
     ver: "a45bdee",
     title: "Changelog",
     items: ["A Changelog button at the top right lists every version of the app and what it changed."],

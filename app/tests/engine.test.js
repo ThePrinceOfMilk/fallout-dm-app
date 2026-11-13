@@ -965,3 +965,20 @@ test("12 Nov: water: deep water can't be walked into, shallows cost a quarter mo
   assert.ok(count({ id: "forest", w: 40, h: 30 }, "forested") >= 4, "small woods sometimes get a pond");
   assert.strictEqual(count({ id: "mediumRoom", w: 12, h: 10 }, "forested"), 0, "never indoors");
 });
+
+test("hit shapes: a boulder blocks by its drawn outline, round things by their ellipse, not their square box", () => {
+  const r = JSON.parse(JSON.stringify(DEFAULT_RULES));
+  const boulder = { id: "b", kind: "cover", item: "boulder", x: 0, y: 0, w: 4, h: 4, cover: "hard", round: true };
+  // a shot along y = 1.9 clips the box's corner area at x = +-1.8, but the rock's outline there is narrower
+  const past = E.lineCover({ x: -10, y: 1.9 }, { x: 10, y: 1.9 }, [boulder], r);
+  assert.strictEqual(past.tier, "open", "grazing the old square corner no longer counts");
+  assert.strictEqual(E.lineCover({ x: -10, y: 0 }, { x: 10, y: 0 }, [boulder], r).tier, "hard", "straight through the rock does");
+  const bush = { id: "u", kind: "cover", item: "rock", x: 0, y: 0, w: 2, h: 2, cover: "soft", round: true };
+  assert.strictEqual(E.lineCover({ x: -5, y: -0.98 }, { x: 5, y: -0.98 }, [bush], r).tier, "open");
+  const pts = E.shotOutline(boulder, r);
+  assert.strictEqual(pts.length, 6, "the rock outline has the glyph's six points");
+  // a shot path that ends inside the outline still counts from where it enters
+  const hits = E.rayCover({ x: -10, y: 0 }, 0, 20, [boulder], r);
+  // the rock's left point is 1.84 m from its middle; coverInset trims a little off every shape, so the shot meets it a bit later
+  assert.ok(hits.length === 1 && hits[0].d > 8.1 && hits[0].d < 8.7, `enters at the rock's left side: ${hits[0] && hits[0].d}`);
+});

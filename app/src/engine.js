@@ -1328,9 +1328,14 @@ const E = (() => {
     return (c && c.trunk) || (!o.item && o.kind === "tree" ? 0.2 : 0);
   };
   // coverInset trims each side so a shot that only clips an edge goes through (peeking round a corner); never below half size.
-  const shotBox = (o, r) => {
+  const shapeOf = (o, r) => {
     const t = trunkOf(o, r);
-    const box = t ? { x: o.x, y: o.y, w: (o.w || 1) * t, h: (o.h || 1) * t, angle: o.angle } : o;
+    if (t) return { x: o.x, y: o.y, w: (o.w || 1) * t, h: (o.h || 1) * t, angle: o.angle, round: true };
+    const c = r && r.mapItems && r.mapItems[o.item];
+    return c && c.poly ? { ...o, poly: c.poly } : o;
+  };
+  const shotBox = (o, r) => {
+    const box = shapeOf(o, r);
     const k = (r && r.coverInset) || 0;
     if (!k) return box;
     const trim = (s) => Math.max(s / 2, s - 2 * k);
@@ -1347,10 +1352,75 @@ const E = (() => {
     return { x: o.x + dx * c + dy * s, y: o.y - dx * s + dy * c };
   }
   const crosses = (a, b, o) => entryT(a, b, o) >= 0;
-  /** How far along the line from a to b (0 to 1) it first enters the box, or -1 when it misses. */
+  /** Points round the outline shots test against (corners, rock outline, or 32 round an ellipse), turned with the object. */
+  function shotOutline(o, r) {
+    const s = shotBox(o, r),
+      w = (s.w || 1) / 2,
+      h = (s.h || 1) / 2;
+    const pts = s.poly
+      ? polyPts(s)
+      : s.round
+        ? Array.from({ length: 32 }, (_, i) => ({ x: s.x + Math.cos((i * Math.PI) / 16) * w, y: s.y + Math.sin((i * Math.PI) / 16) * h }))
+        : [
+            [-1, -1],
+            [1, -1],
+            [1, 1],
+            [-1, 1],
+          ].map(([x, y]) => ({ x: s.x + x * w, y: s.y + y * h }));
+    if (!s.angle) return pts;
+    const t = (s.angle * Math.PI) / 180,
+      c = Math.cos(t),
+      n = Math.sin(t);
+    return pts.map((p) => ({ x: s.x + (p.x - s.x) * c - (p.y - s.y) * n, y: s.y + (p.x - s.x) * n + (p.y - s.y) * c }));
+  }
+  // An object's outline: o.poly (unit-square points, as the map draws it), o.round (the ellipse in its box), or its box.
+  const polyPts = (o) => o.poly.map(([x, y]) => ({ x: o.x + x * (o.w || 1), y: o.y + y * (o.h || 1) }));
+  function inPoly(p, P) {
+    let c = false;
+    for (let i = 0, j = P.length - 1; i < P.length; j = i++)
+      if (P[i].y > p.y !== P[j].y > p.y && p.x < ((P[j].x - P[i].x) * (p.y - P[i].y)) / (P[j].y - P[i].y) + P[i].x) c = !c;
+    return c;
+  }
+  /** How far along the line from a to b (0 to 1) it first enters the outline, or -1 when it misses. */
   function entryT(a0, b0, o) {
     const a = unturn(a0, o),
       b = unturn(b0, o);
+    if (o.poly) {
+      const P = polyPts(o);
+      if (inPoly(a, P)) return 0;
+      let best = -1;
+      const dx = b.x - a.x,
+        dy = b.y - a.y;
+      for (let i = 0; i < P.length; i++) {
+        const p = P[i],
+          q = P[(i + 1) % P.length],
+          ex = q.x - p.x,
+          ey = q.y - p.y,
+          den = dx * ey - dy * ex;
+        if (Math.abs(den) < 1e-12) continue;
+        const t = ((p.x - a.x) * ey - (p.y - a.y) * ex) / den,
+          u = ((p.x - a.x) * dy - (p.y - a.y) * dx) / den;
+        if (t >= 0 && t <= 1 && u >= 0 && u <= 1 && (best < 0 || t < best)) best = t;
+      }
+      return best;
+    }
+    if (o.round) {
+      // the line in the ellipse's own units, where it's a unit circle
+      const rx = (o.w || 1) / 2,
+        ry = (o.h || 1) / 2,
+        px = (a.x - o.x) / rx,
+        py = (a.y - o.y) / ry,
+        dx = (b.x - a.x) / rx,
+        dy = (b.y - a.y) / ry;
+      const A = dx * dx + dy * dy,
+        B = 2 * (px * dx + py * dy),
+        C = px * px + py * py - 1;
+      if (C <= 0) return 0;
+      const disc = B * B - 4 * A * C;
+      if (A < 1e-12 || disc < 0) return -1;
+      const t = (-B - Math.sqrt(disc)) / (2 * A);
+      return t >= 0 && t <= 1 ? t : -1;
+    }
     // Standard box test: shrink the line to the part inside the box's x range, then its y range. Anything left means it crosses.
     const hw = (o.w || 1) / 2,
       hh = (o.h || 1) / 2;
@@ -1377,6 +1447,8 @@ const E = (() => {
   }
   const inside = (p0, o) => {
     const p = unturn(p0, o);
+    if (o.poly) return inPoly(p, polyPts(o));
+    if (o.round) return ((p.x - o.x) / ((o.w || 1) / 2)) ** 2 + ((p.y - o.y) / ((o.h || 1) / 2)) ** 2 <= 1;
     return Math.abs(p.x - o.x) <= (o.w || 1) / 2 && Math.abs(p.y - o.y) <= (o.h || 1) / 2;
   };
   const isDoor = (o, r) => !!(r && r.mapItems && (r.mapItems[o.item] || {}).door);
@@ -1485,8 +1557,7 @@ const E = (() => {
   }
   // a tree is walked round at its trunk, not its leaves
   const walkBox = (o, r) => {
-    const t = trunkOf(o, r);
-    return t ? { x: o.x, y: o.y, w: (o.w || 1) * t, h: (o.h || 1) * t, angle: o.angle } : o;
+    return shapeOf(o, r);
   };
   /** Does walking this path hit something solid? Something you start inside doesn't count, so nobody is ever stuck. */
   /** A natural outline for a body of water: n radii (smoothed, so it bulges and narrows gently), the largest exactly 1. */
@@ -3462,6 +3533,7 @@ const E = (() => {
     enemyType,
     lineCover,
     rayCover,
+    shotOutline,
     moveSpeed,
     shotBox,
     pathBlocked,

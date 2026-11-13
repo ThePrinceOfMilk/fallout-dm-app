@@ -1604,6 +1604,7 @@ function rayPieces(a, ang, hits, objs) {
   }
   return out;
 }
+let ringMemo = { key: "", svg: "" };
 function accRing(id) {
   const hits = ringHits(id);
   if (!hits || !hits.some((x) => x > 0)) return "";
@@ -1611,63 +1612,110 @@ function accRing(id) {
   const R = m[m.length - 1];
   const a = posOf(id);
   const objs = S.scene.objects.filter((o) => E.coverTier(o, S.rules) !== "open" && dist(o, a) - Math.max(o.w || 1, o.h || 1) <= R);
-  // Rays all round; neighbors with the same pieces merge into one wedge, so open ground stays a handful of shapes.
+  const tgt = ui.atk && ui.atk.att === id && ent(ui.atk.tgt) ? ent(ui.atk.tgt).name : "";
+  // Only redrawn when the shooter, the odds, the target or the cover around them change: this is the costly part of a map redraw.
+  const key = JSON.stringify([a.x, a.y, hits, tgt, S.rules.coverStack, objs]);
+  if (ringMemo.key === key) return ringMemo.svg;
+  const TAU = 2 * Math.PI;
+  const wrap = (x) => ((x % TAU) + TAU) % TAU;
+  // Each object's slice of the view (its outline seen from here), so a ray only tests the few objects in its direction.
+  const arcs = objs.map((o) => {
+    const pts = E.shotOutline(o, S.rules);
+    const c = Math.atan2(o.y - a.y, o.x - a.x);
+    const near = Math.hypot(o.x - a.x, o.y - a.y) <= Math.max(...pts.map((q) => Math.hypot(q.x - o.x, q.y - o.y))) + 0.01;
+    const half = Math.max(...pts.map((q) => Math.abs(((Math.atan2(q.y - a.y, q.x - a.x) - c + 3 * Math.PI) % TAU) - Math.PI)));
+    return { o, pts, c, half: near ? 9 : half + 1e-6 };
+  });
+  const at = (t) => ({
+    t,
+    p: rayPieces(
+      a,
+      t,
+      hits,
+      arcs.filter((x) => Math.abs(((t - x.c + 3 * Math.PI) % TAU) - Math.PI) <= x.half).map((x) => x.o),
+    ),
+  });
+  const sig = (p) => p.map((x) => x[2]).join(",");
+  // Same kind of pieces, with no edge jumping: a straight segment between the two rays follows the outline.
+  const close = (p, q) => sig(p) === sig(q) && p.every((x, i) => Math.abs(x[0] - q[i][0]) < 0.2 + 0.02 * x[0] && Math.abs(x[1] - q[i][1]) < 0.2 + 0.02 * x[1]);
+  // Rays: an even sweep plus one at every corner of the cover nearby, so corners and edges land exactly.
+  const angs = new Set();
+  for (let k = 0; k < RING_RAYS; k++) angs.add((k / RING_RAYS) * TAU);
+  for (const x of arcs) if (x.pts.length <= 8) for (const q of x.pts) angs.add(E.fix(wrap(Math.atan2(q.y - a.y, q.x - a.x)))); // corners only: curves (32-point ellipses) are smooth
+  const base = [...angs].sort((x, y) => x - y).map(at);
+  // Where two neighboring rays disagree, find the exact angle by halving the gap: that's the edge of the cover's shadow.
+  const pts = [];
+  base.forEach((s0, n) => {
+    pts.push(s0);
+    const s1 = n + 1 < base.length ? base[n + 1] : { t: base[0].t + TAU, p: base[0].p };
+    if (close(s0.p, s1.p)) return;
+    let lo = s0,
+      hi = s1;
+    for (let it = 0; it < 14 && hi.t - lo.t > 1e-6; it++) {
+      const mid = at((lo.t + hi.t) / 2);
+      if (close(lo.p, mid.p)) lo = mid;
+      else hi = mid;
+    }
+    if (lo !== s0) pts.push(lo);
+    pts.push({ ...hi, brk: true });
+  });
+  // the last one may be the wrapped first ray: keep angles inside one turn
+  if (pts[pts.length - 1].t >= TAU) {
+    const w = pts.pop();
+    pts[0] = { ...pts[0], brk: !!w.brk || pts[0].brk };
+  }
+  // Runs: unbroken stretches of rays. With no break at all the whole ring is one closed run.
+  const first = pts.findIndex((x) => x.brk);
   const runs = [];
-  for (let k = 0; k < RING_RAYS; k++) {
-    const pcs = rayPieces(a, ((k + 0.5) / RING_RAYS) * 2 * Math.PI, hits, objs);
-    const key = pcs.map((p) => p.join(",")).join(";");
-    const last = runs[runs.length - 1];
-    if (last && last.key === key) last.k1 = k + 1;
-    else runs.push({ k0: k, k1: k + 1, key, pcs });
+  if (first < 0) runs.push([...pts, { ...pts[0], t: pts[0].t + TAU }]);
+  else {
+    const rot = [...pts.slice(first), ...pts.slice(0, first).map((x) => ({ ...x, t: x.t + TAU }))];
+    for (const x of rot) (x.brk || !runs.length ? runs[runs.push([]) - 1] : runs[runs.length - 1]).push(x);
   }
-  if (runs.length > 1 && runs[0].key === runs[runs.length - 1].key) {
-    const end = runs.pop();
-    runs[0].k0 = end.k0 - RING_RAYS;
-  }
-  const P = (r, k) => {
-    const t = (k / RING_RAYS) * 2 * Math.PI;
-    return `${E.fix(a.x + r * Math.cos(t))} ${E.fix(a.y + r * Math.sin(t))}`;
-  };
-  const arc = (r, k0, k1, sweep) => `A${r} ${r} 0 ${k1 - k0 > RING_RAYS / 2 ? 1 : 0} ${sweep} ${P(r, sweep ? k1 : k0)}`;
-  let fills = "",
-    edges = "";
-  const full = runs.length === 1;
+  const P = (r, t) => `${E.fix(a.x + r * Math.cos(t))} ${E.fix(a.y + r * Math.sin(t))}`;
+  const line = (r, run, j, which) => run.map((x) => P(x.p[j][which], x.t));
+  // One path per color and one for all the black edges: hundreds of wedges would otherwise be hundreds of elements in every redraw.
+  const byCol = new Map(),
+    edgeD = [];
   for (const run of runs) {
-    const { k0, k1, pcs } = run;
-    pcs.forEach(([r0, r1, ch], i) => {
+    const pcs = run[0].p;
+    pcs.forEach(([r0, , ch], j) => {
       if (ch <= 0) return;
       const col = ringColor(Math.min(1, ch));
-      if (full)
-        fills += `<path class="ringfill" fill-rule="evenodd" style="fill:${col}" d="M${a.x - r1} ${a.y}a${r1} ${r1} 0 1 0 ${2 * r1} 0a${r1} ${r1} 0 1 0 ${-2 * r1} 0Z${r0 ? `M${a.x - r0} ${a.y}a${r0} ${r0} 0 1 0 ${2 * r0} 0a${r0} ${r0} 0 1 0 ${-2 * r0} 0Z` : ""}"/>`;
-      else
-        fills += `<path class="ringfill" style="fill:${col}" d="M${P(r0, k0)}L${P(r1, k0)}${arc(r1, k0, k1, 1)}L${P(r0, k1)}${r0 ? arc(r0, k0, k1, 0) : ""}Z"/>`;
+      const outer = line(0, run, j, 1),
+        inner = run.every((x) => x.p[j][0] < 1e-9) ? [`${E.fix(a.x)} ${E.fix(a.y)}`] : line(0, run, j, 0).reverse();
+      byCol.set(col, (byCol.get(col) || "") + `M${outer.join("L")}L${inner.join("L")}Z`);
       // black lines along the near and far side wherever the next piece is a place no shot lands
-      const before = pcs[i - 1],
-        after = pcs[i + 1];
-      for (const [r, open] of [
-        [r0, r0 > 0 && (!before || before[2] <= 0)],
-        [r1, !after || after[2] <= 0],
-      ])
-        if (open)
-          edges += full ? `<circle class="ringedge" cx="${a.x}" cy="${a.y}" r="${r}"/>` : `<path class="ringedge" d="M${P(r, k0)}${arc(r, k0, k1, 1)}"/>`;
+      const before = pcs[j - 1],
+        after = pcs[j + 1];
+      if (r0 > 0 && (!before || before[2] <= 0)) edgeD.push(`M${line(0, run, j, 0).join("L")}`);
+      if (!after || after[2] <= 0) edgeD.push(`M${outer.join("L")}`);
     });
   }
-  // black lines across the wedges where one side can be hit and the other can't
-  if (!full)
+  // black lines across, where one side of a break can be hit and the other can't
+  if (runs.length > 1)
     runs.forEach((run, i) => {
       const next = runs[(i + 1) % runs.length];
-      const k = run.k1;
+      const pa = run[run.length - 1],
+        pb = next[0];
+      const t = pb.t;
       const lit = (pcs) => pcs.filter((p) => p[2] > 0).map((p) => [p[0], p[1]]);
-      const A0 = lit(run.pcs),
-        B0 = lit(next.pcs);
-      const pts = [...new Set([...A0.flat(), ...B0.flat()])].sort((x, y) => x - y);
+      const A0 = lit(pa.p),
+        B0 = lit(pb.p);
+      const cuts = [...new Set([...A0.flat(), ...B0.flat()])].sort((x, y) => x - y);
       const inn = (L, x) => L.some(([p, q]) => x > p && x < q);
-      for (let j = 0; j + 1 < pts.length; j++) {
-        const mid = (pts[j] + pts[j + 1]) / 2;
-        if (inn(A0, mid) !== inn(B0, mid)) edges += `<path class="ringedge" d="M${P(pts[j], k)}L${P(pts[j + 1], k)}"/>`;
+      for (let j = 0; j + 1 < cuts.length; j++) {
+        const mid = (cuts[j] + cuts[j + 1]) / 2;
+        if (inn(A0, mid) !== inn(B0, mid)) edgeD.push(`M${P(cuts[j], t)}L${P(cuts[j + 1], t)}`);
       }
     });
-  return `<g class="accring"><title>Hit chance by range on open ground${ui.atk && ui.atk.att === id && ent(ui.atk.tgt) ? ` against ${h(ent(ui.atk.tgt).name)}` : ""}: ${hits.map((x, i) => `R${i + 1} ${Math.max(0, Math.round(x * 100))}%`).join(", ")}. Past cover it drops by the first object's penalty; more cover cuts damage, not the odds.</title>${fills}${edges}</g>`;
+  const fills = [...byCol].map(([col, d]) => `<path class="ringfill" style="fill:${col}" d="${d}"/>`).join(""),
+    edges = edgeD.length ? `<path class="ringedge" d="${edgeD.join("")}"/>` : "";
+  ringMemo = {
+    key,
+    svg: `<g class="accring"><title>Hit chance by range on open ground${ui.atk && ui.atk.att === id && ent(ui.atk.tgt) ? ` against ${h(ent(ui.atk.tgt).name)}` : ""}: ${hits.map((x, i) => `R${i + 1} ${Math.max(0, Math.round(x * 100))}%`).join(", ")}. Past cover it drops by the first object's penalty; more cover cuts damage, not the odds.</title>${fills}${edges}</g>`,
+  };
+  return ringMemo.svg;
 }
 // Ctrl while dragging on a turn: the token snaps to the middle of the range band it's in, measured from the target (or the nearest foe).
 function snapRange(id, p) {
