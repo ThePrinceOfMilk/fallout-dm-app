@@ -90,6 +90,7 @@ function mmItem(key, x, y, w, h) {
   };
   if (c.block) o.block = true;
   if (c.round) o.round = true;
+  if (c.water || key === "radLake") o.blob = E.blobShape(); // its own natural outline
   return o;
 }
 function mapMakerBody() {
@@ -141,6 +142,6 @@ function mapMakerBody() {
     <div class="s dim">${m.w} x ${m.h} m, ${m.objects.length} thing${m.objects.length === 1 ? "" : "s"} placed. The party starts at the middle of the left edge.</div>
     <div class="acts">${primary("mmSave", "", m.id ? "Save changes" : "Save map")}${btn("mmClear", "", "Clear")}${m.id ? btn("mmRemove", "", "Delete map", "", "danger") : ""}${btn("closeModal", "", "Cancel")}</div>
   </div>`;
-  const svg = `<div class="mmcanvas"><svg id="mmSvg" tabindex="-1" class="tool-${m.tool}" viewBox="${-m.w / 2 - pad} ${-m.h / 2 - pad} ${m.w + 2 * pad} ${m.h + 2 * pad}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map being drawn, ${m.w} by ${m.h} meters"><rect class="floor" x="${-m.w / 2}" y="${-m.h / 2}" width="${m.w}" height="${m.h}"/><path class="grid" d="${grid}"/>${mmAll().map(draw).join("")}<rect id="mmDraft" class="draft" width="0" height="0"/></svg></div>`;
+  const svg = `<div class="mmcanvas"><svg id="mmSvg" tabindex="-1" class="tool-${m.tool}" viewBox="${-m.w / 2 - pad} ${-m.h / 2 - pad} ${m.w + 2 * pad} ${m.h + 2 * pad}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map being drawn, ${m.w} by ${m.h} meters"><defs>${MAP_DEFS}</defs><rect class="floor" x="${-m.w / 2}" y="${-m.h / 2}" width="${m.w}" height="${m.h}"/><path class="grid" d="${grid}"/>${mmAll().map(draw).join("")}<rect id="mmDraft" class="draft" width="0" height="0"/></svg></div>`;
   return `<div class="mmwrap">${side}${svg}</div>`;
 }

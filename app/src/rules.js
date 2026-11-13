@@ -785,6 +785,59 @@ const DEFAULT_RULES = {
   // 12 Nov: how often a generated outdoor map gets water: a lake on a big map (bigArea square meters or more; less often in a desert),
   // a pond on a small wooded one.
   waterChance: { big: 0.75, bigDesert: 0.35, wooded: 0.5, bigArea: 6000 },
+  // 13 Nov: the ground drawn under a map. Indoors by setting; outdoors by setting, then map, then environment. Building settings on open
+  // ground lay their floor inside their walls (floor: the floor item's kind).
+  terrain: {
+    indoor: {
+      home: "wood",
+      store: "wood",
+      saloon: "wood",
+      church: "wood",
+      police: "tile",
+      clinic: "tile",
+      hospital: "tile",
+      diner: "tile",
+      subway: "tile",
+      vault: "metal",
+      cave: "rock",
+    },
+    indoorDefault: "concrete",
+    theme: {
+      forested: "grass",
+      farm: "grass",
+      desert: "sand",
+      city: "asphalt",
+      roadside: "asphalt",
+      scrapyard: "dirt",
+      raiderCamp: "dirt",
+      military: "dirt",
+      checkpoint: "dirt",
+      ruins: "concrete",
+      cave: "rock",
+      vault: "metal",
+    },
+    map: {
+      forest: "grass",
+      woods: "grass",
+      field: "grass",
+      canyon: "sand",
+      streets: "asphalt",
+      road: "asphalt",
+      parkingLot: "asphalt",
+      courtyard: "concrete",
+      compound: "dirt",
+      cavern: "rock",
+    },
+    floor: {
+      home: "floorWood",
+      store: "floorWood",
+      office: "floorConcrete",
+      factory: "floorConcrete",
+      warehouse: "floorConcrete",
+      police: "floorTile",
+      clinic: "floorTile",
+    },
+  },
   // 12 Nov: how an enemy or ally fights on an automated turn. Rolled once for each when the fight begins; the DM can click the icon to change it.
   // who: human, creature or robot. fits: how likely, by the reach of the gear it carries (melee; close: shotguns, SMGs, pistols; mid: rifles;
   // long: scoped rifles), so nobody is rolled into hanging back with a shotgun. 0 means never.
@@ -1146,6 +1199,10 @@ const DEFAULT_RULES = {
     radLake: { n: "Rad lake", cover: "open", w: 8, h: 5, round: true, walk: true, slow: 0.75, hazard: { on: true, rads: 25, dmg: 3 } },
     // water (12 Nov): deep water can't be walked into; shallow water (and a rad lake) costs a quarter more AP per meter. Big outdoor maps get lakes,
     // small wooded ones ponds, each ringed by shallows.
+    // 13 Nov: the floor inside a building on open ground (drawn under everything, can't be clicked)
+    floorWood: { n: "Wooden floor", cover: "open", w: 4, h: 4, walk: true, floor: "wood" },
+    floorConcrete: { n: "Concrete floor", cover: "open", w: 4, h: 4, walk: true, floor: "concrete" },
+    floorTile: { n: "Tiled floor", cover: "open", w: 4, h: 4, walk: true, floor: "tile" },
     lake: { n: "Lake", cover: "open", w: 24, h: 14, round: true, block: true, water: "deep" },
     pond: { n: "Pond", cover: "open", w: 6, h: 4, round: true, block: true, water: "deep" },
     shallowWater: { n: "Shallow water", cover: "open", w: 6, h: 4, round: true, walk: true, slow: 0.75, water: "shallow" },

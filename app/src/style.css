@@ -7032,3 +7032,193 @@ table.t th {
   font-size: 0.72em;
   letter-spacing: -0.5px;
 }
+
+/* 12 Nov (map art): every material lit from the top left, solid things cast a soft shadow (SVG defs in MAP_DEFS) */
+:is(#map, #mmSvg) .obj.m-none:not(.hazard):not(.note) {
+  fill: url(#gm-none);
+}
+:is(#map, #mmSvg) .obj.m-wood {
+  fill: url(#gm-wood);
+}
+:is(#map, #mmSvg) .obj.m-metal {
+  fill: url(#gm-metal);
+}
+:is(#map, #mmSvg) .obj.m-rust {
+  fill: url(#gm-rust);
+}
+:is(#map, #mmSvg) .obj.m-stone {
+  fill: url(#gm-stone);
+}
+:is(#map, #mmSvg) .obj.m-plant {
+  fill: url(#gm-plant);
+}
+:is(#map, #mmSvg) .obj.m-fabric {
+  fill: url(#gm-fabric);
+}
+:is(#map, #mmSvg) .obj.m-sand {
+  fill: url(#gm-sand);
+}
+:is(#map, #mmSvg) .obj.m-tile {
+  fill: url(#gm-tile);
+}
+:is(#map, #mmSvg) .obj.m-fire {
+  fill: url(#gm-fire);
+}
+:is(#map, #mmSvg) .obj.m-rad {
+  fill: url(#gm-rad);
+  stroke: #d8ff3a;
+}
+:is(#map, #mmSvg) .obj.m-water {
+  fill: url(#gm-water);
+}
+:is(#map, #mmSvg) .obj.m-shallow {
+  fill: url(#gm-shallow);
+}
+:is(#map, #mmSvg) .obj.m-radpool {
+  fill: url(#gm-radpool);
+  stroke: #d8ff3a;
+}
+:is(#map, #mmSvg) .obj:is(.m-water, .m-shallow, .m-radpool) .gly {
+  opacity: 1 !important;
+}
+:is(#map, #mmSvg) .obj:is(.m-water, .m-shallow, .m-radpool) .gly .d {
+  stroke: rgba(210, 240, 255, 0.55);
+}
+:is(#map, #mmSvg) .obj:not(.tree):not(.hazard):not(.note):not(.m-water):not(.m-shallow):not(.m-radpool):not(.dooropen) {
+  filter: url(#osh);
+}
+:is(#map, #mmSvg) .obj .gly > :not(.d):not(.dot):not(.pale) {
+  stroke-linejoin: round;
+}
+/* trees: the leaves shaded from the middle, with a darker outline so a canopy reads even when faint */
+:is(#map, #mmSvg) .obj .gly.canopy > * {
+  fill: url(#gm-canopy);
+}
+:is(#map, #mmSvg) .obj .gly.canopyline > * {
+  fill: none;
+  stroke: rgba(150, 230, 130, 0.45);
+  stroke-width: 1px;
+  stroke-dasharray: none;
+}
+:is(#map, #mmSvg) .obj .gly.canopyline .d {
+  display: none;
+}
+/* hazards: a tinted zone with a dashed edge in the hazard's color, and a dark badge with the icon in that color */
+:is(#map, #mmSvg) .obj .hzz rect {
+  stroke-width: 1.5px !important;
+  stroke-dasharray: 5 3;
+  vector-effect: non-scaling-stroke;
+}
+:is(#map, #mmSvg) .obj.hz-water .hzz rect {
+  stroke-dasharray: none;
+}
+:is(#map, #mmSvg) .obj .hzbadge circle {
+  fill: #0a130d;
+  stroke: currentColor;
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+:is(#map, #mmSvg) .obj .hzbadge .hzi * {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+:is(#map, #mmSvg) .obj .hzbadge .hzi .f {
+  fill: currentColor;
+  stroke: none;
+}
+:is(#map, #mmSvg) .obj.hidtrap .hzbadge {
+  opacity: 0.5;
+}
+:is(#map, #mmSvg) .obj.hidtrap .hzbadge circle {
+  stroke-dasharray: 3 2;
+}
+:is(#map, #mmSvg) .obj.sprung .hzbadge {
+  opacity: 0.35;
+  color: #9a9a9a !important;
+}
+:is(#map, #mmSvg) .obj.sel .hzbadge circle {
+  stroke: #fff;
+}
+/* names on the map sit in their own layer above the objects; a dark outline keeps them readable over anything */
+:is(#map, #mmSvg) .obj.olabels {
+  filter: none !important;
+}
+:is(#map, #mmSvg) .obj.olabels text {
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.85);
+  stroke-width: 2.5px;
+  vector-effect: non-scaling-stroke;
+}
+/* 13 Nov: the corner handle on a selected object resizes it */
+:is(#map, #mmSvg) .sizehandle {
+  fill: var(--bright);
+  stroke: #000;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+  cursor: nwse-resize;
+}
+.objsize {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.objsize .cell {
+  width: 38px;
+}
+/* 13 Nov: in a fight, tokens other than the one whose turn it is let clicks through to the one underneath */
+#map .tok.locked {
+  pointer-events: none;
+}
+html.shiftdown #map .tok.locked {
+  pointer-events: auto;
+}
+
+/* 13 Nov: materials outlined in a dark shade of themselves, so they sit on any floor; cover tier still sets the outline's weight and dash */
+:is(#map, #mmSvg) .obj.m-wood {
+  stroke: #2e1f0c;
+}
+:is(#map, #mmSvg) .obj.m-metal {
+  stroke: #1d2429;
+}
+:is(#map, #mmSvg) .obj.m-rust {
+  stroke: #2e140a;
+}
+:is(#map, #mmSvg) .obj.m-stone {
+  stroke: #2a2b27;
+}
+:is(#map, #mmSvg) .obj.m-plant {
+  stroke: #0f2a0d;
+}
+:is(#map, #mmSvg) .obj.m-fabric {
+  stroke: #221a30;
+}
+:is(#map, #mmSvg) .obj.m-sand {
+  stroke: #3a3018;
+}
+:is(#map, #mmSvg) .obj.m-tile {
+  stroke: #3e4a48;
+}
+:is(#map, #mmSvg) .obj .gly .pale {
+  fill: rgba(225, 245, 230, 0.55);
+}
+/* 13 Nov: floors inside buildings are ground, not things: no clicks, no shadow, no outline */
+:is(#map, #mmSvg) .obj.floorobj {
+  pointer-events: none;
+  filter: none !important;
+  stroke: none;
+}
+:is(#map, #mmSvg) .floor {
+  stroke: var(--ink);
+}
+/* walls and solid buildings keep a light edge so they stay crisp from far out; trees draw their outline stronger over grass */
+:is(#map, #mmSvg) .obj.tier-impenetrable {
+  stroke: #dfe4d8;
+}
+:is(#map, #mmSvg) .obj .gly.canopyline > * {
+  stroke: rgba(185, 250, 160, 0.75) !important;
+  stroke-width: 1.3px;
+}

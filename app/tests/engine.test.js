@@ -425,7 +425,7 @@ test("room generator: every theme fills a room, stays in bounds, no overlaps, ci
     const map = { w: 40, h: 30 }; const room = E.generateRoom(map, id, DEFAULT_RULES, Math.random, [{ x: -18, y: 0 }]);
     assert.ok(room.length >= 2, id);
     for (const o of room) { assert.ok(Math.abs(o.x) <= map.w / 2 + 0.01 && Math.abs(o.y) <= map.h / 2 + 0.01, `${id} ${o.item} out of bounds`); assert.ok(DEFAULT_RULES.cover[o.cover], o.item); }
-    room.forEach((p, i) => room.forEach((q, j) => { if (i < j && !(p.item === "concreteWall" && q.item === "concreteWall") && p.item !== "shallowWater" && q.item !== "shallowWater") assert.ok(Math.abs(p.x - q.x) >= (p.w + q.w) / 2 - 0.05 || Math.abs(p.y - q.y) >= (p.h + q.h) / 2 - 0.05, `${id}: ${p.item} overlaps ${q.item}`); }));  // wall pieces meet at corners
+    room.forEach((p, i) => room.forEach((q, j) => { if (i < j && !(p.item === "concreteWall" && q.item === "concreteWall") && p.item !== "shallowWater" && q.item !== "shallowWater" && !p.floor && !q.floor) assert.ok(Math.abs(p.x - q.x) >= (p.w + q.w) / 2 - 0.05 || Math.abs(p.y - q.y) >= (p.h + q.h) / 2 - 0.05, `${id}: ${p.item} overlaps ${q.item}`); }));  // wall pieces meet at corners
   }
   const city = E.generateRoom({ w: 90, h: 70 }, "city", DEFAULT_RULES, Math.random);
   assert.ok(city.filter((o) => o.item === "building" && o.block && o.cover === "impenetrable").length >= 2, "concrete blocks");
@@ -580,9 +580,9 @@ test("layouts: every map with every setting fits, nothing overlaps, and everythi
   for (const id of Object.keys(LAYOUT_RULES.maps)) for (const theme of Object.keys(LAYOUT_RULES.roomThemes)) for (const seed of [11, 4242, 90001]) {
     const { m, objs } = room(id, theme, seed); const tag = `${id}/${theme}/${seed}`;
     for (const o of objs) assert.ok(o.x - o.w / 2 >= -m.w / 2 - 0.01 && o.x + o.w / 2 <= m.w / 2 + 0.01 && o.y - o.h / 2 >= -m.h / 2 - 0.01 && o.y + o.h / 2 <= m.h / 2 + 0.01, `${tag}: ${o.item} is off the map`);
-    for (let i = 0; i < objs.length; i++) for (let j = i + 1; j < objs.length; j++) { const a = objs[i], b = objs[j]; if ((wallish(a) && wallish(b)) || a.item === "shallowWater" || b.item === "shallowWater") continue; /* a lake sits in its shallows */ assert.ok(!(Math.abs(a.x - b.x) < (a.w + b.w) / 2 - 0.05 && Math.abs(a.y - b.y) < (a.h + b.h) / 2 - 0.05), `${tag}: ${a.item} on top of ${b.item}`); }
+    for (let i = 0; i < objs.length; i++) for (let j = i + 1; j < objs.length; j++) { const a = objs[i], b = objs[j]; if ((wallish(a) && wallish(b)) || a.item === "shallowWater" || b.item === "shallowWater" || a.floor || b.floor) continue; /* a lake sits in its shallows; a floor is under everything */ assert.ok(!(Math.abs(a.x - b.x) < (a.w + b.w) / 2 - 0.05 && Math.abs(a.y - b.y) < (a.h + b.h) / 2 - 0.05), `${tag}: ${a.item} on top of ${b.item}`); }
     const R = E.layoutReach(objs, m); assert.ok(R.share >= 0.85, `${tag}: the floor is cut into pieces`); assert.ok(R.inMain({ x: -m.w / 2 + 2, y: 0 }), `${tag}: the party is walled in`);
-    const stuff = objs.filter((o) => !wallish(o));
+    const stuff = objs.filter((o) => !wallish(o) && !o.floor);
     for (const o of stuff) assert.ok(R.reachable(o) || stuff.some((p) => p !== o && touching(o, p) && R.reachable(p)), `${tag}: nobody can get to the ${o.item}`);
     const n = {}; for (const o of objs) n[o.item] = (n[o.item] || 0) + 1;
     const perBuilding = id === "streets" && E.LAYOUT.indoorThemes.includes(theme);  // in a city the limits are per building

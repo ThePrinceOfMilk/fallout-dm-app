@@ -975,7 +975,8 @@ const ACT = {
                 ),
               };
         let made = E.generateRoom(cm ? { ...mapOf(), id: "custom" } : mapOf(), S.scene.theme, r2, Math.random, [...party, ...foesAt], () => "o" + S.seq++);
-        if (S.scene.density === "sparse") made = made.filter((o) => o.block || o.door || /wall|building|void/i.test(o.item || "") || Math.random() > 0.35);
+        if (S.scene.density === "sparse")
+          made = made.filter((o) => o.block || o.door || o.floor || /wall|building|void/i.test(o.item || "") || Math.random() > 0.35);
         const corners = (o) =>
           [
             [0, 0],
@@ -1030,6 +1031,14 @@ const ACT = {
       act("Blocks walking", () => {
         o.block = on;
       });
+  },
+  setObjSize(val, el) {
+    const o = S.scene.objects.find((x) => x.id === ui.mapSel);
+    const n = num(val);
+    if (!o || n == null || n <= 0) return render();
+    act("Resize", () => {
+      o[el.dataset.k] = E.fix(Math.max(0.1, n));
+    });
   },
   setObjLabel(val) {
     const o = S.scene.objects.find((x) => x.id === ui.mapSel);

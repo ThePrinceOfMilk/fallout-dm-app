@@ -1236,7 +1236,7 @@ async function launch() {
     assert.deepStrictEqual(r.guards, [true, 0, 2], "selling with no stock and taking back unspent points are both safe");
     assert.deepStrictEqual(r.bible, [2, true, true], "opening the bible twice uses the same copy");
     const hosted = fs.readFileSync(path.resolve(__dirname, "../../index.html"), "utf8");
-    assert.ok(/id="wiki"><\/script>/.test(hosted) && hosted.length < 1.8e6, "the hosted page carries no copy of the bible");
+    assert.ok(/id="wiki"><\/script>/.test(hosted) && hosted.length < 2.4e6, "the hosted page carries no copy of the bible"); // the app alone is about 1.8 MB; the bible would add well over 1 MB
   });
   await ok("Enemy map icons follow faction and creature, and setup gives the encounter the middle", async () => {
     const r = await page.evaluate(() => {

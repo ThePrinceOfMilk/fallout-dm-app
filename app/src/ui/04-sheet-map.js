@@ -545,7 +545,7 @@ function mapLegend() {
   const sw = (m, n) => `<span class="lg"><svg viewBox="0 0 20 14"><rect class="lgobj m-${m}" x="2" y="2" width="16" height="10" rx="1"/></svg>${n}</span>`;
   const tier = (t, n) => `<span class="lg"><svg viewBox="0 0 20 14"><rect class="lgtier lt-${t}" x="2" y="2" width="16" height="10"/></svg>${n}</span>`;
   const ring = [0.1, 0.3, 0.5, 0.7, 0.9].map((x) => `<i style="background:${ringColor(x)}"></i>`).join("");
-  return `<div class="maplegend"><b>Made of</b>${sw("wood", "Wood")}${sw("metal", "Metal")}${sw("rust", "Wrecks")}${sw("stone", "Stone")}${sw("plant", "Plants")}${sw("fabric", "Cloth")}${sw("sand", "Sand")}${sw("tile", "Tile")}${sw("rad", "Radioactive")}${sw("water", "Deep water")}${sw("shallow", "Shallow water")}
+  return `<div class="maplegend"><b>Made of</b>${sw("wood", "Wood")}${sw("metal", "Metal")}${sw("rust", "Wrecks")}${sw("stone", "Stone")}${sw("plant", "Plants")}${sw("fabric", "Cloth")}${sw("sand", "Sand")}${sw("tile", "Tile")}${sw("rad", "Radioactive")}${sw("radpool", "Rad lake")}${sw("water", "Deep water")}${sw("shallow", "Shallow water")}
     <b>Cover (outline)</b>${tier("concealment", "Concealment: dashed")}${tier("soft", "Soft: thin")}${tier("hard", "Hard: thick")}${tier("impenetrable", "Impenetrable: thickest")}
     <b>Tokens</b><span class="lg"><svg viewBox="0 0 20 14"><circle class="lgb pc" cx="10" cy="7" r="5"/></svg>Party</span><span class="lg"><svg viewBox="0 0 20 14"><circle class="lgb ally" cx="10" cy="7" r="5"/></svg>Ally</span><span class="lg"><svg viewBox="0 0 20 14"><rect class="lgb npc" x="6" y="3" width="8" height="8" transform="rotate(45 10 7)"/></svg>Enemy</span>
     <b>Accuracy ring</b><span class="lg ringkey">${ring}</span><span class="lg">low to high · clear = no shot</span></div>`;
@@ -586,7 +586,7 @@ function mapExtras() {
           E.isDoor(sel, S.rules)
             ? `<button class="btn tiny ${sel.open ? "" : "on"}" data-a="objDoor" data-v="${sel.id}" title="A shut door stops walking and sight; shots still go through at its cover">${sel.open ? "Open: shut it" : "Shut: open it"}</button>`
             : `<label class="chk s"><input type="checkbox" data-a="objBlock" data-v="${sel.id}"${E.walkBlocks(sel, S.rules) ? " checked" : ""}>Blocks walking</label>`
-        }<input id="objLabel" autocomplete="off" class="grow" placeholder="Label" data-c="setObjLabel" value="${h(sel.label || "")}">${btn("objDel", sel.id, "Remove", "", "tiny")}</div>`
+        }<span class="objsize" title="Size in meters">${numBox(`id="objW" data-c="setObjSize" data-k="w" aria-label="Width in meters"`, sel.w, "cell")}x${numBox(`id="objH" data-c="setObjSize" data-k="h" aria-label="Height in meters"`, sel.h, "cell")}m</span><input id="objLabel" autocomplete="off" class="grow" placeholder="Label" data-c="setObjLabel" value="${h(sel.label || "")}">${btn("objDel", sel.id, "Remove", "", "tiny")}</div>`
       : ""
   }${!sel && !ui.place ? `<div class="maptools s dim maphint">Select an object, then drag its handle or press Q/E to turn it.</div>` : ""}${ui.place ? placeBar() : ""}`;
 }
@@ -734,7 +734,7 @@ const lobes = (r, n, cx = 0, cy = 0) => {
   }
   return p + "Z";
 };
-const box = (x, y, w, h, c = "") => `<rect x="${x}" y="${y}" width="${w}" height="${h}"${c ? ` class="${c}"` : ""}/>`;
+const box = (x, y, w, h, c = "") => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx=".035"${c ? ` class="${c}"` : ""}/>`; // corners softened a touch
 const dline = (d) => `<path class="d" d="${d}"/>`;
 const CIRC = (r, x = 0, y = 0, c = "") => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r}"${c ? ` class="${c}"` : ""}/>`;
 // TOKEN ICONS: how a character shows on the map. Same box as the default person: head at the top, shoulders at the bottom.
@@ -1021,6 +1021,26 @@ const GLYPH = {
   radLake: `<ellipse rx=".5" ry=".5"/>${dline("M-.3 -.1Q-.15 -.2 0 -.1T.3 -.1M-.22 .14Q-.08 .04 .06 .14T.3 .14")}`,
   pin: `<path d="M0 .5L-.32 -.05A.36 .36 0 1 1 .32 -.05Z"/>${CIRC(0.13, 0, -0.2, "pale")}`,
 };
+// 13 Nov: the commonest things drawn again with more detail: planks, drawers, stock on shelves, windscreens and wheels, rims, facets.
+Object.assign(GLYPH, {
+  crate: `${box(-0.5, -0.5, 1, 1)}${box(-0.4, -0.4, 0.8, 0.8, "d")}${dline("M-.4 -.4L.4 .4M-.4 -.13H.4M-.4 .13H.4")}`,
+  crateStack: `${box(-0.5, -0.5, 0.49, 0.49)}${box(0.01, -0.5, 0.49, 0.49)}${box(-0.5, 0.01, 0.49, 0.49)}${box(0.01, 0.01, 0.49, 0.49)}${dline("M-.45 -.45L-.06 -.06M.06 -.45L.45 -.06M-.45 .06L-.06 .45M.06 .06L.45 .45")}`,
+  car: `<rect x="-.5" y="-.44" width="1" height=".88" rx=".16" ry=".26"/><path class="pale" d="M.1 -.33L.3 -.38V.38L.1 .33Z"/><path class="pale" d="M-.32 -.31L-.2 -.33V.33L-.32 .31Z"/>${box(-0.18, -0.32, 0.27, 0.64, "d")}${CIRC(0.035, 0.45, -0.3, "dot")}${CIRC(0.035, 0.45, 0.3, "dot")}${dline("M-.3 -.44V-.4M.3 -.44V-.4M-.3 .44V.4M.3 .44V.4")}`,
+  shelves: `${box(-0.5, -0.5, 1, 1)}${dline("M-.5 0H.5M-.5 -.5V.5M.5 -.5V.5")}${box(-0.44, -0.38, 0.12, 0.28, "pale")}${box(-0.26, -0.38, 0.18, 0.28, "pale")}${box(0.04, -0.38, 0.1, 0.28, "pale")}${box(0.24, -0.38, 0.18, 0.28, "pale")}${box(-0.4, 0.1, 0.2, 0.28, "pale")}${box(-0.12, 0.1, 0.14, 0.28, "pale")}${box(0.14, 0.1, 0.24, 0.28, "pale")}`,
+  desk: `${box(-0.5, -0.5, 1, 1)}${box(-0.44, -0.4, 0.26, 0.8, "d")}${dline("M-.44 -.13H-.18M-.44 .13H-.18")}${box(0.05, -0.34, 0.28, 0.22, "pale")}${box(0.1, 0.08, 0.2, 0.26, "d")}`,
+  barrel: `${CIRC(0.46)}${CIRC(0.36, 0, 0, "d")}${CIRC(0.07, 0.16, -0.16, "dot")}`,
+  barrels: `${CIRC(0.24, -0.25, 0)}${CIRC(0.24, 0.25, 0)}${CIRC(0.17, -0.25, 0, "d")}${CIRC(0.17, 0.25, 0, "d")}${CIRC(0.04, -0.18, -0.08, "dot")}${CIRC(0.04, 0.32, -0.08, "dot")}`,
+  rock: `<path d="M-.46 -.1L-.22 -.46L.26 -.42L.48 -.04L.3 .42L-.24 .46Z"/><path class="pale" d="M-.22 -.38L.2 -.36L.06 -.12L-.16 -.16Z" style="opacity:.35"/>${dline("M-.16 -.16L.06 -.12L.28 -.04M.06 -.12L-.02 .3M-.16 -.16L-.34 .1")}`,
+  sandbags: `<rect x="-.5" y="-.46" width=".33" height=".92" rx=".16"/><rect x="-.17" y="-.46" width=".33" height=".92" rx=".16"/><rect x=".16" y="-.46" width=".33" height=".92" rx=".16"/>${dline("M-.34 -.3V.3M0 -.3V.3M.33 -.3V.3")}`,
+  building: `${box(-0.5, -0.5, 1, 1)}${dline("M-.5 -.5L-.2 0L-.5 .5M.5 -.5L.2 0L.5 .5M-.2 0H.2")}`,
+  bed: `${box(-0.5, -0.5, 1, 1)}${box(-0.46, -0.4, 0.22, 0.8, "pale")}${box(-0.2, -0.46, 0.68, 0.92, "d")}${dline("M-.06 -.46V.46")}`,
+  couch: `${box(-0.5, -0.5, 1, 1)}${box(-0.5, -0.5, 1, 0.3, "d")}${box(-0.5, -0.5, 0.12, 1, "d")}${box(0.38, -0.5, 0.12, 1, "d")}${dline("M0 -.2V.5")}`,
+  bush: `<path d="${lobes(0.3, 6, -0.12, -0.08)}"/><path d="${lobes(0.26, 6, 0.16, 0.12)}"/>${CIRC(0.04, -0.14, -0.1, "dot")}${CIRC(0.04, 0.14, 0.14, "dot")}${CIRC(0.035, 0.02, -0.02, "dot")}`,
+  tree: `<path d="${lobes(0.42, 9)}"/>${dline(lobes(0.26, 7))}${dline(lobes(0.12, 5))}`,
+  kitchenTable: `${box(-0.34, -0.3, 0.68, 0.6)}${box(-0.26, -0.48, 0.16, 0.14)}${box(0.1, -0.48, 0.16, 0.14)}${box(-0.26, 0.34, 0.16, 0.14)}${box(0.1, 0.34, 0.16, 0.14)}${CIRC(0.07, -0.16, 0, "pale")}${CIRC(0.07, 0.16, 0, "pale")}`,
+  dumpster: `${box(-0.5, -0.5, 1, 1)}${box(-0.46, -0.46, 0.45, 0.62, "d")}${box(0.01, -0.46, 0.45, 0.62, "d")}${box(-0.46, 0.25, 0.92, 0.16, "d")}`,
+  door: `${box(-0.5, -0.5, 1, 1)}${dline("M-.38 -.5V.5M.38 -.5V.5")}${CIRC(0.05, 0.25, 0, "dot")}`,
+});
 const ITEM_GLYPH = {
   chest: "chest",
   desk: "desk",
@@ -1043,7 +1063,10 @@ const ITEM_GLYPH = {
   toolCart: "toolCart",
   shelves: "shelves",
   crate: "crate",
-  crateStack: "crate",
+  crateStack: "crateStack",
+  floorWood: "plainWall",
+  floorConcrete: "plainWall",
+  floorTile: "plainWall",
   pallet: "pallet",
   forklift: "forklift",
   barrels: "barrels",
@@ -1193,22 +1216,290 @@ const hzGlyph = (sub) =>
 const KIND_GLYPH = { cover: "crate", hard: "plainWall", wall: "plainWall", tree: "tree", hazard: "hz", note: "pin" };
 const MAT_OF = {};
 for (const [m, list] of Object.entries({
-  wood: "woodDoor desk lDesk kitchenTable workbench bench frontCounter barCounter radioTable pokerTable dresser bookshelf pallet crate footlocker chest ammoCrate log stump piano stage pew altar pulpit dinerCounter fence scarecrow waterTrough deadTree crateStack spikeBarricade cableSpool tentPole operatingTable",
+  wood: "floorWood woodDoor desk lDesk kitchenTable workbench bench frontCounter barCounter radioTable pokerTable dresser bookshelf pallet crate footlocker chest ammoCrate log stump piano stage pew altar pulpit dinerCounter fence scarecrow waterTrough deadTree crateStack spikeBarricade cableSpool tentPole operatingTable",
   metal:
     "steelDoor shopShelf cashRegister examTable cabinet lockers officeSafe shelves cellBars armoryCage dumpster shippingContainer metalSheet engineBlock mineCart gasPump vendingMachine slotMachine jukebox phoneBooth lamppost hydrant fridge stove oilDrum barrels boiler pipeRack generator pressMachine conveyor forklift toolCart copier cooler vaultConsole reactorCore waterPurifier silo tractor cage metalCrate scrapWall fuelTank medCabinet turnstile spotlight burnBarrel nukaMachine wheelchair tankTrap razorWire railTrack billboard mailbox flagpole officeChair supportBeam subwayCar barStool",
   rust: "ironDoor wreck car bus truck motorcycle scrapHeap carStack tirePile tireWall trashPile",
   stone:
-    "rock smallRock boulder stoneWall ruinWall rubble building concreteWall pillar barricade concreteBlock brokenColumn collapsedWall statue stalagmite oreVein crater concretePipe guardTower tollBooth guardBooth ticketBooth void",
+    "floorConcrete rock smallRock boulder stoneWall ruinWall rubble building concreteWall pillar barricade concreteBlock brokenColumn collapsedWall statue stalagmite oreVein crater concretePipe guardTower tollBooth guardBooth ticketBooth void",
   plant: "bush tree bigTree thicket pottedPlant cactus cropRow hedge hayBale",
   fabric: "bed cot bedroll couch bunkBed tarpWall fieldTent mattress curtain hospitalBed gurney boothSeat partition",
   sand: "dune sandbags hesco",
-  tile: "toilet bathtub sink",
+  tile: "floorTile toilet bathtub sink",
   fire: "campfire",
-  rad: "radBarrel radLake",
+  rad: "radBarrel",
+  radpool: "radLake",
   water: "lake pond",
   shallow: "shallowWater",
 }))
   for (const k of list.split(" ")) MAT_OF[k] = m;
+// 13 Nov: terrain. The ground under the map, a pattern in real meters, picked by rules.terrain; floors inside buildings use the same patterns.
+const TERRAIN_DOTS = {
+  grass: [
+    [
+      "#1c3d20",
+      [
+        [1.1, 1.2, 0.35],
+        [2.4, 0.6, 0.25],
+        [0.4, 2.6, 0.3],
+      ],
+    ],
+  ],
+  sand: [
+    [
+      "#57492b",
+      [
+        [0.6, 1.4, 0.05],
+        [2.1, 1.5, 0.04],
+        [1.3, 2.7, 0.05],
+        [2.7, 0.3, 0.04],
+      ],
+    ],
+  ],
+  dirt: [
+    [
+      "#372b1d",
+      [
+        [0.5, 0.6, 0.18],
+        [1.9, 0.4, 0.12],
+        [1.2, 1.6, 0.22],
+        [2.5, 2.1, 0.15],
+        [0.4, 2.5, 0.1],
+      ],
+    ],
+    [
+      "#4a3b28",
+      [
+        [1.6, 1.0, 0.05],
+        [0.9, 2.2, 0.04],
+        [2.6, 0.9, 0.05],
+      ],
+    ],
+  ],
+  asphalt: [
+    [
+      "#24272a",
+      [
+        [0.4, 0.5, 0.05],
+        [1.7, 0.9, 0.04],
+        [1.1, 2, 0.05],
+        [2.6, 2.5, 0.04],
+        [2.2, 1.4, 0.03],
+      ],
+    ],
+  ],
+  concrete: [
+    [
+      "#2e3234",
+      [
+        [0.5, 0.6, 0.04],
+        [1.4, 1.3, 0.05],
+        [0.8, 1.6, 0.03],
+      ],
+    ],
+  ],
+  metal: [
+    [
+      "#3a444d",
+      [
+        [0.1, 0.1, 0.03],
+        [1.1, 0.1, 0.03],
+        [0.1, 1.1, 0.03],
+        [1.1, 1.1, 0.03],
+      ],
+    ],
+  ],
+  rock: [
+    [
+      "#332b26",
+      [
+        [0.6, 1.9, 0.2],
+        [2.3, 2.4, 0.16],
+      ],
+    ],
+  ],
+};
+// [ground color, lines drawn on it, tile size in meters]
+const TERRAIN = {
+  grass: [
+    "#132c17",
+    '<path d="M.3 .9l.1-.3.1.3M1.5 .4l.1-.3.1.3M2.2 1.7l.1-.3.1.3M.9 2.1l.1-.3.1.3M2.6 2.6l.1-.3.1.3" stroke="#2a5a2c" stroke-width=".07" fill="none"/>',
+    3,
+  ],
+  sand: ["#4a3f24", '<path d="M0 .8q.75-.3 1.5 0t1.5 0M0 2.2q.75-.3 1.5 0t1.5 0" stroke="#5c4f2f" stroke-width=".06" fill="none"/>', 3],
+  dirt: ["#2b2217", "", 3],
+  asphalt: ["#1a1c1e", '<path d="M.2 2.8l.5-.2.3.1" stroke="#111314" stroke-width=".05" fill="none"/>', 3],
+  concrete: ["#25282a", '<path d="M0 0H2V2" stroke="#1b1d1f" stroke-width=".06" fill="none"/>', 2],
+  wood: [
+    "#36261a",
+    '<path d="M0 .3H3M0 .6H3M0 .9H3M0 1.2H3M0 1.5H3M0 1.8H3M0 2.1H3M0 2.4H3M0 2.7H3M0 3H3" stroke="#271b11" stroke-width=".035"/>' +
+      '<path d="M1 0V.3M2.2 .3V.6M.5 .6V.9M1.7 .9V1.2M2.6 1.2V1.5M.9 1.5V1.8M2 1.8V2.1M.3 2.1V2.4M1.4 2.4V2.7M2.4 2.7V3" stroke="#271b11" stroke-width=".035"/>',
+    3,
+  ],
+  tile: ["#2b3533", '<path d="M0 0H.6V.6" stroke="#212927" stroke-width=".035" fill="none"/>', 0.6],
+  metal: ["#252c33", '<path d="M0 0H1.2V1.2" stroke="#1a2026" stroke-width=".05" fill="none"/>', 1.2],
+  rock: ["#28221e", '<path d="M0 .7l.8.3.5-.4.9.5.8-.2M1 3l.4-1 .9-.3" stroke="#1d1815" stroke-width=".05" fill="none"/>', 3],
+};
+const TERRAIN_DEFS = Object.entries(TERRAIN)
+  .map(([k, [base, art, size]]) => {
+    const dots = (TERRAIN_DOTS[k] || [])
+      .map(([c, l]) => l.map(([x, y, r]) => '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c + '"/>').join(""))
+      .join("");
+    return (
+      '<pattern id="ter-' +
+      k +
+      '" patternUnits="userSpaceOnUse" width="' +
+      size +
+      '" height="' +
+      size +
+      '"><rect width="' +
+      size +
+      '" height="' +
+      size +
+      '" fill="' +
+      base +
+      '"/>' +
+      art +
+      dots +
+      "</pattern>"
+    );
+  })
+  .join("");
+// 12 Nov (map art): shared SVG defs for the map and the map creator. Each material is lit from the top left (a gradient from lighter to
+// darker of its color), plants and water are shaded from the middle out, and solid things cast a soft shadow. Hazards are a tinted zone in
+// their own color with a round badge carrying their icon; a trap is just the badge.
+const MAT_COL = {
+  none: "#2c7a44",
+  wood: "#7a5a32",
+  metal: "#5f6f78",
+  rust: "#7a4630",
+  stone: "#7d7f76",
+  plant: "#2f6b2c",
+  fabric: "#5c4f72",
+  sand: "#9a8550",
+  tile: "#9fb0ad",
+  fire: "#5a2a10",
+  rad: "#4a5c10",
+};
+const HZ_COL = {
+  fire: "#ff7a1a",
+  rads: "#d8ff3a",
+  gas: "#9be05a",
+  acid: "#7dff2a",
+  wires: "#ffe14a",
+  mines: "#ff5a3a",
+  spikes: "#d0d0d0",
+  water: "#3f8fe8",
+  shallow: "#8ccaff",
+  trap: "#ffb43f",
+};
+const shade = (hex, f) => {
+  const n = parseInt(hex.slice(1), 16);
+  const c = [n >> 16, (n >> 8) & 255, n & 255].map((v) => Math.round(f >= 0 ? v + (255 - v) * f : v * (1 + f)));
+  return "#" + c.map((v) => v.toString(16).padStart(2, "0")).join("");
+};
+const MAP_DEFS = (() => {
+  const lin = Object.entries(MAT_COL)
+    .filter(([m]) => m !== "plant")
+    .map(
+      ([m, c]) =>
+        `<linearGradient id="gm-${m}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${shade(c, 0.5)}"/><stop offset=".45" stop-color="${shade(c, 0.08)}"/><stop offset="1" stop-color="${shade(c, -0.5)}"/></linearGradient>`,
+    )
+    .join("");
+  const rad = (id, stops) =>
+    `<radialGradient id="${id}" cx=".42" cy=".4" r=".62">${stops.map(([o, c, a]) => `<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join("")}</radialGradient>`;
+  const hz = Object.entries(HZ_COL)
+    .map(([k, c]) =>
+      k === "water"
+        ? rad("hz-water", [
+            [0, "#0d2f5c", 0.95],
+            [1, "#2a6db0", 0.9],
+          ])
+        : rad("hz-" + k, [
+            [0, c, 0.5],
+            [0.7, c, 0.26],
+            [1, c, 0.1],
+          ]),
+    )
+    .join("");
+  return `${lin}${rad("gm-plant", [
+    [0, "#4f9a3e", 1],
+    [1, "#1f4a1a", 1],
+  ])}${rad("gm-water", [
+    [0, "#0d2f5c", 1],
+    [1, "#2f74b8", 1],
+  ])}${rad("gm-shallow", [
+    [0, "#5aa0dc", 0.6],
+    [1, "#8ccaff", 0.28],
+  ])}${rad("gm-radpool", [
+    [0, "#c8f03a", 0.55],
+    [1, "#4a5c10", 0.35],
+  ])}${rad("gm-canopy", [
+    [0, "#5aa848", 1],
+    [1, "#1d4a18", 1],
+  ])}${hz}${TERRAIN_DEFS}<filter id="osh" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx=".16" dy=".22" stdDeviation=".12" flood-color="#000" flood-opacity=".8"/></filter>`;
+})();
+// 13 Nov: liquids (lakes, ponds, shallows, the rad lake; deep water, shallow water and acid placed as hazards) have a natural outline
+// of their own (o.blob, made by E.blobShape): a smooth curve through it, in the object's 1 by 1 box.
+const LIQUID_SUBS = ["water", "shallow", "acid"];
+const isLiquid = (o) => {
+  const c = S.rules.mapItems[o.item];
+  return !!((c && (c.water || o.item === "radLake")) || (o.kind === "hazard" && LIQUID_SUBS.includes(o.sub)));
+};
+function blobPath(blob) {
+  const n = blob.length,
+    f = E.fix;
+  const P = blob.map((r, i) => {
+    const t = (i / n) * 2 * Math.PI;
+    return [Math.cos(t) * r * 0.5, Math.sin(t) * r * 0.5];
+  });
+  let d = `M${f(P[0][0])} ${f(P[0][1])}`;
+  for (let i = 0; i < n; i++) {
+    const p0 = P[(i - 1 + n) % n],
+      p1 = P[i],
+      p2 = P[(i + 1) % n],
+      p3 = P[(i + 2) % n];
+    d += `C${f(p1[0] + (p2[0] - p0[0]) / 6)} ${f(p1[1] + (p2[1] - p0[1]) / 6)} ${f(p2[0] - (p3[0] - p1[0]) / 6)} ${f(p2[1] - (p3[1] - p1[1]) / 6)} ${f(p2[0])} ${f(p2[1])}`;
+  }
+  return d + "Z";
+}
+// the water itself, with a few ripples inside the outline
+const blobGlyph = (o) => `<path d="${blobPath(o.blob)}"/>${dline("M-.24 -.06Q-.12 -.13 0 -.06T.24 -.06M-.14 .1Q-.03 .03 .08 .1T.24 .1")}`;
+/** The ground for the map in use: indoors by setting; outdoors by setting, then map, then environment. */
+function terrainOf() {
+  const T = S.rules.terrain || {};
+  const M = mapOf(),
+    th = S.scene.theme;
+  const indoor = (S.rules.indoorMaps || []).includes(M.id) || (M.id === "custom" && M.w * M.h <= 1600);
+  if (indoor) return (T.indoor || {})[th] || T.indoorDefault || "concrete";
+  const fromMap = (T.map || {})[M.id];
+  if (th === "desert" && fromMap === "grass") return "grass"; // a desert setting in a forest is still a forest floor
+  const env = String(S.scene.env || "");
+  return (
+    (T.theme || {})[th] ||
+    fromMap ||
+    (/desert|dune|waste|sand|canyon|mesa/i.test(env)
+      ? "sand"
+      : /forest|grass|swamp|plain|meadow|wood/i.test(env)
+        ? "grass"
+        : /urban|city|street|town/i.test(env)
+          ? "asphalt"
+          : /cave|mine|tunnel/i.test(env)
+            ? "rock"
+            : "dirt")
+  );
+}
+// A hazard: its zone tinted in its color, and a badge with its icon in the middle (a small one, like a trap, is just the badge).
+function hazardArt(o, w, ht, turn, draw, icon) {
+  const key = HZ_COL[o.sub] ? o.sub : "trap";
+  const col = HZ_COL[key];
+  const small = Math.min(w, ht) <= 1.2;
+  const zone = small
+    ? ""
+    : `<g class="gly hzz" transform="${draw}">${o.blob ? `<path d="${blobPath(o.blob)}"` : `<rect x="-.5" y="-.5" width="1" height="1" rx=".28"`} style="fill:url(#hz-${key});stroke:${col}"/></g>`;
+  const s = E.fix(Math.min(w, ht, 1.6) * (small ? 0.95 : 0.62));
+  return `${zone}<g class="hzbadge" transform="${turn}scale(${s})" style="color:${col}"><circle r=".5"/><g class="hzi" transform="translate(-.33 -.33) scale(.0275)">${icon}</g></g>`;
+}
 const MAP_OBJ = {
   cover: ["Cover", 1],
   hard: ["Hard cover", 1],
@@ -1421,7 +1712,9 @@ function mapSvg() {
     for (let x = -M.w / 2 + step; x < M.w / 2 - 0.01; x += step) grid += `M${x} ${-M.h / 2}V${M.h / 2}`;
     for (let y = -M.h / 2 + step; y < M.h / 2 - 0.01; y += step) grid += `M${-M.w / 2} ${y}H${M.w / 2}`;
   }
-  const objs = S.scene.objects
+  const labels = []; // drawn above every object, so no neighbor or shadow covers a name
+  const objs = [...S.scene.objects]
+    .sort((a, b) => !!b.floor - !!a.floor) // floors first, under everything
     .filter((o) => !(isSpec() && hiddenTrap(o) && !trapsSeen())) // players never see a trap nobody has found
     .map((o) => {
       const w = o.w || 1,
@@ -1429,7 +1722,8 @@ function mapSvg() {
       const tier = E.coverTier(o, S.rules);
       const cv = S.rules.cover[tier] || {};
       const name = o.label || (S.rules.mapItems[o.item] || {}).n || (o.kind === "hazard" && (S.rules.hazardKinds || {})[o.sub]) || MAP_OBJ[o.kind][0];
-      const gl = (o.kind === "hazard" && hzGlyph(o.sub)) || GLYPH[ITEM_GLYPH[o.item] || KIND_GLYPH[o.kind] || "crate"];
+      const gl =
+        o.blob && o.kind !== "hazard" ? blobGlyph(o) : (o.kind === "hazard" && hzGlyph(o.sub)) || GLYPH[ITEM_GLYPH[o.item] || KIND_GLYPH[o.kind] || "crate"];
       const hid = hiddenTrap(o);
       // Drawn at real size in meters, so a tree is tiny on a 220m map and full size when you zoom in. Harder cover looks more solid.
       const turn = o.angle ? `rotate(${o.angle}) ` : "";
@@ -1442,18 +1736,20 @@ function mapSvg() {
       // Trees: a faint circle for the trunk, which is what stops shots, under a fainter picture of the leaves.
       const trunk = E.trunkOf(o, S.rules);
       const hzIcon = o.kind === "hazard" && VICON["h_" + o.sub];
+      const fl = (S.rules.mapItems[o.item] || {}).floor;
+      if (fl)
+        return `<g class="obj floorobj" transform="translate(${o.x} ${o.y})"><rect x="${-w / 2}" y="${-ht / 2}" width="${w}" height="${ht}" style="fill:url(#ter-${fl})"/></g>`; // a floor: the terrain pattern, nothing else
       const art = hzIcon
-        ? // a hazard: its plate at full size, its icon square in the middle so a long thin one (live wires) still reads
-          `<g class="gly hzp" transform="${draw}"><rect x="-.5" y="-.5" width="1" height="1" rx=".16"/></g><g class="gly"><g class="hzi" transform="${turn}scale(${Math.min(w, ht)}) translate(-.42 -.42) scale(.035)">${hzIcon}</g></g>`
+        ? hazardArt(o, w, ht, turn, draw, hzIcon)
         : trunk
-          ? `<g class="gly trunk" style="opacity:${S.rules.trunkOpacity}" transform="scale(${w * trunk} ${ht * trunk})"><ellipse rx=".5" ry=".5"/></g><g class="gly canopy" style="opacity:${S.rules.canopyOpacity}" transform="${draw}">${gl}</g>`
-          : `<g class="gly" style="opacity:${Math.max(0.6, cv.opacity != null ? cv.opacity : 1)}" transform="${draw}">${gl}</g>`;
+          ? `<g class="gly trunk" style="opacity:${S.rules.trunkOpacity}" transform="scale(${w * trunk} ${ht * trunk})"><ellipse rx=".5" ry=".5"/></g><g class="gly canopy" style="opacity:${S.rules.canopyOpacity}" transform="${draw}">${gl}</g><g class="gly canopyline" transform="${draw}">${gl}</g>`
+          : `<g class="gly" style="opacity:${E.fix(0.78 + 0.22 * (cv.opacity != null ? cv.opacity : 1))}" transform="${draw}">${gl}</g>`; // harder cover still more solid
       const hpMax = objHp(o);
       const hpBar_ =
         hpMax && o.dmg
           ? `<g class="ohp"><rect class="ohpbg" x="${-w / 2}" y="${-ht / 2 - label * 0.7}" width="${w}" height="${label * 0.4}"/><rect class="ohpf" x="${-w / 2}" y="${-ht / 2 - label * 0.7}" width="${E.fix(w * clamp(1 - o.dmg / hpMax, 0, 1))}" height="${label * 0.4}"/></g>`
           : "";
-      return `<g class="obj ${o.kind} tier-${tier} m-${MAT_OF[o.item] || "none"} ${o.voidBlock ? "oob" : ""} ${o.loot ? (o.opened ? "opened" : "lootable") : ""} ${o.open && E.isDoor(o, S.rules) ? "dooropen" : ""} ${hid ? "hidtrap" : ""} ${o.kind === "hazard" ? "hz-" + o.sub : ""} ${o.sprung ? "sprung" : ""} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${hpMax ? `, ${fmt(hpMax - (o.dmg || 0))}/${hpMax} HP` : ""}${o.loot ? (o.opened ? ", opened" : ", opens for whoever is within R1 on their turn") : ""}${trunk ? ", only the trunk stops shots" : ""}${E.isDoor(o, S.rules) ? (o.open ? ", open" : ", shut: blocks walking and sight") : E.walkBlocks(o, S.rules) ? ", blocks walking (it would have to be vaulted)" : ""}${(S.rules.mapItems[o.item] || {}).hazard ? ", radioactive" : ""}${hid ? ", hidden: the players can't see it" : ""}${o.sprung ? ", sprung" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle></g>` : ""}${hpBar_}${showName || o.loot ? `<text style="font-size:${label}px" y="${ht / 2 + label}">${h(name)}${o.loot && o.opened ? " (open)" : ""}</text>` : ""}</g>`;
+      return `<g class="obj ${o.kind} tier-${tier} m-${MAT_OF[o.item] || "none"} ${o.voidBlock ? "oob" : ""} ${o.loot ? (o.opened ? "opened" : "lootable") : ""} ${o.open && E.isDoor(o, S.rules) ? "dooropen" : ""} ${hid ? "hidtrap" : ""} ${o.kind === "hazard" ? "hz-" + o.sub : ""} ${o.sprung ? "sprung" : ""} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${hpMax ? `, ${fmt(hpMax - (o.dmg || 0))}/${hpMax} HP` : ""}${o.loot ? (o.opened ? ", opened" : ", opens for whoever is within R1 on their turn") : ""}${trunk ? ", only the trunk stops shots" : ""}${E.isDoor(o, S.rules) ? (o.open ? ", open" : ", shut: blocks walking and sight") : E.walkBlocks(o, S.rules) ? ", blocks walking (it would have to be vaulted)" : ""}${(S.rules.mapItems[o.item] || {}).hazard ? ", radioactive" : ""}${hid ? ", hidden: the players can't see it" : ""}${o.sprung ? ", sprung" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle><rect class="sizehandle" data-size="${o.id}" x="${E.fix(w / 2 - v.w * 0.011)}" y="${E.fix(ht / 2 - v.w * 0.011)}" width="${E.fix(v.w * 0.022)}" height="${E.fix(v.w * 0.022)}"><title>Drag to resize (Shift: exact, not to 0.1 m)</title></rect></g>` : ""}${hpBar_}</g>${showName || o.loot ? (labels.push(`<text style="font-size:${label}px" x="${o.x}" y="${E.fix(o.y + ht / 2 + label)}">${h(name)}${o.loot && o.opened ? " (open)" : ""}</text>`), "") : ""}`;
     })
     .join("");
   const me = isSpec() ? null : k ? (fightPhase() ? actorId() : null) : ui.sel;
@@ -1465,7 +1761,11 @@ function mapSvg() {
   const ppm = mapPx / v.w; // screen pixels per meter
   const lensOn = ppm * 1 < LENS_PX;
   const LU = 1 / (ppm * k2); // one screen pixel, in token units
+  // 13 Nov: in a fight, only the token whose turn it is takes clicks (bunched-up tokens used to catch clicks meant for it), and it's
+  // drawn on top. While the attack panel is open everyone is clickable again, to pick a target (an ally too). Shift lets the DM grab anyone.
+  const turnLock = k && k.phase === "turns" && k.turnId && !isSpec() && !(ui.atk && ui.atk.att === k.turnId) ? k.turnId : null;
   const people = [...S.chars, ...foes()]
+    .sort((a, b) => (a.id === turnLock) - (b.id === turnLock))
     .map((e) => {
       const c = cbOf(e.id);
       const p = posOf(e.id);
@@ -1479,6 +1779,7 @@ function mapSvg() {
         ui.atk && ui.atk.tgt === e.id ? "tgt" : "",
         gone ? "gone" : "",
         e.dbno ? "dbno" : "",
+        turnLock && e.id !== turnLock ? "locked" : "",
       ].join(" ");
       const showR = me && me !== e.id && !gone && (k ? true : e.kind === "npc");
       const fx = tokFx(e.id);
@@ -1544,7 +1845,7 @@ function mapSvg() {
     }
   }
   const zoomed = ui.zoom ? ui.zoom.k : 1;
-  return `<div class="mapwrap"><svg id="map" class="${ui.place ? "placing" : ""}" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of ${h(M.n)}, ${M.w} by ${M.h} meters"><rect class="floor" x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/><defs><clipPath id="floorclip"><rect x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/></clipPath></defs><path class="grid" clip-path="url(#floorclip)" d="${grid}" style="stroke-opacity:${hex ? 0.8 : v.w > 120 ? 0.35 : v.w > 60 ? 0.6 : 1}"/>${ring}${objs}${extra}${throwOverlay()}${people}${fxLayer(k2, v.w)}</svg>${ui.legend ? mapLegend() : ""}<div class="zoombar"><button class="btn tiny ${ui.legend ? "on" : ""}" data-a="legendToggle" data-v="" title="What the colors, outlines and shapes on the map mean">Key</button><span class="scale s">${hex ? `${S.rules.hexM}m hexes` : S.rules.gridMode === "none" ? "No grid" : `${step}m grid`} · ${Math.round(v.w)}m across</span><button class="btn tiny ${!hex && S.rules.gridMode !== "none" ? "on" : ""}" data-a="setGrid" data-v="square" title="${step}m squares">&#9633;</button><button class="btn tiny ${hex ? "on" : ""}" data-a="setGrid" data-v="hex" title="Hexes ${S.rules.hexM}m across">Hex</button><button class="btn tiny ${S.rules.gridMode === "none" ? "on" : ""}" data-a="setGrid" data-v="none" title="No grid">Off</button><button class="btn tiny" data-a="mapZoom" data-v="1.5" title="Zoom in (or scroll, pinch, double-tap)">+</button><button class="btn tiny" data-a="mapZoom" data-v="0.667" title="Zoom out (or scroll, pinch)">-</button><button class="btn tiny ${zoomed > 1 ? "on" : ""}" data-a="mapZoom" data-v="0" title="Show the whole map">Fit</button></div></div>`;
+  return `<div class="mapwrap"><svg id="map" class="${ui.place ? "placing" : ""}" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of ${h(M.n)}, ${M.w} by ${M.h} meters"><rect class="floor" x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}" style="fill:url(#ter-${terrainOf()})"/><defs>${MAP_DEFS}<clipPath id="floorclip"><rect x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/></clipPath></defs><path class="grid" clip-path="url(#floorclip)" d="${grid}" style="stroke-opacity:${hex ? 0.8 : v.w > 120 ? 0.35 : v.w > 60 ? 0.6 : 1}"/>${ring}${objs}<g class="obj olabels">${labels.join("")}</g>${extra}${throwOverlay()}${people}${fxLayer(k2, v.w)}</svg>${ui.legend ? mapLegend() : ""}<div class="zoombar"><button class="btn tiny ${ui.legend ? "on" : ""}" data-a="legendToggle" data-v="" title="What the colors, outlines and shapes on the map mean">Key</button><span class="scale s">${hex ? `${S.rules.hexM}m hexes` : S.rules.gridMode === "none" ? "No grid" : `${step}m grid`} · ${Math.round(v.w)}m across</span><button class="btn tiny ${!hex && S.rules.gridMode !== "none" ? "on" : ""}" data-a="setGrid" data-v="square" title="${step}m squares">&#9633;</button><button class="btn tiny ${hex ? "on" : ""}" data-a="setGrid" data-v="hex" title="Hexes ${S.rules.hexM}m across">Hex</button><button class="btn tiny ${S.rules.gridMode === "none" ? "on" : ""}" data-a="setGrid" data-v="none" title="No grid">Off</button><button class="btn tiny" data-a="mapZoom" data-v="1.5" title="Zoom in (or scroll, pinch, double-tap)">+</button><button class="btn tiny" data-a="mapZoom" data-v="0.667" title="Zoom out (or scroll, pinch)">-</button><button class="btn tiny ${zoomed > 1 ? "on" : ""}" data-a="mapZoom" data-v="0" title="Show the whole map">Fit</button></div></div>`;
 }
 function checkValue(e, use) {
   const d = der(e);

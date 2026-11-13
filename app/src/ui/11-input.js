@@ -52,6 +52,13 @@ document.addEventListener("pointerdown", (ev) => {
   }
   const svg = ev.target.closest && ev.target.closest("#map");
   if (svg && ev.button === 0) {
+    const sz = ev.target.closest("[data-size]");
+    if (sz) {
+      const o = S.scene.objects.find((x) => x.id === sz.dataset.size);
+      if (o) drag = { kind: "osize", svg, o, w0: o.w, h0: o.h };
+      ev.preventDefault();
+      return;
+    }
     const rh = ev.target.closest("[data-rot]");
     if (rh) {
       const o = S.scene.objects.find((x) => x.id === rh.dataset.rot);
@@ -89,6 +96,22 @@ document.addEventListener("pointermove", (ev) => {
     const w = drag.w;
     const r = w.getBoundingClientRect();
     w.style.cssText += `;position:fixed;margin:0;max-height:none;width:${r.width}px;height:${r.height}px;left:${clamp(ev.clientX - drag.dx, 0, innerWidth - 60)}px;top:${clamp(ev.clientY - drag.dy, 0, innerHeight - 30)}px`;
+  } else if (drag.kind === "osize") {
+    // The corner handle sets the size: twice the pointer's distance from the middle, along the object's own turned axes.
+    const p = svgPoint(document.getElementById("map") || drag.svg, ev), // each preview redraws the map, so ask for the new one
+      o = drag.o,
+      a = ((o.angle || 0) * Math.PI) / 180;
+    const dx = p.x - o.x,
+      dy = p.y - o.y;
+    const lx = dx * Math.cos(a) + dy * Math.sin(a),
+      ly = -dx * Math.sin(a) + dy * Math.cos(a);
+    const step = ev.shiftKey ? 0.01 : 0.1;
+    const q = (v) => Math.max(0.1, Math.round((2 * Math.abs(v)) / step) * step);
+    drag.w = E.fix(q(lx));
+    drag.h = E.fix(q(ly));
+    o.w = drag.w; // a live preview; the real change is one undo step on release
+    o.h = drag.h;
+    render();
   } else if (drag.kind === "rot") {
     // The handle points where the top of the object should face. Snaps to 5 degrees, Shift for exact.
     const p = svgPoint(drag.svg, ev);
@@ -193,6 +216,18 @@ document.addEventListener("pointerup", (ev) => {
     if (Math.abs(r.width - d.w0) > 2 || Math.abs(r.height - d.h0) > 2) keepDialog(d.w);
     return;
   }
+  if (d.kind === "osize") {
+    const { o } = d;
+    o.w = d.w0;
+    o.h = d.h0;
+    if (d.w != null && (d.w !== d.w0 || d.h !== d.h0))
+      act("Resize", () => {
+        o.w = d.w;
+        o.h = d.h;
+      });
+    else render();
+    return;
+  }
   if (d.kind === "rot") {
     if (d.angle != null)
       act("Rotate", () => {
@@ -226,6 +261,12 @@ document.addEventListener("pointerup", (ev) => {
         if (cat && cat.block) o.block = true;
         if (cat && cat.round) o.round = true;
         if (sub) o.sub = sub;
+        if (isLiquid(o)) {
+          // every pool placed by hand gets its own natural outline and a slightly different stretch
+          o.blob = E.blobShape();
+          o.w = E.fix(o.w * (0.8 + Math.random() * 0.45));
+          o.h = E.fix(o.h * (0.8 + Math.random() * 0.45));
+        }
         S.scene.objects.push(o);
         ui.mapSel = kind === "note" ? id : null;
         if (kind === "note") ui.focus = "#objLabel";

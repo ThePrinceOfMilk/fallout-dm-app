@@ -12,6 +12,7 @@ const suites = [
   ["interactive tour", ["tests/tour.e2e.js"]],
   ["hazards, rads and doors", ["tests/hazards.e2e.js"]],
   ["factions", ["tests/factions.e2e.js"]],
+  ["map art, water, resizing, turn lock", ["tests/mapart.e2e.js"]],
   ["shared table", ["tests/table.e2e.js"]],
   ["spectators", ["tests/spec.e2e.js"]],
   ["spectator self-service", ["tests/specself.e2e.js"]],

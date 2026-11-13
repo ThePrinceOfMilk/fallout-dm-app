@@ -209,4 +209,10 @@ async function tableJoin() {
   render();
 }
 Object.assign(ACT, AUTO_ACT);
+// Shift held: the DM can grab any token on the map, even out of turn (see .tok.locked)
+for (const t of ["keydown", "keyup"])
+  document.addEventListener(t, (ev) => {
+    if (ev.key === "Shift") document.documentElement.classList.toggle("shiftdown", t === "keydown");
+  });
+addEventListener("blur", () => document.documentElement.classList.remove("shiftdown"));
 tableJoin();

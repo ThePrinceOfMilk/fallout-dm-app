@@ -19,7 +19,7 @@ PDF = os.path.join(ROOT, "Fallout TTRPG Game Bible.pdf"); BASE = os.path.join(HE
 if not os.path.exists(BASE): shutil.copy(PDF, BASE)
 D = json.load(open(os.path.join(HERE, "tests", "wiki.json"), encoding="utf8"))
 R = D["rules"]
-D8, D9, D10, D11, D12 = "8 Nov 2026", "9 Nov 2026", "10 Nov 2026", "11 Nov 2026", "12 Nov 2026"
+D8, D9, D10, D11, D12, D13 = "8 Nov 2026", "9 Nov 2026", "10 Nov 2026", "11 Nov 2026", "12 Nov 2026", "13 Nov 2026"
 LATEST = "12 November 2026"
 
 # ---- the bible's own look: Segoe UI when Windows has it, else Helvetica
@@ -645,6 +645,19 @@ upd(43, D12, "The Factions window", "New: a Factions button on the right-hand ra
     "Its hierarchy is an org chart of boxes: + Leader, then + Under on anyone for a co-leader, underbosses and so on. Every title and name can be typed over; X removes a box and everyone under it; Dead marks someone dead.",
     "A new faction has a naming theme: military organization, political system, raider gang, organized criminal group, tribe, humanitarian, religious order, merchant company or Legion. Generate hierarchy fills the chart with that theme's ranks and fresh names (a faction with its own name style, like the NCR or the Legion, uses it). Undo brings back what was there."))
 
+# ---------------------------------------------------------------- 13 Nov 2026: water outlines, resizing, the turn lock, terrain
+upd(12, D13, "Water has a natural shape", "Was: lakes, ponds and pools were ovals or squares. Now: each has an outline of its own, an oblong, a kidney or a bay, and a new one every time one is made or placed.", bl(
+    "The outline is the water: deep water stops a walk only inside it, and shallow water or a rad lake slows only the stretch walked inside it.",
+    "Generated lakes follow their shallows' shape. Deep water, shallow water and acid placed with +Hazard get one too."))
+upd(12, D13, "Terrain", "Was: every map was the same dark green. Now: the ground shows what it is.", bl(
+    "Indoors by setting: wooden planks in homes, stores, saloons and churches; tile in police stations, clinics, hospitals, diners and subways; metal plates in a vault; rock in a cave; concrete anywhere else.",
+    "Outdoors by setting, then map, then environment: grass in forests, woods, fields and farms; sand in a desert or canyon; dirt in camps, scrapyards and outposts; asphalt on city streets and roads; concrete in ruins and courtyards.",
+    "A building on open ground lays its own floor inside its walls. Floors are only a picture: they change no rules. The choices are in Settings (terrain)."))
+upd(12, D13, "Resize anything", "Was: an object kept its catalog size. Now: select any object and drag its corner handle, or type its width and height in meters. Shift drags to the centimeter; each resize is one undo step.")
+upd(17, D13, "Only the acting token takes clicks", "Was: when tokens were bunched up, a click meant for the fighter whose turn it was could land on a neighbor, so a move or action didn't happen. Now: in a fight only the token whose turn it is takes clicks, and it's drawn on top.", bl(
+    "While the attack panel is open, every token can be clicked again, to pick a target (an ally too).",
+    "Hold Shift to grab any token, as the DM, to move someone out of turn."))
+
 # ---------------------------------------------------------------- 12 Nov 2026, evening: aiming, familiarity, check outcomes, perk branches
 upd(8, D12, "Aiming costs no AP", "Was: in campaigns saved before 11 Nov, aiming at a limb or the head still cost extra AP. Now: aiming never costs AP. The part changes the hit chance (head x0.5, body x1, limbs x1.25) and the damage (head x2, body x1, limbs x0.75).", bl(
     "Older saves are brought up to date when they load. The aiming AP setting is gone from Settings; the damage and hit multipliers stay there."))
@@ -718,7 +731,7 @@ def put(page, x, y, text, size, bold=False, color=GREEN, right=False):  # y is t
     if right: x -= tlen(text, size, bold)
     page.insert_text((x, y), text, fontsize=size, fontname=name, fontfile=ff, color=tuple(int(color[i:i + 2], 16) / 255 for i in (1, 3, 5)))
 
-newest = lambda ch: max((u[0] for u in U[ch]), key=[D8, D9, D10, D11, D12].index)
+newest = lambda ch: max((u[0] for u in U[ch]), key=[D8, D9, D10, D11, D12, D13].index)
 put(base[0], 54, 570.5, f"Updated {LATEST}. Changes sit in the chapters they affect, on lettered pages such as {labels[12][0]}.", 8.2, color=GREY)
 for ch in U:
     pg = base[first[ch] - 1]

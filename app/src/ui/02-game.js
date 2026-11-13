@@ -292,6 +292,7 @@ function canPay(e, cost, what) {
 function standBlocked(p) {
   return S.scene.objects.some((o) => {
     if (!E.walkBlocks(o, S.rules)) return false; // open ground, low things, bushes, open doors and hazards can be stood on
+    if (o.blob) return E.inBlob(p, o, 0.2); // natural water: its real outline
     if (o.kind === "tree") {
       const tr = E.trunkOf(o, S.rules);
       return Math.hypot(p.x - o.x, p.y - o.y) <= (tr ? ((o.w || 1) * tr) / 2 : (o.w || 1) / 2) + 0.25;

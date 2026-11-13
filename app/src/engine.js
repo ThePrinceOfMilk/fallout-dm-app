@@ -1489,9 +1489,51 @@ const E = (() => {
     return t ? { x: o.x, y: o.y, w: (o.w || 1) * t, h: (o.h || 1) * t, angle: o.angle } : o;
   };
   /** Does walking this path hit something solid? Something you start inside doesn't count, so nobody is ever stuck. */
+  /** A natural outline for a body of water: n radii (smoothed, so it bulges and narrows gently), the largest exactly 1. */
+  function blobShape(rng = Math.random, n = 16) {
+    // two slow waves round the edge (an oblong, a kidney or a bay) plus a little roughness, smoothed once
+    const p2 = rng() * 2 * Math.PI,
+      p3 = rng() * 2 * Math.PI,
+      a2 = 0.1 + rng() * 0.14,
+      a3 = rng() * 0.12;
+    let r = Array.from({ length: n }, (_, i) => {
+      const t = (i / n) * 2 * Math.PI;
+      return 0.74 + a2 * Math.sin(2 * t + p2) + a3 * Math.sin(3 * t + p3) + (rng() - 0.5) * 0.14;
+    });
+    r = r.map((v, i) => (r[(i + n - 1) % n] + 2 * v + r[(i + 1) % n]) / 4);
+    const m = Math.max(...r);
+    return r.map((v) => fix(v / m));
+  }
+  /** The outline's radius (a share of the half-size) toward angle a. */
+  function blobR(blob, a) {
+    const n = blob.length,
+      t = ((a / (2 * Math.PI)) * n + n) % n,
+      i = Math.floor(t) % n,
+      f = t - Math.floor(t);
+    return blob[i] * (1 - f) + blob[(i + 1) % n] * f;
+  }
+  /** Is p inside a blob-shaped object, or within pad meters of it? */
+  function inBlob(p, o, pad = 0) {
+    const q = unturn(p, o);
+    const hw = (o.w || 1) / 2,
+      hh = (o.h || 1) / 2;
+    const nx = (q.x - o.x) / hw,
+      ny = (q.y - o.y) / hh;
+    const ang = Math.atan2(ny, nx),
+      rr = blobR(o.blob, ang);
+    const edge = { x: Math.cos(ang) * rr * hw, y: Math.sin(ang) * rr * hh }; // the outline point in that direction
+    return Math.hypot(q.x - o.x, q.y - o.y) <= Math.hypot(edge.x, edge.y) + pad + 1e-9;
+  }
   const pathBlocked = (a, b, objects, r) =>
     (objects || []).some((o) => {
       if (!walkBlocks(o, r)) return false;
+      if (o.blob) {
+        // natural water: walk the line in short steps against its real outline
+        if (inBlob(a, o)) return false;
+        const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 0.2));
+        for (let i = 1; i <= n; i++) if (inBlob({ x: a.x + ((b.x - a.x) * i) / n, y: a.y + ((b.y - a.y) * i) / n }, o)) return true;
+        return false;
+      }
       const box = walkBox(o, r);
       return !inside(a, box) && crosses(a, b, box);
     });
@@ -1522,6 +1564,10 @@ const E = (() => {
     for (const o of objects || []) {
       const hz = hazardOf(o, r);
       if (!hz || !(hz.on || hz.near)) continue;
+      if (o.blob) {
+        if (inBlob(p, o, hz.near || 0)) out.push(hazardHit(o, hz, r));
+        continue;
+      }
       const q = unturn(p, o);
       const dx = Math.max(0, Math.abs(q.x - o.x) - (o.w || 1) / 2),
         dy = Math.max(0, Math.abs(q.y - o.y) - (o.h || 1) / 2);
@@ -1582,6 +1628,7 @@ const E = (() => {
     return (c && c.slow) || (o.kind === "hazard" && ((r.hazardFx || {})[o.sub] || {}).slow) || 0;
   }
   const within = (p, o) => {
+    if (o.blob) return inBlob(p, o);
     if (!o.round) return inside(p, o);
     const q = unturn(p, o);
     return ((q.x - o.x) / ((o.w || 1) / 2)) ** 2 + ((q.y - o.y) / ((o.h || 1) / 2)) ** 2 <= 1;
@@ -1705,7 +1752,7 @@ const E = (() => {
       if (keepClear.some((p) => Math.abs(p.x - x) < w / 2 + 1.2 && Math.abs(p.y - y) < h / 2 + 1.2)) return false;
       const me = { x, y, w, h };
       if (!o.inAisle && reserved.some((q) => over(me, q, 0))) return false;
-      return out.every((b) => (o.touch && o.touch.includes(b)) || !over(me, b, walls.has(b) ? 0.05 : pad));
+      return out.every((b) => b.floor || (o.touch && o.touch.includes(b)) || !over(me, b, walls.has(b) ? 0.05 : pad));
     };
     const add = (key, x, y, o = {}) => {
       const c = r.mapItems[key];
@@ -1719,6 +1766,7 @@ const E = (() => {
       if (c.block) ob.block = true;
       if (c.round) ob.round = true;
       if (c.door) ob.door = true;
+      if (c.floor) ob.floor = true;
       if (o.rot && !c.round) ob.rot = 90;
       out.push(ob);
       count[key] = (count[key] || 0) + 1;
@@ -1821,6 +1869,8 @@ const E = (() => {
       wallLine(R.x0, R.y0 + T / 2, R.x0, R.y1 - T / 2, g.W, T, door);
       wallLine(R.x1, R.y0 + T / 2, R.x1, R.y1 - T / 2, g.E, T, door);
       const In = { x0: R.x0 + T / 2, y0: R.y0 + T / 2, x1: R.x1 - T / 2, y1: R.y1 - T / 2 };
+      const fl = ((r.terrain || {}).floor || {})[themeId];
+      if (fl) add(fl, (R.x0 + R.x1) / 2, (R.y0 + R.y1) / 2, { w: R.x1 - R.x0, h: R.y1 - R.y0, force: true }); // the floor inside the walls
       for (const d of doors) clearDoor(d, In, doorW);
       return { In, doors };
     };
@@ -2518,7 +2568,9 @@ const E = (() => {
         if (keepClear.some((p) => Math.hypot((p.x - x) / (w / 2 + edge + 3), (p.y - y) / (h / 2 + edge + 3)) < 1)) continue;
         const sh = add("shallowWater", x, y, { w: w + 2 * edge, h: h + 2 * edge, pad: 0.5 });
         if (!sh) continue;
-        add(big ? "lake" : "pond", x, y, { w, h, force: true });
+        const deep = add(big ? "lake" : "pond", x, y, { w, h, force: true });
+        sh.blob = blobShape(rng); // a natural outline; the deep water follows the shallows' shape
+        if (deep) deep.blob = sh.blob;
         return;
       }
     };
@@ -2725,7 +2777,7 @@ const E = (() => {
     // a cell is blocked when its center is within 0.2m (half a shoulder) of something
     const body = 0.2;
     for (const o of objs) {
-      if (open.includes(o.item) || o.door) continue; // a door opens
+      if (open.includes(o.item) || o.door || o.floor) continue; // a door opens; a floor is walked on
       const x0 = Math.max(0, Math.ceil((o.x - o.w / 2 - body + map.w / 2) / step - 0.5)),
         x1 = Math.min(nx - 1, Math.floor((o.x + o.w / 2 + body + map.w / 2) / step - 0.5)),
         y0 = Math.max(0, Math.ceil((o.y - o.h / 2 - body + map.h / 2) / step - 0.5)),
@@ -3414,6 +3466,8 @@ const E = (() => {
     shotBox,
     pathBlocked,
     walkBlocks,
+    blobShape,
+    inBlob,
     walkLength,
     slowOf,
     hazardsAt,
