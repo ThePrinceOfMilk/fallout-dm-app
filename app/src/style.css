@@ -6856,3 +6856,115 @@ table.t th {
     animation: none;
   }
 }
+
+/* 12 Nov: the rad counter on a party card. The bar is cut into one segment per Irradiated tier; the tier is also written beside it. */
+.radline .cell {
+  width: 32px;
+}
+.bar.rad i {
+  background: repeating-linear-gradient(90deg, #c8e83a 0 4px, transparent 4px 5px);
+}
+.bar.rad b {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 1px;
+  background: var(--dim);
+}
+/* radioactive things: sickly yellow-green, with the trefoil or ripples drawn on them */
+:is(#map, #mmSvg) .obj.m-rad {
+  fill: #4a5c10;
+  stroke: #d8ff3a;
+}
+.maplegend .lgobj.m-rad {
+  fill: #4a5c10;
+  stroke: #d8ff3a;
+}
+/* an open door is drawn faint and dashed: it's no cover and nobody is stopped by it */
+:is(#map, #mmSvg) .obj.dooropen .gly {
+  opacity: 0.35 !important;
+}
+:is(#map, #mmSvg) .obj.dooropen .gly > * {
+  stroke-dasharray: 2 2;
+}
+
+/* 12 Nov: hazard and trap icons on their plates, hidden traps (DM only: faint and dashed), sprung traps (spent) */
+:is(#map, #mmSvg) .obj .gly .hzi * {
+  vector-effect: non-scaling-stroke;
+  fill: none;
+  stroke: #000;
+  stroke-width: 1.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+:is(#map, #mmSvg) .obj .gly .hzi .f {
+  fill: #000;
+  stroke: none;
+}
+:is(#map, #mmSvg) .obj.hidtrap .gly {
+  opacity: 0.45 !important;
+}
+:is(#map, #mmSvg) .obj.hidtrap .gly > rect {
+  stroke-dasharray: 3 2;
+}
+:is(#map, #mmSvg) .obj.sprung .gly {
+  opacity: 0.3 !important;
+}
+/* the disposition icon beside an enemy's name */
+.dispb {
+  background: none;
+  border: 0;
+  padding: 0 2px 0 0;
+  color: var(--bright);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+.card.foe .dispb .dispic {
+  width: 1.25em;
+  height: 1.25em;
+}
+.card.foe.ally .dispb {
+  color: #8fd0ff;
+}
+.autoplan .dispic {
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: -0.25em;
+  margin: 0 2px 0 4px;
+}
+:is(#map, #mmSvg) .obj.hazard:not(.hidtrap):not(.sprung) .gly {
+  opacity: 0.95 !important;
+}
+/* 12 Nov: water is blue: deep water dark and solid (nobody walks into it), shallow water lighter (slow going) */
+:is(#map, #mmSvg) .obj.m-water {
+  fill: #1b4f8f;
+  stroke: #8fd0ff;
+}
+:is(#map, #mmSvg) .obj.m-water .gly {
+  opacity: 0.95 !important;
+}
+:is(#map, #mmSvg) .obj.m-shallow {
+  fill: #4d8fc7;
+  stroke: #cfeaff;
+}
+:is(#map, #mmSvg) .obj.m-shallow .gly {
+  opacity: 0.55 !important;
+}
+.maplegend .lgobj.m-water {
+  fill: #1b4f8f;
+  stroke: #8fd0ff;
+}
+.maplegend .lgobj.m-shallow {
+  fill: #4d8fc7;
+  stroke: #cfeaff;
+}
+:is(#map, #mmSvg) .obj.hz-water .gly.hzp > rect {
+  fill: #1b4f8f;
+}
+:is(#map, #mmSvg) .obj.hz-shallow .gly.hzp > rect {
+  fill: #4d8fc7;
+}
+:is(#map, #mmSvg) .obj:is(.hz-water, .hz-shallow) .gly .hzi * {
+  stroke: #fff;
+}

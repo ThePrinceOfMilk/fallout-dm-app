@@ -511,7 +511,20 @@ const mapTools = () =>
 // What the next click on the map places: a kind of thing from the list and, if you like, a name of your own.
 function placeChoices(kind) {
   const r = S.rules;
-  if (kind === "hazard") return Object.entries(r.hazardKinds || {}).map(([k, n]) => ["hz:" + k, n]);
+  const hidden = (k) => !!((r.hazardFx || {})[k] || {}).hidden;
+  if (kind === "trap")
+    return Object.entries(r.hazardKinds || {})
+      .filter(([k]) => hidden(k))
+      .map(([k, n]) => ["hz:" + k, n]);
+  if (kind === "hazard")
+    return [
+      ...Object.entries(r.hazardKinds || {})
+        .filter(([k]) => !hidden(k))
+        .map(([k, n]) => ["hz:" + k, n]),
+      ...Object.entries(r.mapItems)
+        .filter(([, c]) => c.hazard || c.water)
+        .map(([k, c]) => [k, `${c.n} (${c.w}x${c.h}m)`]),
+    ];
   if (kind === "note") return Object.entries(r.markerKinds || {}).map(([k, n]) => ["mk:" + k, n]);
   const tiers = kind === "hard" ? ["hard", "impenetrable"] : ["concealment", "soft"];
   return [
@@ -532,7 +545,7 @@ function mapLegend() {
   const sw = (m, n) => `<span class="lg"><svg viewBox="0 0 20 14"><rect class="lgobj m-${m}" x="2" y="2" width="16" height="10" rx="1"/></svg>${n}</span>`;
   const tier = (t, n) => `<span class="lg"><svg viewBox="0 0 20 14"><rect class="lgtier lt-${t}" x="2" y="2" width="16" height="10"/></svg>${n}</span>`;
   const ring = [0.1, 0.3, 0.5, 0.7, 0.9].map((x) => `<i style="background:${ringColor(x)}"></i>`).join("");
-  return `<div class="maplegend"><b>Made of</b>${sw("wood", "Wood")}${sw("metal", "Metal")}${sw("rust", "Wrecks")}${sw("stone", "Stone")}${sw("plant", "Plants")}${sw("fabric", "Cloth")}${sw("sand", "Sand")}${sw("tile", "Tile")}
+  return `<div class="maplegend"><b>Made of</b>${sw("wood", "Wood")}${sw("metal", "Metal")}${sw("rust", "Wrecks")}${sw("stone", "Stone")}${sw("plant", "Plants")}${sw("fabric", "Cloth")}${sw("sand", "Sand")}${sw("tile", "Tile")}${sw("rad", "Radioactive")}${sw("water", "Deep water")}${sw("shallow", "Shallow water")}
     <b>Cover (outline)</b>${tier("concealment", "Concealment: dashed")}${tier("soft", "Soft: thin")}${tier("hard", "Hard: thick")}${tier("impenetrable", "Impenetrable: thickest")}
     <b>Tokens</b><span class="lg"><svg viewBox="0 0 20 14"><circle class="lgb pc" cx="10" cy="7" r="5"/></svg>Party</span><span class="lg"><svg viewBox="0 0 20 14"><circle class="lgb ally" cx="10" cy="7" r="5"/></svg>Ally</span><span class="lg"><svg viewBox="0 0 20 14"><rect class="lgb npc" x="6" y="3" width="8" height="8" transform="rotate(45 10 7)"/></svg>Enemy</span>
     <b>Accuracy ring</b><span class="lg ringkey">${ring}</span><span class="lg">low to high · clear = no shot</span></div>`;
@@ -543,7 +556,8 @@ function moveHow(e, m) {
   const mult = moveMult(e),
     add = der(e).m.moveAdd || 0;
   const slow = [mult > 1 ? `slowed x${fmt(Math.round(mult * 100) / 100)}` : "", add ? `+${fmt(add)} AP per move` : ""].filter(Boolean).join(", ");
-  return { d, text: `walks ${fmt(d)} m at ${fmt(E.fix(speedOf(e)))} m per AP (AGI ${der(e).sp.A})${slow ? `, ${slow}` : ""}` };
+  const wet = E.walkLength(posOf(m.id), m, S.scene.objects, S.rules) - d > 0.05 ? ", slowed by water" : "";
+  return { d, text: `walks ${fmt(d)} m at ${fmt(E.fix(speedOf(e)))} m per AP (AGI ${der(e).sp.A})${slow ? `, ${slow}` : ""}${wet}` };
 }
 function mapExtras() {
   if (ui.throwing) return throwBar();
@@ -568,7 +582,11 @@ function mapExtras() {
       ? `<div class="maptools"><span class="s dim">${h(((S.rules.mapItems[sel.item] || {}).n || MAP_OBJ[sel.kind][0]).toUpperCase())}</span><span class="rotbar"><button class="btn tiny" data-a="objRotate" data-v="-15" title="Turn left 15 degrees (Q, or Shift+scroll)">&#8634;</button><span style="width:30px">${numBox(`id="objAngle" data-c="setObjAngle" title="Angle in degrees"`, sel.angle || 0, "cell")}</span><button class="btn tiny" data-a="objRotate" data-v="15" title="Turn right 15 degrees (E, or Shift+scroll)">&#8635;</button><button class="btn tiny" data-a="objRotate" data-v="90" title="Turn a quarter">90</button></span><select id="objCover" data-c="setObjCover" title="Cover tier">${options(
           Object.entries(S.rules.cover).map(([id, t]) => [id, t.n]),
           E.coverTier(sel, S.rules),
-        )}</select><label class="chk s"><input type="checkbox" data-a="objBlock" data-v="${sel.id}"${sel.block ? " checked" : ""}>Blocks walking</label><input id="objLabel" autocomplete="off" class="grow" placeholder="Label" data-c="setObjLabel" value="${h(sel.label || "")}">${btn("objDel", sel.id, "Remove", "", "tiny")}</div>`
+        )}</select>${
+          E.isDoor(sel, S.rules)
+            ? `<button class="btn tiny ${sel.open ? "" : "on"}" data-a="objDoor" data-v="${sel.id}" title="A shut door stops walking and sight; shots still go through at its cover">${sel.open ? "Open: shut it" : "Shut: open it"}</button>`
+            : `<label class="chk s"><input type="checkbox" data-a="objBlock" data-v="${sel.id}"${E.walkBlocks(sel, S.rules) ? " checked" : ""}>Blocks walking</label>`
+        }<input id="objLabel" autocomplete="off" class="grow" placeholder="Label" data-c="setObjLabel" value="${h(sel.label || "")}">${btn("objDel", sel.id, "Remove", "", "tiny")}</div>`
       : ""
   }${!sel && !ui.place ? `<div class="maptools s dim maphint">Select an object, then drag its handle or press Q/E to turn it.</div>` : ""}${ui.place ? placeBar() : ""}`;
 }
@@ -643,9 +661,16 @@ function enemyCard(e) {
           )
         : "";
   return `<article class="card foe ${e.ally ? "ally" : ""} ${ui.rowSel === e.id ? "sel" : ""} ${gone ? "dead" : ""} ${k && k.turnId === e.id ? "cur" : ""} ${ui.atk && ui.atk.tgt === e.id ? "tgt" : ""}" data-a="pick" data-v="${e.id}">
-    <header class="chead">${cb && cb.init != null ? numBox(`data-c="setInit" data-id="${e.id}" id="in-${e.id}" title="Initiative"`, fmt(cb.init), "cell init") : ""}<span class="nm grow" title="${h(slot ? slot.n : "No weapon")}">${h(e.name)}</span><span class="tag">T${e.tier}</span>${e.boss ? `<span class="tag hi">BOSS</span>` : ""}${cb && cb.dead ? `<span class="tag bad">DEAD</span>` : ""}${cb && cb.fled ? `<span class="tag">FLED</span>` : ""}<button class="btn tiny ${e.ally ? "on" : ""}" data-a="toggleAlly" data-v="${e.id}" title="Blue tokens fight on the party's side">Ally</button>${btn("edit", e.id, "E", "", "tiny", "Edit this copy")}</header>
+    <header class="chead">${cb && cb.init != null ? numBox(`data-c="setInit" data-id="${e.id}" id="in-${e.id}" title="Initiative"`, fmt(cb.init), "cell init") : ""}${dispTag(e)}<span class="nm grow" title="${h(slot ? slot.n : "No weapon")}">${h(e.name)}</span><span class="tag">T${e.tier}</span>${e.boss ? `<span class="tag hi">BOSS</span>` : ""}${cb && cb.dead ? `<span class="tag bad">DEAD</span>` : ""}${cb && cb.fled ? `<span class="tag">FLED</span>` : ""}<button class="btn tiny ${e.ally ? "on" : ""}" data-a="toggleAlly" data-v="${e.id}" title="Blue tokens fight on the party's side">Ally</button>${btn("edit", e.id, "E", "", "tiny", "Edit this copy")}</header>
     <div class="hpline"><span>HP</span>${bindNum(e.id, "hp", e.hp, `id="rh-${e.id}"`, "cell")}<span>/${d.hp}</span><span class="grow">${hpBar(e.hp, d.hp)}</span></div>
     <div class="hpline"><span>AP</span>${bindNum(e.id, "ap", e.ap, `id="ra-${e.id}"`, "cell")}<span>/${d.ap}</span><span>DT ${fmt(d.dt)}</span><span class="grow"></span>${rangeBox ? `<span class="bright">R</span>${rangeBox}` : ""}</div>${chips(e)}</article>`;
+}
+// 12 Nov: the disposition icon beside an enemy's or ally's name, from the initiative screen on. Click to change it.
+function dispTag(e) {
+  const k = K();
+  const d = e.disp && (S.rules.dispositions || {})[e.disp];
+  if (!d || !k || k.phase === "stealth" || isSpec()) return "";
+  return `<button class="dispb" data-a="dispNext" data-v="${e.id}" title="${h(d.n)}: ${h(d.d)} Click to change.">${vicon("d_" + e.disp, "dispic")}</button>`;
 }
 // The name under a token: an enemy's nickname if it has one ("Fiend - Zed" reads Zed), otherwise the whole name.
 function tokenLabel(e) {
@@ -991,6 +1016,9 @@ const GLYPH = {
   scrapWall: `${box(-0.5, -0.5, 1, 1)}${dline("M-.3 -.5L-.25 .5M.05 -.5L-.05 .5M.3 -.5L.35 .5")}${CIRC(0.04, -0.4, 0, "dot")}${CIRC(0.04, 0.18, 0, "dot")}`,
   pew: `${box(-0.5, -0.5, 1, 1)}${box(-0.5, -0.5, 1, 0.28, "d")}`,
   hz: `<path d="M0 -.5L.5 .5H-.5Z"/>${dline("M0 -.15V.2")}${CIRC(0.04, 0, 0.33, "dot")}`,
+  door: `${box(-0.5, -0.5, 1, 1)}${dline("M-.25 -.5V.5M.25 -.5V.5")}`,
+  radBarrel: `${CIRC(0.46)}${CIRC(0.09, 0, 0, "dot")}<path class="d" d="M0 -.12L-.12 -.38A.4 .4 0 0 1 .12 -.38ZM.1 .06L.38 .1A.4 .4 0 0 1 .26 .32ZM-.1 .06L-.26 .32A.4 .4 0 0 1 -.38 .1Z"/>`,
+  radLake: `<ellipse rx=".5" ry=".5"/>${dline("M-.3 -.1Q-.15 -.2 0 -.1T.3 -.1M-.22 .14Q-.08 .04 .06 .14T.3 .14")}`,
   pin: `<path d="M0 .5L-.32 -.05A.36 .36 0 1 1 .32 -.05Z"/>${CIRC(0.13, 0, -0.2, "pale")}`,
 };
 const ITEM_GLYPH = {
@@ -1145,14 +1173,30 @@ const ITEM_GLYPH = {
   pew: "pew",
   altar: "altar",
   pulpit: "pulpit",
+  woodDoor: "door",
+  ironDoor: "door",
+  steelDoor: "door",
+  radBarrel: "radBarrel",
+  radLake: "radLake",
+  lake: "radLake",
+  pond: "radLake",
+  shallowWater: "radLake",
+  shopShelf: "shelves",
+  cashRegister: "machine",
+  examTable: "table",
 };
+// 12 Nov: each hazard and trap kind has its own icon (VICON h_<kind>), drawn on a plate
+const hzGlyph = (sub) =>
+  VICON["h_" + sub]
+    ? `<rect x="-.5" y="-.5" width="1" height="1" rx=".16"/><g class="hzi" transform="translate(-.42 -.42) scale(.035)">${VICON["h_" + sub]}</g>`
+    : null;
 const KIND_GLYPH = { cover: "crate", hard: "plainWall", wall: "plainWall", tree: "tree", hazard: "hz", note: "pin" };
 const MAT_OF = {};
 for (const [m, list] of Object.entries({
-  wood: "desk lDesk kitchenTable workbench bench frontCounter barCounter radioTable pokerTable dresser bookshelf pallet crate footlocker chest ammoCrate log stump piano stage pew altar pulpit dinerCounter fence scarecrow waterTrough deadTree crateStack spikeBarricade cableSpool tentPole operatingTable",
+  wood: "woodDoor desk lDesk kitchenTable workbench bench frontCounter barCounter radioTable pokerTable dresser bookshelf pallet crate footlocker chest ammoCrate log stump piano stage pew altar pulpit dinerCounter fence scarecrow waterTrough deadTree crateStack spikeBarricade cableSpool tentPole operatingTable",
   metal:
-    "cabinet lockers officeSafe shelves cellBars armoryCage dumpster shippingContainer metalSheet engineBlock mineCart gasPump vendingMachine slotMachine jukebox phoneBooth lamppost hydrant fridge stove oilDrum barrels boiler pipeRack generator pressMachine conveyor forklift toolCart copier cooler vaultConsole reactorCore waterPurifier silo tractor cage metalCrate scrapWall fuelTank medCabinet turnstile spotlight burnBarrel nukaMachine wheelchair tankTrap razorWire railTrack billboard mailbox flagpole officeChair supportBeam subwayCar barStool",
-  rust: "wreck car bus truck motorcycle scrapHeap carStack tirePile tireWall trashPile",
+    "steelDoor shopShelf cashRegister examTable cabinet lockers officeSafe shelves cellBars armoryCage dumpster shippingContainer metalSheet engineBlock mineCart gasPump vendingMachine slotMachine jukebox phoneBooth lamppost hydrant fridge stove oilDrum barrels boiler pipeRack generator pressMachine conveyor forklift toolCart copier cooler vaultConsole reactorCore waterPurifier silo tractor cage metalCrate scrapWall fuelTank medCabinet turnstile spotlight burnBarrel nukaMachine wheelchair tankTrap razorWire railTrack billboard mailbox flagpole officeChair supportBeam subwayCar barStool",
+  rust: "ironDoor wreck car bus truck motorcycle scrapHeap carStack tirePile tireWall trashPile",
   stone:
     "rock smallRock boulder stoneWall ruinWall rubble building concreteWall pillar barricade concreteBlock brokenColumn collapsedWall statue stalagmite oreVein crater concretePipe guardTower tollBooth guardBooth ticketBooth void",
   plant: "bush tree bigTree thicket pottedPlant cactus cropRow hedge hayBale",
@@ -1160,9 +1204,20 @@ for (const [m, list] of Object.entries({
   sand: "dune sandbags hesco",
   tile: "toilet bathtub sink",
   fire: "campfire",
+  rad: "radBarrel radLake",
+  water: "lake pond",
+  shallow: "shallowWater",
 }))
   for (const k of list.split(" ")) MAT_OF[k] = m;
-const MAP_OBJ = { cover: ["Cover", 1], hard: ["Hard cover", 1], hazard: ["Hazard", 1], note: ["Marker", 1], wall: ["Wall", 0], tree: ["Tree", 0] };
+const MAP_OBJ = {
+  cover: ["Cover", 1],
+  hard: ["Hard cover", 1],
+  hazard: ["Hazard", 1],
+  trap: ["Trap", 1],
+  note: ["Marker", 1],
+  wall: ["Wall", 0],
+  tree: ["Tree", 0],
+};
 // The aiming line is colored by the selected weapon's accuracy at each range band. Red is its worst band, green its best.
 function aimLine(a, b) {
   const p = atkView();
@@ -1367,13 +1422,15 @@ function mapSvg() {
     for (let y = -M.h / 2 + step; y < M.h / 2 - 0.01; y += step) grid += `M${-M.w / 2} ${y}H${M.w / 2}`;
   }
   const objs = S.scene.objects
+    .filter((o) => !(isSpec() && hiddenTrap(o) && !trapsSeen())) // players never see a trap nobody has found
     .map((o) => {
       const w = o.w || 1,
         ht = o.h || 1;
       const tier = E.coverTier(o, S.rules);
       const cv = S.rules.cover[tier] || {};
-      const name = o.label || (S.rules.mapItems[o.item] || {}).n || MAP_OBJ[o.kind][0];
-      const gl = GLYPH[ITEM_GLYPH[o.item] || KIND_GLYPH[o.kind] || "crate"];
+      const name = o.label || (S.rules.mapItems[o.item] || {}).n || (o.kind === "hazard" && (S.rules.hazardKinds || {})[o.sub]) || MAP_OBJ[o.kind][0];
+      const gl = (o.kind === "hazard" && hzGlyph(o.sub)) || GLYPH[ITEM_GLYPH[o.item] || KIND_GLYPH[o.kind] || "crate"];
+      const hid = hiddenTrap(o);
       // Drawn at real size in meters, so a tree is tiny on a 220m map and full size when you zoom in. Harder cover looks more solid.
       const turn = o.angle ? `rotate(${o.angle}) ` : "";
       const draw = turn + (o.rot ? `rotate(90) scale(${ht} ${w})` : `scale(${w} ${ht})`);
@@ -1384,15 +1441,19 @@ function mapSvg() {
           name.length * label * 0.6 <= Math.max(w, ht) * 1.6); /* walls are obvious; and a name wider than its thing would print over its neighbors */
       // Trees: a faint circle for the trunk, which is what stops shots, under a fainter picture of the leaves.
       const trunk = E.trunkOf(o, S.rules);
-      const art = trunk
-        ? `<g class="gly trunk" style="opacity:${S.rules.trunkOpacity}" transform="scale(${w * trunk} ${ht * trunk})"><ellipse rx=".5" ry=".5"/></g><g class="gly canopy" style="opacity:${S.rules.canopyOpacity}" transform="${draw}">${gl}</g>`
-        : `<g class="gly" style="opacity:${Math.max(0.6, cv.opacity != null ? cv.opacity : 1)}" transform="${draw}">${gl}</g>`;
+      const hzIcon = o.kind === "hazard" && VICON["h_" + o.sub];
+      const art = hzIcon
+        ? // a hazard: its plate at full size, its icon square in the middle so a long thin one (live wires) still reads
+          `<g class="gly hzp" transform="${draw}"><rect x="-.5" y="-.5" width="1" height="1" rx=".16"/></g><g class="gly"><g class="hzi" transform="${turn}scale(${Math.min(w, ht)}) translate(-.42 -.42) scale(.035)">${hzIcon}</g></g>`
+        : trunk
+          ? `<g class="gly trunk" style="opacity:${S.rules.trunkOpacity}" transform="scale(${w * trunk} ${ht * trunk})"><ellipse rx=".5" ry=".5"/></g><g class="gly canopy" style="opacity:${S.rules.canopyOpacity}" transform="${draw}">${gl}</g>`
+          : `<g class="gly" style="opacity:${Math.max(0.6, cv.opacity != null ? cv.opacity : 1)}" transform="${draw}">${gl}</g>`;
       const hpMax = objHp(o);
       const hpBar_ =
         hpMax && o.dmg
           ? `<g class="ohp"><rect class="ohpbg" x="${-w / 2}" y="${-ht / 2 - label * 0.7}" width="${w}" height="${label * 0.4}"/><rect class="ohpf" x="${-w / 2}" y="${-ht / 2 - label * 0.7}" width="${E.fix(w * clamp(1 - o.dmg / hpMax, 0, 1))}" height="${label * 0.4}"/></g>`
           : "";
-      return `<g class="obj ${o.kind} tier-${tier} m-${MAT_OF[o.item] || "none"} ${o.voidBlock ? "oob" : ""} ${o.loot ? (o.opened ? "opened" : "lootable") : ""} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${hpMax ? `, ${fmt(hpMax - (o.dmg || 0))}/${hpMax} HP` : ""}${o.loot ? (o.opened ? ", opened" : ", opens for whoever is within R1 on their turn") : ""}${trunk ? ", only the trunk stops shots" : ""}${o.block ? ", blocks movement" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle></g>` : ""}${hpBar_}${showName || o.loot ? `<text style="font-size:${label}px" y="${ht / 2 + label}">${h(name)}${o.loot && o.opened ? " (open)" : ""}</text>` : ""}</g>`;
+      return `<g class="obj ${o.kind} tier-${tier} m-${MAT_OF[o.item] || "none"} ${o.voidBlock ? "oob" : ""} ${o.loot ? (o.opened ? "opened" : "lootable") : ""} ${o.open && E.isDoor(o, S.rules) ? "dooropen" : ""} ${hid ? "hidtrap" : ""} ${o.kind === "hazard" ? "hz-" + o.sub : ""} ${o.sprung ? "sprung" : ""} ${ui.mapSel === o.id ? "sel" : ""}" data-obj="${o.id}" transform="translate(${o.x} ${o.y})"><title>${h(name)}: ${h(cv.n || "")}${hpMax ? `, ${fmt(hpMax - (o.dmg || 0))}/${hpMax} HP` : ""}${o.loot ? (o.opened ? ", opened" : ", opens for whoever is within R1 on their turn") : ""}${trunk ? ", only the trunk stops shots" : ""}${E.isDoor(o, S.rules) ? (o.open ? ", open" : ", shut: blocks walking and sight") : E.walkBlocks(o, S.rules) ? ", blocks walking (it would have to be vaulted)" : ""}${(S.rules.mapItems[o.item] || {}).hazard ? ", radioactive" : ""}${hid ? ", hidden: the players can't see it" : ""}${o.sprung ? ", sprung" : ""}. Drag to move, right-click to remove.</title>${art}${ui.mapSel === o.id ? `<g transform="${o.angle ? `rotate(${o.angle})` : ""}"><line class="rotline" x1="0" y1="0" x2="0" y2="${-(ht / 2 + v.w * 0.04)}"/><circle class="rothandle" data-rot="${o.id}" cy="${-(ht / 2 + v.w * 0.04)}" r="${v.w * 0.014}"><title>Drag to turn</title></circle></g>` : ""}${hpBar_}${showName || o.loot ? `<text style="font-size:${label}px" y="${ht / 2 + label}">${h(name)}${o.loot && o.opened ? " (open)" : ""}</text>` : ""}</g>`;
     })
     .join("");
   const me = isSpec() ? null : k ? (fightPhase() ? actorId() : null) : ui.sel;
@@ -1477,7 +1538,10 @@ function mapSvg() {
       to = p.at || a;
     if (p.at)
       extra += `<line class="movepath" x1="${a.x}" y1="${a.y}" x2="${to.x}" y2="${to.y}"/><g class="ghost" transform="translate(${to.x} ${to.y}) scale(${k2})"><circle cy="-.42" r=".27"/><path d="M-.46 .4 A.46 .62 0 0 1 .46 .4 Z"/></g>`;
-    if (p.tgt && ent(p.tgt) && p.steps.some((s) => s.t === "attack")) extra += aimLine(to, posOf(p.tgt));
+    if (p.tgt && ent(p.tgt) && p.steps.some((s) => s.t === "attack")) {
+      const T = posOf(p.tgt);
+      extra += ui.atk ? aimLine(to, T) : `<line class="movepath" x1="${to.x}" y1="${to.y}" x2="${T.x}" y2="${T.y}"/>`; // no attack panel open: a plain line
+    }
   }
   const zoomed = ui.zoom ? ui.zoom.k : 1;
   return `<div class="mapwrap"><svg id="map" class="${ui.place ? "placing" : ""}" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of ${h(M.n)}, ${M.w} by ${M.h} meters"><rect class="floor" x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/><defs><clipPath id="floorclip"><rect x="${-M.w / 2}" y="${-M.h / 2}" width="${M.w}" height="${M.h}"/></clipPath></defs><path class="grid" clip-path="url(#floorclip)" d="${grid}" style="stroke-opacity:${hex ? 0.8 : v.w > 120 ? 0.35 : v.w > 60 ? 0.6 : 1}"/>${ring}${objs}${extra}${throwOverlay()}${people}${fxLayer(k2, v.w)}</svg>${ui.legend ? mapLegend() : ""}<div class="zoombar"><button class="btn tiny ${ui.legend ? "on" : ""}" data-a="legendToggle" data-v="" title="What the colors, outlines and shapes on the map mean">Key</button><span class="scale s">${hex ? `${S.rules.hexM}m hexes` : S.rules.gridMode === "none" ? "No grid" : `${step}m grid`} · ${Math.round(v.w)}m across</span><button class="btn tiny ${!hex && S.rules.gridMode !== "none" ? "on" : ""}" data-a="setGrid" data-v="square" title="${step}m squares">&#9633;</button><button class="btn tiny ${hex ? "on" : ""}" data-a="setGrid" data-v="hex" title="Hexes ${S.rules.hexM}m across">Hex</button><button class="btn tiny ${S.rules.gridMode === "none" ? "on" : ""}" data-a="setGrid" data-v="none" title="No grid">Off</button><button class="btn tiny" data-a="mapZoom" data-v="1.5" title="Zoom in (or scroll, pinch, double-tap)">+</button><button class="btn tiny" data-a="mapZoom" data-v="0.667" title="Zoom out (or scroll, pinch)">-</button><button class="btn tiny ${zoomed > 1 ? "on" : ""}" data-a="mapZoom" data-v="0" title="Show the whole map">Fit</button></div></div>`;

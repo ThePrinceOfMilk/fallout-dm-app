@@ -331,7 +331,7 @@ function charCard(c) {
   const enc = [d.enc.activeTier, d.enc.totalTier].filter(Boolean);
   return `<article class="card ${sel ? "sel" : ""} ${c.dbno ? "down" : ""} ${K() && K().turnId === c.id ? "cur" : ""} ${ui.atk && ui.atk.tgt === c.id ? "tgt" : ""}" data-a="pick" data-v="${c.id}" data-card="${c.id}">
     <header class="chead"><button class="iconbtn" data-a="iconPick" data-v="${c.id}" title="Map icon: ${h((TOKEN_ICONS[c.icon] || TOKEN_ICONS.person)[0])}. Click to change.">${iconSvg(c.icon)}</button>${cb && cb.init != null ? numBox(`data-c="setInit" data-id="${c.id}" id="in-${c.id}" title="Initiative"`, fmt(cb.init), "cell init") : ""}<span class="nm grow" title="${h(c.background)} ${h(c.spec)}">${h(c.name)}</span><span class="tag">LV${c.level}</span>${c.dbno ? `<span class="tag bad">DBNO</span>` : ""}${cb && cb.caught ? `<span class="tag bad">CAUGHT</span>` : ""}<button class="btn tiny ordb" data-a="partyMove" data-v="${c.id}|-1" title="Move up: earlier in the party and its starting spots" ${S.chars[0] === c ? "disabled" : ""}>&#9650;</button><button class="btn tiny ordb" data-a="partyMove" data-v="${c.id}|1" title="Move down" ${S.chars[S.chars.length - 1] === c ? "disabled" : ""}>&#9660;</button>${btn("edit", c.id, "E", "", "tiny", "Edit")}</header>
-    <div class="hpline"><span>HP</span>${bindNum(c.id, "hp", c.hp, `id="rh-${c.id}" title="Current HP"`, "cell")}<span>/</span>${ovCell(c, "hp", d.hp, "Max HP")}<span class="grow">${hpBar(c.hp, d.hp)}</span><span>AP</span>${bindNum(c.id, "ap", c.ap, `id="ra-${c.id}" title="AP now"`, "cell")}<span>/</span>${ovCell(c, "ap", d.ap, "Action Points after modifiers")}${me && me !== c.id ? `<span>R</span>${numBox(`data-c="setRange" data-id="${c.id}" id="rr-${c.id}" title="Range from ${h((ent(me) || {}).name)}"`, rangeOf(me, c.id), "cell")}` : ""}</div>${statusIcons(c)}
+    <div class="hpline"><span>HP</span>${bindNum(c.id, "hp", c.hp, `id="rh-${c.id}" title="Current HP"`, "cell")}<span>/</span>${ovCell(c, "hp", d.hp, "Max HP")}<span class="grow">${hpBar(c.hp, d.hp)}</span><span>AP</span>${bindNum(c.id, "ap", c.ap, `id="ra-${c.id}" title="AP now"`, "cell")}<span>/</span>${ovCell(c, "ap", d.ap, "Action Points after modifiers")}${me && me !== c.id ? `<span>R</span>${numBox(`data-c="setRange" data-id="${c.id}" id="rr-${c.id}" title="Range from ${h((ent(me) || {}).name)}"`, rangeOf(me, c.id), "cell")}` : ""}</div>${radLine(c)}${statusIcons(c)}
     <div class="stats7 spc">${sp}</div><div class="stats7">${sk}</div>
     ${canLevel(c) ? `<div class="banner s">${btn("levelUp", c.id, `Level up to ${c.level + 1}`, "", "primary tiny")}</div>` : ""}
     ${due ? `<div class="banner s">${btn("spendPts", c.id, `Assign: ${c.ptsBank ? `${c.ptsBank} skill points` : ""}${c.ptsBank && c.perkDue ? " + " : ""}${c.perkDue ? `${c.perkDue} perk` : ""}`, "", "primary tiny")}</div>` : ""}
@@ -538,6 +538,114 @@ function touchObjects(id) {
     for (const l of o.loot) keepFull(e, () => addInv(e, l.n, l.q));
     log("status", `${e.name} opens the ${name}: ${o.loot.map((l) => `${l.q} x ${l.n}`).join(", ") || "it's empty"}.`);
   }
+}
+// 12 Nov: hazards act on whoever ends a turn in them (fire, acid, a rad lake) or near them (a radioactive barrel).
+function hazardTurnEnd(id) {
+  const e = ent(id);
+  if (!e || !K()) return;
+  for (const hz of E.hazardsAt(posOf(id), S.scene.objects, S.rules)) {
+    const on = hz.o.kind === "hazard" || (E.hazardOf(hz.o, S.rules) || {}).on;
+    applyHazard(e, hz, `ends the turn ${on ? "in" : "by"} the ${hz.n}`);
+  }
+}
+// What one hazard does to one fighter: rads, damage, a status (with the limb it hurts), lost AP. A one-shot trap is sprung, and a hidden one found.
+function applyHazard(e, hz, how) {
+  const bits = [];
+  if (hz.rads) {
+    setRads(e, (e.rads || 0) + hz.rads);
+    bits.push(`+${hz.rads} rads (${e.rads})`);
+  }
+  if (hz.dmg) {
+    e.hp = Math.max(0, (e.hp || 0) - hz.dmg);
+    bits.push(`${hz.dmg} damage, HP ${e.hp}/${der(e).hp}`);
+  }
+  const list = Array.isArray(hz.status) ? hz.status : hz.status ? [[hz.status, hz.tier || 1, hz.part]] : [];
+  for (const [name, tier = 1, part] of list) {
+    if (!db.status.has(E.low(name))) continue;
+    const cur = (e.statuses || []).find((s) => s.n === name);
+    keepFull(e, () => addStatus(e, name, Math.min(5, (cur ? cur.tier : 0) + tier)));
+    const now = (e.statuses || []).find((s) => s.n === name);
+    if (now && part) now.parts = [...new Set([...(now.parts || []), part])];
+    bits.push(now ? `${name} ${now.tier}${part ? ` (${PARTS[part][0].toLowerCase()})` : ""}` : `resists ${name}`);
+  }
+  if (hz.drain && K()) {
+    e.ap = 0;
+    bits.push("stuck for the rest of the turn");
+  }
+  if (hz.once) hz.o.sprung = true;
+  if (hz.hidden) hz.o.found = true;
+  if (hz.blast) {
+    // a mine: it blows up where it was set off, and the blast catches everyone close by, like a grenade
+    const p = hz.at || posOf(e.id),
+      o = hz.o; // it goes off at the mine: the spot in it nearest where they were
+    const at = { x: E.fix(clamp(p.x, o.x - (o.w || 1) / 2, o.x + (o.w || 1) / 2)), y: E.fix(clamp(p.y, o.y - (o.h || 1) / 2, o.y + (o.h || 1) / 2)) };
+    const hits = blastHits(at, hz.blast);
+    bits.push(`it explodes: ${hits.map((x) => `${x.e.name} ${fmt(x.d)}m: ${x.dmg}`).join(", ") || "nobody caught"}`);
+    log("status", `${e.name} ${how}: ${bits.join(", ")}.`);
+    for (const x of hits) {
+      x.e.hp = Math.max(0, (x.e.hp || 0) - x.dmg);
+      syncDown(x.e);
+      log("hit", `${x.e.name} ${x.e.hp}/${der(x.e).hp} HP after the blast`);
+    }
+    for (const o of [...S.scene.objects]) {
+      const d = Math.max(0, dist(o, at) - Math.max(o.w || 1, o.h || 1) / 2);
+      if (o !== hz.o) hurtObj(o, E.fix(E.blastDamage(hz.blast, d) * (S.rules.objBlastMul || 1) * coverTake(o)), `the ${hz.n.toLowerCase()}`);
+    }
+    addFx({ type: "boom", at: { ...at }, radius: hz.blast.radius, dur: 900 });
+    if (hz.dmg) syncDown(e);
+    return;
+  }
+  log("status", `${e.name} ${how}: ${bits.join(", ") || "no harm done"}.`);
+  if (hz.dmg) syncDown(e);
+}
+/** Walks a fighter along a confirmed straight move, setting off every trap, mine or live wire the line crosses on the way.
+ * A bear trap or snare ends the walk where it bites. Returns where they end up. */
+function walkTo(e, to) {
+  const c = cbOf(e.id);
+  const from = { x: c.x, y: c.y };
+  let end = { x: E.fix(to.x), y: E.fix(to.y) };
+  for (const hz of E.hazardsCrossed(from, end, S.scene.objects, S.rules)) {
+    c.x = hz.at.x; // they're where it goes off when it goes off
+    c.y = hz.at.y;
+    applyHazard(e, hz, `${hz.hidden ? "sets off a hidden" : "walks into the"} ${hz.hidden ? hz.n.toLowerCase() : hz.n}`);
+    if (hz.stop) {
+      end = hz.at;
+      break;
+    }
+    if (e.hp <= 0 || e.dbno) {
+      end = hz.at;
+      break;
+    }
+  }
+  c.x = end.x;
+  c.y = end.y;
+  return end;
+}
+// Can the players see hidden traps? Only when someone in the party has a trapSense perk.
+const trapsSeen = () => S.chars.some((c) => (c.perks || []).some((p) => (S.rules.trapSense || []).includes(p)));
+// A hidden trap nobody has found, which players don't see unless the party can spot traps.
+const hiddenTrap = (o) => {
+  const hz = E.hazardOf(o, S.rules);
+  return !!(hz && hz.hidden && !o.found);
+};
+/** Sets the rad counter (0 to radMax). When it crosses a radStep line, the Irradiated tier follows it. */
+function setRads(e, n) {
+  const was = E.radTier(e.rads, S.rules);
+  e.rads = clamp(Math.round(n) || 0, 0, S.rules.radMax || 1200);
+  const t = E.radTier(e.rads, S.rules);
+  if (t === was) return;
+  if (t > 0) addStatus(e, "Irradiated", t);
+  else e.statuses = (e.statuses || []).filter((s) => s.n !== "Irradiated");
+  log("status", `${e.name} has ${e.rads} rads: ${t ? `Irradiated ${t}` : "no longer irradiated"}.`);
+}
+// The rad counter on a party card: the count, a bar cut into one segment per Irradiated tier, and the tier in words.
+function radLine(c) {
+  const max = S.rules.radMax || 1200,
+    step = S.rules.radStep || 200,
+    t = E.radTier(c.rads, S.rules);
+  const p = clamp((c.rads || 0) / max, 0, 1);
+  const ticks = Array.from({ length: Math.floor(max / step) - 1 }, (_, i) => `<b style="left:${(((i + 1) * step) / max) * 100}%"></b>`).join("");
+  return `<div class="hpline radline" title="Rads: every ${step} is one tier of Irradiated. Type a number to set it."><span>RAD</span>${numBox(`data-c="setRads" data-id="${c.id}" id="rd-${c.id}"`, c.rads || 0, "cell")}<span>/</span><span>${max}</span><span class="grow"><div class="bar rad"><i style="width:${p * 100}%"></i>${ticks}</div></span><span class="tag ${t ? "bad" : ""}">${t ? `IRR ${t}` : "CLEAN"}</span></div>`;
 }
 // A test chest: ammo for the guns the party carries, placed a few meters in front of them.
 function makeChest() {
@@ -750,6 +858,7 @@ function fxLayer(k2, vw) {
           dy = E.fix(f.to.y - f.from.y);
         return `<circle class="scatterfx" cx="${f.aim.x}" cy="${f.aim.y}" r="${f.spread}" style="${fxDelay(f)}"/><g transform="translate(${f.from.x} ${f.from.y})"><circle class="nade" r="${E.fix(0.3 * k2)}" style="--dx:${dx}px;--dy:${dy}px;${fxDelay(f)}"/></g><circle class="boom" cx="${f.to.x}" cy="${f.to.y}" r="${f.radius}" style="${fxDelay(f, 700)}"/>`;
       }
+      if (f.type === "boom") return `<circle class="boom" cx="${f.at.x}" cy="${f.at.y}" r="${f.radius}" style="${fxDelay(f)}"/>`; // a mine going off
       if (f.type === "float") {
         const p = posOf(f.id);
         const pic =

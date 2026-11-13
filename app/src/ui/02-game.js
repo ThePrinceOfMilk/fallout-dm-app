@@ -246,10 +246,11 @@ function moveMult(e) {
 }
 // Draft rule: AP by how far you walk, from the Move AP table, so 150m is 15 AP and a step across a room is 1 or 2.
 function moveCost(from, to, e) {
-  const d = dist(from, to);
-  if (d < 0.01) return 0;
+  const d0 = dist(from, to);
+  if (d0 < 0.01) return 0;
   const lim = e && der(e).m.moveMaxM;
-  if (lim && d > lim) return Infinity;
+  if (lim && d0 > lim) return Infinity;
+  const d = E.walkLength(from, to, S.scene.objects, S.rules); // shallow water and a rad lake count a quarter more per meter
   const m = moveMult(e);
   return m === Infinity ? Infinity : Math.max(1, Math.ceil((d / speedOf(e)) * m - 1e-9)) + ((e && der(e).m.moveAdd) || 0);
 }
@@ -283,11 +284,10 @@ function canPay(e, cost, what) {
   toast(`${e.name} needs ${cost} AP to ${what}, has ${fmt(e.ap)}.`);
   return false;
 }
-const WALKABLE = new Set(["bedroll", "pallet"]);
 /** Can someone stand here? Not inside walls, furniture, rocks or tree trunks. Rugs and bedrolls are fine, and hazards and markers are areas, not things. */
 function standBlocked(p) {
   return S.scene.objects.some((o) => {
-    if (o.kind === "hazard" || o.kind === "note" || WALKABLE.has(o.item)) return false;
+    if (!E.walkBlocks(o, S.rules)) return false; // open ground, low things, bushes, open doors and hazards can be stood on
     if (o.kind === "tree") {
       const tr = E.trunkOf(o, S.rules);
       return Math.hypot(p.x - o.x, p.y - o.y) <= (tr ? ((o.w || 1) * tr) / 2 : (o.w || 1) / 2) + 0.25;
@@ -441,6 +441,7 @@ function beginCombat(stealth) {
       const fear = der(c).m.startAfraid;
       if (fear) addStatus(c, "Afraid", fear);
     }); // Paranoid
+    for (const e of npcs) if (!e.disp || !(S.rules.dispositions || {})[e.disp]) e.disp = rollDisp(e); // how each one fights on an auto turn
     S.combat = { phase: stealth ? "stealth" : "init", round: 1, npcs, cbs, ranges: {}, acted: {}, last: {}, used: [], turnId: null, stealthDue: null };
     S.scene.npcs = [];
     log("turn", `Combat: ${npcs.map((n) => n.name).join(", ") || "no enemies"}. ${S.scene.time}, ${S.scene.weather}, ${S.scene.env}.`);
@@ -514,6 +515,7 @@ function startTurn(id) {
 function nextTurn() {
   act("End turn", () => {
     const k = K();
+    if (k.turnId && k.phase !== "stealth") hazardTurnEnd(k.turnId);
     const nx = order().find((c) => canAct(c) && !k.acted[c.id]);
     if (nx) startTurn(nx.id);
     else enterRoundEnd();
@@ -874,6 +876,7 @@ function fire() {
       cbT.hitsTaken = (cbT.hitsTaken || 0) + 1;
       T.hp = Math.max(0, T.hp - res.total);
       syncDown(T, A.id);
+      T.lastHitBy = A.id; // a Hothead goes after whoever hurt it last
       if (dT.m.apOnHit) T.ap = (T.ap || 0) + dT.m.apOnHit; // Masochist
       if (wasUp && T.hp <= 0 && E.enemyType(T, S.rules) === "human") cbAtk.killsHuman = (cbAtk.killsHuman || 0) + 1;
       if (wasUp && T.hp <= 0 && p.dA.m.killAP) {
@@ -883,7 +886,7 @@ function fire() {
       } // Grim Reaper's Sprint
     }
     const NAME = { jam: "JAM", miss: "MISS", hit: "HIT", crit: "CRIT", super: "SUPER CRIT" }[res.outcome];
-    const head = `${A.name} → ${T.name} · ${v.n}${v.modeName ? " " + v.modeName : ""} · R${p.range} ${PARTS[a.part][0]}${p.cov.tier !== "open" ? ` · ${p.cov.n}` : ""} · ${fmt(E.pct(p.hit))}% · rolled ${E.two(roll)}`;
+    const head = `${A.name} → ${T.name} · ${v.n}${v.modeName ? " " + v.modeName : ""} · R${p.range} ${PARTS[a.part][0]}${p.cov.tier !== "open" ? ` · ${p.cov.n}` : ""}${p.cov.blind ? " · blind, through a shut door" : ""} · ${fmt(E.pct(p.hit))}% · rolled ${E.two(roll)}`;
     const line =
       `${head}: ${NAME}` +
       (res.total ? ` · ${res.math} · ${T.name} ${T.hp}/${dT.hp}` : jammed ? ` · clear costs ${v.clearJam} AP` : "") +
@@ -970,13 +973,26 @@ function fire() {
   const shown = document.querySelector(".result");
   if (shown) shown.scrollIntoView({ block: "nearest" });
 }
-// ---------- automated turn (12 Nov). One standard way of playing for every enemy and ally; dispositions can come later.
+// ---------- automated turn (12 Nov). Each enemy and ally plays to its disposition (rules.dispositions, rolled when the fight begins).
 // Auto plans the turn without changing anything, shows it on the map and in the turn panel, and Confirm plays it with real dice
 // as one undo step and one combat log entry, then ends the turn. Thresholds are in rules.autoTurn.
+// What it weighs: running away (by disposition), getting out of a hazard, healing and bleeding, a jammed gun, which foe to go for
+// (by disposition), where to stand (charge, best range, farthest range, behind cover, round the side, or hold), a grenade at a bunch
+// of foes, reloading, aiming for the head, how many attacks, and ducking back into cover with what's left.
 var actBatch = 0; // while above 0, act() runs its change inside the surrounding one: a whole automated turn is one undo step
 const autoRules = () => ({ healBelow: 0.4, bleedAt: 2, shootAt: 0.25, minShot: 0.1, maxAttacks: 3, ...(S.rules.autoTurn || {}) });
+const dispOf = (e) => (e && e.disp && (S.rules.dispositions || {})[e.disp]) || {};
+/** A disposition for this fighter, weighted by the reach of the longest-reaching weapon it carries (see rules.dispositions fits). */
+function rollDisp(e) {
+  const d = der(e);
+  const order = ["melee", "close", "mid", "long"];
+  const reach = (e.weapons || [])
+    .map((s) => E.weaponReach(E.weaponView(s, e, d, ctx())))
+    .reduce((a, b) => (order.indexOf(b) > order.indexOf(a) ? b : a), "melee");
+  return E.rollDisposition(E.dispositionKind(e, S.rules), reach, S.rules);
+}
 // The attack panel's own numbers for this shooter, target and weapon, as if the shooter stood at `at`. Nothing is changed.
-function autoEval(id, tgt, w, at) {
+function autoEval(id, tgt, w, at, part = "Body") {
   const k = K(),
     c = cbOf(id),
     keep = { x: c.x, y: c.y },
@@ -989,10 +1005,10 @@ function autoEval(id, tgt, w, at) {
       k.ranges = Object.fromEntries(Object.entries(ranges).filter(([key]) => !key.split("|").includes(id))); // a DM-set range no longer applies once they move
     }
     ui.atk = { att: id, tgt, w, mode: "pr", roll: "", ov: {}, res: null, err: "" };
-    setPart(ui.atk, "Body");
+    setPart(ui.atk, part);
     const p = atkView();
     if (!p || p.hc.noData || (p.v.melee && p.range > 1 && !p.dA.m.lunge) || !p.v.ok || p.v.noLoad) return null;
-    const per = (p.v.base || 0) * (p.v.pellets || 1) * Math.max(1, p.v.count || 1);
+    const per = (p.v.base || 0) * (p.v.pellets || 1) * Math.max(1, p.v.count || 1) * ((S.rules.loc || {})[ui.atk.loc] || 1);
     return { hit: Math.max(0, p.hit), cost: p.cost, value: Math.max(0, p.hit) * per, v: p.v, slot: p.slot, range: p.range };
   } finally {
     c.x = keep.x;
@@ -1001,15 +1017,18 @@ function autoEval(id, tgt, w, at) {
     ui.atk = atk;
   }
 }
-// Where to stand: on the line to the target, at the middle of the weapon's best range band (melee: next to them), as far as AP allows.
-function autoSpot(e, tgt, v, budget) {
+// A hazard this fighter knows about: everything on the map except a hidden trap nobody has found yet.
+const knownHz = (h) => !(h.hidden && !h.o.found);
+const autoAvoid = (A, p) => E.hazardsCrossed(A, p, S.scene.objects, S.rules).some(knownHz) || E.hazardsAt(p, S.scene.objects, S.rules).some(knownHz);
+// Where to stand: on the line to the target, at the middle of the weapon's best range band (melee or charging: next to them), as far as AP allows.
+function autoSpot(e, tgt, v, budget, charge = false) {
   const A = posOf(e.id),
     T = posOf(tgt);
   const d = dist(A, T);
   const bm = S.rules.bandMeters;
   let best = 1,
     bh = -Infinity;
-  if (!v.melee)
+  if (!v.melee && !charge)
     for (let r = 1; r <= bm.length; r++) {
       const x = v.hitBase(r);
       if (typeof x === "number" && x > bh) (bh = x), (best = r);
@@ -1023,29 +1042,138 @@ function autoSpot(e, tgt, v, budget) {
       const p = inMap({ x: E.fix(A.x + (goal.x - A.x) * f + side.x * off), y: E.fix(A.y + (goal.y - A.y) * f + side.y * off) });
       const cost = moveCost(A, p, e);
       if (cost > budget || cost === Infinity) continue;
-      if (E.pathBlocked(A, p, S.scene.objects) || standBlocked(p)) continue;
+      if (E.pathBlocked(A, p, S.scene.objects, S.rules) || standBlocked(p) || autoAvoid(A, p)) continue;
       return { x: p.x, y: p.y, cost, m: E.fix(dist(A, p)) };
     }
   return null;
+}
+// Every spot this fighter could walk to with `budget` AP: rings around it out to what the AP buys, skipping blocked walks,
+// spots inside things, and any hazard it knows of on the way or at the end.
+function autoSpots(e, budget) {
+  const A = posOf(e.id),
+    out = [];
+  const mult = moveMult(e),
+    ap = budget - (der(e).m.moveAdd || 0);
+  const reach = mult === Infinity || ap <= 0 ? 0 : Math.min(60, (ap / mult) * speedOf(e));
+  if (reach < 0.5) return out;
+  for (const f of [0.2, 0.45, 0.7, 1])
+    for (let i = 0; i < 16; i++) {
+      const a = (i / 16) * 2 * Math.PI + f; // each ring a little turned, so the spots don't line up
+      const p = inMap({ x: E.fix(A.x + Math.cos(a) * reach * f), y: E.fix(A.y + Math.sin(a) * reach * f) });
+      const cost = moveCost(A, p, e);
+      if (cost > budget || cost === Infinity || dist(A, p) < 0.4) continue;
+      if (E.pathBlocked(A, p, S.scene.objects, S.rules) || standBlocked(p) || autoAvoid(A, p)) continue;
+      out.push({ x: p.x, y: p.y, cost, m: E.fix(dist(A, p)) });
+    }
+  return out;
+}
+// How well a spot is hidden from a foe: 0 in the open, up to 1 behind a wall (the hit penalty they'd shoot through).
+const shelter = (from, p) => -E.lineCover(posOf(from), p, S.scene.objects, S.rules).hit || 0;
+// Everyone on a fighter's side (itself included), and how many of them are down, dead or gone.
+function sideCount(id) {
+  const mine = K().cbs.filter((c) => sideOf(c.id) === sideOf(id));
+  return { n: mine.length, out: mine.filter((c) => !alive(c) || (ent(c.id) || {}).dbno).length };
+}
+// Why this fighter wants out, by its disposition, or "".
+function fleeWhy(e, P) {
+  const f = P.flee;
+  if (!f) return "";
+  const d = der(e);
+  if (f.hpBelow && e.hp < d.hp * f.hpBelow) return `badly hurt (${e.hp}/${d.hp} HP)`;
+  if (f.sideDown) {
+    const s = sideCount(e.id);
+    if (s.n >= (f.minSide || 0) && s.out / s.n > f.sideDown) return `${s.out} of ${s.n} on its side are down or gone`;
+  }
+  return "";
+}
+// Which foe to go for, by disposition. options: [{t, w, here, v}].
+function pickTarget(e, P, options) {
+  const ids = [...new Set(options.map((o) => o.t))];
+  const by = (f) => ids.reduce((a, b) => (f(b) < f(a) ? b : a));
+  const best = (t) => options.filter((o) => o.t === t).sort((a, b) => (b.here ? b.here.value : 0) - (a.here ? a.here.value : 0))[0];
+  const near = (id) => dist(posOf(e.id), posOf(id));
+  let t = null;
+  switch (P.target) {
+    case "nearest":
+      t = by(near);
+      break;
+    case "weakest":
+      t = by((id) => ent(id).hp);
+      break;
+    case "wounded":
+      t = by((id) => ent(id).hp / Math.max(1, der(ent(id)).hp) + near(id) / 1000);
+      break;
+    case "strongest":
+      t = by((id) => -der(ent(id)).hp);
+      break;
+    case "revenge":
+      t = ids.includes(e.lastHitBy) ? e.lastHitBy : by(near);
+      break;
+    case "guard": {
+      const mates = K()
+        .cbs.filter((c) => c.id !== e.id && sideOf(c.id) === sideOf(e.id) && canAct(c))
+        .map((c) => ent(c.id));
+      const boss = mates.sort((a, b) => der(b).hp - der(a).hp)[0];
+      t = boss ? by((id) => dist(posOf(boss.id), posOf(id))) : by(near);
+      break;
+    }
+  }
+  if (!t) return options[0]; // "best": already sorted by value
+  return best(t);
 }
 function planTurn(id) {
   const e = ent(id);
   const k = K();
   if (!e || !k || e.dbno) return null;
   const R = autoRules();
+  const P = dispOf(e);
   const d = der(e);
   let ap = e.ap || 0;
   const steps = [],
     say = [];
-  // 1. patch up: a healing item when badly hurt, something for bleeding when it's bad
+  const jit = () => 0.92 + Math.random() * 0.16; // a little variety between spots that score alike
+  const foesOf = targetsFor(id).filter((t) => sideOf(t) !== sideOf(id) && !ent(t).dbno);
+  let here = posOf(id);
+  // 0. running away: as far from the nearest foe as the AP buys, toward the edge; reaching the edge ends its fight
+  const why = foesOf.length ? fleeWhy(e, P) : "";
+  if (why) {
+    const M = mapOf();
+    const edge = (p) => Math.min(M.w / 2 - Math.abs(p.x), M.h / 2 - Math.abs(p.y));
+    const far = (p) => Math.min(...foesOf.map((t) => dist(p, posOf(t))));
+    const spot = autoSpots(e, ap).sort((a, b) => far(b) - edge(b) * 2 - (far(a) - edge(a) * 2))[0];
+    if (spot) {
+      steps.push({ t: "move", x: spot.x, y: spot.y, cost: spot.cost, m: Math.round(spot.m), to: "the way out", away: true });
+      ap -= spot.cost;
+      say.push(`run ${Math.round(spot.m)} m (${why})`);
+    }
+    if (edge(spot || here) <= 1.5) {
+      steps.push({ t: "flee" });
+      say.push("leave the fight");
+    }
+    return { id, steps, say, tgt: null, at: spot || null, k: k.round, disp: P.n };
+  }
+  // 1. standing in something that hurts: step out of it first
+  if (E.hazardsAt(here, S.scene.objects, S.rules).some(knownHz)) {
+    const out = autoSpots(e, ap)
+      .filter((p) => !E.hazardsAt(p, S.scene.objects, S.rules).some(knownHz))
+      .sort((a, b) => a.cost - b.cost)[0];
+    if (out) {
+      steps.push({ t: "move", x: out.x, y: out.y, cost: out.cost, m: Math.round(out.m), to: "safe ground" });
+      ap -= out.cost;
+      here = out;
+      say.push(`step out of the hazard`);
+    }
+  }
+  // 2. patch up: a healing item when badly hurt (its disposition says how badly), something for bleeding when it's bad
   const bleed = (e.statuses || []).find((s) => s.n === "Bleeding");
   const useable = (pred) =>
     (e.inv || [])
       .map((l, i) => ({ l, i, it: E.get(ctx(), l.n) }))
       .find((x) => x.it && x.it.cat === "item" && usable(x.it.o) && pred(x.it.o) && (x.it.o.ap || 0) <= ap);
   const need = [];
-  if (bleed && bleed.tier >= R.bleedAt) need.push((o) => o.cat === "Counter" && /bleed/i.test(o.effect || ""));
-  if (e.hp < d.hp * R.healBelow) need.push((o) => o.cat === "Healing");
+  const healAt = P.heal != null ? P.heal : R.healBelow;
+  if (bleed && bleed.tier >= R.bleedAt && P.heal !== 0) need.push((o) => o.cat === "Counter" && /bleed/i.test(o.effect || ""));
+  if (e.hp < d.hp * healAt) need.push((o) => o.cat === "Healing");
   for (const pred of need) {
     const x = useable(pred);
     if (x && !steps.some((s) => s.t === "use" && s.i === x.i)) {
@@ -1054,48 +1182,127 @@ function planTurn(id) {
       say.push(`use ${x.l.n}`);
     }
   }
-  // 2. the best shot from here: every weapon against every target still standing on the other side
-  const foesOf = targetsFor(id).filter((t) => sideOf(t) !== sideOf(id) && !ent(t).dbno);
-  const options = [];
-  for (const t of foesOf)
-    (e.weapons || []).forEach((s, w) => {
-      if (s.jammed) return;
-      const here = autoEval(id, t, w);
-      const vv = here ? here.v : E.weaponView(s, e, d, ctx());
-      options.push({ t, w, here, v: vv });
-    });
-  if (!options.length) return { id, steps, say: say.length ? say : ["nothing to shoot at"], tgt: null };
-  options.sort((a, b) => (b.here ? b.here.value : 0) - (a.here ? a.here.value : 0) || dist(posOf(id), posOf(a.t)) - dist(posOf(id), posOf(b.t)));
-  let pick = options[0];
-  let at = null,
-    shot = pick.here;
-  // 3. too far for a decent shot: walk toward the weapon's best range, keeping enough AP for one attack
-  if (!shot || shot.hit < R.shootAt) {
-    const nearest = [...options].sort((a, b) => dist(posOf(id), posOf(a.t)) - dist(posOf(id), posOf(b.t)))[0];
-    const cand = shot ? pick : nearest;
-    const cost1 = shot ? shot.cost : Math.max(1, cand.v.ap || 1);
-    let spot = autoSpot(e, cand.t, cand.v, Math.max(0, ap - cost1)),
-      there = spot && autoEval(id, cand.t, cand.w, spot);
-    // still no usable shot from there: spend the whole turn walking in instead of saving AP for a shot that can't land
-    if (!there || there.hit < R.minShot) {
-      const far = autoSpot(e, cand.t, cand.v, ap);
-      if (far) (spot = far), (there = autoEval(id, cand.t, cand.w, far));
+  // 3. a jammed gun with nothing as good to fall back on: clear it
+  const unjammed = (e.weapons || []).filter((s) => !s.jammed);
+  const jam = (e.weapons || []).findIndex((s) => s.jammed);
+  if (jam >= 0 && unjammed.every((s) => E.weaponView(s, e, d, ctx()).melee)) {
+    const cj = E.weaponView(e.weapons[jam], e, d, ctx()).clearJam || 1;
+    if (ap >= cj + 1) {
+      steps.push({ t: "unjam", w: jam });
+      ap -= cj;
+      say.push(`clear the jam`);
     }
-    if (spot) {
-      if (!shot || shot.hit < R.minShot || (there && there.hit > shot.hit + 0.05)) {
-        at = spot;
-        pick = cand;
-        shot = there;
-        ap -= spot.cost;
-        steps.push({ t: "move", x: spot.x, y: spot.y, cost: spot.cost, m: Math.round(spot.m), to: ent(cand.t).name });
-        say.push(`move ${Math.round(spot.m)} m toward ${ent(cand.t).name}`);
+  }
+  const usableW = (s, w) => !s.jammed || steps.some((x) => x.t === "unjam" && x.w === w);
+  const withJamFixed = (w, fn) => {
+    const s = e.weapons[w],
+      was = s.jammed;
+    s.jammed = false;
+    try {
+      return fn();
+    } finally {
+      s.jammed = was;
+    }
+  };
+  // 4. who to go for: every weapon against every foe still standing, then the disposition picks the foe
+  let pool = foesOf;
+  if (typeof P.hold === "number") pool = foesOf.filter((t) => dist(here, posOf(t)) <= P.hold); // territorial: only what comes close
+  const options = [];
+  for (const t of pool)
+    (e.weapons || []).forEach((s, w) => {
+      if (!usableW(s, w)) return;
+      const now = withJamFixed(w, () => autoEval(id, t, w, steps.some((x) => x.t === "move") ? here : null));
+      const vv = now ? now.v : E.weaponView(s, e, d, ctx());
+      if (!vv.ok && !now) return; // a weapon with no numbers in the workbook can't be planned with
+      options.push({ t, w, here: now, v: vv });
+    });
+  if (!options.length) {
+    if (typeof P.hold === "number" && foesOf.length) say.push(`watch its ground (nothing within ${P.hold} m)`);
+    return { id, steps, say: say.length ? say : ["nothing to shoot at"], tgt: null, disp: P.n };
+  }
+  options.sort((a, b) => (b.here ? b.here.value : 0) - (a.here ? a.here.value : 0) || dist(here, posOf(a.t)) - dist(here, posOf(b.t)));
+  let pick = pickTarget(e, P, options);
+  let shot = pick.here,
+    at = steps.some((x) => x.t === "move") ? here : null;
+  const cost1 = shot ? shot.cost : Math.max(1, pick.v.ap || 1);
+  const evalAt = (p) => withJamFixed(pick.w, () => autoEval(id, pick.t, pick.w, p));
+  const moveTo = (spot, there, what) => {
+    steps.push({ t: "move", x: spot.x, y: spot.y, cost: spot.cost, m: Math.round(spot.m), to: ent(pick.t).name });
+    ap -= spot.cost;
+    here = at = spot;
+    shot = there;
+    say.push(what || `move ${Math.round(spot.m)} m toward ${ent(pick.t).name}`);
+  };
+  // 5. where to stand
+  const holdStill = P.hold && shot && shot.hit >= R.minShot;
+  if (!holdStill) {
+    if (P.range === "close") {
+      // charge: as close as the AP allows, keeping enough for one attack when that's possible
+      let spot = autoSpot(e, pick.t, pick.v, Math.max(0, ap - cost1), true) || autoSpot(e, pick.t, pick.v, ap, true);
+      if (spot) moveTo(spot, evalAt(spot), `charge ${Math.round(spot.m)} m at ${ent(pick.t).name}`);
+    } else if (P.range === "far" || P.cover || P.flank) {
+      // weigh every reachable spot (and staying put): far wants distance, cover wants shelter, flank wants a clear line
+      const cands = [{ x: here.x, y: here.y, cost: 0, m: 0, stay: true }, ...autoSpots(e, Math.max(0, ap - cost1))];
+      let bestS = null;
+      for (const p of cands) {
+        const ev = p.stay ? shot : evalAt(p);
+        if (!ev || ev.hit < R.minShot) continue;
+        const sh = P.cover ? shelter(pick.t, p) : 0;
+        const far = P.range === "far" && ev.hit >= R.shootAt ? dist(p, posOf(pick.t)) / 20 : 0;
+        const s = (ev.value * (1 + sh * 1.5) + far * ev.value) * (p.stay ? 1.05 : jit());
+        if (!bestS || s > bestS.s) bestS = { p, ev, s, sh };
+      }
+      if (bestS && !bestS.p.stay)
+        moveTo(
+          bestS.p,
+          bestS.ev,
+          `${P.range === "far" ? "fall back" : P.flank ? "circle" : "move"} ${Math.round(bestS.p.m)} m${bestS.sh > 0.05 ? " into cover" : ""}${P.flank ? ` round ${ent(pick.t).name}` : ""}`,
+        );
+      else if (!bestS) {
+        const spot = autoSpot(e, pick.t, pick.v, ap);
+        if (spot) moveTo(spot, evalAt(spot));
+      }
+    } else if (!shot || shot.hit < R.shootAt) {
+      // best range: walk toward the weapon's best band, keeping AP for one attack; with no shot from there, the whole turn walking in
+      let spot = autoSpot(e, pick.t, pick.v, Math.max(0, ap - cost1)),
+        there = spot && evalAt(spot);
+      if (!there || there.hit < R.minShot) {
+        const far = autoSpot(e, pick.t, pick.v, ap) || autoSpot(e, pick.t, pick.v, ap, true); // nothing at its best band in reach: just close in
+        if (far) (spot = far), (there = evalAt(far));
+      }
+      if (spot && (!shot || shot.hit < R.minShot || (there && there.hit > shot.hit + 0.05))) moveTo(spot, there);
+    }
+  }
+  // 6. a grenade at two or more foes bunched together, with no friend near the blast
+  if (P.grenade !== false) {
+    const mates = k.cbs.filter((c) => sideOf(c.id) === sideOf(id) && alive(c)).map((c) => (c.id === id ? here : posOf(c.id)));
+    for (const l of e.inv || []) {
+      const t = (S.rules.throwables || {})[l.n];
+      if (!t || l.q <= 0 || ap < t.ap + (shot ? 0 : 0)) continue;
+      let best = null;
+      for (const f of foesOf) {
+        const c = posOf(f);
+        const n = foesOf.filter((g) => dist(posOf(g), c) <= t.radius * 0.6).length;
+        if (n < 2 || dist(here, c) > (t.range || 30) || mates.some((m) => dist(m, c) <= t.radius + 1)) continue;
+        if (!best || n > best.n) best = { n, at: { x: c.x, y: c.y }, f };
+      }
+      if (best) {
+        steps.push({ t: "throw", item: l.n, at: best.at });
+        ap -= t.ap;
+        say.push(`throw a ${l.n} at ${best.n} foes around ${ent(best.f).name}`);
+        break;
       }
     }
   }
-  // 4. reload an empty gun if there's ammo and AP for it, then attack while it's worth it
+  // 7. reload an empty gun if there's ammo and AP for it, then attack while it's worth it, at the head if the disposition likes that
   if (shot && shot.hit >= R.minShot) {
     const slot = e.weapons[pick.w];
     const v = shot.v;
+    let part = "Body";
+    if (P.aimHead) {
+      const head = withJamFixed(pick.w, () => autoEval(id, pick.t, pick.w, at, "Head"));
+      if (head && head.hit >= P.aimHead && head.value > shot.value) (part = "Head"), (shot = head);
+    }
     let mag = slot.mag || 0;
     if (v.usesAmmo && mag < (v.perShot || 1) && ammoHeld(e, v.reserve) > 0 && ap >= v.reload + shot.cost) {
       steps.push({ t: "reload", w: pick.w });
@@ -1104,25 +1311,40 @@ function planTurn(id) {
       say.push(`reload`);
     }
     let n = 0;
-    while (n < R.maxAttacks && ap >= shot.cost && (!v.usesAmmo || mag >= (v.perShot || 1) * (v.count || 1) || (mag > 0 && n === 0))) {
+    const most = P.attacks || R.maxAttacks;
+    while (n < most && ap >= shot.cost && (!v.usesAmmo || mag >= (v.perShot || 1) * (v.count || 1) || (mag > 0 && n === 0))) {
       n++;
       ap -= shot.cost;
       if (v.usesAmmo) mag -= (v.perShot || 1) * (v.count || 1);
+      if (P.cover && n >= 1 && ap - shot.cost < 2 && n < most) break; // keeps a little AP to duck back
     }
     if (n) {
-      steps.push({ t: "attack", tgt: pick.t, w: pick.w, n });
+      steps.push({ t: "attack", tgt: pick.t, w: pick.w, n, part });
       say.push(
-        `${v.melee ? "attack" : "shoot"} ${ent(pick.t).name} ${n === 1 ? "once" : n === 2 ? "twice" : n + " times"} with ${v.n} (${Math.round(shot.hit * 100)}%)`,
+        `${v.melee ? "attack" : "shoot"} ${ent(pick.t).name}${part === "Head" ? " in the head" : ""} ${n === 1 ? "once" : n === 2 ? "twice" : n + " times"} with ${v.n} (${Math.round(shot.hit * 100)}%)`,
       );
     }
   }
+  // 8. what's left: duck back into better cover
+  if (P.cover && ap >= 1) {
+    const now = shelter(pick.t, here);
+    const back = autoSpots(e, ap)
+      .map((p) => ({ p, sh: shelter(pick.t, p) }))
+      .filter((x) => x.sh >= now + 0.1)
+      .sort((a, b) => b.sh - a.sh || a.p.cost - b.p.cost)[0];
+    if (back) {
+      steps.push({ t: "move", x: back.p.x, y: back.p.y, cost: back.p.cost, m: Math.round(back.p.m), to: "cover", duck: true });
+      ap -= back.p.cost;
+      say.push(`duck ${Math.round(back.p.m)} m back into cover`);
+    }
+  }
   if (!steps.length) say.push("hold: no worthwhile shot or move");
-  return { id, steps, say, tgt: pick.t, at, k: k.round };
+  return { id, steps, say, tgt: pick.t, at, k: k.round, disp: P.n };
 }
 function autoBox(A) {
   const p = ui.autoPlan;
   if (!p || p.id !== A.id) return "";
-  return `<div class="autoplan"><div class="s"><b>AUTO TURN</b> ${h(A.name)} will ${h(p.say.join(", then "))}.</div><div class="acts">${btn("autoConfirm", "", "Confirm", "Enter", "primary tiny")}${btn("autoCancel", "", "Cancel", "Esc", "tiny")}<span class="s dim">Dice are rolled when you confirm. The turn then ends.</span></div></div>`;
+  return `<div class="autoplan"><div class="s"><b>AUTO TURN</b>${p.disp ? ` ${vicon("d_" + A.disp, "dispic")}<span class="bright">${h(p.disp)}</span>` : ""} ${h(A.name)} will ${h(p.say.join(", then "))}.</div><div class="acts">${btn("autoConfirm", "", "Confirm", "Enter", "primary tiny")}${btn("autoCancel", "", "Cancel", "Esc", "tiny")}<span class="s dim">Dice are rolled when you confirm. The turn then ends.</span></div></div>`;
 }
 const AUTO_ACT = {
   autoPlan() {
@@ -1161,13 +1383,24 @@ const AUTO_ACT = {
             ui.modal = keep;
             did.push(`uses ${s.n}`);
           } else if (s.t === "move") {
-            c.x = s.x;
-            c.y = s.y;
             for (const key of Object.keys(k.ranges)) if (key.split("|").includes(e.id)) delete k.ranges[key];
             e.ap = Math.max(0, (e.ap || 0) - s.cost);
             c.moved = true;
+            const end = walkTo(e, s);
             touchObjects(e.id);
-            did.push(`moves ${s.m} m toward ${s.to}`);
+            did.push(s.away ? `runs ${s.m} m` : s.duck ? `ducks ${s.m} m into cover` : `moves ${s.m} m toward ${s.to}`);
+            if (end.x !== s.x || end.y !== s.y || e.hp <= 0 || e.dbno) break; // caught in a trap or put down on the way: the plan stops there
+          } else if (s.t === "flee") {
+            c.fled = true;
+            did.push("flees the fight");
+          } else if (s.t === "unjam") {
+            clearJam(e.id, s.w);
+            did.push("clears a jam");
+          } else if (s.t === "throw") {
+            if (!(e.inv || []).some((l) => l.n === s.item)) continue;
+            ui.throwing = { id: e.id, item: s.item, at: { ...s.at } };
+            ACT.throwConfirm();
+            did.push(`throws a ${s.item}`);
           } else if (s.t === "reload") {
             reloadWeapon(e.id, s.w);
             did.push("reloads");
@@ -1177,7 +1410,7 @@ const AUTO_ACT = {
               if (!T || T.hp <= 0 || T.dbno || !alive(cbOf(s.tgt))) break;
               makeAttack(e.id, s.tgt);
               ui.atk.w = s.w;
-              setPart(ui.atk, "Body");
+              setPart(ui.atk, s.part || "Body");
               ui.atk.roll = String(Math.floor(Math.random() * 100)).padStart(2, "0");
               const before = S.log.length;
               fire();

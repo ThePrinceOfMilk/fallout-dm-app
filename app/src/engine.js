@@ -1379,7 +1379,11 @@ const E = (() => {
     const p = unturn(p0, o);
     return Math.abs(p.x - o.x) <= (o.w || 1) / 2 && Math.abs(p.y - o.y) <= (o.h || 1) / 2;
   };
-  const coverTier = (o, r) => o.cover || r.coverByKind[o.kind] || "open";
+  const isDoor = (o, r) => !!(r && r.mapItems && (r.mapItems[o.item] || {}).door);
+  // an open door is no cover at all; a shut one is its material's cover (wood concealment, iron soft, steel hard)
+  const coverTier = (o, r) => (o.open && isDoor(o, r) ? "open" : o.cover || r.coverByKind[o.kind] || "open");
+  /** A shut door on the line: you can shoot through it, but you can't see who's behind it. */
+  const doorBlind = (a, b, objects, r) => (objects || []).some((o) => isDoor(o, r) && !o.open && !inside(a, o) && crosses(a, b, o));
   /** The worst cover between shooter and target. Something the shooter stands inside doesn't count: they can shoot out of a bush. */
   // With coverStack on, objects count in order along the line: the first one's hit penalty is the shot's, and each one cuts the damage
   // still getting through by its damage penalty at half the strength of the one before (x1, x0.5, x0.25...). Impenetrable stops it outright.
@@ -1420,6 +1424,7 @@ const E = (() => {
         by: names.join(", "),
         id: by ? by.id : null,
         stacked: names.length,
+        blind: doorBlind(a, b, objects, r),
       };
     }
     for (const o of objects || []) {
@@ -1437,6 +1442,7 @@ const E = (() => {
       dam: r.cover[best].dam,
       by: by ? by.label || (r.mapItems[by.item] || {}).n || "" : "",
       id: by ? by.id : null,
+      blind: doorBlind(a, b, objects, r),
     };
   }
   /** Everything a ray from a, len meters long at angle ang, runs into: [{d, tier, o}] by distance. Objects a stands inside don't count. */
@@ -1466,8 +1472,136 @@ const E = (() => {
       [a1, s1] = pts[i + 1];
     return Math.max(0.5, s0 + ((agl - a0) * (s1 - s0)) / (a1 - a0));
   }
-  /** Does walking this path hit something solid, like a building? */
-  const pathBlocked = (a, b, objects) => (objects || []).some((o) => o.block && crosses(a, b, o));
+  /** Does this object stop someone walking? 12 Nov: anything you'd have to vault does (any cover above open); open ground, low things
+   * and walk-through things (bushes, crops, a rad lake) don't. A shut door does, an open one doesn't. The DM's "Blocks walking" box wins. */
+  function walkBlocks(o, r) {
+    if (!r || !r.mapItems) return !!o.block;
+    const c = r.mapItems[o.item] || {};
+    if (c.door) return !o.open;
+    if (o.block != null) return !!o.block;
+    if (o.kind === "hazard") return !!((r.hazardFx || {})[o.sub] || {}).block; // deep water
+    if (o.kind === "note" || c.walk) return false;
+    return !!c.vault || coverTier(o, r) !== "open";
+  }
+  // a tree is walked round at its trunk, not its leaves
+  const walkBox = (o, r) => {
+    const t = trunkOf(o, r);
+    return t ? { x: o.x, y: o.y, w: (o.w || 1) * t, h: (o.h || 1) * t, angle: o.angle } : o;
+  };
+  /** Does walking this path hit something solid? Something you start inside doesn't count, so nobody is ever stuck. */
+  const pathBlocked = (a, b, objects, r) =>
+    (objects || []).some((o) => {
+      if (!walkBlocks(o, r)) return false;
+      const box = walkBox(o, r);
+      return !inside(a, box) && crosses(a, b, box);
+    });
+  /** What a map object does as a hazard (rules.hazardFx by its kind, or its catalog entry's `hazard`), or null. A sprung trap does nothing. */
+  function hazardOf(o, r) {
+    if (o.sprung) return null;
+    const c = (r.mapItems || {})[o.item];
+    return (c && c.hazard) || (o.kind === "hazard" && (r.hazardFx || {})[o.sub]) || null;
+  }
+  const hazardHit = (o, hz, r, extra) => ({
+    o,
+    n: o.label || ((r.mapItems || {})[o.item] || {}).n || (r.hazardKinds || {})[o.sub] || "hazard",
+    rads: hz.rads || 0,
+    dmg: hz.dmg || 0,
+    status: hz.status || null,
+    tier: hz.tier || 1,
+    part: hz.part || null,
+    stop: !!hz.stop,
+    drain: !!hz.drain,
+    once: !!hz.once,
+    hidden: !!hz.hidden,
+    blast: hz.blast || null,
+    ...extra,
+  });
+  /** What a spot does to someone who ends their turn on it: every hazard they stand in, or near enough to. [{o, n, rads, dmg, status, ...}] */
+  function hazardsAt(p, objects, r) {
+    const out = [];
+    for (const o of objects || []) {
+      const hz = hazardOf(o, r);
+      if (!hz || !(hz.on || hz.near)) continue;
+      const q = unturn(p, o);
+      const dx = Math.max(0, Math.abs(q.x - o.x) - (o.w || 1) / 2),
+        dy = Math.max(0, Math.abs(q.y - o.y) - (o.h || 1) / 2);
+      const d = Math.hypot(dx, dy); // meters from the edge, 0 inside
+      if (d > (hz.near || 0)) continue;
+      out.push(hazardHit(o, hz, r));
+    }
+    return out;
+  }
+  /** What a walk from a to b sets off, in the order it gets there: hazards marked cross whose area (plus `near`) the line enters.
+   * Something the walk starts inside doesn't go off again. Each comes with at: the point where the walk reaches it. */
+  function hazardsCrossed(a, b, objects, r) {
+    const out = [];
+    for (const o of objects || []) {
+      const hz = hazardOf(o, r);
+      if (!hz || !hz.cross) continue;
+      const m = hz.near || 0;
+      const box = { x: o.x, y: o.y, w: (o.w || 1) + 2 * m, h: (o.h || 1) + 2 * m, angle: o.angle };
+      if (inside(a, box)) continue;
+      const t = entryT(a, b, box);
+      if (t < 0) continue;
+      out.push(hazardHit(o, hz, r, { t, at: { x: fix(a.x + (b.x - a.x) * t), y: fix(a.y + (b.y - a.y) * t) } }));
+    }
+    return out.sort((p, q) => p.t - q.t);
+  }
+  /** How far a weapon wants to be: melee, close (best band R1-R2: shotguns, SMGs, pistols), mid (R3-R5) or long (R6 and out). */
+  function weaponReach(v) {
+    if (!v || v.melee) return "melee";
+    let best = 1,
+      bh = -Infinity;
+    for (let b = 1; b <= 10; b++) {
+      const x = v.hitBase ? v.hitBase(b) : null;
+      if (typeof x === "number" && x > bh) (bh = x), (best = b);
+    }
+    return best <= 2 ? "close" : best <= 5 ? "mid" : "long";
+  }
+  /** Who a disposition is for: robots, creatures (animals, insects, feral ghouls) or humans. */
+  const dispositionKind = (e, r) => {
+    const t = enemyType(e, r);
+    return t === "robot"
+      ? "robot"
+      : t === "animal" || t === "insect" || (t === "ghoul" && /feral|glowing/i.test(e.tmpl || e.name || ""))
+        ? "creature"
+        : "human";
+  };
+  /** A disposition rolled for this kind of fighter and the reach of its gear: each one's weight is its fits[reach]. */
+  function rollDisposition(kind, reach, r, rng = Math.random) {
+    const list = Object.entries(r.dispositions || {}).filter(([, d]) => d.who === kind && ((d.fits || {})[reach] == null ? 1 : d.fits[reach]) > 0);
+    const w = (d) => ((d.fits || {})[reach] == null ? 1 : d.fits[reach]);
+    let x = rng() * list.reduce((t, [, d]) => t + w(d), 0);
+    for (const [k, d] of list) if ((x -= w(d)) <= 0) return k;
+    return list.length ? list[list.length - 1][0] : null;
+  }
+  /** Slow ground (shallow water, a rad lake): the share of the usual distance a walk covers there, or 0 if it isn't slow. */
+  function slowOf(o, r) {
+    const c = (r.mapItems || {})[o.item];
+    return (c && c.slow) || (o.kind === "hazard" && ((r.hazardFx || {})[o.sub] || {}).slow) || 0;
+  }
+  const within = (p, o) => {
+    if (!o.round) return inside(p, o);
+    const q = unturn(p, o);
+    return ((q.x - o.x) / ((o.w || 1) / 2)) ** 2 + ((q.y - o.y) / ((o.h || 1) / 2)) ** 2 <= 1;
+  };
+  /** How long a walk from a to b counts for, in meters: each stretch through slow ground counts as its length / slow (the slowest wins). */
+  function walkLength(a, b, objects, r) {
+    const d = Math.hypot(b.x - a.x, b.y - a.y);
+    const slow = (objects || []).filter((o) => slowOf(o, r));
+    if (!slow.length || d < 0.01) return d;
+    const n = Math.max(1, Math.ceil(d / 0.25));
+    let len = 0;
+    for (let i = 0; i < n; i++) {
+      const t = (i + 0.5) / n,
+        p = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+      const f = slow.filter((o) => within(p, o)).reduce((m, o) => Math.min(m, slowOf(o, r)), 1);
+      len += d / n / f;
+    }
+    return fix(len);
+  }
+  /** Irradiated tier for a rad count: one tier per radStep rads, at most 5. */
+  const radTier = (rads, r) => Math.max(0, Math.min(5, Math.floor((rads || 0) / ((r && r.radStep) || 200))));
 
   /** Random furniture for a location. Count = area x density x 0.8 to 1.2, kept between the theme's min and max. */
   // ---------- room layouts
@@ -1476,8 +1610,8 @@ const E = (() => {
   // with its junk around it and wilderness beyond; city blocks become buildings of the setting. Rows stay parallel,
   // conveyors chain into lines, drums stand in rows, and aisles and doorways stay clear so you can walk everywhere.
   const LAYOUT = {
-    indoorThemes: ["home", "office", "factory", "warehouse", "police"],
-    footprint: { home: [16, 12], office: [24, 16], factory: [34, 22], warehouse: [38, 24], police: [26, 18] },
+    indoorThemes: ["home", "office", "factory", "warehouse", "police", "store", "clinic"],
+    footprint: { home: [16, 12], office: [24, 16], factory: [34, 22], warehouse: [38, 24], police: [26, 18], store: [12, 18], clinic: [16, 24] },
     // the most of each item one layout may hold
     caps: {
       conveyor: 14,
@@ -1556,6 +1690,7 @@ const E = (() => {
     let n = 0;
     const count = {};
     const walls = new Set();
+    const TH = r.roomThemes[themeId] || {}; // its door (the way in) and innerDoor (between rooms)
     const B = { x0: -map.w / 2, y0: -map.h / 2, x1: map.w / 2, y1: map.h / 2 };
     const rand = (a, b) => a + rng() * (b - a);
     const ri = (a, b) => Math.floor(rand(a, b + 1));
@@ -1582,6 +1717,7 @@ const E = (() => {
       const ob = { id: newId(n++), item: key, kind: c.round ? "tree" : "cover", x: fix(x), y: fix(y), w: fix(w), h: fix(h), cover: c.cover, label: "" };
       if (c.block) ob.block = true;
       if (c.round) ob.round = true;
+      if (c.door) ob.door = true;
       if (o.rot && !c.round) ob.rot = 90;
       out.push(ob);
       count[key] = (count[key] || 0) + 1;
@@ -1596,7 +1732,7 @@ const E = (() => {
       const at = (u, v) =>
         side === "W" ? [R.x0 + u, R.y0 + v] : side === "E" ? [R.x1 - u, R.y0 + v] : side === "N" ? [R.x0 + v, R.y0 + u] : [R.x0 + v, R.y1 - u];
       // a wall inside the room between two (u, v) points, with doorways given as [position along the line, width]
-      const line = (ua, va, ub, vb, gaps = [], thick = 0.2) => {
+      const line = (ua, va, ub, vb, gaps = [], thick = 0.2, door = null) => {
         const [ax, ay] = at(ua, va),
           [bx, by] = at(ub, vb);
         const alongU = Math.abs(va - vb) < 1e-6;
@@ -1604,7 +1740,7 @@ const E = (() => {
           const [gx, gy] = alongU ? at(t, va) : at(ua, t);
           return [Math.abs(ay - by) < 1e-6 ? gx : gy, w];
         });
-        wallLine(Math.min(ax, bx), Math.min(ay, by), Math.max(ax, bx), Math.max(ay, by), g, thick);
+        wallLine(Math.min(ax, bx), Math.min(ay, by), Math.max(ax, bx), Math.max(ay, by), g, thick, door);
       };
       // along: the item's long side runs along u
       const put = (key, u, v, along = true, o = {}) => {
@@ -1628,12 +1764,19 @@ const E = (() => {
     const reserve = (x0, y0, x1, y1) => reserved.push({ x: (x0 + x1) / 2, y: (y0 + y1) / 2, w: Math.abs(x1 - x0), h: Math.abs(y1 - y0) });
     // Wall pieces along a line, with gaps for doors and for anyone standing on the line.
     const T = 0.4;
-    const wallLine = (x0, y0, x1, y1, gaps = [], thick = T) => {
+    // door: the catalog key of a door to hang in each doorway (not in the gaps left for people standing on the line)
+    const wallLine = (x0, y0, x1, y1, gaps = [], thick = T, door = null) => {
       const horiz = Math.abs(y1 - y0) < 1e-6;
       const a0 = horiz ? Math.min(x0, x1) : Math.min(y0, y1),
         a1 = horiz ? Math.max(x0, x1) : Math.max(y0, y1);
       const fixed = horiz ? y0 : x0;
       const g = [...gaps];
+      if (door && r.mapItems[door])
+        for (const [c, wd] of gaps) {
+          const [x, y] = horiz ? [c, fixed] : [fixed, c];
+          const d = add(door, x, y, { w: horiz ? wd : thick, h: horiz ? thick : wd, force: true });
+          if (d && keepClear.some((p) => Math.hypot(p.x - x, p.y - y) < wd / 2 + 0.8)) d.open = true; // nobody starts shut in a doorway
+        }
       for (const p of keepClear) {
         const along = horiz ? p.x : p.y,
           off = horiz ? p.y : p.x;
@@ -1657,7 +1800,7 @@ const E = (() => {
       piece(s, a1);
     };
     // A walled shell on rectangle R with doors; returns the floor inside the walls and where the doors are.
-    const shell = (R, doorSides, doorW = 2.4) => {
+    const shell = (R, doorSides, doorW = 2.4, door = TH.door) => {
       const doors = [];
       const gapOn = (side) => {
         const len = side === "N" || side === "S" ? R.x1 - R.x0 : R.y1 - R.y0;
@@ -1672,10 +1815,10 @@ const E = (() => {
           side === "N" ? { x: c, y: R.y0, side } : side === "S" ? { x: c, y: R.y1, side } : side === "W" ? { x: R.x0, y: c, side } : { x: R.x1, y: c, side },
         );
       }
-      wallLine(R.x0 - T / 2, R.y0, R.x1 + T / 2, R.y0, g.N);
-      wallLine(R.x0 - T / 2, R.y1, R.x1 + T / 2, R.y1, g.S);
-      wallLine(R.x0, R.y0 + T / 2, R.x0, R.y1 - T / 2, g.W);
-      wallLine(R.x1, R.y0 + T / 2, R.x1, R.y1 - T / 2, g.E);
+      wallLine(R.x0 - T / 2, R.y0, R.x1 + T / 2, R.y0, g.N, T, door);
+      wallLine(R.x0 - T / 2, R.y1, R.x1 + T / 2, R.y1, g.S, T, door);
+      wallLine(R.x0, R.y0 + T / 2, R.x0, R.y1 - T / 2, g.W, T, door);
+      wallLine(R.x1, R.y0 + T / 2, R.x1, R.y1 - T / 2, g.E, T, door);
       const In = { x0: R.x0 + T / 2, y0: R.y0 + T / 2, x1: R.x1 - T / 2, y1: R.y1 - T / 2 };
       for (const d of doors) clearDoor(d, In, doorW);
       return { In, doors };
@@ -1795,7 +1938,7 @@ const E = (() => {
           const [ax, ay] = F.at(F.Lu - mw, 0),
             [bx, by] = F.at(F.Lu, mh);
           const R = { x0: Math.min(ax, bx), y0: Math.min(ay, by), x1: Math.max(ax, bx), y1: Math.max(ay, by) };
-          F.line(F.Lu - mw, 0, F.Lu - mw, mh, [[mh * 0.55, 1.6]]);
+          F.line(F.Lu - mw, 0, F.Lu - mw, mh, [[mh * 0.55, 1.6]], 0.2, TH.innerDoor);
           F.line(F.Lu - mw, mh, F.Lu, mh);
           reserve(...F.at(F.Lu - mw - 1.4, mh * 0.55 - 0.8), ...F.at(F.Lu - mw + 1.4, mh * 0.55 + 0.8));
           const M = frame({ x0: R.x0 + 0.15, y0: R.y0 + 0.15, x1: R.x1 - 0.15, y1: R.y1 - 0.15 });
@@ -1868,6 +2011,73 @@ const E = (() => {
         alongWall(F, "lockers", "near", lob + 0.5, cu - 3, 0.05, 3);
         F.put("armoryCage", cu - 3.8, F.Lv - 1.1, true, { pad: 0.2 });
         alongWall(F, "cabinet", "far", lob + 0.5, lob + 3, 0.02, 3);
+      },
+      // 12 Nov: a general store. The till by the way in, shelves in aisles down the shop floor, a storeroom behind a door at the back.
+      store(F) {
+        let floorU1 = F.Lu;
+        if (F.Lu >= 12) {
+          const back = Math.min(5, F.Lu * 0.28);
+          const dv = F.Lv * 0.5;
+          F.line(F.Lu - back, 0, F.Lu - back, F.Lv, [[dv, 1.6]], 0.2, TH.innerDoor);
+          reserve(...F.at(F.Lu - back - 1.4, dv - 0.8), ...F.at(F.Lu - back + 1.4, dv + 0.8));
+          alongWall(F, "crate", "far", F.Lu - back + 0.3, F.Lu - 0.1, 0.05, 3);
+          alongWall(F, "barrels", "near", F.Lu - back + 0.3, F.Lu - 0.1, 0.1, 2);
+          F.put("crateStack", F.Lu - 1.15, dv, true, { pad: 0.1 });
+          floorU1 = F.Lu - back - 1.6;
+        }
+        // the counter runs along the room by the way in, with the register on it and room behind it for the shopkeeper
+        const counter = F.put("frontCounter", 3.2, F.Lv - 1.6, true, { pad: 0.2 });
+        if (counter) F.put("cashRegister", 5.52, F.Lv - 1.6, true, { pad: 0.02, touch: [counter] }); // at the counter's end
+        F.put("vendingMachine", 0.6, 0.5, true, { pad: 0.05 });
+        // shelves in rows along the room, 2 m aisles between, a way round both ends
+        for (let v = 0.5; v + 0.5 <= F.Lv - 3.2; v += 0.8 + 2) {
+          const row = [];
+          for (let u = 6.6; u + 1.5 <= floorU1; u += 3) {
+            const sh = F.put("shopShelf", u, v, true, { pad: 0.02, touch: row });
+            if (sh) row.push(sh);
+          }
+        }
+      },
+      // 12 Nov: a clinic. A waiting room by the way in, a ward of beds with curtains between, exam rooms with doors along the far end.
+      clinic(F) {
+        const depth = 3.6,
+          cw = 3.4;
+        const n = F.Lu >= 14 ? Math.min(4, Math.floor((F.Lv - 0.4) / cw)) : 0;
+        const cu = F.Lu - depth;
+        if (n) {
+          const v0 = (F.Lv - n * cw) / 2;
+          F.line(
+            cu,
+            0,
+            cu,
+            F.Lv,
+            Array.from({ length: n }, (_, i) => [v0 + i * cw + cw / 2, 1.2]),
+            0.2,
+            TH.innerDoor,
+          );
+          for (let i = 0; i <= n; i++)
+            if ((i > 0 && i < n) || (i === 0 && v0 > 0.3) || (i === n && v0 + n * cw < F.Lv - 0.3)) F.line(cu, v0 + i * cw, F.Lu, v0 + i * cw);
+          for (let i = 0; i < n; i++) {
+            const v = v0 + i * cw;
+            F.put("examTable", F.Lu - 1.15, v + cw * 0.62, true, { pad: 0.05 });
+            F.put("medCabinet", F.Lu - 0.8, v + 0.4, true, { pad: 0.02 });
+          }
+          reserve(...F.at(cu - 2, 0), ...F.at(cu - 0.15, F.Lv)); // the corridor in front of the exam rooms
+        }
+        const wardU1 = n ? cu - 2.2 : F.Lu - 0.3;
+        // the waiting room: benches on the far wall, the reception desk across from them
+        alongWall(F, "bench", "far", 0.6, 5.2, 0.4, 2);
+        if (F.put("desk", 3.6, 1.6, false, { pad: 0.2 })) F.put("officeChair", 4.6, 1.6, true, { pad: 0.05 });
+        F.put("pottedPlant", 0.5, 0.5, true, { pad: 0.05 });
+        // the ward: beds head to the wall on both sides, a curtain between each pair
+        for (const far of [false, true])
+          for (let u = 7; u + 1 <= wardU1; u += 2.6) {
+            const v = far ? F.Lv - 1.1 : 1.1;
+            if (!F.put("hospitalBed", u, v, false, { pad: 0.05 })) continue;
+            if (u + 2.6 + 1 <= wardU1) F.put("curtain", u + 1.3, far ? F.Lv - 1.2 : 1.2, false, { pad: 0.02, w: 2.2 });
+          }
+        F.put("wheelchair", 6, F.Lv / 2, true, { pad: 0.3 });
+        F.put("medCabinet", wardU1 - 0.7, F.Lv / 2, false, { pad: 0.1 });
       },
       // a home is split into rooms first; these furnish one room each
       living(F) {
@@ -2002,8 +2212,8 @@ const E = (() => {
         const len = vert ? H : W;
         const door = (vert ? A.y0 : A.x0) + len * (0.25 + rng() * 0.5);
         doorways.push(vert ? { x: at, y: door } : { x: door, y: at });
-        if (vert) wallLine(at, A.y0, at, A.y1, [[door, 1.6]], 0.2);
-        else wallLine(A.x0, at, A.x1, at, [[door, 1.6]], 0.2);
+        if (vert) wallLine(at, A.y0, at, A.y1, [[door, 1.6]], 0.2, TH.innerDoor);
+        else wallLine(A.x0, at, A.x1, at, [[door, 1.6]], 0.2, TH.innerDoor);
         if (vert) reserve(at - 1.4, door - 0.8, at + 1.4, door + 0.8);
         else reserve(door - 0.8, at - 1.4, door + 0.8, at + 1.4);
         const a = vert ? { ...A, x1: at - 0.1 } : { ...A, y1: at - 0.1 },
@@ -2052,6 +2262,8 @@ const E = (() => {
         factory: ["oilDrum", "toolCart", "crate"],
         warehouse: ["crate", "barrels", "pallet"],
         police: ["bench", "lockers", "cabinet"],
+        store: ["shopShelf", "crate", "barrels"],
+        clinic: ["bench", "medCabinet", "wheelchair", "pottedPlant"],
       }[theme] || ["crate"];
       for (let u = 2; u < F.Lu - 2; u += rand(3, 6)) {
         const k = any(keys);
@@ -2211,6 +2423,17 @@ const E = (() => {
         row("car", S.x0 + 3, S.y1 + 4, Math.max(2, Math.floor(W / 6)), 6, 0, { pad: 0.6 });
         row("lamppost", S.x0 + 1, S.y1 + 1.2, Math.max(2, Math.floor(W / 10)), 10, 0);
       }
+      if (theme === "store") {
+        add("gasPump", S.x0 + W * 0.3, S.y1 + 3, { pad: 0.5 });
+        add("car", S.x0 + W * 0.65, S.y1 + 4, { pad: 0.5 });
+        add("dumpster", S.x1 + 1.3, S.y0 + 2, { rot: true, pad: 0.2 });
+        row("barrels", S.x1 + 1.2, S.y0 + 4.5, 2, 0, 1.7, { rot: true });
+      }
+      if (theme === "clinic") {
+        row("bench", S.x0 + W / 2 - 4, S.y1 + 1.4, 2, 6, 0);
+        add("car", S.x0 + W * 0.2, S.y1 + 4.5, { pad: 0.5 });
+        add("dumpster", S.x1 + 1.3, S.y0 + 2, { rot: true, pad: 0.2 });
+      }
       if (theme === "police") {
         row("car", S.x0 + 3, S.y1 + 4, 3, 6, 0, { pad: 0.6 });
         row("sandbags", S.x0 + W / 2 - 4, S.y1 + 2.6, 2, 2.2, 0);
@@ -2276,6 +2499,27 @@ const E = (() => {
         }
       }
       return lots;
+    };
+    // ---- water (12 Nov): a lake on a big outdoor map, a pond on a small wooded one. Deep water ringed by shallows, never on the party.
+    const waterBody = () => {
+      if (indoorMap) return;
+      const W = r.waterChance || {};
+      const big = map.w * map.h >= (W.bigArea || 6000);
+      const wooded = ["forest", "woods"].includes(map.id) || themeId === "forested";
+      if (!big && !wooded) return;
+      if (rng() > ((big ? (themeId === "desert" ? W.bigDesert : W.big) : W.wooded) || 0)) return;
+      const w = big ? rand(20, Math.max(20, Math.min(50, map.w * 0.25))) : rand(4, Math.max(4, Math.min(8, map.w * 0.3)));
+      const h = w * rand(0.5, 0.8),
+        edge = big ? 3 : 1.5; // the shallows around it
+      for (let t = 0; t < 30; t++) {
+        const x = rand(B.x0 + w / 2 + edge + 2, B.x1 - w / 2 - edge - 2),
+          y = rand(B.y0 + h / 2 + edge + 2, B.y1 - h / 2 - edge - 2);
+        if (keepClear.some((p) => Math.hypot((p.x - x) / (w / 2 + edge + 3), (p.y - y) / (h / 2 + edge + 3)) < 1)) continue;
+        const sh = add("shallowWater", x, y, { w: w + 2 * edge, h: h + 2 * edge, pad: 0.5 });
+        if (!sh) continue;
+        add(big ? "lake" : "pond", x, y, { w, h, force: true });
+        return;
+      }
     };
     // ---- choose the plan
     const indoorMap = (r.indoorMaps || []).includes(map.id) || (map.id === "custom" && map.w * map.h <= 1600);
@@ -2459,26 +2703,28 @@ const E = (() => {
       if (indoorMap) camp(0, 0);
       else {
         camp(0, 0);
+        waterBody();
         if (map.w * map.h > 15000) camp(any([-1, 1]) * map.w * 0.25, any([-1, 1]) * map.h * 0.25);
         nature(outdoorKind, B, [{ x0: -10, y0: -10, x1: 10, y1: 10 }], 0.7);
         topUp(outdoorKind, [{ x0: -10, y0: -10, x1: 10, y1: 10 }], 0.7);
       }
     } else {
       const kind = themeId === "forested" ? "forested" : "desert";
+      waterBody();
       nature(kind, B, indoorMap ? [{ x0: -1.5, y0: -1.5, x1: 1.5, y1: 1.5 }] : [], indoorMap ? 1.6 : 1);
       if (!indoorMap && kind === outdoorKind) topUp(kind, [], 1);
     }
     return out;
   }
   /** Walking check for a layout: free ground on a grid, the largest connected area, and what touches it. Used by the tests and the DM's report. */
-  function layoutReach(objs, map, step = 0.5, open = ["bedroll", "pallet"]) {
+  function layoutReach(objs, map, step = 0.5, open = ["bedroll", "pallet", "shallowWater"]) {
     const nx = Math.ceil(map.w / step),
       ny = Math.ceil(map.h / step);
     const blocked = new Uint8Array(nx * ny);
     // a cell is blocked when its center is within 0.2m (half a shoulder) of something
     const body = 0.2;
     for (const o of objs) {
-      if (open.includes(o.item)) continue;
+      if (open.includes(o.item) || o.door) continue; // a door opens
       const x0 = Math.max(0, Math.ceil((o.x - o.w / 2 - body + map.w / 2) / step - 0.5)),
         x1 = Math.min(nx - 1, Math.floor((o.x + o.w / 2 + body + map.w / 2) / step - 0.5)),
         y0 = Math.max(0, Math.ceil((o.y - o.h / 2 - body + map.h / 2) / step - 0.5)),
@@ -3166,6 +3412,17 @@ const E = (() => {
     moveSpeed,
     shotBox,
     pathBlocked,
+    walkBlocks,
+    walkLength,
+    slowOf,
+    hazardsAt,
+    hazardsCrossed,
+    hazardOf,
+    weaponReach,
+    dispositionKind,
+    rollDisposition,
+    radTier,
+    isDoor,
     generateRoom,
     coverTier,
     SPECIAL,

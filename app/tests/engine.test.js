@@ -425,7 +425,7 @@ test("room generator: every theme fills a room, stays in bounds, no overlaps, ci
     const map = { w: 40, h: 30 }; const room = E.generateRoom(map, id, DEFAULT_RULES, Math.random, [{ x: -18, y: 0 }]);
     assert.ok(room.length >= 2, id);
     for (const o of room) { assert.ok(Math.abs(o.x) <= map.w / 2 + 0.01 && Math.abs(o.y) <= map.h / 2 + 0.01, `${id} ${o.item} out of bounds`); assert.ok(DEFAULT_RULES.cover[o.cover], o.item); }
-    room.forEach((p, i) => room.forEach((q, j) => { if (i < j && !(p.item === "concreteWall" && q.item === "concreteWall")) assert.ok(Math.abs(p.x - q.x) >= (p.w + q.w) / 2 - 0.05 || Math.abs(p.y - q.y) >= (p.h + q.h) / 2 - 0.05, `${id}: ${p.item} overlaps ${q.item}`); }));  // wall pieces meet at corners
+    room.forEach((p, i) => room.forEach((q, j) => { if (i < j && !(p.item === "concreteWall" && q.item === "concreteWall") && p.item !== "shallowWater" && q.item !== "shallowWater") assert.ok(Math.abs(p.x - q.x) >= (p.w + q.w) / 2 - 0.05 || Math.abs(p.y - q.y) >= (p.h + q.h) / 2 - 0.05, `${id}: ${p.item} overlaps ${q.item}`); }));  // wall pieces meet at corners
   }
   const city = E.generateRoom({ w: 90, h: 70 }, "city", DEFAULT_RULES, Math.random);
   assert.ok(city.filter((o) => o.item === "building" && o.block && o.cover === "impenetrable").length >= 2, "concrete blocks");
@@ -580,7 +580,7 @@ test("layouts: every map with every setting fits, nothing overlaps, and everythi
   for (const id of Object.keys(LAYOUT_RULES.maps)) for (const theme of Object.keys(LAYOUT_RULES.roomThemes)) for (const seed of [11, 4242, 90001]) {
     const { m, objs } = room(id, theme, seed); const tag = `${id}/${theme}/${seed}`;
     for (const o of objs) assert.ok(o.x - o.w / 2 >= -m.w / 2 - 0.01 && o.x + o.w / 2 <= m.w / 2 + 0.01 && o.y - o.h / 2 >= -m.h / 2 - 0.01 && o.y + o.h / 2 <= m.h / 2 + 0.01, `${tag}: ${o.item} is off the map`);
-    for (let i = 0; i < objs.length; i++) for (let j = i + 1; j < objs.length; j++) { const a = objs[i], b = objs[j]; if (wallish(a) && wallish(b)) continue; assert.ok(!(Math.abs(a.x - b.x) < (a.w + b.w) / 2 - 0.05 && Math.abs(a.y - b.y) < (a.h + b.h) / 2 - 0.05), `${tag}: ${a.item} on top of ${b.item}`); }
+    for (let i = 0; i < objs.length; i++) for (let j = i + 1; j < objs.length; j++) { const a = objs[i], b = objs[j]; if ((wallish(a) && wallish(b)) || a.item === "shallowWater" || b.item === "shallowWater") continue; /* a lake sits in its shallows */ assert.ok(!(Math.abs(a.x - b.x) < (a.w + b.w) / 2 - 0.05 && Math.abs(a.y - b.y) < (a.h + b.h) / 2 - 0.05), `${tag}: ${a.item} on top of ${b.item}`); }
     const R = E.layoutReach(objs, m); assert.ok(R.share >= 0.85, `${tag}: the floor is cut into pieces`); assert.ok(R.inMain({ x: -m.w / 2 + 2, y: 0 }), `${tag}: the party is walled in`);
     const stuff = objs.filter((o) => !wallish(o));
     for (const o of stuff) assert.ok(R.reachable(o) || stuff.some((p) => p !== o && touching(o, p) && R.reachable(p)), `${tag}: nobody can get to the ${o.item}`);
@@ -871,4 +871,97 @@ test("12 Nov fixes: vague statuses get numbers, traits match their words, Cyborg
   const pa = data.armor.find((a) => /power/i.test(`${a.type || ""} ${a.n}`));
   const z = E.derive(pc([], { gear: { armor: pa.n, acc: [] }, statuses: [{ n: "Electrocuted", tier: 1 }] }), c2);
   assert.strictEqual(z.m.dmgTaken, 1);
+});
+
+test("12 Nov: doors, vaulting, hazards and rads", () => {
+  const r = DEFAULT_RULES, a = { x: 0, y: 0 }, b = { x: 10, y: 0 };
+  const it = (item, x, y, extra = {}) => ({ item, x, y, w: r.mapItems[item].w, h: r.mapItems[item].h, cover: r.mapItems[item].cover, ...extra });
+  // doors: wood is concealment, iron soft, steel hard; shut they block walking and sight, open they do neither
+  const door = (k, open) => ({ ...it(k, 5, 0), w: 0.2, h: 1.2, open });
+  assert.deepStrictEqual(["woodDoor", "ironDoor", "steelDoor"].map((k) => E.lineCover(a, b, [door(k)], r).tier), ["concealment", "soft", "hard"]);
+  assert.ok(E.lineCover(a, b, [door("woodDoor")], r).blind, "a shut door blocks sight");
+  assert.ok(!E.lineCover(a, b, [door("steelDoor", true)], r).blind && E.lineCover(a, b, [door("steelDoor", true)], r).tier === "open", "an open door is nothing");
+  assert.ok(E.pathBlocked(a, b, [door("woodDoor")], r) && !E.pathBlocked(a, b, [door("woodDoor", true)], r));
+  // walking: anything that would have to be vaulted stops you; open, low and walk-through things don't
+  for (const k of ["crate", "sandbags", "desk", "kitchenTable", "bed", "radBarrel"]) assert.ok(E.pathBlocked(a, b, [it(k, 5, 0)], r), `${k} has to be vaulted`);
+  for (const k of ["pallet", "bedroll", "bush", "cropRow", "radLake", "crater"]) assert.ok(!E.pathBlocked(a, b, [it(k, 5, 0)], r), `${k} can be walked over`);
+  assert.ok(!E.pathBlocked(a, b, [it("crate", 5, 0, { block: false })], r), "the DM's box wins");
+  assert.ok(!E.pathBlocked({ x: 5, y: 0 }, b, [it("crate", 5, 0)], r), "nobody is stuck in what they stand in");
+  assert.ok(!E.pathBlocked({ x: 0, y: 1.2 }, { x: 10, y: 1.2 }, [it("tree", 5, 0)], r), "a tree's leaves are walked through, only its trunk stops you");
+  // hazards: a rad barrel within 2 m, a rad lake and fire only when you stand in them
+  const barrel = it("radBarrel", 0, 0), lake = it("radLake", 20, 0), fire = { kind: "hazard", sub: "fire", x: -10, y: 0, w: 2, h: 2 };
+  const at = (x) => E.hazardsAt({ x, y: 0 }, [barrel, lake, fire], r);
+  assert.deepStrictEqual(at(2.3).map((z) => z.rads), [10], "2 m from the barrel's edge is near");
+  assert.strictEqual(at(2.6).length, 0, "farther is not");
+  assert.deepStrictEqual(at(19).map((z) => [z.rads, z.dmg]), [[25, 3]]);
+  assert.strictEqual(at(15.9).length, 0, "beside the lake is safe");
+  assert.deepStrictEqual(at(-10).map((z) => z.status), ["Burned"]);
+  // rads: one Irradiated tier per 200, up to 5
+  assert.deepStrictEqual([0, 199, 200, 650, 1000, 1200].map((n) => E.radTier(n, r)), [0, 0, 1, 3, 5, 5]);
+  // generated buildings hang doors of their setting's material in every doorway
+  const doorsOf = (theme) => E.generateRoom({ id: "open", w: 60, h: 50 }, theme, r, seeded(5), [{ x: -28, y: 0 }]).filter((o) => o.door).map((o) => o.item);
+  assert.ok(doorsOf("home").length >= 3 && doorsOf("home").every((k) => k === "woodDoor"), "a home: wooden doors, inside and out");
+  assert.ok(doorsOf("police").includes("steelDoor"), "a police station: a steel front door");
+  assert.ok(doorsOf("clinic").filter((k) => k === "woodDoor").length >= 4, "a clinic: a door on each exam room");
+});
+
+test("12 Nov: traps on the way, and dispositions that suit the gear", () => {
+  const r = DEFAULT_RULES, a = { x: 0, y: 0 }, b = { x: 10, y: 0 };
+  const hz = (sub, x, y, w = 1, h = 1, extra = {}) => ({ kind: "hazard", sub, x, y, w, h, ...extra });
+  // a walk sets off what it crosses, in order; a bear trap says stop where it bites; a sprung one is spent
+  const on = E.hazardsCrossed(a, b, [hz("landmine", 7, 0), hz("bearTrap", 4, 0), hz("wires", 5, 3, 2, 0.2)], r);
+  assert.deepStrictEqual(on.map((h) => h.o.sub), ["bearTrap", "landmine"], "the wires are 3 m off the line");
+  assert.ok(!on[0].stop && !on[0].drain && on[0].hidden && on[0].once, "a bear trap hurts and is spent; it doesn't stop the walk");
+  assert.deepStrictEqual(on[0].status.map((x) => x[0]), ["Injured Limb (Leg/Arm)", "Bleeding"]);
+  assert.strictEqual(on[0].dmg, 4);
+  assert.strictEqual(on[0].at.x, 3.5);
+  assert.strictEqual(E.hazardsCrossed(a, b, [hz("bearTrap", 4, 0, 1, 1, { sprung: true })], r).length, 0);
+  assert.strictEqual(E.hazardsCrossed(a, b, [hz("wires", 5, 0.9, 2, 0.2)], r).length, 1, "within a meter of live wires counts");
+  assert.strictEqual(E.hazardsAt({ x: 5, y: 0 }, [hz("mines", 5, 1.4, 1, 1)], r).length, 1, "standing within a meter of a mine counts");
+  assert.strictEqual(E.hazardsAt({ x: 5, y: 0 }, [hz("mines", 5, 1.8, 1, 1)], r).length, 0, "farther does not");
+  assert.strictEqual(E.hazardsCrossed({ x: 4, y: 0 }, b, [hz("bearTrap", 4, 0)], r).length, 0, "walking out of a trap you stand in");
+  const mine = E.hazardsCrossed(a, b, [hz("mines", 5, 0, 2, 2)], r)[0];
+  assert.ok(mine.blast && mine.blast.radius > 0 && !mine.dmg, "a mine explodes instead of hurting only the walker");
+  assert.deepStrictEqual([0.5, 1.5, 2.5].map((d) => E.blastDamage(mine.blast, d)), [5, 2, 0]);
+  // every disposition has a name, words, who it's for, and an icon-able key; gear decides what can come up
+  for (const [k, d] of Object.entries(r.dispositions)) assert.ok(d.n && d.d && ["human", "creature", "robot"].includes(d.who), k);
+  const seen = (kind, reach) => {
+    const s = new Set();
+    let x = 0;
+    for (let i = 0; i < 400; i++) s.add(E.rollDisposition(kind, reach, r, () => (x = (x + 0.61803) % 1)));
+    return s;
+  };
+  assert.ok(!seen("human", "melee").has("craven") && !seen("human", "melee").has("marksman"), "nobody hangs back with a knife");
+  assert.ok(!seen("human", "close").has("marksman"), "or snipes with a shotgun");
+  assert.ok(seen("human", "long").has("marksman") && seen("human", "long").has("craven"));
+  assert.ok([...seen("creature", "melee")].every((k) => r.dispositions[k].who === "creature"));
+  assert.ok([...seen("robot", "mid")].every((k) => r.dispositions[k].who === "robot"));
+  assert.strictEqual(E.weaponReach({ melee: true }), "melee");
+  assert.strictEqual(E.weaponReach({ hitBase: (b) => [0.6, 0.5, 0.3][b - 1] ?? 0 }), "close");
+  assert.strictEqual(E.weaponReach({ hitBase: (b) => (b === 7 ? 0.7 : 0.2) }), "long");
+});
+
+test("12 Nov: water: deep water can't be walked into, shallows cost a quarter more, big maps get lakes and small woods ponds", () => {
+  const r = DEFAULT_RULES, a = { x: 0, y: 0 }, b = { x: 10, y: 0 };
+  const it = (item, x, y, w, h) => ({ item, x, y, w, h, cover: "open", round: true, ...(r.mapItems[item].block ? { block: true } : {}) });
+  assert.ok(E.pathBlocked(a, b, [it("lake", 5, 0, 4, 3)], r), "a lake");
+  assert.ok(E.pathBlocked(a, b, [{ kind: "hazard", sub: "water", x: 5, y: 0, w: 2, h: 2 }], r), "placed deep water");
+  assert.ok(!E.pathBlocked(a, b, [it("shallowWater", 5, 0, 4, 3)], r));
+  // 4 m of the 10 in shallow water counts as 6 + 4 / 0.75
+  assert.ok(Math.abs(E.walkLength(a, b, [it("shallowWater", 5, 0, 4, 3)], r) - (6 + 4 / 0.75)) < 0.1);
+  assert.ok(Math.abs(E.walkLength(a, b, [it("radLake", 5, 0, 4, 3)], r) - (6 + 4 / 0.75)) < 0.1, "a rad lake too");
+  assert.strictEqual(E.walkLength(a, b, [], r), 10);
+  const count = (map, theme) => {
+    let lakes = 0;
+    for (let s = 1; s <= 20; s++) {
+      const objs = E.generateRoom(map, theme, r, seeded(s * 97), [{ x: 0, y: 0 }]);
+      const deep = objs.filter((o) => o.item === "lake" || o.item === "pond");
+      if (deep.length) lakes++;
+      for (const o of deep) assert.ok(Math.hypot(o.x, o.y) > Math.max(o.w, o.h) / 2, "never on the party");
+    }
+    return lakes;
+  };
+  assert.ok(count({ id: "wild", w: 220, h: 160 }, "forested") >= 8, "big maps usually get a lake");
+  assert.ok(count({ id: "forest", w: 40, h: 30 }, "forested") >= 4, "small woods sometimes get a pond");
+  assert.strictEqual(count({ id: "mediumRoom", w: 12, h: 10 }, "forested"), 0, "never indoors");
 });

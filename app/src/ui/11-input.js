@@ -209,14 +209,14 @@ document.addEventListener("pointerup", (ev) => {
     }
     if (ui.place) {
       const p = inMap(svgPoint(d.svg, ev));
-      const kind = ui.place;
+      const kind = ui.place === "trap" ? "hazard" : ui.place; // a trap is a hidden hazard
       const id = "o" + S.seq++;
       const pick = ui.placeItem || "";
       const cat = S.rules.mapItems[pick];
       const sub = /^(hz|mk):/.test(pick) ? pick.slice(3) : "";
       const subName = sub ? (kind === "hazard" ? S.rules.hazardKinds : S.rules.markerKinds)[sub] : "";
       act(`Place ${cat ? cat.n : subName || MAP_OBJ[kind][0]}`, () => {
-        const size = { cover: [1, 1], hard: [1.2, 1.2], hazard: [2, 2], note: [0.5, 0.5] }[kind];
+        const size = ui.place === "trap" ? [1, 1] : { cover: [1, 1], hard: [1.2, 1.2], hazard: [2, 2], note: [0.5, 0.5] }[kind];
         const big = Math.max(1, (ui.viewW || 20) / 40);
         const label = String(ui.placeName || "").trim() || (kind === "hazard" || (kind === "note" && sub && sub !== "note") ? subName : "");
         // a catalog item comes at its real size; a plain one a little larger when zoomed far out, so it can be seen and grabbed
@@ -279,8 +279,8 @@ document.addEventListener("pointerup", (ev) => {
     const c = cbOf(d.tok);
     const e = ent(d.tok);
     const free = ev.shiftKey || !fightPhase();
-    if (!free && E.pathBlocked({ x: c.x, y: c.y }, { x, y }, S.scene.objects)) {
-      toast(`Something solid is in the way. Go around, or hold Shift.`);
+    if (!free && E.pathBlocked({ x: c.x, y: c.y }, { x, y }, S.scene.objects, S.rules)) {
+      toast(`Something in the way would have to be vaulted, or a door is shut. Go around, or hold Shift.`);
       return render();
     }
     if (!free && d.tok !== actorId()) {

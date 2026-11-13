@@ -882,13 +882,12 @@ const ACT = {
     ui.pendingMove = null;
     if (!canPay(e, m.cost, "move there")) return render();
     act("Move token", () => {
-      c.x = m.x;
-      c.y = m.y;
       for (const key of Object.keys(k.ranges)) if (key.split("|").includes(m.id)) delete k.ranges[key];
       e.ap = Math.max(0, (e.ap || 0) - m.cost);
       c.moved = true;
       if (k.phase === "stealth") k.stealthDue = e.id;
       log("status", `${e.name} moves ${fmt(m.cost)} AP: ${moveHow(e, m).text}. ${e.ap} left.`);
+      walkTo(e, m); // traps, mines and live wires on the way go off now
       touchObjects(e.id);
       ui.focus = "#roll";
     });
@@ -976,7 +975,7 @@ const ACT = {
                 ),
               };
         let made = E.generateRoom(cm ? { ...mapOf(), id: "custom" } : mapOf(), S.scene.theme, r2, Math.random, [...party, ...foesAt], () => "o" + S.seq++);
-        if (S.scene.density === "sparse") made = made.filter((o) => o.block || /wall|building|void/i.test(o.item || "") || Math.random() > 0.35);
+        if (S.scene.density === "sparse") made = made.filter((o) => o.block || o.door || /wall|building|void/i.test(o.item || "") || Math.random() > 0.35);
         const corners = (o) =>
           [
             [0, 0],
@@ -1038,6 +1037,32 @@ const ACT = {
       act("Label", () => {
         o.label = val;
       });
+  },
+  dispNext(v) {
+    const e = ent(v);
+    if (!e) return;
+    const kind = E.dispositionKind(e, S.rules);
+    const list = Object.keys(S.rules.dispositions || {}).filter((k) => S.rules.dispositions[k].who === kind);
+    if (!list.length) return;
+    act("Disposition", () => {
+      e.disp = list[(list.indexOf(e.disp) + 1) % list.length];
+      ui.autoPlan = null;
+      log("status", `${e.name} is now ${S.rules.dispositions[e.disp].n}.`);
+    });
+  },
+  objDoor(v) {
+    const o = S.scene.objects.find((x) => x.id === v);
+    if (o)
+      act(o.open ? "Shut door" : "Open door", () => {
+        o.open = !o.open;
+        log("status", `The ${(S.rules.mapItems[o.item] || {}).n || "door"} is ${o.open ? "open" : "shut"}.`);
+      });
+  },
+  setRads(val, el) {
+    const e = ent(el.dataset.id);
+    const t = num(val);
+    if (!e || t == null) return render();
+    act("Rads", () => setRads(e, t));
   },
   objDel(v) {
     act("Remove from map", () => {
@@ -1877,16 +1902,16 @@ const ACT = {
     const cost = r === cur ? 0 : moveCost(posOf(m.att), to, A);
     if (cost === Infinity) return toast(`${A.name} can't walk: a shattered leg.`);
     if (!canPay(A, cost, "move there")) return;
-    if (E.pathBlocked(posOf(m.att), to, S.scene.objects)) return toast("Something solid is in the way. Drag around it on the map.");
+    if (E.pathBlocked(posOf(m.att), to, S.scene.objects, S.rules))
+      return toast("Something in the way would have to be vaulted, or a door is shut. Drag around it on the map.");
     if (r !== cur && standBlocked(to)) return toast("That spot is inside something. Drag to a clear spot on the map.");
     act(`Move: ${A.name}`, () => {
       const a = cbOf(m.att);
-      a.x = E.fix(to.x);
-      a.y = E.fix(to.y);
       a.moved = true;
       for (const k of Object.keys(K().ranges)) if (k.split("|").includes(m.att)) delete K().ranges[k];
       A.ap = Math.max(0, (A.ap || 0) - cost);
       log("status", `${A.name} moves to R${r} of ${ent(m.tgt).name}, ${cost} AP. ${A.ap} left.`);
+      walkTo(A, to);
       if (K().phase === "stealth") K().stealthDue = A.id;
       ui.modal = null;
       if (ui.atk) ui.focus = "#roll";
@@ -1946,6 +1971,7 @@ const ACT = {
         for (const [n, x] of Object.entries(u.reduces)) {
           const st = (T.statuses || []).find((q) => q.n === n);
           if (st) {
+            if (n === "Irradiated" && T.rads) T.rads = Math.max(0, T.rads - x * (S.rules.radStep || 200)); // RadAway flushes the rads with the tier
             st.tier -= x;
             if (st.tier < 1) T.statuses = T.statuses.filter((q) => q !== st);
           }

@@ -140,7 +140,7 @@ upd(12, D9, "Room layouts", "Was: items scattered at random. Now: layouts follow
     p("Items placed = map area x density x a random 0.8 to 1.2, kept between the minimum and maximum. Higher weights come up more often."),
     tbl(["Setting", "Density per m2", "Min-max", "Items (weight)"], [[t["n"], t["density"], f"{t['min']}-{t['max']}", ", ".join(f"{R['mapItems'][k]['n']} ({v})" for k, v in t["items"].items())] for t in R["roomThemes"].values()], [1.1, 0.9, 0.6, 4.4]))
 upd(12, D9, "Furniture and scenery", "The current list, from the app's data.",
-    tbl(["Item", "Cover", "Size (m)"], [[i["n"], R["cover"][i["cover"]]["n"] + (", blocks walking" if i.get("block") else ""), f"{i['w']} x {i['h']}"] for i in R["mapItems"].values()], [2.8, 2.6, 1.2]))
+    tbl(["Item", "Cover", "Size (m)"], [[i["n"], R["cover"][i["cover"]]["n"] + (", blocks walking and sight while shut" if i.get("door") else ", blocks walking" if i.get("block") or i.get("vault") or (i["cover"] != "open" and not i.get("walk")) else ""), f"{i['w']} x {i['h']}"] for i in R["mapItems"].values()], [2.8, 2.6, 1.2]))
 
 upd(13, D8, "Effects as variables", "Was: effects written as text only. Now: items, statuses, perks, traits and armor store them as these variables, in their fx and use columns.",
     tbl(["Variable", "What it changes"], [[k, v] for k, v in D["vars"].items()], [1.4, 5.6]))
@@ -549,6 +549,82 @@ upd(18, D12, "Saving throws are rolled high", "Was: roll at or under the save nu
 upd(24, D12, "Prayer", "New: an action for characters with Strict Religious Rites (or its evolved form, Devout).", bl(
     f"Pray spends all the AP left this turn and gives the Prayer status (+1 Luck, +1 END, +5% to hit) for {R['prayer']['rounds']} rounds. It also lifts Damnation.",
     "Only characters with the trait see the button. The length is a guess, since the trait doesn't say; it's in Settings (prayer.rounds)."))
+
+# ---------------------------------------------------------------- 12 Nov 2026, late: doors, vaulting, hazards that act, rads
+upd(12, D12, "Doors", "Was: buildings had gaps in their walls and no doors. Now: every doorway the room maker draws has a door, and the DM can place doors.", bl(
+    "A shut door stops walking and blocks sight: the attack panel's Cover tile says \"no sight\" and the log says the shot was blind, through a shut door. Shots still go through it.",
+    "Its cover is its material: a wooden door is concealment, an iron door soft cover, a steel door hard cover.",
+    "An open door is no cover and stops nobody. Select a door on the map to open or shut it. A door with someone standing in its doorway starts open.",
+    "Each building setting has its own doors (Settings: roomThemes, door and innerDoor): homes, stores and clinics wood throughout; offices iron outside and wood inside; factories and warehouses steel outside and iron inside; police stations steel outside."))
+upd(11, D12, "What you can walk over", "Was: only buildings, walls and a few big things stopped a walk; a character could walk straight through crates, desks and sandbags. Now: anything that would have to be vaulted can't be walked over.", bl(
+    "Every object with cover above open (concealment, soft, hard, impenetrable) stops a walk. Go around it, or hold Shift to place the token by hand.",
+    "Open things are stepped over: pallets, bedrolls, cots, benches, rail track, craters. A bed and a wheelchair are open but still in the way.",
+    "Some concealment can be walked through: bushes, thickets, dunes, crop rows, trash piles, curtains, field tents and a rad lake. A tree stops you only at its trunk.",
+    "The DM's \"Blocks walking\" box on any selected object overrides all of this. Nobody can be stuck: a walk that starts inside something isn't stopped by it."))
+upd(12, D12, "Hazards act", "Was: hazards on the map were labels only. Now: they act on whoever ends a turn in them, or near them.", bl(
+    f"Fire: Burned goes up one tier (to 5) for each turn ended in it.",
+    f"Radiation: +{R['hazardFx']['rads']['rads']} rads for each turn ended in it. Toxic gas: Poisoned goes up a tier. Acid pool: {R['hazardFx']['acid']['dmg']} damage.",
+    f"Radioactive barrel (new object, soft cover): +{R['mapItems']['radBarrel']['hazard']['rads']} rads for ending a turn within {R['mapItems']['radBarrel']['hazard']['near']} m of it.",
+    f"Rad lake (new object, open, can be walked into): +{R['mapItems']['radLake']['hazard']['rads']} rads and {R['mapItems']['radLake']['hazard']['dmg']} damage for each turn ended in it.",
+    "Resistances still apply to the statuses. Every number is in Settings. (Live wires, mines, spike traps and water came later the same day: see Traps on the way and Water.)",
+    "The barrel's 10 rads was asked for. The rad lake's, the radiation hazard's and the acid's numbers are guesses to start from."))
+upd(27, D12, "Rads", f"Was: Irradiated was a status the DM set by hand. Now: each character has a rad counter from 0 to {R['radMax']}, on the party card.", bl(
+    f"Every {R['radStep']} rads is one tier of Irradiated: {R['radStep']} is tier 1 (Contact Radiation), {R['radStep']*5} is tier 5 (Walking Isotope). The bar on the card is cut at each tier.",
+    "Rads come from hazards at the end of a turn, or the DM types the number on the card. When the count crosses a line the Irradiated tier follows, up or down.",
+    f"RadAway and anything else that lowers Irradiated by N tiers also takes off N x {R['radStep']} rads.",
+    "Changing the Irradiated status by hand doesn't change the count.",
+    "At the cap the count simply stops; nothing more happens there unless the DM rules it."))
+upd(12, D12, "General store and clinic", "New settings, with floor plans that make sense when you walk them.", bl(
+    "General store: the counter and register by the way in, shelves in rows with aisles down the shop floor, a storeroom of crates and barrels behind a door at the back. Outside: a gas pump, a car, a dumpster.",
+    "Clinic: a waiting room with benches and a reception desk by the way in, a ward of beds head to the wall with curtains between, and exam rooms along the far end, each with its own door, an exam table and a medicine cabinet."))
+
+# ---------------------------------------------------------------- 12 Nov 2026, night: traps on the way, hidden traps, dispositions
+def _hzrow(k, h):
+    bits = []
+    when = "end a turn in it" if h.get("on") else ""
+    if h.get("near"): when = f"end a turn within {h['near']} m"
+    if h.get("cross"): when = (when + " or walk through it" if when else "walk through it")
+    if h.get("rads"): bits.append(f"+{h['rads']} rads")
+    if h.get("dmg"): bits.append(f"{h['dmg']} damage")
+    if h.get("blast"): bits.append(f"explodes: {' / '.join(str(x) for x in h['blast']['dmg'])} damage by meter out to {h['blast']['radius']} m, to everyone in it")
+    sts = h.get("status")
+    for st in (sts if isinstance(sts, list) else [[sts, h.get("tier", 1), h.get("part")]] if sts else []):
+        bits.append(f"{st[0]} +{st[1] if len(st) > 1 else 1}" + (" (left leg)" if len(st) > 2 and st[2] == "LLeg" else ""))
+    if h.get("block"): bits.append("nobody can walk into it")
+    if h.get("slow"): bits.append(f"walking through it covers {round(h['slow'] * 100)}% of the usual distance per AP")
+    if h.get("stop"): bits.append("the walk stops there")
+    if h.get("drain"): bits.append("no AP left this turn")
+    if h.get("once"): bits.append("goes off once")
+    return [R["hazardKinds"].get(k, k) + (" (hidden)" if h.get("hidden") else ""), when, ", ".join(bits)]
+upd(12, D12, "Traps on the way", "Was: hazards acted only on whoever ended a turn in them. Now: mines, live wires, spikes and traps also go off when a confirmed walk passes through them, or within their reach.", bl(
+    "The DM confirms the walk first; then whatever the line crosses goes off, in the order it's reached. A trap that stops the walk leaves the walker standing where it bit.",
+    f"Mines explode like a small grenade where they're set off, hurting everyone in the blast, not just whoever set them off: a minefield {R['hazardFx']['mines']['blast']['dmg']} damage out to {R['hazardFx']['mines']['blast']['radius']} m (each mine walked over or stood beside), a buried landmine {R['hazardFx']['landmine']['blast']['dmg']} out to {R['hazardFx']['landmine']['blast']['radius']} m. Cover in the blast is damaged too. These start low on purpose.",
+    "Hidden traps (bear trap, tripwire, buried landmine, dart plate, snare) are drawn faint and dashed on the DM's screen and not at all on the players'. Once one goes off it shows, and a one-time trap is drawn spent.",
+    f"A party member with any of these perks spots hidden traps, so the players see them: {', '.join(R['trapSense'])}.",
+    "Automated turns walk around every hazard their fighter can see, but not around hidden traps nobody has found."),
+    tbl(["Hazard", "When", "What it does"], [_hzrow(k, h) for k, h in R["hazardFx"].items()], [1.7, 2.2, 3.0]),
+    p("Every number is a starting guess, in Settings under hazardFx."))
+upd(12, D12, "Water", "Was: deep water was a label. Now: water is on the map in blue and changes how you walk.", bl(
+    "Deep water (a lake, a pond, or deep water placed with +Hazard) can't be walked into. Shots still cross it.",
+    f"Shallow water and a rad lake slow you: walking through them covers {round(R['mapItems']['shallowWater']['slow'] * 100)}% of the usual distance per AP, so that stretch costs a quarter more. The move readout says when water slowed a walk.",
+    f"The room maker puts a lake (deep water ringed by shallows) on big outdoor maps ({R['waterChance']['bigArea']} square meters or more) {round(R['waterChance']['big'] * 100)}% of the time ({round(R['waterChance']['bigDesert'] * 100)}% in a desert), and a pond on small wooded maps {round(R['waterChance']['wooded'] * 100)}% of the time, never where the party stands.",
+    "Deep water is dark blue, shallow water a lighter, fainter blue; both are named on the map and in the Key."))
+upd(12, D12, "Traps go down with +Trap", "Was: hidden traps were in the +Hazard list. Now: the DM places them with their own +Trap button, the same way as cover; +Hazard keeps the ones everyone can see.", bl(
+    "Bear trap: 4 damage, an injured left leg (tier 1) and Bleeding 1, once. It no longer stops the walk or takes the AP.",
+    "Tripwire: 8 damage and Bleeding 1, once. Buried landmine, dart plate and snare are unchanged."))
+upd(20, D12, "Dispositions", "Was: every enemy played an automated turn the same way. Now: each enemy and ally rolls a disposition when the fight begins, and plays its automated turns by it.", bl(
+    "The roll is weighted by the gear it carries (its longest-reaching weapon: melee; close for shotguns, SMGs and pistols; mid for rifles; long for scoped rifles), so nobody is rolled into hanging back with a shotgun or sniping with a knife.",
+    "Humans, creatures (animals, insects, feral ghouls) and robots each have their own list. Its icon shows beside its name on the enemy card from the initiative screen on; the DM can click the icon to change it.",
+    "A Craven, for one, hangs back at the farthest range it can still hit from, takes potshots from cover, and runs once more than half its side is down or gone, unless its side was only two."),
+    tbl(["Disposition", "For", "How it fights"], [[d["n"], d["who"], d["d"]] for d in R["dispositions"].values()], [1.3, 0.8, 4.8]))
+upd(17, D12, "Automated turns think more", "Was: walk toward the weapon's best range, heal when badly hurt, shoot. Now: it also weighs these, by disposition.", bl(
+    "Running away (and leaving the fight at the map's edge), stepping out of a hazard it's standing in, and walking around hazards it can see.",
+    "Clearing a jammed gun when it has nothing as good to fall back on.",
+    "Which foe to go for: the best odds, the nearest, the weakest, the most hurt, the toughest, whoever hurt it last, or whoever is closest to its toughest ally.",
+    "Where to stand: charge in, the weapon's best band, the farthest band it can still hit from, a spot behind cover, a spot round the side with a clearer line, or hold its ground.",
+    "A grenade at two or more foes bunched together, never with a friend near the blast.",
+    "Aiming for the head when that still hits often enough, how many attacks to make, and ducking back into cover with the AP left.",
+    "Spots that score alike are picked with a little chance, so two fighters of the same disposition don't move in lockstep."))
 
 # ---------------------------------------------------------------- 12 Nov 2026, evening: aiming, familiarity, check outcomes, perk branches
 upd(8, D12, "Aiming costs no AP", "Was: in campaigns saved before 11 Nov, aiming at a limb or the head still cost extra AP. Now: aiming never costs AP. The part changes the hit chance (head x0.5, body x1, limbs x1.25) and the damage (head x2, body x1, limbs x0.75).", bl(

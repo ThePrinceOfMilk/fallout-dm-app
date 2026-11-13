@@ -76,4 +76,39 @@ function weaponIcon(o) {
   if (/LMG|Heavy/.test(t)) return "heavy";
   return "rifle";
 }
+// 12 Nov: hazard and trap icons (h_<kind>), drawn on the map and in the review sheet, and disposition icons (d_<key>) for enemy cards.
+Object.assign(VICON, {
+  h_fire: `<path d="M12 22c-4.2 0-7-2.8-7-6.6 0-3.4 2.3-5.6 3.6-8 .5 1.8 1.4 3 2.6 3.6C11 7.4 12.6 4.4 15.2 2c-.3 3.6 1.6 5.6 2.9 7.6 1 1.6 1.9 3.4 1.9 5.8 0 3.8-3.2 6.6-8 6.6z"/><path d="M12 22c-1.8 0-3-1.2-3-2.9 0-1.8 1.4-2.8 2.4-4.5.9 1.6 3.6 2.6 3.6 4.6 0 1.6-1.2 2.8-3 2.8z"/>`,
+  h_rads: `<circle class="f" cx="12" cy="12" r="1.9"/><path class="f" d="M12 9.2 8.4 3a10 10 0 0 1 7.2 0zM14.4 13.4l7.1 0a10 10 0 0 1-3.6 6.2zM9.6 13.4 6.1 19.6a10 10 0 0 1-3.6-6.2z"/>`,
+  h_gas: `<path d="M6.5 18.5h11a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6-1.3A4.7 4.7 0 0 0 6.5 18.5z"/><path d="M9 14.5c1 .8 2 .8 3 0s2-.8 3 0"/><path d="M4 22h4M11 22h6"/>`,
+  h_acid: `<path d="M8 3c-2.4 3.2-3.6 5.4-3.6 7a3.6 3.6 0 0 0 7.2 0C11.6 8.4 10.4 6.2 8 3z"/><path d="M16.5 8.5c-1.8 2.4-2.7 4-2.7 5.2a2.7 2.7 0 0 0 5.4 0c0-1.2-.9-2.8-2.7-5.2z"/><path d="M3 21c2-1.4 4-1.4 6 0s4 1.4 6 0 4-1.4 6 0"/>`,
+  h_wires: `<path d="M2 6c3 0 4 3 7 3"/><path d="M22 6c-3 0-4 3-7 3"/><path class="f" d="M13.4 7.5 8.6 14h3l-1.6 6.5 5.4-7.6h-3.1z"/>`,
+  h_mines: `<circle cx="12" cy="13" r="5"/><path d="M12 8V4.5M12 4.5h-2M12 4.5h2M7.2 9.5 5 7.3M16.8 9.5 19 7.3M7 13H3.5M17 13h3.5"/><circle class="f" cx="12" cy="13" r="1.6"/>`,
+  h_spikes: `<path d="M2 20h20"/><path d="M3 20 5.5 9 8 20M8 20l2.5-13L13 20M13 20l2.5-10L18 20M18 20l2-7 1.5 7"/>`,
+  h_water: `<path d="M2 8c2-1.6 4-1.6 6 0s4 1.6 6 0 4-1.6 6 0"/><path d="M2 13c2-1.6 4-1.6 6 0s4 1.6 6 0 4-1.6 6 0"/><path d="M2 18c2-1.6 4-1.6 6 0s4 1.6 6 0 4-1.6 6 0"/>`,
+  h_shallow: `<path d="M2 12c2-1.6 4-1.6 6 0s4 1.6 6 0 4-1.6 6 0"/><path d="M5 17h3M11 17h3M17 17h2"/>`,
+  h_bearTrap: `<path d="M3 13a9 9 0 0 1 18 0"/><path d="M3 13a9 6 0 0 0 18 0"/><path d="M6 9.2 7.6 12l1.6-3.6L11 12l1-3.6L13.6 12l1.4-3.6L16.4 12 18 9.2"/><path d="M12 19v3M9 22h6"/>`,
+  h_tripwire: `<path d="M2 15h13"/><path d="M2 12v6M22 12v6"/><rect x="15" y="10" width="5" height="9" rx="1.2"/><path d="M17.5 10V7.5l2-1.5"/><path d="M15 15l-2-1"/>`,
+  h_landmine: `<ellipse cx="12" cy="15" rx="8" ry="3.2"/><path d="M4 15v1.5c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2V15"/><path d="M12 11.8V8M9.5 8h5M3 6l2 2M21 6l-2 2M12 3v1.5"/>`,
+  h_dartPlate: `<rect x="4" y="13" width="16" height="7" rx="1"/><path d="M7 13V6M12 13V4M17 13V6"/><path class="f" d="M5.6 6.4 7 3.6l1.4 2.8zM10.6 4.4 12 1.6l1.4 2.8zM15.6 6.4 17 3.6l1.4 2.8z"/>`,
+  h_snare: `<path d="M12 2v6"/><ellipse cx="12" cy="15" rx="7" ry="5"/><path d="M12 8c-1.4 2-1.4 3 0 2.6 1.4.4 1.4-.6 0-2.6"/><path d="M5 15h-2.5M19 15h2.5"/>`,
+  // dispositions
+  d_craven: `<path d="M6 22V3"/><path d="M6 4c3-1.4 5 1.4 8 0s4-.6 5 0v8c-1-.6-2-1.4-5 0s-5-1.4-8 0"/>`,
+  d_reckless: `<path d="M3 5l7 7-7 7M11 5l7 7-7 7"/><path class="f" d="M19 9.5h2.5v5H19z"/>`,
+  d_marksman: `<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 1.5v6M12 16.5v6M1.5 12h6M16.5 12h6"/>`,
+  d_tactician: `<path d="M2 21h20"/><path d="M3 21v-7h7v7M3 17.5h7M6.5 14v3.5M6.5 17.5v3.5"/><circle cx="16" cy="7" r="2"/><path d="M16 9v6l-2.5 6M16 15l2.5 6M13 11.5l3-1.5 3 2"/>`,
+  d_flanker: `<rect x="9.5" y="8" width="5" height="8"/><path d="M4 18c-2-6 2-13 10-13.5"/><path d="M11.5 2.5 14 4.5l-2.5 2.2"/><circle class="f" cx="19" cy="16" r="2"/>`,
+  d_bully: `<path d="M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6-8 11-8 11z"/><path d="M12 9v7M9 13l3 3 3-3"/>`,
+  d_vulture: `<path d="M12 3c-2.8 4-4.4 6.8-4.4 9a4.4 4.4 0 0 0 8.8 0C16.4 9.8 14.8 7 12 3z"/><circle cx="12" cy="12.5" r="1.8"/><path d="M12 17v4M8 20h8"/>`,
+  d_zealot: `<path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/><circle class="f" cx="12" cy="12" r="1.8"/>`,
+  d_mercenary: `<path d="M12 2.5l1.6 1.6 2.2-.6.6 2.2 2.2.6-.6 2.2 1.6 1.6-1.6 1.6.6 2.2-2.2.6-.6 2.2-2.2-.6L12 17.5l-1.6-1.6-2.2.6-.6-2.2-2.2-.6.6-2.2L4.4 10l1.6-1.6-.6-2.2 2.2-.6.6-2.2 2.2.6z"/><path d="M13.6 7.6c-.6-.6-3.4-.8-3.4.8 0 1.8 3.6 1 3.6 3 0 1.4-2.8 1.4-3.8.6M12 6v1.4M12 12.6V14"/><path d="M8 20l4 2 4-2"/>`,
+  d_hothead: `<path d="M3 9c3 0 5-2 5-5M21 9c-3 0-5-2-5-5M3 15c3 0 5 2 5 5M21 15c-3 0-5 2-5 5"/><path class="f" d="M12.8 6 9 13h2.6l-1.2 5 4.4-7h-2.6z"/>`,
+  d_bodyguard: `<path d="M12 2.5l8 3v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z"/><circle cx="12" cy="10" r="2.2"/><path d="M8 17c.8-2.4 2.2-3.6 4-3.6s3.2 1.2 4 3.6"/>`,
+  d_feral: `<path d="M5 3c1 6 3 11 8 16M10 2.5c1 5.5 3 10 7.5 14M15.5 3c.6 4 2 7.5 5 10.5"/>`,
+  d_packHunter: `<ellipse cx="12" cy="16" rx="4.2" ry="3.6"/><circle cx="5.5" cy="11" r="1.9"/><circle cx="9.5" cy="6.5" r="1.9"/><circle cx="14.5" cy="6.5" r="1.9"/><circle cx="18.5" cy="11" r="1.9"/>`,
+  d_skittish: `<path d="M14 3v11"/><circle class="f" cx="14" cy="19" r="1.6"/><path d="M3 7h6M2 12h6M4 17h5"/>`,
+  d_territorial: `<circle cx="12" cy="12" r="9.5" stroke-dasharray="2.5 2.5"/><path d="M10 17V6"/><path d="M10 6.5l6 2-6 2.5"/><path d="M8 17h5"/>`,
+  d_protocol: `<rect x="6" y="6" width="12" height="12" rx="1.5"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9 6V2.5M12 6V2.5M15 6V2.5M9 18v3.5M12 18v3.5M15 18v3.5M6 9H2.5M6 12H2.5M6 15H2.5M18 9h3.5M18 12h3.5M18 15h3.5"/>`,
+  d_sentry: `<path d="M5 9h11l3 2.5L16 14H5z"/><circle class="f" cx="10" cy="11.5" r="1.4"/><path d="M10 14v3M10 17l-5 5M10 17l5 5M10 17v5"/><path d="M19.5 11.5H23"/>`,
+});
 const vicon = (name, cls = "") => `<svg class="vic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${VICON[name] || VICON.item}</svg>`;
