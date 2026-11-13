@@ -1568,11 +1568,12 @@ const E = (() => {
         : "human";
   };
   /** A disposition rolled for this kind of fighter and the reach of its gear: each one's weight is its fits[reach]. */
-  function rollDisposition(kind, reach, r, rng = Math.random) {
-    const list = Object.entries(r.dispositions || {}).filter(([, d]) => d.who === kind && ((d.fits || {})[reach] == null ? 1 : d.fits[reach]) > 0);
-    const w = (d) => ((d.fits || {})[reach] == null ? 1 : d.fits[reach]);
-    let x = rng() * list.reduce((t, [, d]) => t + w(d), 0);
-    for (const [k, d] of list) if ((x -= w(d)) <= 0) return k;
+  function rollDisposition(kind, reach, r, rng = Math.random, faction = "") {
+    const fac = (r.dispositionFactions || {})[faction] || {};
+    const w = (k, d) => ((d.fits || {})[reach] == null ? 1 : d.fits[reach]) * (fac[k] == null ? 1 : fac[k]); // gear, then faction
+    const list = Object.entries(r.dispositions || {}).filter(([k, d]) => d.who === kind && w(k, d) > 0);
+    let x = rng() * list.reduce((t, [k, d]) => t + w(k, d), 0);
+    for (const [k, d] of list) if ((x -= w(k, d)) <= 0) return k;
     return list.length ? list[list.length - 1][0] : null;
   }
   /** Slow ground (shallow water, a rad lake): the share of the usual distance a walk covers there, or 0 if it isn't slow. */

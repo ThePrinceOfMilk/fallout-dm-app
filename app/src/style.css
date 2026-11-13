@@ -6968,3 +6968,67 @@ table.t th {
 :is(#map, #mmSvg) .obj:is(.hz-water, .hz-shallow) .gly .hzi * {
   stroke: #fff;
 }
+
+/* 12 Nov: the Factions window: tabs, the faction's own bar, and its hierarchy as an org chart (the skill tree's connector lines) */
+.factabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-bottom: 6px;
+}
+.facbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.facbar .cell {
+  width: 52px;
+}
+.facchart {
+  overflow: auto;
+  padding: 6px 0 10px;
+}
+.facchart .ptree {
+  width: max-content;
+  margin: 0 auto;
+}
+.fnode {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 150px;
+  padding: 4px;
+  border: 1px solid var(--line2);
+  background: #051209;
+}
+.fnode input:not([type="checkbox"]) {
+  width: 100%;
+}
+.fnode .ftitle {
+  color: var(--bright);
+  font-size: var(--fs-s);
+  text-transform: uppercase;
+}
+.fnode .frow {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.fnode .frow .chk {
+  margin-right: auto;
+}
+/* a dead member: struck through and dimmed, and the word Dead stays ticked */
+.fnode.dead {
+  border-style: dashed;
+  opacity: 0.6;
+}
+.fnode.dead .fname {
+  text-decoration: line-through;
+}
+/* "Factions" is a little long for a rail button */
+.railb[data-v="factions"] span {
+  font-size: 0.72em;
+  letter-spacing: -0.5px;
+}

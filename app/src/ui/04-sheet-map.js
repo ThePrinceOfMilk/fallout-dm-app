@@ -1537,7 +1537,7 @@ function mapSvg() {
       a = posOf(p.id),
       to = p.at || a;
     if (p.at)
-      extra += `<line class="movepath" x1="${a.x}" y1="${a.y}" x2="${to.x}" y2="${to.y}"/><g class="ghost" transform="translate(${to.x} ${to.y}) scale(${k2})"><circle cy="-.42" r=".27"/><path d="M-.46 .4 A.46 .62 0 0 1 .46 .4 Z"/></g>`;
+      extra += `<polyline class="movepath" fill="none" points="${a.x},${a.y} ${p.via ? `${p.via.x},${p.via.y} ` : ""}${to.x},${to.y}"/><g class="ghost" transform="translate(${to.x} ${to.y}) scale(${k2})"><circle cy="-.42" r=".27"/><path d="M-.46 .4 A.46 .62 0 0 1 .46 .4 Z"/></g>`;
     if (p.tgt && ent(p.tgt) && p.steps.some((s) => s.t === "attack")) {
       const T = posOf(p.tgt);
       extra += ui.atk ? aimLine(to, T) : `<line class="movepath" x1="${to.x}" y1="${to.y}" x2="${T.x}" y2="${T.y}"/>`; // no attack panel open: a plain line

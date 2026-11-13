@@ -107,7 +107,11 @@ function syncDown(e, killer) {
       cb.dead = true;
       cb.killer = killer || null;
       log("kill", `${e.name} is dead.`);
-    } else if (e.hp > 0 && cb.dead) cb.dead = false;
+      facKill(e, cb, true); // its faction's kill count
+    } else if (e.hp > 0 && cb.dead) {
+      cb.dead = false;
+      facKill(e, cb, false);
+    }
   }
 }
 function addInv(e, name, q = 1, active = false) {
@@ -989,7 +993,7 @@ function rollDisp(e) {
   const reach = (e.weapons || [])
     .map((s) => E.weaponReach(E.weaponView(s, e, d, ctx())))
     .reduce((a, b) => (order.indexOf(b) > order.indexOf(a) ? b : a), "melee");
-  return E.rollDisposition(E.dispositionKind(e, S.rules), reach, S.rules);
+  return E.rollDisposition(E.dispositionKind(e, S.rules), reach, S.rules, Math.random, e.faction || "");
 }
 // The attack panel's own numbers for this shooter, target and weapon, as if the shooter stood at `at`. Nothing is changed.
 function autoEval(id, tgt, w, at, part = "Body") {
@@ -1049,16 +1053,16 @@ function autoSpot(e, tgt, v, budget, charge = false) {
 }
 // Every spot this fighter could walk to with `budget` AP: rings around it out to what the AP buys, skipping blocked walks,
 // spots inside things, and any hazard it knows of on the way or at the end.
-function autoSpots(e, budget) {
-  const A = posOf(e.id),
+function autoSpots(e, budget, from = null, rings = [0.2, 0.45, 0.7, 1], n = 16) {
+  const A = from || posOf(e.id),
     out = [];
   const mult = moveMult(e),
     ap = budget - (der(e).m.moveAdd || 0);
   const reach = mult === Infinity || ap <= 0 ? 0 : Math.min(60, (ap / mult) * speedOf(e));
   if (reach < 0.5) return out;
-  for (const f of [0.2, 0.45, 0.7, 1])
-    for (let i = 0; i < 16; i++) {
-      const a = (i / 16) * 2 * Math.PI + f; // each ring a little turned, so the spots don't line up
+  for (const f of rings)
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * 2 * Math.PI + f; // each ring a little turned, so the spots don't line up
       const p = inMap({ x: E.fix(A.x + Math.cos(a) * reach * f), y: E.fix(A.y + Math.sin(a) * reach * f) });
       const cost = moveCost(A, p, e);
       if (cost > budget || cost === Infinity || dist(A, p) < 0.4) continue;
@@ -1066,6 +1070,68 @@ function autoSpots(e, budget) {
       out.push({ x: p.x, y: p.y, cost, m: E.fix(dist(A, p)) });
     }
   return out;
+}
+// Spots in rings round the target (1 to 6 m out), reachable from `from` with `budget` AP: the rings round the walker are too coarse
+// to land next to someone a few meters away.
+function spotsNear(e, T, budget, from) {
+  const out = [];
+  for (const r of [1, 1.8, 3, 4.5, 6])
+    for (let i = 0; i < 16; i++) {
+      const a = (i / 16) * 2 * Math.PI + r;
+      const p = inMap({ x: E.fix(T.x + Math.cos(a) * r), y: E.fix(T.y + Math.sin(a) * r) });
+      const cost = moveCost(from, p, e);
+      if (cost > budget || cost === Infinity || dist(from, p) < 0.4) continue;
+      if (E.pathBlocked(from, p, S.scene.objects, S.rules) || standBlocked(p) || autoAvoid(from, p)) continue;
+      out.push({ x: p.x, y: p.y, cost, m: E.fix(dist(from, p)) });
+    }
+  return out;
+}
+// When the plain approach finds nothing (furniture or a wall in the straight line, already at the right band but with no clear shot):
+// search every spot it can reach, by one walk or two, for the best place to fire from, the way its disposition likes it. With no shot
+// anywhere in reach, it takes the route that gets it closest to its target, favoring spots with a clear line, so nobody stands idle.
+function seekSpot(e, pick, P, ap, keep, evalAt, jit) {
+  const R = autoRules(),
+    A = posOf(e.id),
+    T = posOf(pick.t);
+  const cost1 = (s) => s.cost;
+  const melee = pick.v.melee || P.range === "close";
+  const worth = (p) => (melee ? dist(p, T) <= S.rules.bandMeters[0] + 0.6 : E.lineCover(p, T, S.scene.objects, S.rules).tier !== "impenetrable");
+  const score = (p) => {
+    if (!worth(p)) return null;
+    const ev = evalAt(p);
+    if (!ev || ev.hit < R.minShot) return null;
+    const sh = P.cover ? shelter(pick.t, p) : 0;
+    const far = P.range === "far" ? dist(p, T) / 20 : 0;
+    const near = P.range === "close" ? -dist(p, T) / 40 : 0;
+    return { ev, s: ev.value * (1 + sh * 1.5 + far + near) * jit() };
+  };
+  // one walk, keeping AP for a shot, with a finer search than usual
+  const one = [...autoSpots(e, Math.max(0, ap - keep), null, [0.15, 0.3, 0.45, 0.6, 0.8, 1], 24), ...spotsNear(e, T, Math.max(0, ap - keep), A)];
+  let best = null;
+  for (const p of one) {
+    const sc = score(p);
+    if (sc && (!best || sc.s > best.s)) best = { legs: [p], ev: sc.ev, s: sc.s };
+  }
+  if (best) return best;
+  // two walks: round a wall or a row of crates, still keeping AP for a shot if there's a spot to fire from
+  const all = [...autoSpots(e, ap, null, [0.25, 0.5, 0.75, 1], 20), ...spotsNear(e, T, ap, A)];
+  const toward = (p) => dist(p, T) - (E.lineCover(p, T, S.scene.objects, S.rules).tier === "impenetrable" ? 0 : 3); // a clear line counts as 3 m closer
+  const firsts = [...all].sort((a, b) => toward(a) - toward(b)).slice(0, 10);
+  let route = null;
+  for (const p of firsts) {
+    for (const q of [...autoSpots(e, Math.max(0, ap - keep - cost1(p)), p, [0.35, 0.7, 1], 12), ...spotsNear(e, T, Math.max(0, ap - keep - cost1(p)), p)]) {
+      const sc = score(q);
+      if (sc && (!route || sc.s > route.s)) route = { legs: [p, q], ev: sc.ev, s: sc.s };
+    }
+  }
+  if (route) return route;
+  // no shot anywhere it can reach: close the distance as far as it can, by one walk or two
+  let go = all.length ? { legs: [all.reduce((a, b) => (toward(b) * jit() < toward(a) ? b : a))], ev: null } : null;
+  for (const p of firsts)
+    for (const q of autoSpots(e, Math.max(0, ap - cost1(p)), p, [0.5, 1], 12))
+      if (!go || toward(q) < toward(go.legs[go.legs.length - 1]) - 0.5) go = { legs: [p, q], ev: null };
+  if (go && dist(go.legs[go.legs.length - 1], T) >= dist(A, T) - 0.5) return null; // nowhere it can go gets it any closer
+  return go;
 }
 // How well a spot is hidden from a foe: 0 in the open, up to 1 behind a wall (the hit penalty they'd shoot through).
 const shelter = (from, p) => -E.lineCover(posOf(from), p, S.scene.objects, S.rules).hit || 0;
@@ -1174,10 +1240,12 @@ function planTurn(id) {
   const healAt = P.heal != null ? P.heal : R.healBelow;
   if (bleed && bleed.tier >= R.bleedAt && P.heal !== 0) need.push((o) => o.cat === "Counter" && /bleed/i.test(o.effect || ""));
   if (e.hp < d.hp * healAt) need.push((o) => o.cat === "Healing");
+  // a drug-fueled rage starts with a chem, once a fight
+  if (P.chems && !(cbOf(id) || {}).chemmed) need.unshift((o) => o.cat === "Chem/Drug");
   for (const pred of need) {
     const x = useable(pred);
     if (x && !steps.some((s) => s.t === "use" && s.i === x.i)) {
-      steps.push({ t: "use", i: x.i, n: x.l.n });
+      steps.push({ t: "use", i: x.i, n: x.l.n, chem: x.it.o.cat === "Chem/Drug" });
       ap -= x.it.o.ap || 0;
       say.push(`use ${x.l.n}`);
     }
@@ -1214,6 +1282,7 @@ function planTurn(id) {
       const now = withJamFixed(w, () => autoEval(id, t, w, steps.some((x) => x.t === "move") ? here : null));
       const vv = now ? now.v : E.weaponView(s, e, d, ctx());
       if (!vv.ok && !now) return; // a weapon with no numbers in the workbook can't be planned with
+      if (vv.usesAmmo && (s.mag || 0) < (vv.perShot || 1) && !(ammoHeld(e, vv.reserve) > 0)) return; // empty, and nothing to load: use something else
       options.push({ t, w, here: now, v: vv });
     });
   if (!options.length) {
@@ -1223,7 +1292,8 @@ function planTurn(id) {
   options.sort((a, b) => (b.here ? b.here.value : 0) - (a.here ? a.here.value : 0) || dist(here, posOf(a.t)) - dist(here, posOf(b.t)));
   let pick = pickTarget(e, P, options);
   let shot = pick.here,
-    at = steps.some((x) => x.t === "move") ? here : null;
+    at = steps.some((x) => x.t === "move") ? here : null,
+    via = null; // the turn on a two-leg walk, drawn on the map
   const cost1 = shot ? shot.cost : Math.max(1, pick.v.ap || 1);
   const evalAt = (p) => withJamFixed(pick.w, () => autoEval(id, pick.t, pick.w, p));
   const moveTo = (spot, there, what) => {
@@ -1271,6 +1341,29 @@ function planTurn(id) {
         if (far) (spot = far), (there = evalAt(far));
       }
       if (spot && (!shot || shot.hit < R.minShot || (there && there.hit > shot.hit + 0.05))) moveTo(spot, there);
+    }
+  }
+  // 5b. still no shot worth taking and nothing planned for the walk: search wider (one walk or two) rather than stand idle
+  if ((!shot || shot.hit < R.minShot) && !steps.some((s) => s.t === "move" && s.to !== "safe ground") && ap >= 1) {
+    const found = seekSpot(e, pick, P, ap, cost1, evalAt, jit);
+    if (found) {
+      let from = here;
+      found.legs.forEach((leg, i) => {
+        const cost = i === 0 ? leg.cost : moveCost(from, leg, e);
+        steps.push({ t: "move", x: leg.x, y: leg.y, cost, m: Math.round(dist(from, leg)), to: ent(pick.t).name });
+        ap -= cost;
+        from = leg;
+      });
+      const end = found.legs[found.legs.length - 1];
+      const m = Math.round(found.legs.reduce((t, l, i) => t + dist(i ? found.legs[i - 1] : here, l), 0));
+      if (found.legs.length > 1) via = found.legs[0];
+      here = at = end;
+      shot = found.ev || evalAt(end);
+      say.push(
+        found.ev
+          ? `${found.legs.length > 1 ? "work round" : "move"} ${m} m to get a shot at ${ent(pick.t).name}${P.cover && shelter(pick.t, end) > 0.05 ? " from cover" : ""}`
+          : `${found.legs.length > 1 ? "work round" : "close in"} ${m} m toward ${ent(pick.t).name} (no shot from anywhere in reach yet)`,
+      );
     }
   }
   // 6. a grenade at two or more foes bunched together, with no friend near the blast
@@ -1338,8 +1431,8 @@ function planTurn(id) {
       say.push(`duck ${Math.round(back.p.m)} m back into cover`);
     }
   }
-  if (!steps.length) say.push("hold: no worthwhile shot or move");
-  return { id, steps, say, tgt: pick.t, at, k: k.round, disp: P.n };
+  if (!steps.length) say.push((e.ap || 0) < 1 ? "do nothing: no AP this turn" : "hold: no worthwhile shot, and nowhere in reach is any better");
+  return { id, steps, say, tgt: pick.t, at, via, k: k.round, disp: P.n };
 }
 function autoBox(A) {
   const p = ui.autoPlan;
@@ -1381,6 +1474,7 @@ const AUTO_ACT = {
             const keep = ui.modal;
             ACT.useSelf(`${e.id}|${i}`);
             ui.modal = keep;
+            if (s.chem) c.chemmed = true;
             did.push(`uses ${s.n}`);
           } else if (s.t === "move") {
             for (const key of Object.keys(k.ranges)) if (key.split("|").includes(e.id)) delete k.ranges[key];

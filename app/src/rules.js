@@ -752,6 +752,34 @@ const DEFAULT_RULES = {
     dartPlate: { hidden: true, on: true, cross: true, once: true, dmg: 2, status: "Poisoned", tier: 2 },
     snare: { hidden: true, on: true, cross: true, stop: true, drain: true, once: true, status: "Disoriented" },
   },
+  // 12 Nov: how a faction changes the disposition roll: each number multiplies that disposition's chance for the faction's members
+  // (Legion rarely Craven, Fiends often in a drug-fueled rage). A faction not listed rolls on gear alone.
+  dispositionFactions: {
+    "Caesar's Legion": { craven: 0.1, zealot: 3, reckless: 1.6, mercenary: 0.3, vulture: 0.5, bodyguard: 1.5, drugRage: 0.05 },
+    NCR: { tactician: 2, bodyguard: 1.5, marksman: 1.3, craven: 0.6, reckless: 0.5, drugRage: 0.1 },
+    "Brotherhood of Steel": { tactician: 2, zealot: 1.8, marksman: 1.3, craven: 0.15, drugRage: 0, mercenary: 0.3 },
+    Fiends: { drugRage: 8, reckless: 2, hothead: 1.5, tactician: 0.3, bodyguard: 0.3 },
+    "Great Khans": { drugRage: 3, hothead: 2, reckless: 1.5, craven: 0.5 },
+    Raiders: { bully: 2, vulture: 1.5, craven: 1.4, drugRage: 2, tactician: 0.4 },
+    Jackals: { bully: 2, vulture: 1.8, craven: 1.5, drugRage: 1.5, tactician: 0.4 },
+    Vipers: { bully: 1.8, vulture: 1.5, flanker: 1.5, drugRage: 1.5, tactician: 0.4 },
+    "Powder Gangers": { bully: 1.5, craven: 1.3, reckless: 1.2, tactician: 0.5 },
+    Highwaymen: { craven: 2, vulture: 2, mercenary: 1.5, zealot: 0.3 },
+    "City Muggers": { craven: 2.2, vulture: 2, bully: 1.5, zealot: 0.2 },
+    "Rogue Scavengers": { craven: 2.5, mercenary: 2, zealot: 0.2, reckless: 0.4 },
+    "Crime Families": { mercenary: 2, bodyguard: 2, bully: 1.5, zealot: 0.4 },
+    Omertas: { mercenary: 2, bodyguard: 2, bully: 1.5, zealot: 0.4 },
+    Chairmen: { mercenary: 1.8, bodyguard: 2.2, tactician: 1.3, zealot: 0.4 },
+    Garrets: { mercenary: 2, bodyguard: 1.5, craven: 1.5 },
+    "White Glove Society": { bodyguard: 2, tactician: 1.5, marksman: 1.3, reckless: 0.3 },
+    "The Kings": { hothead: 2, bodyguard: 1.8, bully: 1.3 },
+    "Super Mutants": { reckless: 2.5, zealot: 1.5, bully: 1.5, craven: 0.1, tactician: 0.4 },
+    Tribals: { hothead: 1.5, flanker: 1.8, zealot: 1.3, craven: 0.6 },
+    Boomers: { zealot: 2, tactician: 1.5, craven: 0.4 },
+    "Van Graffs": { mercenary: 2, bully: 1.5, bodyguard: 1.3 },
+    "Crimson Caravan": { mercenary: 2, bodyguard: 2, craven: 1.2 },
+    Goodsprings: { craven: 1.5, bodyguard: 1.5, reckless: 0.5, drugRage: 0.1 },
+  },
   // 12 Nov: a party member with any of these perks spots hidden traps, so the players see them on the map.
   trapSense: ["Minelayer", "Booby-Trapper", "Seabee"],
   // 12 Nov: how often a generated outdoor map gets water: a lake on a big map (bigArea square meters or more; less often in a desert),
@@ -865,6 +893,18 @@ const DEFAULT_RULES = {
       range: "close",
       target: "revenge",
       fits: { melee: 1.5, close: 1.3, mid: 0.6, long: 0.2 },
+    },
+    drugRage: {
+      n: "Drug-fueled rage",
+      who: "human",
+      d: "Takes a chem it carries at the start of the fight, then charges the nearest foe in a rage: every AP on attacks, never heals, never runs.",
+      range: "close",
+      target: "nearest",
+      chems: true,
+      heal: 0,
+      attacks: 9,
+      grenade: false,
+      fits: { melee: 0.5, close: 0.35, mid: 0.15, long: 0.02 },
     },
     bodyguard: {
       n: "Bodyguard",
@@ -1439,6 +1479,9 @@ const DEFAULT_RULES = {
   autoNames: true,
   storyLog: true, // a descriptive line under each attack in the combat log
   namePools: {
+    // 12 Nov: names for tribe-themed factions
+    tribal:
+      "Red Hawk,Stone Fist,Ash Walker,Two Rivers,Quiet Bear,Long Shadow,Sun Eye,Dust Runner,Iron Antler,Blue Smoke,Burnt Sky,White Wolf,Cold Water,Thunder Hoof,Sharp Reed,Gray Feather,Night Lizard,Bright Spear,Salt Wind,Old Coyote,Broken Horn,Swift Gecko,Black Mesa,Red Clay,Tall Grass,Silent Owl,Morning Star,Bone Rattle",
     american:
       "Jake,Tom,Bill,Mike,Joe,Dave,Steve,Bob,Jim,Frank,Ray,Earl,Hank,Walt,Gus,Roy,Lou,Carl,Dale,Wayne,Mark,Luke,Sam,Ben,Dan,Ed,Al,Ted,Rick,Tony,Pete,Nick,Matt,Chris,Kevin,Brian,Eric,Greg,Scott,Jeff,Doug,Gary,Larry,Terry,Dennis,Wesley,Travis,Cody,Tyler,Austin,Dustin,Brandon,Jesse,Caleb,Cole,Colt,Wade,Clay,Troy,Glenn,Russ,Vern,Floyd,Lyle,Clint,Buck,Chester,Harold,Eugene,Norman,Leon,Marvin,Calvin,Curtis,Darnell,Andre,Marcus,Malik,Luis,Carlos,Miguel,Jose,Manny,Hector,Diego,Rafael,Ruben,Victor,Mary,Sarah,Linda,Susan,Karen,Nancy,Betty,Helen,Sandra,Donna,Carol,Ruth,Sharon,Laura,Amy,Kim,Lisa,Jenny,Beth,Kate,Anne,Megan,Rachel,Rosa,Maria,Lucy,Grace,Dolores,June,Peggy,Joan,Rita,Ellie,Tess,Nora,Vera,Hazel,Dottie,Gloria,Ana,Carmen,Tanya,Jolene",
     americanLast:

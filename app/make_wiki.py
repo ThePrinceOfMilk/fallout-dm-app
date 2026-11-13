@@ -626,6 +626,25 @@ upd(17, D12, "Automated turns think more", "Was: walk toward the weapon's best r
     "Aiming for the head when that still hits often enough, how many attacks to make, and ducking back into cover with the AP left.",
     "Spots that score alike are picked with a little chance, so two fighters of the same disposition don't move in lockstep."))
 
+# ---------------------------------------------------------------- 12 Nov 2026, last: factions, faction dispositions, auto turns that don't stall
+def _facw(w):
+    hi = [f"{R['dispositions'][k]['n']} x{v}" for k, v in sorted(w.items(), key=lambda kv: -kv[1]) if v > 1 and k in R["dispositions"]]
+    lo = [f"{R['dispositions'][k]['n']} x{v}" for k, v in sorted(w.items(), key=lambda kv: kv[1]) if v < 1 and k in R["dispositions"]]
+    return ", ".join(hi) or "-", ", ".join(lo) or "-"
+upd(20, D12, "Factions shape dispositions", "Was: a disposition was rolled on gear alone. Now: the enemy's faction multiplies each disposition's chance too.", bl(
+    "The Legion is almost never Craven and often a Zealot; Fiends are often in a drug-fueled rage; scavengers and muggers run more; crime families hire mercenaries and bodyguards. A faction not on the list rolls on gear alone.",
+    "New disposition, Drug-fueled rage: takes a chem it carries at the start of the fight (once), then charges the nearest foe, spends every AP on attacks, never heals and never runs. On its own it's rare; Fiends, Khans and raiders roll it far more."),
+    tbl(["Faction", "More likely", "Less likely"], [[f, *_facw(w)] for f, w in R["dispositionFactions"].items()], [1.6, 2.7, 2.6]))
+upd(17, D12, "Automated turns don't stand still", "Was: when furniture or a wall blocked the straight line to its target, or it was already at the right range with no clear shot, an enemy could stand idle. Now it searches for a way.", bl(
+    "It looks at every spot it can reach (finer rings, and rings round the target itself), by one walk or two (round a wall or a row of crates), for the best place to fire from, the way its disposition likes it.",
+    "With no shot from anywhere in reach, it closes in by the route that gets nearest its target, favoring spots with a clear line.",
+    "A gun that's empty with nothing to load is set aside for another weapon. The plan says when a fighter simply has no AP."))
+upd(43, D12, "The Factions window", "New: a Factions button on the right-hand rail.", bl(
+    "One tab per faction. Every campaign starts with the New Vegas factions and their leaders (NCR, Caesar's Legion, Brotherhood of Steel, Mr. House, Great Khans, Powder Gangers, Fiends, Boomers, Omertas, Chairmen, White Glove Society, The Kings, Followers of the Apocalypse, Van Graffs, Crimson Caravan). Tabs can be added and deleted.",
+    "Each faction has its standing toward the party (Vilified, Hated, Disliked, Neutral, Accepted, Liked, Idolized) and how many of its members the party has killed. The count goes up by itself when an enemy of that faction dies in a fight, and the DM can type it.",
+    "Its hierarchy is an org chart of boxes: + Leader, then + Under on anyone for a co-leader, underbosses and so on. Every title and name can be typed over; X removes a box and everyone under it; Dead marks someone dead.",
+    "A new faction has a naming theme: military organization, political system, raider gang, organized criminal group, tribe, humanitarian, religious order, merchant company or Legion. Generate hierarchy fills the chart with that theme's ranks and fresh names (a faction with its own name style, like the NCR or the Legion, uses it). Undo brings back what was there."))
+
 # ---------------------------------------------------------------- 12 Nov 2026, evening: aiming, familiarity, check outcomes, perk branches
 upd(8, D12, "Aiming costs no AP", "Was: in campaigns saved before 11 Nov, aiming at a limb or the head still cost extra AP. Now: aiming never costs AP. The part changes the hit chance (head x0.5, body x1, limbs x1.25) and the damage (head x2, body x1, limbs x0.75).", bl(
     "Older saves are brought up to date when they load. The aiming AP setting is gone from Settings; the damage and hit multipliers stay there."))

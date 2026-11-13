@@ -547,6 +547,7 @@ const RAIL = [
   ["vendor", "Shop", "box"],
   ["skillTree", "Skill tree", "dna"],
   ["levelPerks", "Level perks", "star"],
+  ["factions", "Factions", "flag"],
   ["guide", "Help", "star"],
 ];
 function rail() {
@@ -568,6 +569,7 @@ const RAIL_TITLE = {
   vendor: "Vendor: buy and sell",
   skillTree: "Skill tree: proficiency, expertise and mastery perks for each skill",
   levelPerks: "Level perks: the perks unlocked by level",
+  factions: "Factions: standing with the party, members killed, and each faction's hierarchy",
 };
 const UI_SCALES = [2, 1.5, 1, 0.75, 0.5, 0.25];
 // Zooming in makes the page narrower in CSS pixels, but breakpoints only see the real screen.
