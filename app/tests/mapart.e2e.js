@@ -78,6 +78,7 @@ let pass = 0,
       document.activeElement.blur(); // as clicking away does: the map redraws with the handle at the new corner
       render();
     });
+    await p.waitForSelector('[data-size="rz1"]', { state: "visible" }); // under load the redraw can land a moment later
     const hd = await p.locator('[data-size="rz1"]').boundingBox();
     const pxPerM = await p.evaluate(() => {
       const r = document.getElementById("map").getBoundingClientRect(),
@@ -157,6 +158,18 @@ let pass = 0,
     assert.match(r.streets, /ter-asphalt/);
     assert.match(r.cavern, /ter-rock/);
     assert.ok(r.homeFloor && r.firstObj, "the floor is there, under everything");
+  });
+  await step("the Changelog button at the top right lists every version, newest first", async () => {
+    await p.evaluate(() => {
+      S.combat = null;
+      ui.modal = null;
+      render();
+    });
+    await p.locator('.devbar [data-a="railGo"][data-v="changelog"]').click();
+    await p.waitForSelector('.dialog[data-dlg="changelog"]');
+    const r = await p.evaluate(() => ({ n: document.querySelectorAll(".clentry").length, first: document.querySelector(".cldate").textContent, total: CHANGELOG.length }));
+    assert.ok(r.n === r.total && r.n >= 25, JSON.stringify(r));
+    assert.strictEqual(r.first, await p.evaluate(() => CHANGELOG[0].date), "the newest day first");
   });
   assert.deepStrictEqual(errs, [], "no page errors");
   console.log(`\n${pass}/${pass + fail} passed`);

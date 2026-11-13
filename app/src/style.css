@@ -7222,3 +7222,29 @@ html.shiftdown #map .tok.locked {
   stroke: rgba(185, 250, 160, 0.75) !important;
   stroke-width: 1.3px;
 }
+
+/* 13 Nov: the Changelog window */
+.cldate {
+  margin: 10px 0 3px;
+  color: var(--bright);
+  border-bottom: 1px solid var(--line);
+}
+.clentry {
+  margin: 4px 0 8px;
+}
+.clentry ul {
+  margin: 2px 0 0;
+  padding-left: 18px;
+}
+.clentry li {
+  margin: 1px 0;
+}
+/* 13 Nov: below the width the whole top bar needs (Changelog made it a little longer), its buttons sit a little tighter so it stays one line */
+@media (max-width: 1520px) {
+  .devbar {
+    gap: 2px;
+  }
+  .devbar .btn.tiny {
+    padding: 0 2px;
+  }
+}

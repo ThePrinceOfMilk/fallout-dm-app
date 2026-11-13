@@ -65,7 +65,7 @@ Everything in `app/src/` is inlined into one HTML file by `app/build.py`.
 | `engine.js` | The game math, with no screen code: hit chance, damage, AP, derived stats, effect parsing. Tested by `tests/engine.test.js` |
 | `combat_text.js` | The combat log's wording |
 | `icons.js` | Weapon and item icons |
-| `ui/01-state.js` … `ui/12-boot.js` | The screen, split by topic. They run as one script in file-name order. Each file starts with a note on what it holds |
+| `ui/01-state.js` … `ui/15-changelog.js` | The screen, split by topic (13 the tour, 14 the Factions window, 15 the changelog). They run as one script in file-name order. Each file starts with a note on what it holds |
 | `style.css`, `shell.html` | Styles (phone and tablet rules are in the `max-width` blocks) and the page around the app |
 
 To add a button: give it `data-a="name" data-v="value"` in the HTML and add `ACT.name` in `ui/09-actions.js`. Wrap changes to the game state in `act(label, fn)` so Undo covers them. To add a rule number: put it in `DEFAULT_RULES` and a line in `RULE_SCHEMA` in `rules.js`, and it shows in Settings.

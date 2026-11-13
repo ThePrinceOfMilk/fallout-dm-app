@@ -771,6 +771,7 @@ function renderModal() {
     skillTree: ["Skill tree", () => treeModal("skill")],
     levelPerks: ["Level perks", () => treeModal("level")],
     factions: ["Factions", factionsBody],
+    changelog: ["Changelog", changelogBody],
     mapmaker: [ui.mm && ui.mm.id ? "Map creator: edit" : "Map creator: new map", mapMakerBody],
   };
   const [title, body] = defs[m.type];
@@ -778,9 +779,23 @@ function renderModal() {
   const size =
     m.type === "dev" || m.type === "mapmaker"
       ? "full"
-      : ["edit", "help", "char", "items", "notes", "sheet", "health", "guide", "wizard", "vendor", "skillTree", "levelPerks", "factions", "detail"].includes(
-            m.type,
-          )
+      : [
+            "edit",
+            "help",
+            "char",
+            "items",
+            "notes",
+            "sheet",
+            "health",
+            "guide",
+            "wizard",
+            "vendor",
+            "skillTree",
+            "levelPerks",
+            "factions",
+            "changelog",
+            "detail",
+          ].includes(m.type)
         ? "big"
         : ["autoWin", "move", "uiScale", "saveTo"].includes(m.type)
           ? "tiny"
