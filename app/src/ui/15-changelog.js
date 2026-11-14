@@ -4,6 +4,15 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
+    ver: "",
+    title: "27 more weapon icons: machine guns, sidearms and melee",
+    items: [
+      "Guns: Alyonka, .45 Auto SMG and pistol, 10mm Carbine and SMG, 12.7mm SMG and pistol, Assault Carbine, Biathlon Rifle, Rusoriz, the SAW, Bren, RPD, Parabellum and Great War MG, and the Beretta service pistol.",
+      "Melee: Boron Carbide Katana, Bowie Knife, Chainsaw, Sickle, Scythe, Homemade Sword, Impact Steel Glaive, Shocksword, Marine Combat Knife, Laser Sword and Plasma Cutter.",
+    ],
+  },
+  {
+    date: "14 Nov 2026",
     ver: "75dd7de",
     title: "Attack menu shows the weapons as pictures; Katana icon",
     items: [
