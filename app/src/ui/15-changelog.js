@@ -4,8 +4,8 @@
 var CHANGELOG = [
   {
     date: "13 Nov 2026",
-    ver: "",
-    title: "New icons: tier frames, tier rings, disposition emblems",
+    ver: "c9895db",
+    title: "New icons: traced weapon and item art, tier frames, tier rings, disposition emblems",
     items: [
       "Item icons sit in a frame colored by the item's tier (bronze, steel, green, blue, gold, violet), with the tier number in the corner.",
       "Status effect icons sit in a ring of five segments, lit up to the effect's tier.",
