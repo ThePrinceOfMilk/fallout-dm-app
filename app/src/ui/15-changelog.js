@@ -4,6 +4,17 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
+    ver: "",
+    title: "Attack menu shows the weapons as pictures; Katana icon",
+    items: [
+      "In the attack menu, the weapon in hand is its picture across the card, with its tier as a big number in the corner and the name, familiarity and numbers small below.",
+      "The other weapon is its picture and its AP cost; its name shows when you point at it.",
+      "Opening an attack no longer scrolls the weapon pictures out of view when there is room to show them.",
+      "New traced icon: Katana.",
+    ],
+  },
+  {
+    date: "14 Nov 2026",
     ver: "4bcfa18",
     title: "Equipped guns fill their slot; 8 more weapon icons",
     items: [

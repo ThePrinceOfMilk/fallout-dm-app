@@ -7463,3 +7463,58 @@ html.shiftdown #map .tok.locked {
   height: 2.1em;
   margin: -0.28em 0;
 }
+
+/* 14 Nov: the attack panel's weapons are pictures first: the one in use spans the card, the other is a small picture and its AP */
+.wcard.full {
+  position: relative;
+}
+.wcard .wpic {
+  display: block;
+  width: 100%;
+}
+.wcard .wpic .vic {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 100px;
+}
+.wcard.full .wtier {
+  position: absolute;
+  top: 3px;
+  right: 6px;
+  font-size: 24px;
+  line-height: 1;
+  padding: 1px 5px;
+  background: #000;
+  border-radius: 3px;
+}
+.wcard.full .wtop .nm {
+  font-size: var(--fs-s);
+}
+.wcard.full .wst {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+  padding: 0 5px;
+}
+.wcard.full .wst b {
+  font-size: 14px;
+}
+.wcard.full {
+  gap: 2px;
+  padding: 3px 8px;
+}
+.wcard.slim {
+  flex-direction: column;
+  gap: 1px;
+  width: 120px;
+  padding: 3px 6px;
+}
+.wcard.slim .wpic .vic {
+  max-height: 54px;
+}
+.wcard.slim small {
+  font-size: var(--fs-s);
+  color: var(--bright);
+}

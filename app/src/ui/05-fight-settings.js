@@ -132,7 +132,8 @@ function attackPanel() {
     .map((s, i) => {
       if (a.w !== i) {
         const wv = E.weaponView(s, A, p.dA, ctx());
-        return `<button class="wcard slim" data-a="atkW" data-v="${i}" title="Switch to ${h(s.n)}">${itemIcon(s.n)}<span class="nm">${h(s.n)}</span><small>${fmt(wv.ap)} AP${s.jammed ? " · JAM" : ""}</small></button>`;
+        // 14 Nov: the other weapon is its picture and its AP cost; the name is in the tooltip
+        return `<button class="wcard slim" data-a="atkW" data-v="${i}" title="Switch to ${h(s.n)}"><span class="wpic">${weaponPic(s.n)}</span><small>${fmt(wv.ap)} AP${s.jammed ? " · JAM" : ""}</small></button>`;
       }
       const stats = [
         v.usesAmmo ? wst("Mag", `${fmt(s.mag || 0)}/${fmt(v.cap)}`, (s.mag || 0) <= 0 ? "bad" : "") : "",
@@ -142,7 +143,8 @@ function attackPanel() {
         swapAP ? wst("Swap", `+${fmt(swapAP)} AP`) : "",
         s.jammed ? wst("Jammed", `${fmt(v.clearJam)} AP`, "bad") : "",
       ].join("");
-      return `<button class="wcard on full" data-a="atkW" data-v="${i}" title="${h(s.n)}"><span class="wtop">${itemIcon(s.n)}<span class="nm">${h(s.n)}</span>${famTag(A, s.n)}</span><span class="wstats">${stats}</span></button>`;
+      // 14 Nov: the weapon's picture is the card; name, familiarity and the numbers sit smaller below it
+      return `<button class="wcard on full" data-a="atkW" data-v="${i}" title="${h(s.n)}"><span class="wpic">${weaponPic(s.n)}</span>${wtier(s.n)}<span class="wtop"><span class="nm">${h(s.n)}</span>${famTag(A, s.n)}</span><span class="wstats">${stats}</span></button>`;
     })
     .join("");
   const loads = loadsHeld(A, v, p.slot);

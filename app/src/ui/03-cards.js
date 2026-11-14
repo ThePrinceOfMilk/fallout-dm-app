@@ -412,16 +412,20 @@ function weaponBox(c, d, i) {
     <div class="wrow"><span>AP <b>${fmt(v.ap)}</b></span><span>Best <b>R${E.optimalRange(o)}</b></span><span>Value <b>${o.val != null ? fmt(o.val) : "-"}</b></span><span>Skill <b>${fmt(v.req)}</b></span><span>Crit <b>${fmt(E.pct(v.crit))}%</b></span>${c.kind === "pc" && o.tier ? `<span>${famTag(c, slot.n)} <span class="famedit" title="Rounds fired: the DM can set it">${numBox(`data-c="setFam" data-id="${c.id}" data-n="${h(slot.n)}" id="famw-${c.id}-${i}"`, fmt(famOf(c, slot.n).n), "cell")}</span></span>` : ""}${slot.jammed ? `<span class="bad">JAMMED</span>${btn("clearSlot", `${c.id}|${i}`, "Clear", "", "tiny")}` : ""}</div>${ammo}</div>${hitTable(c, d, slot, o, v)}`;
 }
 // 14 Nov: the equipped weapon fills its slot with no frame; its tier is a big number in the top right, colored by tier
-function wbig(n) {
+// a weapon's picture with no frame: traced art at its own proportions (spans the width it's given), a plain icon in a 2:1 box
+function weaponPic(n) {
+  const k = itemKind(n)[2];
+  const m = (VICON[k] || "").match(/<svg x="0" y="0" width="24" height="24" viewBox="([^"]+)">([\s\S]*)<\/svg>/);
+  return m ? `<svg class="vic wfull" viewBox="${m[1]}" aria-hidden="true">${m[2]}</svg>` : viconWide(k);
+}
+// its tier as a big number colored by tier (no tier counts as 1)
+function wtier(n) {
   const it = E.get(ctx(), n);
   const t = Math.round(Number(it && it.o.tier));
   const tier = t >= 1 && t <= 6 ? t : 1;
-  const k = itemKind(n)[2];
-  // traced art: drawn at its own proportions so it spans the slot's width; a plain icon keeps the 2:1 box
-  const m = (VICON[k] || "").match(/<svg x="0" y="0" width="24" height="24" viewBox="([^"]+)">([\s\S]*)<\/svg>/);
-  const pic = m ? `<svg class="vic wfull" viewBox="${m[1]}" aria-hidden="true">${m[2]}</svg>` : viconWide(k);
-  return `<span class="wbig">${pic}</span><b class="wtier t${tier}" title="Tier ${tier}">${tier}</b>`;
+  return `<b class="wtier t${tier}" title="Tier ${tier}">${tier}</b>`;
 }
+const wbig = (n) => `<span class="wbig">${weaponPic(n)}</span>${wtier(n)}`;
 function gearPicker(c, s) {
   const m = ui.modal;
   const isW = s[0] === "w";

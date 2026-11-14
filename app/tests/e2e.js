@@ -652,7 +652,7 @@ async function launch() {
     assert.strictEqual(mag, 0);
     await blur(); await press("r");
     assert.strictEqual(await page.evaluate((i) => { const c = ent(i); return c.weapons[c.activeW].mag; }, me), 0, "nothing to load");
-    await press("a"); await has("In", ".wcards");
+    await press("a"); await has("AP", ".wcards"); // the attack panel is up (14 Nov: the other weapon shows only its picture and AP)
     const opts = await page.locator("#atkLoad option").allTextContents();
     assert.ok(opts.filter((x) => /Dam/.test(x)).length <= 1, `only held or loaded ammo: ${opts.join(" | ")}`);
     await press("Escape");
