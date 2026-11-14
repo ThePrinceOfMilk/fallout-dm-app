@@ -408,8 +408,19 @@ function weaponBox(c, d, i) {
           : `<div class="s dim">Uses ${h(v.reserve)}</div>`
       }`
     : `<div class="wrow"><span>${v.melee ? "Melee" : v.thrown ? "Thrown" : "No ammo"}</span><span>Dam <b>${v.pellets ? `${fmt(v.base)}x${v.pellets}` : fmt(v.base)}</b></span><span>Pen <b>${fmt(v.pen)}</b></span>${v.count > 1 ? `<span>Hits <b>${v.count}</b></span>` : ""}</div>`;
-  return `<div class="wbox ${(c.activeW || 0) === i ? "act" : ""}"><button class="whead ${ui.modal.pick === "w" + i ? "on" : ""}" data-a="gearSlot" data-v="w${i}"><span class="gl">Weapon ${i + 1}${(c.activeW || 0) === i ? " · in hand" : ""}</span><span class="gn">${h(slot.n)}</span>${slot.n ? `<span class="wbig">${itemIcon(slot.n, true)}</span>` : ""}</button>
+  return `<div class="wbox ${(c.activeW || 0) === i ? "act" : ""}"><button class="whead ${ui.modal.pick === "w" + i ? "on" : ""}" data-a="gearSlot" data-v="w${i}"><span class="gl">Weapon ${i + 1}${(c.activeW || 0) === i ? " · in hand" : ""}</span><span class="gn">${h(slot.n)}</span>${slot.n ? wbig(slot.n) : ""}</button>
     <div class="wrow"><span>AP <b>${fmt(v.ap)}</b></span><span>Best <b>R${E.optimalRange(o)}</b></span><span>Value <b>${o.val != null ? fmt(o.val) : "-"}</b></span><span>Skill <b>${fmt(v.req)}</b></span><span>Crit <b>${fmt(E.pct(v.crit))}%</b></span>${c.kind === "pc" && o.tier ? `<span>${famTag(c, slot.n)} <span class="famedit" title="Rounds fired: the DM can set it">${numBox(`data-c="setFam" data-id="${c.id}" data-n="${h(slot.n)}" id="famw-${c.id}-${i}"`, fmt(famOf(c, slot.n).n), "cell")}</span></span>` : ""}${slot.jammed ? `<span class="bad">JAMMED</span>${btn("clearSlot", `${c.id}|${i}`, "Clear", "", "tiny")}` : ""}</div>${ammo}</div>${hitTable(c, d, slot, o, v)}`;
+}
+// 14 Nov: the equipped weapon fills its slot with no frame; its tier is a big number in the top right, colored by tier
+function wbig(n) {
+  const it = E.get(ctx(), n);
+  const t = Math.round(Number(it && it.o.tier));
+  const tier = t >= 1 && t <= 6 ? t : 1;
+  const k = itemKind(n)[2];
+  // traced art: drawn at its own proportions so it spans the slot's width; a plain icon keeps the 2:1 box
+  const m = (VICON[k] || "").match(/<svg x="0" y="0" width="24" height="24" viewBox="([^"]+)">([\s\S]*)<\/svg>/);
+  const pic = m ? `<svg class="vic wfull" viewBox="${m[1]}" aria-hidden="true">${m[2]}</svg>` : viconWide(k);
+  return `<span class="wbig">${pic}</span><b class="wtier t${tier}" title="Tier ${tier}">${tier}</b>`;
 }
 function gearPicker(c, s) {
   const m = ui.modal;

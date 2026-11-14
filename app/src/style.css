@@ -7397,17 +7397,50 @@ html.shiftdown #map .tok.locked {
   width: 76px;
 }
 .wbig {
-  display: flex;
-  justify-content: center;
-  padding: 4px 0 6px;
+  display: block;
+  padding: 2px 0 4px;
 }
-.wbig .tfi.wide .vic.wide {
-  width: 176px;
-  height: 88px;
+.wbig .vic.wfull {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 170px;
+  color: var(--ink);
 }
-.wbig .tfi b {
-  font-size: 11px;
-  line-height: 12px;
+.wbig .vic.wide {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 1;
+  max-height: 150px;
+  color: var(--ink);
+}
+.whead .wtier {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  font-size: 26px;
+  line-height: 1;
+  font-weight: bold;
+  text-shadow: 0 0 6px #000;
+}
+.wtier.t1 {
+  color: #c48b52;
+}
+.wtier.t2 {
+  color: #aab7bd;
+}
+.wtier.t3 {
+  color: #5fd27a;
+}
+.wtier.t4 {
+  color: #5aa8ff;
+}
+.wtier.t5 {
+  color: #f0c64e;
+}
+.wtier.t6 {
+  color: #c58bff;
 }
 
 /* 14 Nov: the disposition picker: one row per disposition, emblem on the left */
