@@ -4,6 +4,15 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
+    ver: "",
+    title: "14 more weapon icons: pistols, AR and AUG rifles",
+    items: [
+      "Pistols: Peashooter, Old Springfield, Maria, Deliverer, Classic 10mm pistol and 5mm Pistol.",
+      "Rifles: Green Bean, Service rifle, Euro Rifle, Mystifier, Firebrand, Chinese Carbine, Pipe Hitter and Door Kicker.",
+    ],
+  },
+  {
+    date: "14 Nov 2026",
     ver: "f429053",
     title: "27 more weapon icons: machine guns, sidearms and melee",
     items: [
