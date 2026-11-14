@@ -4,6 +4,15 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
+    ver: "",
+    title: "8 more weapon icons; Pipe Rifle and Pipe Bolt Action Rifle sorted out",
+    items: [
+      "New traced icons: Pipe Revolver Rifle, Pipe Bolt Action Rifle, Plinker, Chinese Carbine (C96), the nail gun, Crank Gatling Gun, Railway Rifle and Pipe Auto Pistol, all facing right.",
+      "Pipe Rifle now has the drawing the Pipe Bolt Action Rifle had; the bolt-action has its own scrap bolt-action drawing.",
+    ],
+  },
+  {
+    date: "14 Nov 2026",
     ver: "aaa70ca",
     title: "12 more weapon icons, all facing right",
     items: [
