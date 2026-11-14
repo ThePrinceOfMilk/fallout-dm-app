@@ -4,7 +4,7 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
-    ver: "",
+    ver: "75dd7de",
     title: "Attack menu shows the weapons as pictures; Katana icon",
     items: [
       "In the attack menu, the weapon in hand is its picture across the card, with its tier as a big number in the corner and the name, familiarity and numbers small below.",
