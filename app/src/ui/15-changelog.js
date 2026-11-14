@@ -4,7 +4,7 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
-    ver: "",
+    ver: "f429053",
     title: "27 more weapon icons: machine guns, sidearms and melee",
     items: [
       "Guns: Alyonka, .45 Auto SMG and pistol, 10mm Carbine and SMG, 12.7mm SMG and pistol, Assault Carbine, Biathlon Rifle, Rusoriz, the SAW, Bren, RPD, Parabellum and Great War MG, and the Beretta service pistol.",
