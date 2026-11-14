@@ -4,7 +4,7 @@
 var CHANGELOG = [
   {
     date: "13 Nov 2026",
-    ver: "",
+    ver: "d8aad33",
     title: "Bigger inventory icons, all framed, new weapon and item icons",
     items: [
       "Inventory rows show each item's icon in a wide frame (64 x 32), so long guns stretch out and other items fill the height.",
