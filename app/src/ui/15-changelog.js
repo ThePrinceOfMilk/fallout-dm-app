@@ -4,6 +4,15 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
+    ver: "",
+    title: "7 more weapon icons, two drawn from photos",
+    items: [
+      "New traced icons: Modern Military DMR, Anti-Materiel Rifle, Elephant Gun, Tankgewher, Unbridled Rage, Personal Defense Weapon (P90) and Euro PDW (MP7), all facing right.",
+      "The Anti-Materiel Rifle and Tankgewher icons are line drawings made from photos: the outline, the wood, and the main inner edges.",
+    ],
+  },
+  {
+    date: "14 Nov 2026",
     ver: "d1f82eb",
     title: "7 more weapon icons; cleaner lines on the big ones",
     items: [
