@@ -4,6 +4,14 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
+    ver: "",
+    title: "15 more icons: the police set, revolvers and rifles",
+    items: [
+      "New traced icons: Civil Defender, Police Carbine, Police Sniper Rifle, Police Shotgun, Police Baton, Police Riot Shield, Police pistol (a .38 Detective Special), Peacekeeper, Ranger Sequoia, That Gun, Battle rifle, Russian Sniper Rifle, Distant Hand, Vintorez and Black Powder Rifle, all facing right.",
+    ],
+  },
+  {
+    date: "14 Nov 2026",
     ver: "0ec9fd3",
     title: "7 more weapon icons, two drawn from photos",
     items: [
