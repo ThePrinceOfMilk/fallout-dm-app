@@ -4,6 +4,15 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
+    ver: "",
+    title: "12 more weapon icons, all facing right",
+    items: [
+      "New traced icons: .44 and .357 Magnum revolvers, Auto Revolver, A Light Shining in Darkness, 9 Breaker, the three Advanced Military guns (carbine, rifle, sniper), Counting (Kirk), Gobi Campaign Scout Rifle, 50 Cal. MG and Bitter Memory.",
+      "Every weapon icon faces right; drawings with the barrel on the left are mirrored when traced.",
+    ],
+  },
+  {
+    date: "14 Nov 2026",
     ver: "34319e4",
     title: "Your own icons for weapons, hazards and dispositions; pick a disposition from a list",
     items: [
