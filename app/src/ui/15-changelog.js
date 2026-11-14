@@ -4,7 +4,7 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
-    ver: "",
+    ver: "d1f82eb",
     title: "7 more weapon icons; cleaner lines on the big ones",
     items: [
       "New traced icons: Bozar, Caseless Rifle (G11), Hitman, Deathclaw Hunting Carbine, Centennial, Perforator and Charcolov, all facing right.",
