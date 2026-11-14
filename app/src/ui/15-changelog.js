@@ -4,6 +4,12 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
+    ver: "",
+    title: "7 energy weapon icons",
+    items: ["New traced icons: Laser Pistol, Laser Rifle, Laser RCW, Plasma Pistol, Plasma Rifle, Plasma Defender and Plasma Caster."],
+  },
+  {
+    date: "14 Nov 2026",
     ver: "df2ec48",
     title: "15 more icons: the police set, revolvers and rifles",
     items: [
