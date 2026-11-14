@@ -149,11 +149,18 @@ function itemKind(name) {
   return ["Other", "dot", "item"];
 }
 // 13 Nov: the icon in a frame colored by the item's tier (bronze, steel, green, blue, gold, violet), with the number in the corner
-const itemIcon = (name) => {
+// wide (inventory rows): a 2:1 frame, so long guns use the row's spare width instead of shrinking into a square
+const itemIcon = (name, wide = false) => {
   const it = E.get(ctx(), name);
   const t = Math.round(Number(it && it.o.tier));
-  const tier = t >= 1 && t <= 6 ? t : 0;
-  return `<span class="tfi ${tier ? "t" + tier : "t0"}"${tier ? ` title="Tier ${tier}"` : ""}>${vicon(itemKind(name)[2], "ii")}${tier ? `<b>${tier}</b>` : ""}</span>`;
+  const tier = t >= 1 && t <= 6 ? t : 1; // no tier counts as tier 1 (the user's call, 13 Nov)
+  return `<span class="tfi t${tier}${wide ? " wide" : ""}" title="Tier ${tier}">${wide ? viconWide(itemKind(name)[2]) : vicon(itemKind(name)[2], "ii")}<b>${tier}</b></span>`;
+};
+// the icon in a 48 x 24 box: traced art (a nested 24 x 24 svg) is widened to fill it; anything else sits in the middle
+const viconWide = (k) => {
+  const s = VICON[k] || VICON.item;
+  const body = s.startsWith('<svg x="0" y="0" width="24"') ? s.replace('width="24"', 'width="48"') : `<g transform="translate(12 0)">${s}</g>`;
+  return `<svg class="vic ii wide" viewBox="0 0 48 24" aria-hidden="true">${body}</svg>`;
 };
 // Inventory folders: each item kind sorts into one tab. Active is everything ticked as on hand.
 const INV_TABS = [
@@ -213,7 +220,7 @@ function invSect(c, d) {
           .map(([l, i]) => {
             const it = E.get(ctx(), l.n);
             const canUse = it && it.cat === "item" && usable(it.o);
-            return `<div class="irow"><span class="iq">${numBox(`data-c="setQty" data-id="${c.id}" data-i="${i}" id="q-${c.id}-${i}" title="How many"`, fmt(l.q), "cell")}</span>${itemIcon(l.n)}<span class="grow" title="${h(it && it.o.effect ? it.o.effect : "")}">${h(l.n)}${canUse ? `<span class="ustat">${h(useStats(it.o))}</span>` : ""}${it && it.cat === "weapon" && c.kind === "pc" ? ` ${famTag(c, l.n)} <span class="famedit" title="Rounds fired: the DM can set it">${numBox(`data-c="setFam" data-id="${c.id}" data-n="${h(l.n)}" id="fam-${c.id}-${i}"`, fmt(famOf(c, l.n).n), "cell")}</span>` : ""}</span><span class="s faint">${fmt(E.weightOf(ctx(), l.n) * l.q)}lb</span><label class="chk s" title="Active: on hand during combat"><input type="checkbox" data-a="invActive" data-v="${c.id}|${i}"${l.active ? " checked" : ""}>ACTIVE</label>${canUse ? `<button class="btn tiny primary usebtn" data-a="useSelf" data-v="${c.id}|${i}" title="Use it on ${h(c.name)} right away">Self</button><button class="btn tiny usebtn" data-a="useItemFrom" data-v="${c.id}|${i}" title="Use or give it: pick who, then Use">Use…</button>` : ""}<button class="btn tiny" data-a="invDel" data-v="${c.id}|${i}" title="Remove">X</button></div>`;
+            return `<div class="irow"><span class="iq">${numBox(`data-c="setQty" data-id="${c.id}" data-i="${i}" id="q-${c.id}-${i}" title="How many"`, fmt(l.q), "cell")}</span>${itemIcon(l.n, true)}<span class="grow" title="${h(it && it.o.effect ? it.o.effect : "")}">${h(l.n)}${canUse ? `<span class="ustat">${h(useStats(it.o))}</span>` : ""}${it && it.cat === "weapon" && c.kind === "pc" ? ` ${famTag(c, l.n)} <span class="famedit" title="Rounds fired: the DM can set it">${numBox(`data-c="setFam" data-id="${c.id}" data-n="${h(l.n)}" id="fam-${c.id}-${i}"`, fmt(famOf(c, l.n).n), "cell")}</span>` : ""}</span><span class="s faint">${fmt(E.weightOf(ctx(), l.n) * l.q)}lb</span><label class="chk s" title="Active: on hand during combat"><input type="checkbox" data-a="invActive" data-v="${c.id}|${i}"${l.active ? " checked" : ""}>ACTIVE</label>${canUse ? `<button class="btn tiny primary usebtn" data-a="useSelf" data-v="${c.id}|${i}" title="Use it on ${h(c.name)} right away">Self</button><button class="btn tiny usebtn" data-a="useItemFrom" data-v="${c.id}|${i}" title="Use or give it: pick who, then Use">Use…</button>` : ""}<button class="btn tiny" data-a="invDel" data-v="${c.id}|${i}" title="Remove">X</button></div>`;
           })
           .join("")}`,
     )

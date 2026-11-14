@@ -7304,9 +7304,6 @@ html.shiftdown #map .tok.locked {
 .tfi .vic {
   color: var(--ink);
 }
-.tfi.t0 {
-  border-color: transparent;
-}
 .tfi.t1 {
   color: #c48b52;
 }
@@ -7387,4 +7384,10 @@ html.shiftdown #map .tok.locked {
 .autoplan .emb {
   margin: 0 6px 0 4px;
   vertical-align: -0.35em;
+}
+
+/* 13 Nov: inventory rows show the item icon in a wide 2:1 frame (the traced guns are long), 32px tall */
+.tfi.wide .vic.wide {
+  width: 64px;
+  height: 32px;
 }

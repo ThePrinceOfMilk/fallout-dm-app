@@ -425,7 +425,7 @@ function wizCustom(w) {
   const list = k.items
     .map(
       ([n, q], i) =>
-        `<div class="irow">${itemIcon(n)}<span class="grow bright">${h(n)}</span><span class="s dim">x${q}</span><span class="s dim">${h(itemKind(n)[0])}</span><button class="btn tiny" data-a="wizKitDel" data-v="${i}" title="Remove">X</button></div>`,
+        `<div class="irow">${itemIcon(n, true)}<span class="grow bright">${h(n)}</span><span class="s dim">x${q}</span><span class="s dim">${h(itemKind(n)[0])}</span><button class="btn tiny" data-a="wizKitDel" data-v="${i}" title="Remove">X</button></div>`,
     )
     .join("");
   return `<h3>Custom starting gear <span class="s dim">pick anything from the item lists</span></h3><div class="row wrap" style="margin-bottom:4px"><label class="f grow">Background<input id="wizBg" autocomplete="off" data-u="wiz.custom.bg" value="${h(k.bg)}" placeholder="e.g. Wasteland drifter"></label><label class="f" style="width:80px">Caps${numBox(`id="wizCaps" data-u="wiz.custom.caps"`, k.caps)}</label></div>

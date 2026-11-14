@@ -4,6 +4,16 @@
 var CHANGELOG = [
   {
     date: "13 Nov 2026",
+    ver: "",
+    title: "Bigger inventory icons, all framed, new weapon and item icons",
+    items: [
+      "Inventory rows show each item's icon in a wide frame (64 x 32), so long guns stretch out and other items fill the height.",
+      "Every item icon has a frame colored by its tier; items with no tier count as tier 1 (bronze).",
+      "New traced icons: fire, cold and lightning flamers for elemental energy weapons (by fuel, nitrogen, or the Electric type), a rail gun for every Powered and Magnetic one, a shield with a medical cross for counter and resistance items, a briefcase for implants, an acid skull for poisons and the Acid Soaker.",
+    ],
+  },
+  {
+    date: "13 Nov 2026",
     ver: "c9895db",
     title: "New icons: traced weapon and item art, tier frames, tier rings, disposition emblems",
     items: [
