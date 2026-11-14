@@ -786,7 +786,17 @@ function statusIcon(e, st) {
   const pic = paths
     ? paths.map((d) => `<path d="${d}"/>`).join("")
     : `<circle cx="8" cy="8" r="6"/><text x="8" y="11" text-anchor="middle">${h(st.n.slice(0, 2))}</text>`;
-  return `<span class="sti ${tone}" title="${h(st.n)}${st.tier > 1 ? " " + st.tier : ""}${st.turns != null ? `, ${st.turns} turns` : ""}: ${h(inf.text)}"><svg viewBox="0 0 16 16" aria-hidden="true">${pic}</svg>${st.tier ? `<sup>${st.tier}</sup>` : ""}</span>`;
+  // 13 Nov: the icon inside a ring of five segments, lit up to the tier
+  const lit = Math.max(1, Math.min(5, st.tier || 1));
+  const seg = [0, 1, 2, 3, 4]
+    .map((i) => {
+      const a0 = -90 + i * 72 + 5,
+        a1 = a0 + 62,
+        P = (a) => `${E.fix(18 + 15.5 * Math.cos((a * Math.PI) / 180))} ${E.fix(18 + 15.5 * Math.sin((a * Math.PI) / 180))}`;
+      return `<path class="seg ${i < lit ? "on" : ""}" d="M${P(a0)}A15.5 15.5 0 0 1 ${P(a1)}"/>`;
+    })
+    .join("");
+  return `<span class="sti ${tone}" title="${h(st.n)} ${st.tier || 1}${st.turns != null ? `, ${st.turns} turns` : ""}: ${h(inf.text)}"><svg viewBox="0 0 36 36" aria-hidden="true">${seg}<g transform="translate(8 8) scale(1.25)">${pic}</g></svg></span>`;
 }
 const statusIcons = (e) => ((e.statuses || []).length ? `<div class="stirow">${e.statuses.map((st) => statusIcon(e, st)).join("")}</div>` : "");
 // FAMILIARITY with a weapon, from rounds fired. Each band has a word and a color.

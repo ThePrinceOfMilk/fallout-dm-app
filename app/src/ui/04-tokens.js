@@ -266,3 +266,19 @@ const ICON_GROUPS = [
   ["Mutants and ghouls", ["mutant", "centaur", "ghoul", "glowone"]],
   ["Robots", ["robot", "protectron", "handy", "sentrybot", "securitron", "assaultron", "robobrain", "eyebot"]],
 ];
+// 13 Nov: more detail on the plainest tokens: collars, belts, rivets, visors, claws, teeth ("cl" parts are fine dark lines).
+const TOKEN_MORE = {
+  person: `<path class="cl" d="M-.13 -.13 L0 0 L.13 -.13M-.4 .2 H.4"/>`,
+  armored: `<circle class="cut" cx="-.36" cy="-.04" r=".03"/><circle class="cut" cx=".36" cy="-.04" r=".03"/><path class="cl" d="M-.44 .22 H-.14M.14 .22 H.44"/>`,
+  power: `<path class="cl" d="M-.3 -.3 H.3M-.46 .06 H-.24M.24 .06 H.46M-.32 .28 H.32"/><circle class="cut" cx="-.24" cy="-.62" r=".035"/><circle class="cut" cx=".24" cy="-.62" r=".035"/>`,
+  paw: `<path class="cut" d="M-.36 -.32 l.03 -.08 l.03 .08Z M-.15 -.53 l.03 -.08 l.03 .08Z M.09 -.53 l.03 -.08 l.03 .08Z M.3 -.32 l.03 -.08 l.03 .08Z"/><path class="cl" d="M-.12 .12 Q0 .2 .12 .12"/>`,
+  skull: `<path class="cut" d="M-.04 -.3 L0 -.36 L.04 -.3Z"/><path class="cl" d="M-.12 -.12 V-.06M0 -.12 V-.06M.12 -.12 V-.06"/>`,
+  vault: `<path class="cl" d="M-.36 .3 H.36"/>`,
+  wanderer: `<path class="cl" d="M-.3 .05 L-.1 .35M.3 .05 L.1 .35"/>`,
+  muscle: `<path class="cl" d="M-.3 .2 Q0 .28 .3 .2"/>`,
+  ghoul: `<path class="cl" d="M.16 -.62 l.06 .06M-.2 -.58 l-.05 .05"/>`,
+  medic: `<path class="cl" d="M-.13 -.13 L0 -.04 L.13 -.13"/>`,
+  dog: `<circle class="cut" cx=".28" cy="-.26" r=".03"/>`,
+  lizard: `<circle class="cut" cx=".38" cy="-.08" r=".025"/>`,
+};
+for (const [k, extra] of Object.entries(TOKEN_MORE)) if (TOKEN_ICONS[k]) TOKEN_ICONS[k][1] += extra;

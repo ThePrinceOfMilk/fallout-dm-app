@@ -143,12 +143,18 @@ function itemKind(name) {
     ];
   if (it.cat === "ammo") return ["Ammo", "ammo", "ammo"];
   if (it.cat === "armor") return o.loc === "Accessory" ? ["Accessories", "ring", "ring"] : ["Armor", "vest", /head/i.test(o.loc) ? "helmet" : "armor"];
-  if (it.cat === "material") return ["Materials", "nut", "nut"];
+  if (it.cat === "material") return ["Materials", "nut", /\b(cell|charge pack|fusion core)\b/i.test(o.n || name) ? "cell" : "nut"]; // 13 Nov: energy ammo is kept with materials
   if (it.cat === "mod") return ["Mods", "scope", "mod"];
   if (it.cat === "item") return [o.cat || "Items", ITEM_ICON[o.cat] || "dot", ITEM_VICON[o.cat] || "item"];
   return ["Other", "dot", "item"];
 }
-const itemIcon = (name) => vicon(itemKind(name)[2], "ii");
+// 13 Nov: the icon in a frame colored by the item's tier (bronze, steel, green, blue, gold, violet), with the number in the corner
+const itemIcon = (name) => {
+  const it = E.get(ctx(), name);
+  const t = Math.round(Number(it && it.o.tier));
+  const tier = t >= 1 && t <= 6 ? t : 0;
+  return `<span class="tfi ${tier ? "t" + tier : "t0"}"${tier ? ` title="Tier ${tier}"` : ""}>${vicon(itemKind(name)[2], "ii")}${tier ? `<b>${tier}</b>` : ""}</span>`;
+};
 // Inventory folders: each item kind sorts into one tab. Active is everything ticked as on hand.
 const INV_TABS = [
   ["all", "All"],
@@ -670,7 +676,18 @@ function dispTag(e) {
   const k = K();
   const d = e.disp && (S.rules.dispositions || {})[e.disp];
   if (!d || !k || k.phase === "stealth" || isSpec()) return "";
-  return `<button class="dispb" data-a="dispNext" data-v="${e.id}" title="${h(d.n)}: ${h(d.d)} Click to change.">${vicon("d_" + e.disp, "dispic")}</button>`;
+  return `<button class="dispb" data-a="dispNext" data-v="${e.id}" title="${h(d.n)} (${h(d.temper || "steady")}): ${h(d.d)} Click to change.">${dispEmblem(e.disp)}</button>`;
+}
+// 13 Nov: a disposition's emblem: its frame by kind (shield for humans, hexagon for creatures, cog for robots), its color by temperament
+const EMBLEM_FRAME = {
+  human: "M18 3 31 8v9c0 8-5.6 13.6-13 16-7.4-2.4-13-8-13-16V8z",
+  creature: "M18 3 31.5 10.5v15L18 33 4.5 25.5v-15z",
+  robot: "M15 3h6l1 3.3 3-1.8 4.2 4.2-1.8 3 3.3 1v6l-3.3 1 1.8 3-4.2 4.2-3-1.8-1 3.3h-6l-1-3.3-3 1.8-4.2-4.2 1.8-3-3.3-1v-6l3.3-1-1.8-3 4.2-4.2 3 1.8z",
+};
+function dispEmblem(key, word = false) {
+  const d = (S.rules.dispositions || {})[key] || {};
+  const t = d.temper || "steady";
+  return `<span class="emb tm-${t}"><svg viewBox="0 0 36 36" class="embic" aria-hidden="true"><path class="embf" d="${EMBLEM_FRAME[d.who] || EMBLEM_FRAME.human}"/><g transform="translate(8 8) scale(.833)">${VICON["d_" + key] || ""}</g></svg>${word ? `<span class="embw">${t.toUpperCase()}</span>` : ""}</span>`;
 }
 // The name under a token: an enemy's nickname if it has one ("Fiend - Zed" reads Zed), otherwise the whole name.
 function tokenLabel(e) {
@@ -1673,7 +1690,8 @@ function accRing(id) {
     for (const x of rot) (x.brk || !runs.length ? runs[runs.push([]) - 1] : runs[runs.length - 1]).push(x);
   }
   const P = (r, t) => `${E.fix(a.x + r * Math.cos(t))} ${E.fix(a.y + r * Math.sin(t))}`;
-  const line = (r, run, j, which) => run.map((x) => P(x.p[j][which], x.t));
+  const piece = (x, j) => x.p[j] || x.p[x.p.length - 1] || [0, 0]; // a ray in the run with fewer bands than its neighbor: use its last band
+  const line = (r, run, j, which) => run.map((x) => P(piece(x, j)[which], x.t));
   // One path per color and one for all the black edges: hundreds of wedges would otherwise be hundreds of elements in every redraw.
   const byCol = new Map(),
     edgeD = [];
@@ -1683,7 +1701,7 @@ function accRing(id) {
       if (ch <= 0) return;
       const col = ringColor(Math.min(1, ch));
       const outer = line(0, run, j, 1),
-        inner = run.every((x) => x.p[j][0] < 1e-9) ? [`${E.fix(a.x)} ${E.fix(a.y)}`] : line(0, run, j, 0).reverse();
+        inner = run.every((x) => piece(x, j)[0] < 1e-9) ? [`${E.fix(a.x)} ${E.fix(a.y)}`] : line(0, run, j, 0).reverse();
       byCol.set(col, (byCol.get(col) || "") + `M${outer.join("L")}L${inner.join("L")}Z`);
       // black lines along the near and far side wherever the next piece is a place no shot lands
       const before = pcs[j - 1],

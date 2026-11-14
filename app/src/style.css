@@ -6118,8 +6118,8 @@ table.t th {
   padding: 14px 18px 10px;
   border: 1px solid #1f6b35;
   border-radius: 10px;
-  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px),
-    radial-gradient(ellipse at center, #072b12 0%, #021207 70%, #010a04 100%);
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, #072b12 0%, #021207 70%, #010a04 100%);
   box-shadow:
     inset 0 0 40px rgba(0, 0, 0, 0.85),
     0 0 18px rgba(43, 255, 106, 0.12);
@@ -7247,4 +7247,144 @@ html.shiftdown #map .tok.locked {
   .devbar .btn.tiny {
     padding: 0 2px;
   }
+}
+
+/* 13 Nov: the icons' second tone: a soft fill under the lines */
+.vic .t,
+.hzi .t,
+.ficon .t {
+  fill: currentColor !important;
+  fill-opacity: 0.22;
+  stroke: none !important;
+}
+/* the icons' finer secondary lines */
+.vic .s2,
+.hzi .s2,
+.ficon .s2 {
+  opacity: 0.55;
+  stroke-width: 1.3;
+}
+/* 13 Nov: tokens: a thin light rim on every shape so silhouettes read crisper, and fine dark detail lines */
+.ticon .b,
+:is(#map, #mmSvg) .tok .b {
+  stroke: rgba(255, 255, 255, 0.4);
+  stroke-width: 0.025;
+}
+.ticon .cl,
+:is(#map, #mmSvg) .tok .cl {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: 0.7;
+  stroke-width: 0.045;
+  stroke-linecap: round;
+}
+
+/* 13 Nov: item icons in a frame colored by tier, with the number in the corner (the number says it, not only the color) */
+.tfi {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  padding: 1px;
+  line-height: 0;
+  vertical-align: middle;
+}
+.tfi b {
+  position: absolute;
+  right: -3px;
+  bottom: -4px;
+  font-size: 8px;
+  line-height: 9px;
+  padding: 0 1px;
+  background: #050d07;
+  border-radius: 2px;
+}
+.tfi .vic {
+  color: var(--ink);
+}
+.tfi.t0 {
+  border-color: transparent;
+}
+.tfi.t1 {
+  color: #c48b52;
+}
+.tfi.t2 {
+  color: #aab7bd;
+}
+.tfi.t3 {
+  color: #5fd27a;
+}
+.tfi.t4 {
+  color: #5aa8ff;
+}
+.tfi.t5 {
+  color: #f0c64e;
+}
+.tfi.t6 {
+  color: #c58bff;
+}
+/* status icons: the icon inside a ring of five segments, lit up to the tier */
+.sti svg {
+  width: 22px;
+  height: 22px;
+}
+.sti svg .seg {
+  fill: none;
+  stroke-width: 3.4;
+  stroke-linecap: butt;
+  opacity: 0.22;
+}
+.sti svg .seg.on {
+  opacity: 1;
+}
+/* disposition emblems: frame by kind, color by temperament (the word is in the tooltip and the auto-turn box) */
+.emb {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.embic {
+  width: 1.55em;
+  height: 1.55em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.embic .embf {
+  fill: currentColor;
+  fill-opacity: 0.16;
+  stroke-width: 2;
+}
+.embic .f {
+  fill: currentColor;
+  stroke: none;
+}
+.embic .t {
+  fill: currentColor;
+  fill-opacity: 0.22;
+  stroke: none;
+}
+.embic .s2 {
+  opacity: 0.55;
+}
+.emb.tm-aggressive {
+  color: #ff8a5a;
+}
+.emb.tm-cautious {
+  color: #6fc3ff;
+}
+.emb.tm-steady {
+  color: #cfe8d4;
+}
+.embw {
+  font-size: 0.72em;
+  letter-spacing: 0.5px;
+}
+.autoplan .emb {
+  margin: 0 6px 0 4px;
+  vertical-align: -0.35em;
 }

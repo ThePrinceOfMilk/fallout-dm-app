@@ -4,6 +4,20 @@
 var CHANGELOG = [
   {
     date: "13 Nov 2026",
+    ver: "",
+    title: "New icons: tier frames, tier rings, disposition emblems",
+    items: [
+      "Item icons sit in a frame colored by the item's tier (bronze, steel, green, blue, gold, violet), with the tier number in the corner.",
+      "Status effect icons sit in a ring of five segments, lit up to the effect's tier.",
+      "Disposition icons are emblems: a shield for humans, a hexagon for creatures, a cog for robots, colored by temperament (aggressive, cautious, steady).",
+      "Every weapon and item icon is now traced from the illustrated icon sheet: guns, bow, energy guns, launcher, fist, spiked bat, knife, spear, grenade, mine, missile, ammo, energy cell, armor, helmet, rings, nut and bolt (junk and parts), scope and brake (mods), syringe (healing), spilled pills (drugs), liquor (anything you drink), books, cigarettes, wrench and hammer (tools), and a can of food.",
+      "Every line icon has a soft second tone under its lines and finer detail lines; Agility and Barter drawn again.",
+      "Map tokens: a light rim on every shape and more detail on the plainest ones (collars, belts, rivets, visors, claws, teeth).",
+      "Fixed: the accuracy ring could crash a redraw when neighboring directions crossed different numbers of cover pieces.",
+    ],
+  },
+  {
+    date: "13 Nov 2026",
     ver: "f7ed489",
     title: "Objects block by their real shape; a faster map",
     items: [

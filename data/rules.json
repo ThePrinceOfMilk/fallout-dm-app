@@ -2645,6 +2645,7 @@
  "dispositions": {
   "craven": {
    "n": "Craven",
+   "temper": "cautious",
    "who": "human",
    "d": "Hangs back at the farthest range it can still hit from and takes potshots from cover. Runs once more than half its side is down or gone, unless there were only two of them.",
    "range": "far",
@@ -2665,6 +2666,7 @@
   },
   "reckless": {
    "n": "Reckless",
+   "temper": "aggressive",
    "who": "human",
    "d": "Charges the nearest foe, never takes cover, spends every AP on attacks and never runs.",
    "range": "close",
@@ -2680,6 +2682,7 @@
   },
   "marksman": {
    "n": "Marksman",
+   "temper": "cautious",
    "who": "human",
    "d": "Holds a spot at its weapon's best range behind cover and aims for the head when the odds are good.",
    "range": "best",
@@ -2696,6 +2699,7 @@
   },
   "tactician": {
    "n": "Tactician",
+   "temper": "cautious",
    "who": "human",
    "d": "Moves cover to cover at its weapon's best range, fires on whoever it hits best, ducks back after shooting.",
    "range": "best",
@@ -2711,6 +2715,7 @@
   },
   "flanker": {
    "n": "Flanker",
+   "temper": "steady",
    "who": "human",
    "d": "Circles round to a spot with a clear line past its target's cover.",
    "range": "best",
@@ -2725,6 +2730,7 @@
   },
   "bully": {
    "n": "Bully",
+   "temper": "steady",
    "who": "human",
    "d": "Picks on whoever has the least HP left.",
    "range": "best",
@@ -2738,6 +2744,7 @@
   },
   "vulture": {
    "n": "Vulture",
+   "temper": "steady",
    "who": "human",
    "d": "Goes for the most badly hurt foe to finish them, and runs when its own HP drops under a third.",
    "range": "best",
@@ -2754,6 +2761,7 @@
   },
   "zealot": {
    "n": "Zealot",
+   "temper": "aggressive",
    "who": "human",
    "d": "Fights to the death against the toughest foe in sight, and only heals when nearly dead.",
    "range": "best",
@@ -2769,6 +2777,7 @@
   },
   "mercenary": {
    "n": "Mercenary",
+   "temper": "cautious",
    "who": "human",
    "d": "Fights carefully from cover for the best odds, and quits the fight once its own HP is under 40%.",
    "range": "best",
@@ -2787,6 +2796,7 @@
   },
   "hothead": {
    "n": "Hothead",
+   "temper": "aggressive",
    "who": "human",
    "d": "Goes after whoever hurt it last, closing in to do it; until someone does, the nearest foe.",
    "range": "close",
@@ -2800,6 +2810,7 @@
   },
   "drugRage": {
    "n": "Drug-fueled rage",
+   "temper": "aggressive",
    "who": "human",
    "d": "Takes a chem it carries at the start of the fight, then charges the nearest foe in a rage: every AP on attacks, never heals, never runs.",
    "range": "close",
@@ -2817,6 +2828,7 @@
   },
   "bodyguard": {
    "n": "Bodyguard",
+   "temper": "steady",
    "who": "human",
    "d": "Stays with its toughest ally and shoots whoever is closest to them.",
    "range": "best",
@@ -2831,6 +2843,7 @@
   },
   "feral": {
    "n": "Feral",
+   "temper": "aggressive",
    "who": "creature",
    "d": "Charges the nearest thing that moves and never stops.",
    "range": "close",
@@ -2846,6 +2859,7 @@
   },
   "packHunter": {
    "n": "Pack hunter",
+   "temper": "aggressive",
    "who": "creature",
    "d": "Gangs up with its pack on the most hurt foe.",
    "range": "close",
@@ -2860,6 +2874,7 @@
   },
   "skittish": {
    "n": "Skittish",
+   "temper": "cautious",
    "who": "creature",
    "d": "Attacks the nearest foe, but bolts once it's under half HP or most of its side is down.",
    "range": "close",
@@ -2878,6 +2893,7 @@
   },
   "territorial": {
    "n": "Territorial",
+   "temper": "cautious",
    "who": "creature",
    "d": "Defends its ground: attacks anything that comes within 15 m, and doesn't chase farther.",
    "range": "close",
@@ -2892,6 +2908,7 @@
   },
   "protocol": {
    "n": "Protocol",
+   "temper": "aggressive",
    "who": "robot",
    "d": "Advances steadily on the nearest threat and never retreats.",
    "range": "best",
@@ -2906,6 +2923,7 @@
   },
   "sentry": {
    "n": "Sentry",
+   "temper": "cautious",
    "who": "robot",
    "d": "Holds position and fires on anything it can hit; moves only when nothing is in reach.",
    "range": "best",

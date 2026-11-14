@@ -848,9 +848,11 @@ const DEFAULT_RULES = {
   // flee: { sideDown: share of its side down, dead or gone, minSide: only if the side started at least this big; hpBelow: share of its own HP }.
   // heal: heals below this share of HP (0: never). attacks: most attacks a turn. aimHead: aims for the head when that still hits this often.
   // grenade: throws a grenade at two or more foes bunched together (false: never).
+  // temper: aggressive, cautious or steady: the color and word of its emblem on the enemy card.
   dispositions: {
     craven: {
       n: "Craven",
+      temper: "cautious",
       who: "human",
       d: "Hangs back at the farthest range it can still hit from and takes potshots from cover. Runs once more than half its side is down or gone, unless there were only two of them.",
       range: "far",
@@ -863,6 +865,7 @@ const DEFAULT_RULES = {
     },
     reckless: {
       n: "Reckless",
+      temper: "aggressive",
       who: "human",
       d: "Charges the nearest foe, never takes cover, spends every AP on attacks and never runs.",
       range: "close",
@@ -873,6 +876,7 @@ const DEFAULT_RULES = {
     },
     marksman: {
       n: "Marksman",
+      temper: "cautious",
       who: "human",
       d: "Holds a spot at its weapon's best range behind cover and aims for the head when the odds are good.",
       range: "best",
@@ -884,6 +888,7 @@ const DEFAULT_RULES = {
     },
     tactician: {
       n: "Tactician",
+      temper: "cautious",
       who: "human",
       d: "Moves cover to cover at its weapon's best range, fires on whoever it hits best, ducks back after shooting.",
       range: "best",
@@ -894,6 +899,7 @@ const DEFAULT_RULES = {
     },
     flanker: {
       n: "Flanker",
+      temper: "steady",
       who: "human",
       d: "Circles round to a spot with a clear line past its target's cover.",
       range: "best",
@@ -903,6 +909,7 @@ const DEFAULT_RULES = {
     },
     bully: {
       n: "Bully",
+      temper: "steady",
       who: "human",
       d: "Picks on whoever has the least HP left.",
       range: "best",
@@ -911,6 +918,7 @@ const DEFAULT_RULES = {
     },
     vulture: {
       n: "Vulture",
+      temper: "steady",
       who: "human",
       d: "Goes for the most badly hurt foe to finish them, and runs when its own HP drops under a third.",
       range: "best",
@@ -920,6 +928,7 @@ const DEFAULT_RULES = {
     },
     zealot: {
       n: "Zealot",
+      temper: "aggressive",
       who: "human",
       d: "Fights to the death against the toughest foe in sight, and only heals when nearly dead.",
       range: "best",
@@ -930,6 +939,7 @@ const DEFAULT_RULES = {
     },
     mercenary: {
       n: "Mercenary",
+      temper: "cautious",
       who: "human",
       d: "Fights carefully from cover for the best odds, and quits the fight once its own HP is under 40%.",
       range: "best",
@@ -941,6 +951,7 @@ const DEFAULT_RULES = {
     },
     hothead: {
       n: "Hothead",
+      temper: "aggressive",
       who: "human",
       d: "Goes after whoever hurt it last, closing in to do it; until someone does, the nearest foe.",
       range: "close",
@@ -949,6 +960,7 @@ const DEFAULT_RULES = {
     },
     drugRage: {
       n: "Drug-fueled rage",
+      temper: "aggressive",
       who: "human",
       d: "Takes a chem it carries at the start of the fight, then charges the nearest foe in a rage: every AP on attacks, never heals, never runs.",
       range: "close",
@@ -961,6 +973,7 @@ const DEFAULT_RULES = {
     },
     bodyguard: {
       n: "Bodyguard",
+      temper: "steady",
       who: "human",
       d: "Stays with its toughest ally and shoots whoever is closest to them.",
       range: "best",
@@ -970,6 +983,7 @@ const DEFAULT_RULES = {
     },
     feral: {
       n: "Feral",
+      temper: "aggressive",
       who: "creature",
       d: "Charges the nearest thing that moves and never stops.",
       range: "close",
@@ -980,6 +994,7 @@ const DEFAULT_RULES = {
     },
     packHunter: {
       n: "Pack hunter",
+      temper: "aggressive",
       who: "creature",
       d: "Gangs up with its pack on the most hurt foe.",
       range: "close",
@@ -989,6 +1004,7 @@ const DEFAULT_RULES = {
     },
     skittish: {
       n: "Skittish",
+      temper: "cautious",
       who: "creature",
       d: "Attacks the nearest foe, but bolts once it's under half HP or most of its side is down.",
       range: "close",
@@ -998,6 +1014,7 @@ const DEFAULT_RULES = {
     },
     territorial: {
       n: "Territorial",
+      temper: "cautious",
       who: "creature",
       d: "Defends its ground: attacks anything that comes within 15 m, and doesn't chase farther.",
       range: "close",
@@ -1007,6 +1024,7 @@ const DEFAULT_RULES = {
     },
     protocol: {
       n: "Protocol",
+      temper: "aggressive",
       who: "robot",
       d: "Advances steadily on the nearest threat and never retreats.",
       range: "best",
@@ -1016,6 +1034,7 @@ const DEFAULT_RULES = {
     },
     sentry: {
       n: "Sentry",
+      temper: "cautious",
       who: "robot",
       d: "Holds position and fires on anything it can hit; moves only when nothing is in reach.",
       range: "best",

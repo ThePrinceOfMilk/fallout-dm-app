@@ -1438,7 +1438,7 @@ function planTurn(id) {
 function autoBox(A) {
   const p = ui.autoPlan;
   if (!p || p.id !== A.id) return "";
-  return `<div class="autoplan"><div class="s"><b>AUTO TURN</b>${p.disp ? ` ${vicon("d_" + A.disp, "dispic")}<span class="bright">${h(p.disp)}</span>` : ""} ${h(A.name)} will ${h(p.say.join(", then "))}.</div><div class="acts">${btn("autoConfirm", "", "Confirm", "Enter", "primary tiny")}${btn("autoCancel", "", "Cancel", "Esc", "tiny")}<span class="s dim">Dice are rolled when you confirm. The turn then ends.</span></div></div>`;
+  return `<div class="autoplan"><div class="s"><b>AUTO TURN</b>${p.disp ? ` ${dispEmblem(A.disp, true)}<span class="bright">${h(p.disp)}</span>` : ""} ${h(A.name)} will ${h(p.say.join(", then "))}.</div><div class="acts">${btn("autoConfirm", "", "Confirm", "Enter", "primary tiny")}${btn("autoCancel", "", "Cancel", "Esc", "tiny")}<span class="s dim">Dice are rolled when you confirm. The turn then ends.</span></div></div>`;
 }
 const AUTO_ACT = {
   autoPlan() {
