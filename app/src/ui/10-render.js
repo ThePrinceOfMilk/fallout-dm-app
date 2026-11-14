@@ -69,11 +69,10 @@ function render() {
     const el = document.querySelector(ui.focus);
     ui.focus = null;
     focusSoft(el);
-    if (el) showLoadout(el);
   } else if (key) {
     const el = document.querySelector(key);
     if (el) {
-      el.focus();
+      el.focus({ preventScroll: true }); // 14 Nov: a redraw keeps the panel where the user scrolled it
       if (sel)
         try {
           el.setSelectionRange(sel[0], sel[1]);
@@ -86,26 +85,15 @@ function render() {
   if (dlg && !dlg.contains(document.activeElement)) {
     // with a keyboard the first box is ready to type in; on a touch screen that would pop the keyboard up, so a button instead
     const f = dlg.querySelector(touchScreen() ? ".wb button" : ".wb input, .wb select, .wb textarea, .wb button");
-    (f || dlg.querySelector("button")).focus();
+    (f || dlg.querySelector("button")).focus({ preventScroll: true });
   }
 }
 // On a phone or tablet the keyboard only opens when you tap a box yourself: the app never focuses a text box there.
 // (Focus that was already in a box before a redraw is put back, since you tapped that box.)
 const touchScreen = () => matchMedia("(pointer: coarse)").matches;
 const typingBox = (el) => !!el && el.matches("textarea, input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]):not([type=file])");
-// 14 Nov: focusing the roll box scrolls the turn panel down to it, which hid the weapon pictures at the top;
-// scroll back up as far as the box stays in view, so the loadout shows too when there is room
-function showLoadout(el) {
-  const top = document.querySelector(".wb .wcards");
-  const wb = top && top.closest(".wb");
-  if (!wb || !wb.contains(el)) return;
-  const box = wb.getBoundingClientRect();
-  const hidden = box.top - (top.closest(".seg") || top).getBoundingClientRect().top; // how far the loadout's top is above view
-  const room = box.bottom - el.getBoundingClientRect().bottom; // how far the roll box could move down and stay in view
-  if (hidden > 0 && room > 0) wb.scrollTop -= Math.min(hidden, room);
-}
 function focusSoft(el) {
-  if (el && !(touchScreen() && typingBox(el))) el.focus();
+  if (el && !(touchScreen() && typingBox(el))) el.focus({ preventScroll: true }); // 14 Nov: focus no longer jumps the scroll
 }
 
 // ---------- events

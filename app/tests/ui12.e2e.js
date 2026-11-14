@@ -87,6 +87,25 @@ let pass = 0,
     await p.locator('.dialog [data-a="treeSkill"][data-v=""]').click();
     assert.ok((await p.locator(".dialog .snode.sskill").count()) > 5, "All skills again");
   });
+  await step("clicking in the attack panel keeps the panel where it was scrolled (14 Nov)", async () => {
+    await p.evaluate(() => {
+      ACT.setupOpen("1");
+      ACT.randomRoom();
+      ACT.addPick(allTemplates()[0].n);
+      ACT.beginC("");
+      beginRounds();
+      startTurn(S.chars[0].id);
+      ACT.attack();
+      render();
+      document.querySelector(".wcards").closest(".wb").scrollTop = 60;
+    });
+    const top = () => p.evaluate(() => document.querySelector(".wcards").closest(".wb").scrollTop);
+    const before = await top();
+    assert.ok(before > 0, "the panel can scroll");
+    await p.locator(".wcard.slim").first().click();
+    await p.locator(".body [data-a]").first().click();
+    assert.strictEqual(await top(), before, "still where it was");
+  });
   await step("loadout: the weapon in use shows mag, reserve, fire and reload AP; the other is slim", async () => {
     await p.evaluate(() => {
       ACT.setupOpen("1");

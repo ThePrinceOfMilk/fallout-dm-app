@@ -4,6 +4,15 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
+    ver: "",
+    title: "The combat menu stays where you scrolled it; 8 more weapon icons",
+    items: [
+      "Clicking or typing in the turn panel no longer scrolls it back; it stays where you left it.",
+      "New traced icons: Overseer's Guardian, Little Friend, Radium Rifle, Stalker's Rifle, Commonwealth Assault Rifle, Burst Pistol and the compact .45 and 10mm SMGs.",
+    ],
+  },
+  {
+    date: "14 Nov 2026",
     ver: "e164d30",
     title: "14 more weapon icons: pistols, AR and AUG rifles",
     items: [
