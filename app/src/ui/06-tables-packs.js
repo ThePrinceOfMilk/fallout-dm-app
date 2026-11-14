@@ -766,6 +766,7 @@ function renderModal() {
     pwide: [m.side === "enemies" ? "All enemies" : "Party-wide", pwBody],
     char: [`${h((ce || {}).name)}: Inventory`, () => (ce ? invSect(ce, der(ce)) : "")],
     icon: [`${h((ce || {}).name)}: map icon`, iconModal],
+    disp: [`${h((ce || {}).name)}: disposition`, dispModal],
     vendor: ["Vendor", vendorWin],
     reward: ["Rewards rolled", rewardBody],
     skillTree: ["Skill tree", () => treeModal("skill")],
@@ -801,6 +802,21 @@ function renderModal() {
           ? "tiny"
           : "";
   return `<div class="scrim" data-a="closeModal"><div class="dialog float ${size}" data-a="noop" data-dlg="${key}" style="${dlgStyle(key)}" role="dialog" aria-modal="true"><header class="wt"><span>${title}</span><span class="spacer"></span><button class="btn tiny" data-a="closeModal" data-v="">${kbd("Esc")}Close</button></header><div class="wb" data-scroll="modal-${key}">${body()}</div></div></div>`;
+}
+// 14 Nov: the DM picks a disposition from a list (clicking the emblem on an enemy card); the enemy's own kind first, then the rest
+function dispModal() {
+  const e = ent(ui.modal.id);
+  if (!e) return "";
+  const all = S.rules.dispositions || {};
+  const kind = E.dispositionKind(e, S.rules);
+  const kinds = [kind, ...["human", "creature", "robot"].filter((k) => k !== kind)];
+  const word = { human: "Humans", creature: "Creatures", robot: "Robots" };
+  const row = (k) =>
+    `<button class="rowbtn dpick ${e.disp === k ? "on" : ""}" data-a="dispSet" data-v="${e.id}|${k}" aria-pressed="${e.disp === k}">${dispEmblem(k)}<span class="grow"><b class="bright">${h(all[k].n)}</b> <span class="s dim">${h(all[k].temper || "steady")}</span><br><span class="s">${h(all[k].d)}</span></span></button>`;
+  return `<div class="s dim" style="margin-bottom:4px">How ${h(e.name)} plays its automated turns. Only you see this.</div>${kinds
+    .map((w) => [w, Object.keys(all).filter((k) => all[k].who === w)])
+    .map(([w, ks]) => (ks.length ? `<h4 class="icongroup">${word[w] || h(w)}${w === kind ? " (its kind)" : ""}</h4>${ks.map(row).join("")}` : ""))
+    .join("")}`;
 }
 function iconModal() {
   const e = ent(ui.modal.id);

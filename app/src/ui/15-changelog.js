@@ -3,6 +3,19 @@
 // ver: the public commit, once pushed ("" until then). items: plain words, one line each.
 var CHANGELOG = [
   {
+    date: "14 Nov 2026",
+    ver: "",
+    title: "Your own icons for weapons, hazards and dispositions; pick a disposition from a list",
+    items: [
+      "35 weapons have their own traced icon (the pipe guns, the 9mm and .22 pistols, the Mauser, Peacemaker, AK47, FAL and more, and the tier 1 melee weapons); every other weapon keeps its type's icon.",
+      "The equipped weapon slots show the weapon's icon large, and the item browser shows a bigger icon on every row.",
+      "Hazards and traps use the new traced icons: fire, rads, gas, acid, live wires, the minefield (pre-war mines), the buried landmine, spikes, water, shallow water, bear trap, dart plate and snare.",
+      "Dispositions use the new traced icons, and the emblem on enemy cards is bigger.",
+      "The two robot dispositions are now Offensive Protocol (was Protocol) and Defensive Protocol (was Sentry).",
+      "Clicking a disposition emblem opens a list to pick from, instead of stepping to the next one.",
+    ],
+  },
+  {
     date: "13 Nov 2026",
     ver: "d8aad33",
     title: "Bigger inventory icons, all framed, new weapon and item icons",

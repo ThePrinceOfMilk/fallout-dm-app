@@ -683,7 +683,7 @@ function dispTag(e) {
   const k = K();
   const d = e.disp && (S.rules.dispositions || {})[e.disp];
   if (!d || !k || k.phase === "stealth" || isSpec()) return "";
-  return `<button class="dispb" data-a="dispNext" data-v="${e.id}" title="${h(d.n)} (${h(d.temper || "steady")}): ${h(d.d)} Click to change.">${dispEmblem(e.disp)}</button>`;
+  return `<button class="dispb" data-a="dispPick" data-v="${e.id}" title="${h(d.n)} (${h(d.temper || "steady")}): ${h(d.d)} Click to choose another.">${dispEmblem(e.disp)}</button>`;
 }
 // 13 Nov: a disposition's emblem: its frame by kind (shield for humans, hexagon for creatures, cog for robots), its color by temperament
 const EMBLEM_FRAME = {
@@ -694,7 +694,7 @@ const EMBLEM_FRAME = {
 function dispEmblem(key, word = false) {
   const d = (S.rules.dispositions || {})[key] || {};
   const t = d.temper || "steady";
-  return `<span class="emb tm-${t}"><svg viewBox="0 0 36 36" class="embic" aria-hidden="true"><path class="embf" d="${EMBLEM_FRAME[d.who] || EMBLEM_FRAME.human}"/><g transform="translate(8 8) scale(.833)">${VICON["d_" + key] || ""}</g></svg>${word ? `<span class="embw">${t.toUpperCase()}</span>` : ""}</span>`;
+  return `<span class="emb tm-${t}"><svg viewBox="0 0 36 36" class="embic" aria-hidden="true"><path class="embf" d="${EMBLEM_FRAME[d.who] || EMBLEM_FRAME.human}"/><g transform="translate(7 7) scale(.917)">${VICON["d_" + key] || ""}</g></svg>${word ? `<span class="embw">${t.toUpperCase()}</span>` : ""}</span>`;
 }
 // The name under a token: an enemy's nickname if it has one ("Fiend - Zed" reads Zed), otherwise the whole name.
 function tokenLabel(e) {

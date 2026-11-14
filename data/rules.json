@@ -2907,7 +2907,7 @@
    }
   },
   "protocol": {
-   "n": "Protocol",
+   "n": "Offensive Protocol",
    "temper": "aggressive",
    "who": "robot",
    "d": "Advances steadily on the nearest threat and never retreats.",
@@ -2922,7 +2922,7 @@
    }
   },
   "sentry": {
-   "n": "Sentry",
+   "n": "Defensive Protocol",
    "temper": "cautious",
    "who": "robot",
    "d": "Holds position and fires on anything it can hit; moves only when nothing is in reach.",

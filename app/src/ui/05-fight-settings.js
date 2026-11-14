@@ -449,7 +449,7 @@ function itemsBody() {
   const body = shown
     .map(([c, o], i) => {
       const open = ui.brOpen === o.n;
-      return `<tr class="click" data-a="brToggle" data-v="${h(o.n)}"><td title="${h(c)}" style="width:20px">${itemIcon(o.n)}</td><td class="bright" title="${h(o.n)}">${h(o.n)}</td><td>${o.tier != null && o.tier !== "" ? h(o.tier) : "-"}</td><td title="${h(statText(c, o))}">${h(statText(c, o))}</td><td title="${fmt(o.lb)}">${Number((o.lb || 0).toFixed(2))}</td><td>${o.val != null ? fmt(o.val) : "-"}</td><td style="overflow:visible"><button class="btn tiny" data-a="brGive" data-v="${h(o.n)}" title="Give one">+</button></td></tr>${open ? `<tr><td class="open" colspan="7"><div style="padding:3px 0">${detailFields(o, E.low(o.n), BR_LIST().find(([, x]) => x.n === o.n)[1], `br${i}`)}</div></td></tr>` : ""}`;
+      return `<tr class="click" data-a="brToggle" data-v="${h(o.n)}"><td title="${h(c)}" class="bric">${itemIcon(o.n, true)}</td><td class="bright" title="${h(o.n)}">${h(o.n)}</td><td>${o.tier != null && o.tier !== "" ? h(o.tier) : "-"}</td><td title="${h(statText(c, o))}">${h(statText(c, o))}</td><td title="${fmt(o.lb)}">${Number((o.lb || 0).toFixed(2))}</td><td>${o.val != null ? fmt(o.val) : "-"}</td><td style="overflow:visible"><button class="btn tiny" data-a="brGive" data-v="${h(o.n)}" title="Give one">+</button></td></tr>${open ? `<tr><td class="open" colspan="7"><div style="padding:3px 0">${detailFields(o, E.low(o.n), BR_LIST().find(([, x]) => x.n === o.n)[1], `br${i}`)}</div></td></tr>` : ""}`;
     })
     .join("");
   const th = (k, l, w) => `<th style="width:${w}" data-a="brSortBy" data-v="${k}">${l}${ui.brSort === k && !q ? (ui.brDir > 0 ? " ^" : " v") : ""}</th>`;
@@ -457,7 +457,7 @@ function itemsBody() {
     S.chars.map((c) => [c.id, c.name]),
     ui.sel,
   )}</select></label></div>
-    <div class="itab"><table class="t"><tr><th style="width:20px" data-a="brSortBy" data-v="c"></th>${th("n", "Name", "30%")}${th("tier", "T", "4%")}<th>Stats</th>${th("lb", "Lb", "7%")}${th("val", "Cap", "7%")}<th style="width:24px"></th></tr>${body}</table></div>${rows.length > shown.length ? `<div class="s dim">Showing ${shown.length} of ${rows.length}. Search to narrow it down.</div>` : ""}`;
+    <div class="itab"><table class="t"><tr><th style="width:76px" data-a="brSortBy" data-v="c"></th>${th("n", "Name", "30%")}${th("tier", "T", "4%")}<th>Stats</th>${th("lb", "Lb", "7%")}${th("val", "Cap", "7%")}<th style="width:24px"></th></tr>${body}</table></div>${rows.length > shown.length ? `<div class="s dim">Showing ${shown.length} of ${rows.length}. Search to narrow it down.</div>` : ""}`;
 }
 const PCT_FIELDS = new Set(["crit", "jam", "base", "addict"]);
 function detailFields(o, key, base, idp) {

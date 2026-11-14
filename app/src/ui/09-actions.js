@@ -1047,16 +1047,20 @@ const ACT = {
         o.label = val;
       });
   },
-  dispNext(v) {
-    const e = ent(v);
-    if (!e) return;
-    const kind = E.dispositionKind(e, S.rules);
-    const list = Object.keys(S.rules.dispositions || {}).filter((k) => S.rules.dispositions[k].who === kind);
-    if (!list.length) return;
+  dispPick(v) {
+    ui.modal = { type: "disp", id: v };
+    render();
+  },
+  dispSet(v) {
+    const [id, k] = splitV(v);
+    const e = ent(id);
+    if (!e || !(S.rules.dispositions || {})[k]) return;
+    ui.modal = null;
+    if (e.disp === k) return render();
     act("Disposition", () => {
-      e.disp = list[(list.indexOf(e.disp) + 1) % list.length];
+      e.disp = k;
       ui.autoPlan = null;
-      log("status", `${e.name} is now ${S.rules.dispositions[e.disp].n}.`);
+      log("status", `${e.name} is now ${S.rules.dispositions[k].n}.`);
     });
   },
   objDoor(v) {

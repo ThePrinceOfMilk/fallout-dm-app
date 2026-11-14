@@ -19,7 +19,7 @@ PDF = os.path.join(ROOT, "Fallout TTRPG Game Bible.pdf"); BASE = os.path.join(HE
 if not os.path.exists(BASE): shutil.copy(PDF, BASE)
 D = json.load(open(os.path.join(HERE, "tests", "wiki.json"), encoding="utf8"))
 R = D["rules"]
-D8, D9, D10, D11, D12, D13 = "8 Nov 2026", "9 Nov 2026", "10 Nov 2026", "11 Nov 2026", "12 Nov 2026", "13 Nov 2026"
+D8, D9, D10, D11, D12, D13, D14 = "8 Nov 2026", "9 Nov 2026", "10 Nov 2026", "11 Nov 2026", "12 Nov 2026", "13 Nov 2026", "14 Nov 2026"
 LATEST = "12 November 2026"
 
 # ---- the bible's own look: Segoe UI when Windows has it, else Helvetica
@@ -646,6 +646,13 @@ upd(43, D12, "The Factions window", "New: a Factions button on the right-hand ra
     "A new faction has a naming theme: military organization, political system, raider gang, organized criminal group, tribe, humanitarian, religious order, merchant company or Legion. Generate hierarchy fills the chart with that theme's ranks and fresh names (a faction with its own name style, like the NCR or the Legion, uses it). Undo brings back what was there."))
 
 # ---------------------------------------------------------------- 13 Nov 2026: water outlines, resizing, the turn lock, terrain
+upd(20, D14, "Robot dispositions renamed", "Was: the two robot dispositions were Protocol and Sentry. Now: they are Offensive Protocol and Defensive Protocol.", bl(
+    "Offensive Protocol (was Protocol): advances steadily on the nearest threat and never retreats.",
+    "Defensive Protocol (was Sentry): holds position and fires on anything it can hit; moves only when nothing is in reach.",
+    "Only the names changed. How each one fights, and how often it is rolled, are the same."))
+upd(20, D14, "The DM picks a disposition", "Was: clicking the emblem on an enemy card stepped to the next disposition of its kind. Now: it opens a list of every disposition, with its emblem and how it fights, and the DM clicks the one to use.", bl(
+    "The enemy's own kind (humans, creatures or robots) is listed first; the others are below it, so a robot can be given a human disposition if the DM wants.",
+    "The players never see the emblem or the list."))
 upd(12, D13, "Water has a natural shape", "Was: lakes, ponds and pools were ovals or squares. Now: each has an outline of its own, an oblong, a kidney or a bay, and a new one every time one is made or placed.", bl(
     "The outline is the water: deep water stops a walk only inside it, and shallow water or a rad lake slows only the stretch walked inside it.",
     "Generated lakes follow their shallows' shape. Deep water, shallow water and acid placed with +Hazard get one too."))
@@ -737,7 +744,7 @@ def put(page, x, y, text, size, bold=False, color=GREEN, right=False):  # y is t
     if right: x -= tlen(text, size, bold)
     page.insert_text((x, y), text, fontsize=size, fontname=name, fontfile=ff, color=tuple(int(color[i:i + 2], 16) / 255 for i in (1, 3, 5)))
 
-newest = lambda ch: max((u[0] for u in U[ch]), key=[D8, D9, D10, D11, D12, D13].index)
+newest = lambda ch: max((u[0] for u in U[ch]), key=[D8, D9, D10, D11, D12, D13, D14].index)
 put(base[0], 54, 570.5, f"Updated {LATEST}. Changes sit in the chapters they affect, on lettered pages such as {labels[12][0]}.", 8.2, color=GREY)
 for ch in U:
     pg = base[first[ch] - 1]

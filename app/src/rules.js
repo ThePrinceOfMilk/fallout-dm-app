@@ -1023,7 +1023,7 @@ const DEFAULT_RULES = {
       fits: { melee: 1, close: 1, mid: 1, long: 1 },
     },
     protocol: {
-      n: "Protocol",
+      n: "Offensive Protocol", // 14 Nov: renamed by the user (was Protocol)
       temper: "aggressive",
       who: "robot",
       d: "Advances steadily on the nearest threat and never retreats.",
@@ -1033,7 +1033,7 @@ const DEFAULT_RULES = {
       fits: { melee: 1, close: 1, mid: 1, long: 1 },
     },
     sentry: {
-      n: "Sentry",
+      n: "Defensive Protocol", // 14 Nov: renamed by the user (was Sentry)
       temper: "cautious",
       who: "robot",
       d: "Holds position and fires on anything it can hit; moves only when nothing is in reach.",

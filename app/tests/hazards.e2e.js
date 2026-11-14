@@ -140,10 +140,16 @@ let pass = 0,
       return d.id;
     });
     assert.match(await p.locator(".covflag").first().textContent(), /Soft cover[\s\S]*no sight/);
-    assert.strictEqual(await p.evaluate(() => E.pathBlocked(posOf(S.chars[0].id), { x: posOf(S.chars[0].id).x + 8, y: posOf(S.chars[0].id).y }, S.scene.objects, S.rules)), true);
+    assert.strictEqual(
+      await p.evaluate(() => E.pathBlocked(posOf(S.chars[0].id), { x: posOf(S.chars[0].id).x + 8, y: posOf(S.chars[0].id).y }, S.scene.objects, S.rules)),
+      true,
+    );
     await p.locator(`[data-a="objDoor"][data-v="${id}"]`).click();
     assert.strictEqual(await p.evaluate((id) => S.scene.objects.find((o) => o.id === id).open, id), true);
-    assert.strictEqual(await p.evaluate(() => E.pathBlocked(posOf(S.chars[0].id), { x: posOf(S.chars[0].id).x + 8, y: posOf(S.chars[0].id).y }, S.scene.objects, S.rules)), false);
+    assert.strictEqual(
+      await p.evaluate(() => E.pathBlocked(posOf(S.chars[0].id), { x: posOf(S.chars[0].id).x + 8, y: posOf(S.chars[0].id).y }, S.scene.objects, S.rules)),
+      false,
+    );
     assert.doesNotMatch(await p.locator(".covflag").first().textContent(), /no sight/);
   });
   await step("a generated home has wooden doors; a police station a steel front door", async () => {
@@ -196,7 +202,10 @@ let pass = 0,
     const r = await walk(6, 0);
     assert.strictEqual(r.x, 6, "the walk goes on");
     assert.strictEqual(r.hp, hp0 - 6);
-    assert.ok(r.st.some((s) => s.startsWith("Electrocuted")), r.st.join());
+    assert.ok(
+      r.st.some((s) => s.startsWith("Electrocuted")),
+      r.st.join(),
+    );
   });
   await step("walking into a minefield sets off a mine: a small blast hurts the walker and anyone close by", async () => {
     await freshFight();
@@ -290,14 +299,22 @@ let pass = 0,
     });
     assert.strictEqual(r.phase, "init");
     const known = await p.evaluate(() => Object.keys(S.rules.dispositions));
-    assert.ok(r.disp.every((d) => d && known.includes(d)), r.disp.join());
+    assert.ok(
+      r.disp.every((d) => d && known.includes(d)),
+      r.disp.join(),
+    );
     assert.strictEqual(r.icons, 5);
-    // clicking the icon changes it
+    // clicking the icon opens the picker (14 Nov); a row sets that disposition and closes it
     const btn = p.locator(".card.foe .dispb").first();
     const who = await btn.getAttribute("data-v");
     const before = await p.evaluate((id) => ent(id).disp, who);
     await btn.click();
-    assert.notStrictEqual(await p.evaluate((id) => ent(id).disp, who), before);
+    assert.strictEqual(await p.locator(".dpick").count(), known.length, "the picker lists every disposition");
+    assert.strictEqual(await p.locator(".dpick.on").getAttribute("data-v"), `${who}|${before}`, "the current one is marked");
+    const pick = p.locator(".dpick:not(.on)").first();
+    const to = (await pick.getAttribute("data-v")).split("|")[1];
+    await pick.click();
+    assert.deepStrictEqual(await p.evaluate((id) => [ent(id).disp, !!ui.modal], who), [to, false]);
   });
   await step("a Craven runs once most of its side is down; a Zealot fights on", async () => {
     const r = await p.evaluate(() => {

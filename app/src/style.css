@@ -7391,3 +7391,42 @@ html.shiftdown #map .tok.locked {
   width: 64px;
   height: 32px;
 }
+
+/* 13 Nov: the item browser shows the wide icon too, and the equipped weapon slots make the weapon's icon their focus */
+.bric {
+  width: 76px;
+}
+.wbig {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 6px;
+}
+.wbig .tfi.wide .vic.wide {
+  width: 176px;
+  height: 88px;
+}
+.wbig .tfi b {
+  font-size: 11px;
+  line-height: 12px;
+}
+
+/* 14 Nov: the disposition picker: one row per disposition, emblem on the left */
+.rowbtn.dpick {
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  margin-bottom: 3px;
+}
+.rowbtn.dpick .emb {
+  font-size: 28px;
+}
+.rowbtn.dpick.on {
+  border-color: var(--bright);
+  background: #123a20;
+}
+/* 14 Nov: a bigger emblem on enemy cards; the negative margin keeps the header row from growing much */
+.dispb .embic {
+  width: 2.1em;
+  height: 2.1em;
+  margin: -0.28em 0;
+}
