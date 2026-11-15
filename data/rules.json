@@ -36,6 +36,12 @@
   "Limb": 1.25,
   "Head": 0.5
  },
+ "disarm": {
+  "floor": 0.35,
+  "hold": 1,
+  "broken": 0.12,
+  "pickupMul": 2
+ },
  "pelletShareMin": 0.5,
  "coverInset": 0.1,
  "critMult": {

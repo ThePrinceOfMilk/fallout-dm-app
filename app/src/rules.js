@@ -24,6 +24,7 @@ const DEFAULT_RULES = {
   strMelee: 0, // accuracy is skill and weapon only for now. The sheet's values are 0.05, 0.0125 and 0.05.
   loc: { Body: 1, Limb: 0.75, Head: 2 }, // damage x this for the part hit; aiming costs no AP (12 Nov), and locHit changes the odds
   locHit: { Body: 1, Limb: 1.25, Head: 0.5 }, // 12 Nov: hit chance x this for the part aimed at
+  disarm: { floor: 0.35, hold: 1, broken: 0.12, pickupMul: 2 }, // 14 Nov, aiming at the weapon (body odds, no damage): knock chance = floor + (1 - floor) x damage / (damage + hold x (STR + LCK)), so even a weak hit has a fair chance; broken: share of knocks that break it for the fight (about 1 in 10 at best); the rest drop it, picked up for pickupMul x the jam-clearing AP
   pelletShareMin: 0.5, // 12 Nov, spread pellets: share landed = range share x (this + roll quality)
   coverInset: 0.1, // 12 Nov: object hitboxes are this many meters smaller on each side, so a shot clipping an edge goes through
   critMult: { Hit: 1, Crit: 2, Super: 3 },

@@ -982,3 +982,23 @@ test("hit shapes: a boulder blocks by its drawn outline, round things by their e
   // the rock's left point is 1.84 m from its middle; coverInset trims a little off every shape, so the shot meets it a bit later
   assert.ok(hits.length === 1 && hits[0].d > 8.1 && hits[0].d < 8.7, `enters at the rock's left side: ${hits[0] && hits[0].d}`);
 });
+
+test("aiming at the weapon: damage against grip decides the knock, and a dropped weapon costs double to pick up (14 Nov)", () => {
+  const r = { disarm: { floor: 0.35, hold: 1, broken: 0.12, pickupMul: 2 } };
+  // 10 damage against STR 5 + LCK 5 (grip 10): 0.35 + 0.65 x 1/2 = 67.5% knocked; 12% of those break it (8.1%)
+  const k = E.disarm(10, 5, 5, r, 0);
+  assert.strictEqual(k.knock, 0.675);
+  assert.strictEqual(k.brokeAt, 8.1);
+  assert.strictEqual(k.dropAt, 67.5);
+  assert.deepStrictEqual([5, 30, 80].map((roll) => E.disarm(10, 5, 5, r, roll).result), ["broken", "dropped", "none"]);
+  assert.ok(E.disarm(2, 10, 10, r, 0).knock > 0.35, "even a weak hit on a strong, lucky holder has a fair chance");
+  assert.ok(E.disarm(1000, 1, 1, r, 0).brokeAt <= 12, "breaking stays rare: about 1 in 10 at best");
+  assert.ok(E.disarm(10, 10, 10, r, 0).knock < k.knock, "a stronger, luckier holder keeps hold more often");
+  assert.strictEqual(E.disarm(0, 5, 5, r, 0).result, "none", "no damage, no knock");
+  const c = data.party[0];
+  const d = E.derive(c, ctx);
+  const w = data.weapons.find((x) => x.tab === "SG" && x.tier);
+  const plain = E.weaponView({ n: w.n }, c, d, ctx).clearJam;
+  const dropped = E.weaponView({ n: w.n, dropped: true, jammed: true }, c, d, ctx).clearJam;
+  assert.strictEqual(dropped, plain * (ctx.rules.disarm ? ctx.rules.disarm.pickupMul : 2));
+});

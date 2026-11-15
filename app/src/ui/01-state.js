@@ -126,6 +126,7 @@ function normalize(p) {
   p.log = p.log || [];
   p.seq = p.seq || 1;
   p.notesList = p.notesList || [];
+  p.hotkeys = p.hotkeys || {}; // 14 Nov: keys the DM changed in the Keys window, by hotkey id
   p.tables = p.tables || {};
   p.customMaps = p.customMaps || {};
   for (const k of Object.keys(p.tables)) if (Array.isArray(WORKBOOK[k]) && Array.isArray(p.tables[k])) p.tables[k] = shrinkTable(k, p.tables[k]); // older saves held every row

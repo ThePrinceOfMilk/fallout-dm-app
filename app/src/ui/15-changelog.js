@@ -4,6 +4,20 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
+    ver: "",
+    title: "Aim at the enemy's weapon; every hotkey listed and changeable; 8 more weapon icons",
+    items: [
+      "New target under the body figure: Weapon. Same odds as the body, no damage. Any hit has a fair chance to knock the weapon away (more with more damage, less against high STR and LCK); breaking it for the fight is rare, about 1 in 10 at best.",
+      "A knocked-away weapon is picked up like clearing a jam, for double the AP.",
+      "The turn's action buttons only show what can be done right now: no Reload without ammo or a full magazine, no Clear jam unless jammed, nothing you can't afford.",
+      "A jammed, dropped or broken weapon gets a big stamp across its picture in the loadout.",
+      "Hotkeys redone: the Keys window (?) lists every one, by where it works. Click Change and press a key, or two keys one after the other. Changes save with the campaign.",
+      "New keys: S swap, J clear jam or pick up, X statuses, V revive, K skill check, E edit, C sheet, H health, L log, P next body part, O overrides, Q end the fight, D defeat. Menus: G then a letter (G S settings, G I item browser, G V vendor, and so on).",
+      "New traced icons: .22 Machine Pistol, Silenced .22 SMG, Single Rifle, Varmint rifle, Classic 9mm SMG, Classic Hunting rifle, Commonwealth Combat Rifle and Cowboy repeater.",
+    ],
+  },
+  {
+    date: "14 Nov 2026",
     ver: "4eb4281",
     title: "The combat menu stays where you scrolled it; 8 more weapon icons",
     items: [

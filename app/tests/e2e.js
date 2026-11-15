@@ -452,7 +452,7 @@ async function launch() {
     await blur(); await page.evaluate(() => { startTurn("c4"); S.combat.acted = { c4: true }; ui.focus = null; render(); }); const s0 = await state(); assert.strictEqual(s0.combat.turnId, "c4");
     await press("a"); await has("HIT "); assert.match(await text(".bandshort .bs-jam"), /^[0-9][0-9] -$/, "jam reads as a number and a minus");
     assert.strictEqual(await page.locator("#map .aim").count(), 1, "the map shows who is aimed at");
-    assert.strictEqual(await page.locator(".body .bp").count(), 6, "body mock-up: head, body, four limbs");
+    assert.strictEqual(await page.locator(".body .bp").count(), 7, "body mock-up: head, body, four limbs, and the weapon (14 Nov)");
     await page.evaluate(() => { K().ranges[pairKey(ui.atk.att, ui.atk.tgt)] = 2; ui.atk.ov.cover = "open"; ui.focus = "#roll"; render(); });  // scattered enemies can be out of pistol range, where a 99 rightly misses
     const ap = (await state()).chars[3].ap; const mag = (await state()).chars[3].weapons[0].mag;
     await type("99"); await press("Enter");
@@ -541,8 +541,8 @@ async function launch() {
     const at = await onMap(p0.x + 20, p0.y); await dragTo(await center(`[data-tok="${me}"] .base`), at);
     const p1 = await page.evaluate((i) => ({ ...posOf(i) }), me);
     assert.deepStrictEqual(p1, p0, "the token stays put");
-    await click("swap");
-    const after = await state(); assert.strictEqual(after.log.length, logN, "swap and cover refused"); assert.strictEqual(await page.locator('[data-a="cover"]').count(), 0, "cover comes from the map now");
+    assert.strictEqual(await page.locator('.acts [data-a="swap"], .acts [data-a="reload"], .acts [data-a="moveModal"]').count(), 0, "actions that need AP are left out (14 Nov)");
+    const after = await state(); assert.strictEqual(after.log.length, logN, "nothing happened"); assert.strictEqual(await page.locator('[data-a="cover"]').count(), 0, "cover comes from the map now");
     await page.evaluate((i) => { ent(i).ap = der(ent(i)).ap; render(); }, me);
   });
   await ok("Party and enemies stand apart in a fight, boxes override numbers", async () => {
@@ -667,14 +667,26 @@ async function launch() {
     const err = await page.evaluate(() => { const c = S.chars[0]; startTurn("c1"); const keep = c.weapons; c.weapons = [{ n: "Dynamite" }]; c.activeW = 0; c.ap = 99; c.inv = c.inv.filter((l) => l.n !== "Dynamite"); openAttack("c1"); ui.atk.roll = "50"; fire(); const e = ui.atk.err; ui.atk = null; c.weapons = keep; render(); return e; });
     assert.match(err, /no Dynamite left/);
   });
-  await ok("Only essential hotkeys are left", async () => {
-    await blur(); const before = await state();
-    const atk = await page.evaluate(() => !!ui.atk);
-    for (const k of ["c", "s", "k", "t", "e", "j", "v", "z", "o", "q", "d", "1", "2"]) await press(k);
-    await page.waitForTimeout(20);
-    assert.strictEqual(await page.locator(".dialog").count(), 0, "no window opened");
-    assert.deepStrictEqual((await state()).combat.phase, before.combat.phase);
-    assert.strictEqual((await state()).log.length, before.log.length, "nothing happened");
+  await ok("Hotkeys: listed in the Keys window, changeable, saved with the campaign; G then a letter opens a menu (14 Nov)", async () => {
+    await blur();
+    await press("?");
+    const rows = await page.locator(".dialog .hkrow:not(.fixed)").count();
+    assert.strictEqual(rows, await page.evaluate(() => HOTKEYS.length), "every hotkey is in the list");
+    // change End turn to Shift+K: click Change, press Shift+K, then Enter keeps the one key
+    await page.locator('.dialog [data-a="hkEdit"][data-v="next"]').click();
+    await page.keyboard.press("Shift+K");
+    await page.keyboard.press("Enter");
+    assert.strictEqual(await page.evaluate(() => S.hotkeys.next), "Shift+K", "saved in the campaign");
+    assert.ok(await page.evaluate(() => JSON.parse(JSON.stringify(S)).hotkeys.next === "Shift+K"), "and in what gets written to the file");
+    await page.evaluate(() => ACT.hkReset("next"));
+    assert.strictEqual(await page.evaluate(() => S.hotkeys.next), undefined, "Default puts it back");
+    await press("Escape");
+    await blur();
+    await press("g");
+    await press("s");
+    assert.strictEqual(await page.evaluate(() => ui.modal && ui.modal.type), "settings", "G then S opens Settings");
+    await press("Escape");
+    assert.strictEqual(await page.evaluate(() => { const c = HOTKEYS.filter((x) => hkClash(x[0])).map((x) => x[0]); return c.join(","); }), "", "no two default keys clash");
   });
   await ok("Character windows still open mid-fight with Shift", async () => {
     await blur(); await click("openChar", "c1|inv"); await has("Adhesive", ".dialog"); await press("Escape");

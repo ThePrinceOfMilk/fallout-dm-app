@@ -49,7 +49,7 @@ function stealthStage() {
   const n = Math.max(1, Math.floor(d.skills.SNK / S.rules.sneakDiv - S.rules.sneakSub));
   return `<div class="s dim" style="margin-bottom:3px">Pick a player on the left. Each action gets a d20 stealth roll. Caught means ${S.rules.caughtInit} initiative.</div>${ui.atk ? attackPanel() : ""}
    <div class="bright">${h(A.name)} <span class="tag">${c.caught ? "CAUGHT" : "HIDDEN"}</span> <span class="s dim">AP ${fmt(A.ap)}/${d.ap} · Sneak ${d.skills.SNK}</span></div>
-   ${ui.atk ? "" : `<div class="acts">${btn("attack", "", "Attack", "A")}${btn("moveModal", "", "Move", "M")}${btn("itemModal", "", "Item", "I")}${btn("reload", "", "Reload", "R")}</div>`}
+   ${ui.atk ? "" : `<div class="acts">${btn("attack", "", "Attack", "attack")}${btn("moveModal", "", "Move", "move")}${btn("itemModal", "", "Item", "item")}${btn("reload", "", "Reload", "reload")}</div>`}
    ${!c.caught ? `<div class="rollrow"><span>Stealth: at or under <span class="bright">${n}</span> stays hidden <span class="tag warn" title="The Gameplay Loop says Sneak/5-5 without saying how to read it. Change it in Settings.">PROVISIONAL</span></span><input class="rollbox" id="stealthRoll" inputmode="numeric" maxlength="2" autocomplete="off" data-enter="stealthRoll" placeholder="d20" aria-label="Stealth d20 roll">${diceBtn("stealthRoll", "d20")}${btn("stealthRoll", "", "Roll", "", "tiny")}</div>` : ""}
    <div class="acts" style="margin-top:6px">${ui.atk ? "" : primary("toInit", "", "Roll initiative", "Enter")}${btn("endCombat", "", "Cancel fight")}</div>`;
 }
@@ -81,17 +81,38 @@ function turnStage() {
   const banners = [];
   if (!npcsAlive())
     banners.push(
-      `<div class="banner bigend"><span>All enemies are down.</span><label class="s">Loot all to <select id="endLootTo" data-u="endLootTo" title="Who gets everything on the after-action screen. You can still change each item there.">${options([["", "Choose later"], ...S.chars.map((c) => [c.id, c.name])], ui.endLootTo || "")}</select></label><button class="btn primary big" data-a="endCombat" data-v="">${kbd("Q")}End the fight</button></div>`,
+      `<div class="banner bigend"><span>All enemies are down.</span><label class="s">Loot all to <select id="endLootTo" data-u="endLootTo" title="Who gets everything on the after-action screen. You can still change each item there.">${options([["", "Choose later"], ...S.chars.map((c) => [c.id, c.name])], ui.endLootTo || "")}</select></label><button class="btn primary big" data-a="endCombat" data-v="">${kbd(hk("endFight"))}End the fight</button></div>`,
     );
   if (!partyUp())
     banners.push(
-      `<div class="banner bigend bad"><span>The whole party is down.</span><button class="btn primary big" data-a="defeat" data-v="">${kbd("D")}Defeat</button></div>`,
+      `<div class="banner bigend bad"><span>The whole party is down.</span><button class="btn primary big" data-a="defeat" data-v="">${kbd(hk("defeat"))}Defeat</button></div>`,
     );
-  const na = (cost) => (cost > (A.ap || 0) ? "na" : "");
-  const free = (A.ap || 0) < 1 ? "na" : "";
   const cons = (A.inv || []).map((l, i) => ({ l, i, it: E.get(ctx(), l.n) })).filter((x) => x.it && x.it.cat === "item" && usable(x.it.o));
-  const head = `<div class="turnhead ${A.kind === "pc" ? "" : A.ally ? "ally" : "foe"}"><div class="turnwho"><span class="turnlabel">ROUND ${k.round} // ACTING</span><span class="actname">${h(A.name)}</span></div><div class="turnap"><span class="turnlabel">ACTION POINTS</span><span class="apbig">${fmt(A.ap)}<small>/${d.ap}</small></span>${apPips(A.ap || 0, d.ap)}${ui.atk && atkView() ? `<span class="apafter">after this shot: ${fmt(Math.max(0, (A.ap || 0) - atkView().cost))}</span>` : ""}</div>${A.kind !== "pc" ? `<button class="btn autobtn" data-a="autoPlan" data-v="" title="Plan this turn for ${h(A.name)}: heal if hurt, move into range, shoot. You see the plan first, then Confirm.">Auto</button>` : ""}<button class="btn primary endturn" data-a="next" data-v="">${kbd("N")}End turn</button></div>`;
-  const actions = `<div class="acts">${btn("reload", "", `Reload${v && v.usesAmmo ? ` ${fmt(v.reload)}` : ""}`, "R", v && v.usesAmmo ? na(v.reload) : "na")}${btn("swap", "", `Swap ${S.rules.swapAP}`, "", na(S.rules.swapAP))}${btn("moveModal", "", "Move", "M", free)}${slot && slot.jammed ? btn("clearJamBtn", "", `Clear jam ${v.clearJam}`, "", `primary ${na(v.clearJam)}`) : ""}${btn("check", "", "Skill check")}${btn("reviveChk", "", "Revive", "", S.chars.some((x) => x.dbno) ? "" : "na")}${btn("statusModal", "", "Status")}${d.m.inspire ? btn("inspire", "", "Inspire 2", "", na(2)) : ""}${canPray(A) ? btn("pray", "", `Pray (all ${fmt(A.ap || 0)} AP)`, "", (A.ap || 0) > 0 ? "" : "na", `Spend the rest of the turn in prayer: ${S.rules.prayer.status} for ${S.rules.prayer.rounds} rounds`) : ""}</div>`;
+  const head = `<div class="turnhead ${A.kind === "pc" ? "" : A.ally ? "ally" : "foe"}"><div class="turnwho"><span class="turnlabel">ROUND ${k.round} // ACTING</span><span class="actname">${h(A.name)}</span></div><div class="turnap"><span class="turnlabel">ACTION POINTS</span><span class="apbig">${fmt(A.ap)}<small>/${d.ap}</small></span>${apPips(A.ap || 0, d.ap)}${ui.atk && atkView() ? `<span class="apafter">after this shot: ${fmt(Math.max(0, (A.ap || 0) - atkView().cost))}</span>` : ""}</div>${A.kind !== "pc" ? `<button class="btn autobtn" data-a="autoPlan" data-v="" title="Plan this turn for ${h(A.name)}: heal if hurt, move into range, shoot. You see the plan first, then Confirm.">Auto</button>` : ""}<button class="btn primary endturn" data-a="next" data-v="">${kbd(hk("next"))}End turn</button></div>`;
+  // 14 Nov: only what can be done right now; anything that can't (no ammo to load, nothing jammed, not enough AP) is left out
+  const ok = (cost) => cost <= (A.ap || 0);
+  const canReload = v && v.usesAmmo && !slot.jammed && (slot.mag || 0) < v.cap && ok(v.reload) && !!ammoLine(A, v.reserve);
+  const acts = [
+    canReload && btn("reload", "", `Reload ${fmt(v.reload)}`, "reload"),
+    (A.weapons || []).length > 1 && ok(S.rules.swapAP) && btn("swap", "", `Swap ${S.rules.swapAP}`),
+    ok(1) && btn("moveModal", "", "Move", "move"),
+    slot && slot.jammed && ok(v.clearJam) && btn("clearJamBtn", "", `${slot.dropped ? "Pick up" : "Clear jam"} ${v.clearJam}`, "unjam", "primary"),
+    btn("check", "", "Skill check"),
+    S.chars.some((x) => x.dbno) && btn("reviveChk", "", "Revive"),
+    btn("statusModal", "", "Status"),
+    d.m.inspire && ok(2) && btn("inspire", "", "Inspire 2"),
+    canPray(A) &&
+      (A.ap || 0) > 0 &&
+      btn(
+        "pray",
+        "",
+        `Pray (all ${fmt(A.ap || 0)} AP)`,
+        "",
+        "",
+        `Spend the rest of the turn in prayer: ${S.rules.prayer.status} for ${S.rules.prayer.rounds} rounds`,
+      ),
+  ];
+  const actions = `<div class="acts">${acts.filter(Boolean).join("")}</div>`;
   const throws = (A.inv || []).filter((l) => (S.rules.throwables || {})[l.n]);
   const throwBtns = throws
     .map(
@@ -109,7 +130,7 @@ function turnStage() {
         .join("") || `<span class="s dim">None carried.</span>`;
   return `${head}${autoBox(A)}${banners.join("")}<div class="segs">${ui.atk ? attackPanel() : seg("Attack", `<span class="s dim">${h(A.name)} has no weapon.</span>`)}${seg("Actions", actions, "half")}${seg("Consumables", `<div class="conslist">${consBody}</div>`, "half")}${d.notes.length ? seg(`For the DM <small>${d.notes.length}</small>`, fold(`rem:${A.id}`, "Reminders", d.notes.map((n) => `<div class="txt s">${h(n)}</div>`).join("")), "half") : ""}${(S.scene.effects || []).length ? seg("Carried over", S.scene.effects.map((f) => `<div class="txt s">${h(f.label)}${f.hit ? `: ${f.who} ${E.pct(f.hit)}% to hit` : ""}</div>`).join(""), "half") : ""}</div>`;
 }
-function bodyFig(a, T) {
+function bodyFig(a, T, p = {}) {
   const hurt = new Set();
   for (const st of (T && T.statuses) || []) for (const p of st.parts || []) hurt.add(p);
   const b = (id, lab) => {
@@ -117,7 +138,7 @@ function bodyFig(a, T) {
     return `<button class="bp bp-${id} ${a.part === id ? "on" : ""} ${hurt.has(id) ? "hurt" : ""}" data-a="atkPart" data-v="${id}" aria-label="${name}" title="${name}: damage x${S.rules.loc[loc]}, hit chance x${(S.rules.locHit || {})[loc] || 1}">${lab}</button>`;
   };
   const friendly = T && sideOf(a.att) === sideOf(T.id); // bright green for your own side, bright red for the other side
-  return `<div class="body ${friendly ? "friendly" : "hostile"}">${b("Head", "H")}${b("LArm", "")}${b("Body", "B")}${b("RArm", "")}${b("LLeg", "")}${b("RLeg", "")}</div>`;
+  return `<div class="body ${friendly ? "friendly" : "hostile"}">${b("Head", "H")}${b("LArm", "")}${b("Body", "B")}${b("RArm", "")}${b("LLeg", "")}${b("RLeg", "")}<button class="bp bp-Weapon ${a.part === "Weapon" ? "on" : ""}" data-a="atkPart" data-v="Weapon" ${p.canDisarm ? "" : "disabled"} title="${p.canDisarm ? `Aim at ${h(p.tSlot.n)}: body odds, no damage. A hit may knock it away, weighed against ${h(T.name)}'s STR and LCK.` : "Nothing in hand that can be knocked away"}">Weapon</button></div>`;
 }
 function attackPanel() {
   const p = atkView();
@@ -133,7 +154,7 @@ function attackPanel() {
       if (a.w !== i) {
         const wv = E.weaponView(s, A, p.dA, ctx());
         // 14 Nov: the other weapon is its picture and its AP cost; the name is in the tooltip
-        return `<button class="wcard slim" data-a="atkW" data-v="${i}" title="Switch to ${h(s.n)}"><span class="wpic">${weaponPic(s.n)}</span><small>${fmt(wv.ap)} AP${s.jammed ? " · JAM" : ""}</small></button>`;
+        return `<button class="wcard slim" data-a="atkW" data-v="${i}" title="Switch to ${h(s.n)}"><span class="wpic">${weaponPic(s.n)}</span><small>${fmt(wv.ap)} AP${s.broken ? " · BROKEN" : s.dropped ? " · DROPPED" : s.jammed ? " · JAM" : ""}</small></button>`;
       }
       const stats = [
         v.usesAmmo ? wst("Mag", `${fmt(s.mag || 0)}/${fmt(v.cap)}`, (s.mag || 0) <= 0 ? "bad" : "") : "",
@@ -141,10 +162,11 @@ function attackPanel() {
         wst("Fire", `${fmt(v.ap)} AP`),
         v.usesAmmo ? wst("Reload", `${fmt(v.reload)} AP`) : "",
         swapAP ? wst("Swap", `+${fmt(swapAP)} AP`) : "",
-        s.jammed ? wst("Jammed", `${fmt(v.clearJam)} AP`, "bad") : "",
       ].join("");
       // 14 Nov: the weapon's picture is the card; name, familiarity and the numbers sit smaller below it
-      return `<button class="wcard on full" data-a="atkW" data-v="${i}" title="${h(s.n)}"><span class="wpic">${weaponPic(s.n)}</span>${wtier(s.n)}<span class="wtop"><span class="nm">${h(s.n)}</span>${famTag(A, s.n)}</span><span class="wstats">${stats}</span></button>`;
+      // 14 Nov: a jammed, dropped or broken weapon gets a big stamp across its picture
+      const stamp = s.broken ? "BROKEN" : s.dropped ? "DROPPED" : s.jammed ? "JAMMED" : "";
+      return `<button class="wcard on full ${stamp ? "stamped" : ""}" data-a="atkW" data-v="${i}" title="${h(s.n)}"><span class="wpic">${weaponPic(s.n)}${stamp ? `<span class="wstamp">${stamp}<small>${s.broken ? "out for this fight" : `${s.dropped ? "pick up" : "clear"}: ${fmt(v.clearJam)} AP (${hk("unjam")})`}</small></span>` : ""}</span>${wtier(s.n)}<span class="wtop"><span class="nm">${h(s.n)}</span>${famTag(A, s.n)}</span><span class="wstats">${stats}</span></button>`;
     })
     .join("");
   const loads = loadsHeld(A, v, p.slot);
@@ -171,7 +193,7 @@ function attackPanel() {
       )}</select></div>`
     : "";
   const modeAP = (mode) => E.weaponView(p.slot, A, p.dA, ctx(), mode).ap;
-  const loadout = `<div class="wcards">${kbd("W")}${weapons}</div>
+  const loadout = `<div class="wcards">${kbd(hk("nextW"))}${weapons}</div>
    ${v.hasSecondary ? `<div class="opts"><button class="opt ${a.mode !== "se" ? "on" : ""}" data-a="atkMode" data-v="pr">1st ${h(w.o.prName || "")} · ${fmt(modeAP("pr"))} AP</button><button class="opt ${a.mode === "se" ? "on" : ""}" data-a="atkMode" data-v="se">2nd ${h(w.o.seName || "")} · ${fmt(modeAP("se"))} AP</button></div>` : ""}
    ${
      loads.length
@@ -188,8 +210,8 @@ function attackPanel() {
    }`;
   const tile = (lab, val, sub, cls = "", tip = "") =>
     `<div class="ttile ${cls}"${tip ? ` title="${h(tip)}"` : ""}><span class="tl">${lab}</span><b>${val}</b><small>${sub}</small></div>`;
-  const tiles = `<div class="ttiles">${tile("Hit", `${hitPct}%`, num(a.ov.hit) != null ? "DM SET" : "chance", `hitt ${hitPct <= 0 ? "zero" : ""}`)}${tile("Aim", `x${S.rules.loc[a.loc]}`, `${h(PARTS[a.part][0])} dmg · hit x${(S.rules.locHit || {})[a.loc] || 1}`, "", "Damage and hit chance multipliers for the part aimed at: limbs are easier to hit but take less, the head is harder to hit but takes double. Aiming costs no AP. Click the body to change it.")}${tile("Cost", `${fmt(p.cost)} AP`, `${fmt(Math.max(0, (A.ap || 0) - p.cost))} left`, `costbig ${p.cost > (A.ap || 0) && !a.ov.free ? "over" : ""}`)}${tile("Cover", h(p.cov.n), `${p.cov.hit ? `${Math.round(E.pct(p.cov.hit))}% hit` : "no penalty"}${p.cov.dam ? ` ${Math.round(E.pct(p.cov.dam))}% dmg` : ""}${p.cov.blind ? " · no sight" : ""}`, `covflag tier-${p.cov.tier}`, (p.cov.by ? "Blocked by: " + p.cov.by : "Nothing in the way") + (p.cov.blind ? ". A shut door is in the way: the shooter can't see the target, only shoot through the door." : ""))}${tile("Range", `<button class="xb" data-a="atkRange" data-v="-1" title="Closer">-</button>R${range}<button class="xb" data-a="atkRange" data-v="1" title="Farther">+</button>`, `${T ? `${dist(posOf(A.id), posOf(T.id)).toFixed(1)}m · ` : ""}${k.ranges[pairKey(a.att, a.tgt)] != null ? "DM set" : "from map"}`, "rng")}${tile("Damage", `${v.pellets ? `${fmt(v.base)}x${v.pellets}` : fmt(v.base)}`, `Pen ${fmt(v.pen)}${v.count > 1 ? ` · burst ${v.count}` : ""}`)}</div>`;
-  const targeting = `<div class="atkmid">${T ? bodyFig(a, T) : ""}<div class="atkinfo">${tgt}${tiles}
+  const tiles = `<div class="ttiles">${tile("Hit", `${hitPct}%`, num(a.ov.hit) != null ? "DM SET" : "chance", `hitt ${hitPct <= 0 ? "zero" : ""}`)}${a.part === "Weapon" ? tile("Aim", "Weapon", `no dmg · grip ${fmt(S.rules.disarm.hold * ((p.dT.sp.S ?? 5) + (p.dT.sp.L ?? 5)))}`, "", `A hit does no damage. Knock chance = ${E.pct(S.rules.disarm.floor || 0)}% + the rest x damage / (damage + grip), grip = ${S.rules.disarm.hold} x (STR + LCK). ${E.pct(S.rules.disarm.broken)}% of knocks break the weapon for the fight; the rest drop it, picked up for ${S.rules.disarm.pickupMul}x the jam-clearing AP.`) : ""}${a.part === "Weapon" ? "" : tile("Aim", `x${S.rules.loc[a.loc]}`, `${h(PARTS[a.part][0])} dmg · hit x${(S.rules.locHit || {})[a.loc] || 1}`, "", "Damage and hit chance multipliers for the part aimed at: limbs are easier to hit but take less, the head is harder to hit but takes double. Aiming costs no AP. Click the body to change it.")}${tile("Cost", `${fmt(p.cost)} AP`, `${fmt(Math.max(0, (A.ap || 0) - p.cost))} left`, `costbig ${p.cost > (A.ap || 0) && !a.ov.free ? "over" : ""}`)}${tile("Cover", h(p.cov.n), `${p.cov.hit ? `${Math.round(E.pct(p.cov.hit))}% hit` : "no penalty"}${p.cov.dam ? ` ${Math.round(E.pct(p.cov.dam))}% dmg` : ""}${p.cov.blind ? " · no sight" : ""}`, `covflag tier-${p.cov.tier}`, (p.cov.by ? "Blocked by: " + p.cov.by : "Nothing in the way") + (p.cov.blind ? ". A shut door is in the way: the shooter can't see the target, only shoot through the door." : ""))}${tile("Range", `<button class="xb" data-a="atkRange" data-v="-1" title="Closer">-</button>R${range}<button class="xb" data-a="atkRange" data-v="1" title="Farther">+</button>`, `${T ? `${dist(posOf(A.id), posOf(T.id)).toFixed(1)}m · ` : ""}${k.ranges[pairKey(a.att, a.tgt)] != null ? "DM set" : "from map"}`, "rng")}${tile("Damage", `${v.pellets ? `${fmt(v.base)}x${v.pellets}` : fmt(v.base)}`, `Pen ${fmt(v.pen)}${v.count > 1 ? ` · burst ${v.count}` : ""}`)}</div>`;
+  const targeting = `<div class="atkmid">${T ? bodyFig(a, T, p) : ""}<div class="atkinfo">${tgt}${tiles}
      <div class="math">HIT ${h(E.hitLine(hc))}${num(a.ov.hit) != null ? ` <span class="warn">DM SET ${h(a.ov.hit)}%</span>` : ""}${p.swap ? ` · AP ${fmt(v.ap)} +${p.swap} swap` : ""}</div></div></div>`;
   const short = {
     jam: (s) => `${E.two(s.to + 1)} -`,
@@ -208,11 +230,11 @@ function attackPanel() {
    ${
      r
        ? `<div class="result ${r.outcome}">${(() => {
-           const facts = `${r.name}: ${h(r.head)}${r.math ? `<br>${h(r.math)}<br>${h(r.tName)} ${r.hp}/${r.max} HP${r.hp <= 0 ? " DOWN" : ""}` : ""}${r.ammoText ? ` · ${h(r.ammoText)}` : ""}${(r.auto || []).length ? `<br>Applied: ${h(r.auto.join(", "))}` : ""}`;
+           const facts = `${r.name}: ${h(r.head)}${r.math ? `<br>${h(r.math)}<br>${h(r.tName)} ${r.hp}/${r.max} HP${r.hp <= 0 ? " DOWN" : ""}` : ""}${r.ammoText ? ` · ${h(r.ammoText)}` : ""}${(r.auto || []).length ? `<br>Applied: ${h(r.auto.join(", "))}` : ""}${r.disarm ? `<br>${h(r.disarm)}` : ""}`;
            return r.story
              ? `<details class="shotmore" data-k="atkres"${ui.open.atkres ? " open" : ""}><summary><span class="story">${h(r.story)}</span><span class="moretag">${ui.open.atkres ? "less" : "details"}</span></summary><div class="facts">${facts}</div></details>`
              : facts;
-         })()}${r.outcome === "jam" ? `<br>Press J to clear the jam.` : ""}${r.status ? `<br>${btn("applyHitStatus", r.status, `Apply ${h(r.status)} to ${h(r.tName)}`, "", "tiny")}` : ""}${r.radius ? `<br><span class="warn">Blast radius ${r.radius}: apply damage to anyone else in it by typing their HP.</span>` : ""}</div>`
+         })()}${r.outcome === "jam" ? `<br>Press ${hk("unjam")} to clear the jam.` : ""}${r.status ? `<br>${btn("applyHitStatus", r.status, `Apply ${h(r.status)} to ${h(r.tName)}`, "", "tiny")}` : ""}${r.radius ? `<br><span class="warn">Blast radius ${r.radius}: apply damage to anyone else in it by typing their HP.</span>` : ""}</div>`
        : ""
    }`;
   return `${seg("Loadout", loadout, "full")}${seg("Target", targeting, "full")}${seg("Roll", rolling, "full hot")}`;

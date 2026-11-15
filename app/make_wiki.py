@@ -507,6 +507,13 @@ upd(11, D12, "Walking is a straight line by Agility", "Was: AP by range band (2 
     "Settings, AP costs: meters per AP at Agility 1 and 10."))
 upd(8, D12, "Aiming costs no AP", "Was: a limb shot cost 1 more AP and a head shot 2 more. Now: no extra AP; the part only changes the odds (head x0.5, body x1, limbs x1.25) and the damage.", bl(
     "The attack panel's AP row shows the shot's cost and the three hit multipliers instead of three AP prices."))
+upd(8, D14, "Aiming at the weapon", "New: a sixth target, Weapon, under the body figure. It aims at the weapon in the target's hands.", bl(
+    "It hits as often as a Body shot and does no damage.",
+    f"On a hit, the damage the shot would have done is weighed against the holder's grip, {R['disarm']['hold']} x (STR + LCK). Knock chance = {round(R['disarm']['floor'] * 100)}% + the other {round(100 - R['disarm']['floor'] * 100)}% x damage / (damage + grip), so even a weak hit has a fair chance. Example: 10 damage against STR 5 and LCK 5 (grip 10) is a 67.5% knock.",
+    f"The app rolls the knock. Breaking is rare: {round(R['disarm']['broken'] * 100)}% of knocks (about 1 in 10 at best) break the weapon for the rest of the fight. The rest knock it away: it can't be used until picked up, which costs {R['disarm']['pickupMul']}x that weapon's jam-clearing AP (same button as Clear jam, now called Pick up). Otherwise they hold on.",
+    "Claws, bites and fists can't be aimed at, nor a weapon that is already broken or on the ground.",
+    "After the fight, dropped weapons are picked up and broken ones are back in use.",
+    "Settings numbers (rules.disarm): floor, hold, broken share, pick-up multiplier."))
 upd(20, D12, "Low-tier animal bosses are easier to hurt", "New: creatures at tier 1-3 that are bosses lose 30% of their DT (rounded down).", bl(
     "Bosses are the named ones (an alpha, mother, bull, queen, king, leader, legendary...) and any creature the DM makes a boss. Robots don't count.",
     "Today that changes Coyote Den Mother (DT 5 to 3) and Coyote Pack Alpha (2 to 1); Bighorner Bull has no DT. Settings: the share and the highest tier."))

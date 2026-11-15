@@ -1099,7 +1099,7 @@ body.dragging {
   position: relative;
   flex: none;
   width: 84px;
-  height: 146px;
+  height: 170px;
 }
 .bp {
   position: absolute;
@@ -1163,6 +1163,18 @@ body.dragging {
   top: 86px;
   width: 18px;
   height: 60px;
+}
+.bp-Weapon {
+  /* 14 Nov: aim at the weapon in hand */
+  left: 4px;
+  top: 150px;
+  width: 76px;
+  height: 20px;
+}
+.bp:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: #0a2a14;
 }
 .tgtcard {
   display: flex;
@@ -6118,8 +6130,8 @@ table.t th {
   padding: 14px 18px 10px;
   border: 1px solid #1f6b35;
   border-radius: 10px;
-  background:
-    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, #072b12 0%, #021207 70%, #010a04 100%);
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse at center, #072b12 0%, #021207 70%, #010a04 100%);
   box-shadow:
     inset 0 0 40px rgba(0, 0, 0, 0.85),
     0 0 18px rgba(43, 255, 106, 0.12);
@@ -7472,6 +7484,40 @@ html.shiftdown #map .tok.locked {
   display: block;
   width: 100%;
 }
+/* 14 Nov: JAMMED / DROPPED / BROKEN stamped across the weapon in use: a word in a heavy frame, not color alone */
+.wcard.full .wpic {
+  position: relative;
+}
+.wcard.stamped .wpic .vic {
+  opacity: 0.35;
+}
+.wstamp {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 18px 5px;
+  border: 4px double var(--bad);
+  background: rgba(0, 0, 0, 0.82);
+  color: var(--bad);
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  text-shadow: 0 0 8px rgba(255, 90, 77, 0.6);
+}
+.wstamp small {
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 400;
+  color: #ffd2cc;
+  margin-top: 3px;
+}
 .wcard .wpic .vic {
   display: block;
   width: 100%;
@@ -7517,4 +7563,40 @@ html.shiftdown #map .tok.locked {
 .wcard.slim small {
   font-size: var(--fs-s);
   color: var(--bright);
+}
+/* 14 Nov: the Keys window: every shortcut, changeable */
+.hkhead {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.hkeys .hkrow {
+  display: grid;
+  grid-template-columns: 150px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 2px 4px;
+  border-bottom: 1px solid #173b22;
+}
+.hkeys .hkrow.on {
+  background: #0d3a1c;
+  outline: 1px solid var(--bright);
+}
+.hkeys .hkrow.clash .hkkey kbd {
+  border-color: var(--bad);
+  border-style: dashed;
+}
+.hkeys .hkkey {
+  white-space: nowrap;
+}
+.hkeys .hkthen {
+  margin: 0 4px;
+  font-size: var(--fs-s);
+  color: var(--dim, #6fb383);
+}
+.hkeys .hka {
+  display: flex;
+  gap: 4px;
 }

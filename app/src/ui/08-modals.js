@@ -471,52 +471,6 @@ function wizardBody() {
 function newcBody() {
   return `<div class="txt" style="margin-bottom:6px">This clears everything: the party, rules you changed, item edits, notes, the log and any fight. Then you build new characters. Do you want to save the current campaign first?</div><div class="acts">${primary("newStart", "save", "Save, then start new", "Enter")}${btn("newStart", "", "Start without saving", "", "danger")}${btn("closeModal", "", "Cancel")}</div>`;
 }
-function helpModal() {
-  const g = [
-    [
-      "Everywhere",
-      [
-        ["Ctrl+Z / Ctrl+Y", "Undo, redo"],
-        ["Ctrl+S", "Save"],
-        ["/", "Search everything"],
-        ["?", "This list"],
-        ["Esc", "Close, or leave a field"],
-        ["Enter", "Confirm"],
-      ],
-    ],
-    [
-      "Out of combat",
-      [
-        ["B", "Open encounter setup, then begin"],
-        ["I", "Inventory of the selected character"],
-        ["← →", "Pick a character"],
-      ],
-    ],
-    [
-      "On a turn",
-      [
-        ["A", "Attack: your last target, weapon and body part"],
-        ["0-9, Enter", "Type the roll and resolve"],
-        ["W", "Next weapon"],
-        ["T", "Next target"],
-        ["M", "Move"],
-        ["R", "Reload"],
-        ["I", "Use item"],
-        ["N", "End turn"],
-      ],
-    ],
-    [
-      "Mouse on the map",
-      [
-        ["Drag", "Move the acting character. Costs AP"],
-        ["Shift+drag", "Reposition anyone for free"],
-        ["Click", "Select. On a turn, clicking an enemy attacks it"],
-        ["Right-click", "Remove cover or a marker"],
-      ],
-    ],
-  ];
-  return `<div class="keys">${g.map(([t, rows]) => `<h3>${t}</h3>${rows.map(([k, l]) => `<div>${kbd(k)}${h(l)}</div>`).join("")}`).join("")}</div>`;
-}
 const SEARCH_LIST = () => [
   ...DATA.weapons.filter((o) => o.tier).map((o) => ["Weapon", o]),
   ...DATA.ammo.map((o) => ["Ammo", o]),

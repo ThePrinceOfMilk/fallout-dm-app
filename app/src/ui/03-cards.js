@@ -242,7 +242,7 @@ const DEV = [
   ["state", "Raw state"],
 ];
 function devBar() {
-  return `<header class="devbar"><span class="brand">Fallout DM</span><button class="btn tiny devtoggle ${ui.devOpen ? "on" : ""}" data-a="devToggle" data-v="">Dev ${ui.devOpen ? "-" : "+"}</button><span class="devlabel">Dev:</span><span class="devlist ${ui.devOpen ? "open" : ""}">${DEV.map(([id, n]) => btn("dev", id, n, "", "tiny")).join("")}</span><span class="spacer"></span>${table.on ? btn("table", "", table.up ? `Table: ${table.n}` : "Table: ...", "", "tiny " + (table.up ? "" : "warn"), "Share this table: join links and devices") : btn("openSession", "", "Open session", "", "tiny", "Get a link so other devices can join this game as DM screens")}${btn("refresh", "", "Refresh", "", "tiny", "Reload every list and table into the menus after you edit them")}${btn("undo", "", "Undo", "U", "tiny", undoStack.length ? "Undo: " + undoStack[undoStack.length - 1].label : "Nothing to undo")}${btn("redo", "", "Redo", "Y", "tiny")}${btn("search", "", "Search", "/", "tiny")}${btn("help", "", "Keys", "?", "tiny keysbtn")}${btn("railGo", "changelog", "Changelog", "", "tiny", "What changed, version by version")}</header>`;
+  return `<header class="devbar"><span class="brand">Fallout DM</span><button class="btn tiny devtoggle ${ui.devOpen ? "on" : ""}" data-a="devToggle" data-v="">Dev ${ui.devOpen ? "-" : "+"}</button><span class="devlabel">Dev:</span><span class="devlist ${ui.devOpen ? "open" : ""}">${DEV.map(([id, n]) => btn("dev", id, n, "", "tiny")).join("")}</span><span class="spacer"></span>${table.on ? btn("table", "", table.up ? `Table: ${table.n}` : "Table: ...", "", "tiny " + (table.up ? "" : "warn"), "Share this table: join links and devices") : btn("openSession", "", "Open session", "", "tiny", "Get a link so other devices can join this game as DM screens")}${btn("refresh", "", "Refresh", "", "tiny", "Reload every list and table into the menus after you edit them")}${btn("undo", "", "Undo", "undo", "tiny", undoStack.length ? "Undo: " + undoStack[undoStack.length - 1].label : "Nothing to undo")}${btn("redo", "", "Redo", "redo", "tiny")}${btn("search", "", "Search", "search", "tiny")}${btn("help", "", "Keys", "keys", "tiny keysbtn")}${btn("railGo", "changelog", "Changelog", "", "tiny", "What changed, version by version")}</header>`;
 }
 function hints() {
   if (ui.modal)
@@ -279,7 +279,7 @@ function hints() {
 }
 function logFloat() {
   const rows = S.log.slice(-300).reverse().map(logRow).join("") || `<div class="dim">Nothing yet.</div>`;
-  return `<section class="win float floatlog" data-dlg="log" style="${dlgStyle("log")}"><header class="wt">${pix("log")}<span>Log</span><span class="spacer"></span><button class="btn tiny" data-a="clearLog" data-v="all" title="Clear the whole log (Undo brings it back)">Clear all</button><button class="btn tiny" data-a="toggleLog" data-v="">${kbd("F4")}Close</button></header><div class="wb loglist" data-scroll="floatlog">${rows}</div></section>`;
+  return `<section class="win float floatlog" data-dlg="log" style="${dlgStyle("log")}"><header class="wt">${pix("log")}<span>Log</span><span class="spacer"></span><button class="btn tiny" data-a="clearLog" data-v="all" title="Clear the whole log (Undo brings it back)">Clear all</button><button class="btn tiny" data-a="toggleLog" data-v="">${kbd(hk("log"))}Close</button></header><div class="wb loglist" data-scroll="floatlog">${rows}</div></section>`;
 }
 
 // ----- party
@@ -289,7 +289,7 @@ const CARD_MENUS = [
   ["health", "Health", "heart"],
 ];
 function partyWin() {
-  const tools = `${btn("pwOpen", "party", "All", "O", "tiny", "Party-wide changes")}${K() ? "" : btn("newChar", "", "New", "N", "tiny")}${K() ? "" : btn("rest", "", "Rest", "Z", "tiny", "Passive heal, clears Shock and item effects")}`;
+  const tools = `${btn("pwOpen", "party", "All", "O", "tiny", "Party-wide changes")}${K() ? "" : btn("newChar", "", "New", "", "tiny")}${K() ? "" : btn("rest", "", "Rest", "Z", "tiny", "Passive heal, clears Shock and item effects")}`;
   return win(
     "w-party",
     `Party ${S.chars.length}`,
@@ -409,7 +409,7 @@ function weaponBox(c, d, i) {
       }`
     : `<div class="wrow"><span>${v.melee ? "Melee" : v.thrown ? "Thrown" : "No ammo"}</span><span>Dam <b>${v.pellets ? `${fmt(v.base)}x${v.pellets}` : fmt(v.base)}</b></span><span>Pen <b>${fmt(v.pen)}</b></span>${v.count > 1 ? `<span>Hits <b>${v.count}</b></span>` : ""}</div>`;
   return `<div class="wbox ${(c.activeW || 0) === i ? "act" : ""}"><button class="whead ${ui.modal.pick === "w" + i ? "on" : ""}" data-a="gearSlot" data-v="w${i}"><span class="gl">Weapon ${i + 1}${(c.activeW || 0) === i ? " · in hand" : ""}</span><span class="gn">${h(slot.n)}</span>${slot.n ? wbig(slot.n) : ""}</button>
-    <div class="wrow"><span>AP <b>${fmt(v.ap)}</b></span><span>Best <b>R${E.optimalRange(o)}</b></span><span>Value <b>${o.val != null ? fmt(o.val) : "-"}</b></span><span>Skill <b>${fmt(v.req)}</b></span><span>Crit <b>${fmt(E.pct(v.crit))}%</b></span>${c.kind === "pc" && o.tier ? `<span>${famTag(c, slot.n)} <span class="famedit" title="Rounds fired: the DM can set it">${numBox(`data-c="setFam" data-id="${c.id}" data-n="${h(slot.n)}" id="famw-${c.id}-${i}"`, fmt(famOf(c, slot.n).n), "cell")}</span></span>` : ""}${slot.jammed ? `<span class="bad">JAMMED</span>${btn("clearSlot", `${c.id}|${i}`, "Clear", "", "tiny")}` : ""}</div>${ammo}</div>${hitTable(c, d, slot, o, v)}`;
+    <div class="wrow"><span>AP <b>${fmt(v.ap)}</b></span><span>Best <b>R${E.optimalRange(o)}</b></span><span>Value <b>${o.val != null ? fmt(o.val) : "-"}</b></span><span>Skill <b>${fmt(v.req)}</b></span><span>Crit <b>${fmt(E.pct(v.crit))}%</b></span>${c.kind === "pc" && o.tier ? `<span>${famTag(c, slot.n)} <span class="famedit" title="Rounds fired: the DM can set it">${numBox(`data-c="setFam" data-id="${c.id}" data-n="${h(slot.n)}" id="famw-${c.id}-${i}"`, fmt(famOf(c, slot.n).n), "cell")}</span></span>` : ""}${slot.broken ? `<span class="bad">BROKEN</span>` : slot.jammed ? `<span class="bad">${slot.dropped ? "DROPPED" : "JAMMED"}</span>${btn("clearSlot", `${c.id}|${i}`, slot.dropped ? "Pick up" : "Clear", "", "tiny")}` : ""}</div>${ammo}</div>${hitTable(c, d, slot, o, v)}`;
 }
 // 14 Nov: the equipped weapon fills its slot with no frame; its tier is a big number in the top right, colored by tier
 // a weapon's picture with no frame: traced art at its own proportions (spans the width it's given), a plain icon in a 2:1 box

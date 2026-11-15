@@ -2,10 +2,13 @@
 // the combat flow (start, turns, rounds, end), attacks, and the automated enemy turn. Rules math belongs in engine.js, not here.
 // ---------- small view helpers
 const kbd = (k) => (k ? `<kbd>${h(k)}</kbd>` : "");
-const SHOWN_KEYS = new Set(["A", "R", "M", "I", "N", "B", "Enter", "Esc", "/", "?"]); // only the keys for what happens all the time
+// key: a hotkey id from HOTKEYS (10-keys.js), shown as its current key, or a fixed key ("Enter", "Esc"). Only the everyday ones show.
+const SHOWN_KEYS = new Set(["attack", "reload", "move", "item", "next", "begin", "unjam", "undo", "redo", "search", "keys", "Enter", "Esc"]);
+const keyTag = (key) => (!SHOWN_KEYS.has(key) ? "" : typeof HK_BY_ID !== "undefined" && HK_BY_ID[key] ? (keyOf(key) ? kbd(hk(key)) : "") : kbd(key));
 const btn = (a, v, label, key = "", cls = "", title = "") =>
-  `<button class="btn ${cls}" data-a="${a}" data-v="${h(v)}"${title ? ` title="${h(title)}"` : ""}>${SHOWN_KEYS.has(key) ? kbd(key) : ""}${label}</button>`;
-const primary = (a, v, label, key = "") => `<button class="btn primary" data-primary="1" data-a="${a}" data-v="${h(v)}">${kbd(key)}${label}</button>`;
+  `<button class="btn ${cls}" data-a="${a}" data-v="${h(v)}"${title ? ` title="${h(title)}"` : ""}>${keyTag(key)}${label}</button>`;
+const primary = (a, v, label, key = "") =>
+  `<button class="btn primary" data-primary="1" data-a="${a}" data-v="${h(v)}">${HK_BY_ID[key] ? kbd(hk(key)) : kbd(key)}${label}</button>`;
 const small = () => matchMedia("(max-width: 1000px)").matches || document.documentElement.classList.contains("lt1000");
 // A size the DM dragged a window to (bottom-right corner) sticks. Double-click the title bar to put it back.
 const winSize = (cls) => {
@@ -649,6 +652,7 @@ const PARTS = {
   RArm: ["Right arm", "Limb"],
   LLeg: ["Left leg", "Limb"],
   RLeg: ["Right leg", "Limb"],
+  Weapon: ["Weapon", "Body"], // 14 Nov: body odds, no damage; may knock the weapon in hand away (E.disarm)
 };
 function setPart(a, id) {
   a.part = id;
@@ -672,7 +676,7 @@ function openAttack(att, want) {
   const A = ent(id);
   if (!K()) return;
   if (!A) return toast("Nobody is acting right now");
-  if (!makeAttack(id, want)) return toast(`${A.name} has no weapon. Press E to edit.`);
+  if (!makeAttack(id, want)) return toast(`${A.name} has no weapon. Press ${hk("edit")} to edit.`);
   ui.focus = "#roll";
   render();
 }
@@ -753,12 +757,23 @@ function atkView() {
   if (dA.m.failRoll) b.jamAt = E.fix(b.jamAt + dA.m.failRoll);
   const swap = a.w !== (A.activeW || 0) && !v.punch ? S.rules.swapAP : 0; // fists are always ready, so punching never pays to swap
   const cost = v.ap + swap; // aiming at a part costs no AP (12 Nov)
+  // 14 Nov, aiming at the weapon: the target's weapon in hand, if it is one that can be knocked away
+  const tv = tSlot ? E.weaponView(tSlot, T, dT, c) : null;
+  const canDisarm = !!tv && !tv.missing && !tv.punch && !tv.natural && !tSlot.broken && !tSlot.dropped;
   const warn = [];
-  if (slot && slot.jammed) warn.push(`Jammed. Press J to clear for ${v.clearJam} AP.`);
+  if (a.part === "Weapon" && !canDisarm)
+    warn.push(
+      tSlot && (tSlot.broken || tSlot.dropped)
+        ? `${T.name}'s ${tSlot.n} is already out of their hands.`
+        : `${T ? T.name : "The target"} holds nothing that can be knocked away.`,
+    );
+  if (slot && slot.broken) warn.push("Broken: out for the rest of this fight.");
+  if (slot && slot.jammed)
+    warn.push(slot.dropped ? `Dropped. Pick it up for ${v.clearJam} AP (${hk("unjam")}).` : `Jammed. Press ${hk("unjam")} to clear for ${v.clearJam} AP.`);
   if (v.missing) warn.push("This weapon is not in the item data.");
   else if (!v.ok) warn.push("Blank stats in the workbook. Fill them in from the WEAPONS list up top.");
   if (v.noLoad) warn.push("No ammo type chosen, so damage is 0.");
-  if (v.usesAmmo && (slot.mag || 0) <= 0) warn.push("Magazine empty. Press R to reload.");
+  if (v.usesAmmo && (slot.mag || 0) <= 0) warn.push(`Magazine empty. Press ${hk("reload")} to reload.`);
   if (cost > (A.ap || 0) && !a.ov.free) warn.push(`Costs ${cost} AP but only ${A.ap} left. Move on, or tick Free under OVR.`);
   if (hit <= 0 && !hc.noData) warn.push("0% or less to hit.");
   if (v.melee && range > 1 && !dA.m.lunge) warn.push(`Melee at R${range}: only reaches R1 unless a perk says otherwise.`);
@@ -766,7 +781,7 @@ function atkView() {
     warn.push(
       `Pellet ammo (${fmt(v.base)}x${v.pellets}) counts as ${S.rules.pelletMode === "each" ? "one roll per pellet" : S.rules.pelletMode === "spread" ? `one hit; up to ${Math.max(1, Math.ceil(v.pellets * E.pelletShare(v, range) * (1 + (S.rules.pelletShareMin ?? 0.5)) - 1e-9))} of ${v.pellets} land at R${range}, more on a better roll` : "one combined hit"}. Change in Settings.`,
     );
-  return { a, A, T, dA, dT, slot, v, range, hc, hit, b, cost, swap, warn, cov, spans: E.bandSpans(b) };
+  return { a, A, T, dA, dT, slot, v, range, hc, hit, b, cost, swap, warn, cov, spans: E.bandSpans(b), tSlot, tv, canDisarm };
 }
 function fire() {
   const a = ui.atk;
@@ -786,12 +801,22 @@ function fire() {
     a.err = `${p.A.name} has no weapon to attack with.`;
     return render();
   }
+  if (p.slot.broken) {
+    a.err = `${p.slot.n} is broken for the rest of this fight. Swap weapons.`;
+    return render();
+  }
   if (p.slot.jammed) {
-    a.err = `Jammed. Press J to clear for ${p.v.clearJam} AP first.`;
+    a.err = p.slot.dropped
+      ? `${p.slot.n} is on the ground. Press ${hk("unjam")} to pick it up for ${p.v.clearJam} AP first.`
+      : `Jammed. Press ${hk("unjam")} to clear for ${p.v.clearJam} AP first.`;
+    return render();
+  }
+  if (a.part === "Weapon" && !p.canDisarm) {
+    a.err = p.warn[0];
     return render();
   }
   if (p.v.usesAmmo && (p.slot.mag || 0) <= 0) {
-    a.err = "Empty magazine. Press R to reload.";
+    a.err = `Empty magazine. Press ${hk("reload")} to reload.`;
     return render();
   }
   if (p.hc.noData && num(a.ov.hit) == null) {
@@ -833,6 +858,13 @@ function fire() {
       taken: dT.m,
     };
     const res = E.resolve(args);
+    // 14 Nov, aiming at the weapon: no damage. The hit's damage is weighed against the holder's STR + LCK, and the app rolls the knock.
+    let dis = null;
+    if (a.part === "Weapon" && res.total) {
+      const kr = Math.floor(Math.random() * 100);
+      dis = { ...E.disarm(res.total, dT.sp.S, dT.sp.L, S.rules, kr), roll: kr, dmg: res.total };
+      res.total = 0;
+    }
     const jammed = res.outcome === "jam";
     const crit = res.outcome === "crit" || res.outcome === "super";
     // Familiarity: rounds fired with this weapon (a swing is 1), a crit counts famCritMul times.
@@ -843,7 +875,7 @@ function fire() {
       A.fam[fk] = (A.fam[fk] || 0) + fired * (crit ? S.rules.famCritMul || 1 : 1);
     }
     // A hit through cover wears it down: the shot's damage before cover, times that tier's share.
-    if (p.cov.id && res.total != null && !jammed && !["miss", "jam"].includes(res.outcome)) {
+    if (p.cov.id && res.total != null && !dis && a.part !== "Weapon" && !jammed && !["miss", "jam"].includes(res.outcome)) {
       const o = S.scene.objects.find((x) => x.id === p.cov.id);
       const open = E.resolve({ ...args, mult: Math.max(0, 1 + (dT.m.dmgTaken || 0)) });
       hurtObj(o, E.fix((open.total || 0) * coverTake(o)), `${A.name}'s shot`);
@@ -891,15 +923,35 @@ function fire() {
       } // Grim Reaper's Sprint
     }
     const NAME = { jam: "JAM", miss: "MISS", hit: "HIT", crit: "CRIT", super: "SUPER CRIT" }[res.outcome];
+    let disText = "";
+    if (dis) {
+      const ts = p.tSlot;
+      if (dis.result === "broken") ts.broken = true;
+      if (dis.result !== "none") setPart(a, "Body"); // the weapon is out of their hands: aim back at the body
+      if (dis.result === "dropped") Object.assign(ts, { dropped: true, jammed: true }); // dropped rides on the jam: blocked until picked up, at pickupMul x the cost
+      const pick = dis.result === "dropped" ? E.weaponView(ts, T, dT, ctx()).clearJam : 0;
+      disText = `${ts.n}: ${dis.dmg} dmg vs grip ${dis.grip} (STR+LCK x${S.rules.disarm.hold}) = ${fmt(E.pct(dis.knock))}% to knock (${fmt(dis.brokeAt)}% to break), rolled ${E.two(dis.roll)}: ${dis.result === "broken" ? "BROKEN, out for the fight" : dis.result === "dropped" ? `KNOCKED AWAY, picking it up costs ${fmt(pick)} AP` : "held on"}`;
+    }
     const head = `${A.name} → ${T.name} · ${v.n}${v.modeName ? " " + v.modeName : ""} · R${p.range} ${PARTS[a.part][0]}${p.cov.tier !== "open" ? ` · ${p.cov.n}` : ""}${p.cov.blind ? " · blind, through a shut door" : ""} · ${fmt(E.pct(p.hit))}% · rolled ${E.two(roll)}`;
     const line =
       `${head}: ${NAME}` +
       (res.total ? ` · ${res.math} · ${T.name} ${T.hp}/${dT.hp}` : jammed ? ` · clear costs ${v.clearJam} AP` : "") +
+      (disText ? ` · ${disText}` : "") +
       (ammoText ? ` · ${ammoText}` : "");
-    log(`${res.total ? "hit" : jammed ? "jam" : "miss"} o-${res.outcome}`, line);
+    log(`${res.total || dis ? "hit" : jammed ? "jam" : "miss"} o-${res.outcome}`, line);
     const fx = hitStatuses(res, T, v, a.part, p.dA.m);
     let story = "";
-    if (S.rules.storyLog) {
+    if (S.rules.storyLog && a.part === "Weapon") {
+      // the story text has no lines for a shot at the weapon: say it plainly
+      const t = p.tSlot ? `${T.name}'s ${p.tSlot.n}` : T.name;
+      story = jammed
+        ? `${A.name}'s ${v.n} jams.`
+        : !dis
+          ? `${A.name} goes for ${t} and misses.`
+          : `${A.name} hits ${t}${dis.result === "broken" ? " and wrecks it for the fight" : dis.result === "dropped" ? " and knocks it away" : ", but they hold on"}.`;
+      const more = S.log.splice(logStart).map((l) => l.x);
+      S.log.push({ k: `story o-${res.outcome}`, x: story, r: K().round, id: S.seq++, more });
+    } else if (S.rules.storyLog) {
       const ty = E.enemyType(T, S.rules);
       const nm = (e) => (e.kind !== "pc" && / - /.test(e.name) ? e.name.split(" - ").slice(1).join(" - ") : e.name);
       story = E.story(
@@ -955,7 +1007,8 @@ function fire() {
       outcome: res.outcome,
       name: NAME,
       head,
-      math: res.math,
+      math: dis ? "" : res.math,
+      disarm: disText,
       total: res.total,
       auto: fx.auto,
       status: fx.manual,
@@ -1252,7 +1305,7 @@ function planTurn(id) {
     }
   }
   // 3. a jammed gun with nothing as good to fall back on: clear it
-  const unjammed = (e.weapons || []).filter((s) => !s.jammed);
+  const unjammed = (e.weapons || []).filter((s) => !s.jammed && !s.broken);
   const jam = (e.weapons || []).findIndex((s) => s.jammed);
   if (jam >= 0 && unjammed.every((s) => E.weaponView(s, e, d, ctx()).melee)) {
     const cj = E.weaponView(e.weapons[jam], e, d, ctx()).clearJam || 1;
@@ -1262,7 +1315,7 @@ function planTurn(id) {
       say.push(`clear the jam`);
     }
   }
-  const usableW = (s, w) => !s.jammed || steps.some((x) => x.t === "unjam" && x.w === w);
+  const usableW = (s, w) => !s.broken && (!s.jammed || steps.some((x) => x.t === "unjam" && x.w === w));
   const withJamFixed = (w, fn) => {
     const s = e.weapons[w],
       was = s.jammed;
@@ -1624,21 +1677,32 @@ function reloadWeapon(id, idx) {
     if (S.combat && K().phase === "stealth") K().stealthDue = e.id;
   });
 }
+// 14 Nov: after a fight, weapons knocked away are picked up and broken ones are back in use
+function weaponsBack() {
+  for (const c of S.chars)
+    for (const s of c.weapons || []) {
+      if (s.dropped) s.jammed = false;
+      delete s.dropped;
+      delete s.broken;
+    }
+}
 function clearJam(id, idx) {
   const e = ent(id);
   const i = idx != null ? idx : ui.atk && ui.atk.att === id ? ui.atk.w : e.activeW || 0;
   const slot = e.weapons[i];
   if (!slot || !slot.jammed) {
     const any = e.weapons.findIndex((s) => s.jammed);
-    if (any < 0) return toast("No jammed weapon.");
+    if (any < 0) return toast("No jammed or dropped weapon.");
     return clearJam(id, any);
   }
   const v = E.weaponView(slot, e, der(e), ctx());
-  if (!canPay(e, v.clearJam, "clear the jam")) return;
-  act(`Clear jam: ${e.name}`, () => {
+  const up = !!slot.dropped; // 14 Nov: a weapon knocked away is picked up the same way, at a higher cost
+  if (!canPay(e, v.clearJam, up ? "pick it up" : "clear the jam")) return;
+  act(`${up ? "Pick up" : "Clear jam"}: ${e.name}`, () => {
     slot.jammed = false;
+    slot.dropped = false;
     if (S.combat) e.ap = Math.max(0, (e.ap || 0) - v.clearJam);
-    log("status", `${e.name} clears ${v.n}${S.combat ? `, ${v.clearJam} AP. ${e.ap} left.` : "."}`);
+    log("status", `${e.name} ${up ? "picks up" : "clears"} ${v.n}${S.combat ? `, ${v.clearJam} AP. ${e.ap} left.` : "."}`);
   });
 }
 function reqMet(req, d) {

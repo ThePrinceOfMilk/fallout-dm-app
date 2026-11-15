@@ -525,6 +525,7 @@ const E = (() => {
         punch = !natural && /^hand$/i.test(w.type || "");
       // Heavy two-handed melee (base AP heavyMeleeAP or more, not fists) starts lower; skill carries it past light weapons later.
       v.heavy = !natural && !punch && r.heavyMeleeAP != null && (w.ap || 0) >= r.heavyMeleeAP;
+      v.natural = natural; // claws and bites: nothing to knock away
       const lightBase = r.meleeBase != null ? r.meleeBase : 0.45;
       const rowBase = w.base != null && w.base !== 0.45 ? w.base : null; // 0.45 is the sheet's blanket default, so it follows the rules
       v.hitBase = () => (rowBase != null ? rowBase : v.heavy && r.meleeHeavyBase != null ? r.meleeHeavyBase : lightBase);
@@ -574,6 +575,7 @@ const E = (() => {
     v.base = fix((v.base || 0) * dm);
     v.pen = (v.pen || 0) + (d.m.pen || 0);
     v.clearJam = Math.max(0, v.clearJam + (d.m.clearJamAdd || 0)); // Quick Repair Harness
+    if (slot.dropped) v.clearJam *= (ctx.rules.disarm && ctx.rules.disarm.pickupMul) || 2; // 14 Nov: a weapon knocked loose costs more to pick up than a jam
     v.tier = Number(w.tier) || 0;
     return v;
   }
@@ -707,6 +709,19 @@ const E = (() => {
     const q = outcome === "super" || span <= 0 ? 1 : Math.min(1, Math.max(0, (roll - b.hitAt) / span));
     const min = rules.pelletShareMin != null ? rules.pelletShareMin : 0.5;
     return Math.max(1, Math.min(pellets, Math.ceil(pellets * share * (min + q) - 1e-9)));
+  }
+
+  /** 14 Nov, aiming at the weapon: the hit does no damage. Its damage is weighed against the holder's grip, hold x (STR + LCK):
+   * knock chance = floor + (1 - floor) x damage / (damage + grip), so any hit has a fair chance. Rolled 00-99: under brokeAt
+   * the weapon breaks (out for the fight; rare), under dropAt it is knocked loose (picking it up costs pickupMul x the
+   * jam-clearing AP), anything higher and it stays in hand. */
+  function disarm(dmg, str, lck, rules, roll) {
+    const r = rules.disarm || { floor: 0.35, hold: 1, broken: 0.12 };
+    const grip = r.hold * ((str != null ? str : 5) + (lck != null ? lck : 5));
+    const knock = dmg > 0 ? (r.floor || 0) + (1 - (r.floor || 0)) * (dmg / (dmg + grip)) : 0;
+    const brokeAt = fix(knock * r.broken * 100),
+      dropAt = fix(knock * 100);
+    return { knock: fix(knock), grip, brokeAt, dropAt, result: roll < brokeAt ? "broken" : roll < dropAt ? "dropped" : "none" };
   }
 
   function damage(base, pen, dt, locMult, critMult, floor = 0.2) {
@@ -3581,6 +3596,7 @@ const E = (() => {
     bullets,
     damage,
     resolve,
+    disarm,
     checkNeeded,
     checkResult,
     checkOdds,

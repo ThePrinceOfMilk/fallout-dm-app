@@ -6,6 +6,20 @@ const ACT = {
   noop() {},
   undo,
   redo,
+  hkEdit(v) {
+    ui.hkCapture = { id: v, first: null };
+    render();
+  },
+  hkReset(v) {
+    act(`Key for ${HK_BY_ID[v][2]}: back to ${HK_BY_ID[v][3]}`, () => {
+      delete (S.hotkeys || {})[v];
+    });
+  },
+  hkResetAll() {
+    act("Reset every key", () => {
+      S.hotkeys = {};
+    });
+  },
   help() {
     ui.modal = { type: "help" };
     render();
@@ -81,6 +95,7 @@ const ACT = {
   },
   closeModal() {
     const hadAtk = ui.atk;
+    ui.hkCapture = null;
     ui.modal = (ui.modal && ui.modal.back) || null;
     if (hadAtk && K()) ui.focus = "#roll";
     render();
@@ -2182,6 +2197,7 @@ const ACT = {
       });
       log("turn", `Combat over after ${k.round} round${k.round === 1 ? "" : "s"}. ${gained.join("; ")}.`);
       for (const c of S.chars) c.ap = der(c).ap;
+      weaponsBack();
       S.combat = null;
       S.scene = freshScene(S.rules);
       ui.setup = null;
@@ -2241,6 +2257,7 @@ const ACT = {
         );
       }
       log("down", `Defeat after ${k.round} round${k.round === 1 ? "" : "s"}. ${notes.join("; ")}.`);
+      weaponsBack();
       S.combat = null;
       S.scene = freshScene(S.rules);
       ui.setup = null;

@@ -328,17 +328,6 @@ function pickCard(dir) {
     render();
   }
 }
-const KEYS = {
-  idle: {
-    b: () => ACT.beginC(""),
-    i: () => {
-      if (ui.sel) ACT.openChar(`${ui.sel}|inv`);
-    },
-    arrowright: () => pickCard(1),
-    arrowleft: () => pickCard(-1),
-  },
-  fight: { a: ACT.attack, r: ACT.reload, m: () => ACT.keyMoveStart(), i: ACT.itemModal, n: ACT.next },
-};
 document.addEventListener("keydown", (e) => {
   if (isSpec() && e.key !== "Escape") return; // no shortcuts on a spectator screen
   const t = e.target;
@@ -348,61 +337,29 @@ document.addEventListener("keydown", (e) => {
   }
   const k = e.key.toLowerCase();
   const typing = t.matches && t.matches("input,select,textarea");
-  // Q and E turn the object you're holding or have selected: Q counter-clockwise, E clockwise, 15 degrees a press
-  if ((k === "q" || k === "e") && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) {
-    const step = (k === "e" ? 1 : -1) * (e.shiftKey ? 5 : 15);
-    if (drag && drag.kind === "map" && drag.obj) {
-      const o = S.scene.objects.find((x) => x.id === drag.obj);
-      if (o) {
-        e.preventDefault();
-        drag.angle = ((((drag.angle != null ? drag.angle : o.angle || 0) + step) % 360) + 360) % 360;
-        const gly = drag.g.querySelector(".gly:not(.trunk)");
-        if (gly && drag.base == null) drag.base = (gly.getAttribute("transform") || "").replace(/^rotate\([^)]*\)\s*/, "");
-        if (gly) gly.setAttribute("transform", `rotate(${drag.angle}) ${drag.base}`);
-        return;
-      }
-    }
-    if (ui.mapSel && !ui.modal) {
-      e.preventDefault();
-      ACT.objRotate(step);
-      return;
-    }
-  }
-  if (ui.keyMove && !typing && !ui.modal && ["a", "d", "w", "s", "enter", "escape"].includes(k)) {
+  // 14 Nov: every shortcut is in HOTKEYS (10-keys.js) and can be changed in the Keys window
+  if (ui.hkCapture) return hkCaptureKey(e);
+  if (ui.keyMove && !typing && !ui.modal && (k === "escape" || k === "enter")) {
     e.preventDefault();
-    const km = ui.keyMove;
-    if (k === "escape") {
-      ui.keyMove = null;
-      ui.pendingMove = null;
-    } else if (k === "enter") {
-      ui.keyMove = null;
-      return ACT.moveConfirm();
-    } else if (k === "a" || k === "d") km.ang = (km.ang + (k === "d" ? 15 : -15) + 360) % 360;
-    else km.steps = clamp(km.steps + (k === "w" ? 1 : -1), 0, Math.max(0, ent(km.id).ap || 0));
-    keyMovePlan();
+    ui.keyMove = null;
+    if (k === "enter") return ACT.moveConfirm();
+    ui.pendingMove = null;
     return render();
   }
+  if (!typing && !e.ctrlKey && !e.metaKey && !e.altKey && runHotkey(e, ["km", "obj"])) return e.preventDefault();
   if (ui.modal && ui.modal.type === "move" && t.tagName === "SELECT" && /^[0-9]$/.test(k)) {
     e.preventDefault();
     return ACT.moveTo(k === "0" ? 10 : Number(k));
   }
-  if (e.ctrlKey || e.metaKey) {
-    if (k === "s") {
-      e.preventDefault();
-      ACT.saveNow();
-      return;
-    }
-    if (typing && t.id !== "roll") return; // the browser's own undo while typing in a box
-    if (k === "z" && !e.shiftKey) {
-      e.preventDefault();
-      undo();
-    } else if (k === "y" || (k === "z" && e.shiftKey)) {
-      e.preventDefault();
+  if (e.ctrlKey || e.metaKey || e.altKey) {
+    if (typing && t.id !== "roll" && comboOf(e) !== keyOf("save")) return; // the browser's own undo, copy and paste while typing in a box
+    if (runHotkey(e)) e.preventDefault();
+    else if ((e.ctrlKey || e.metaKey) && k === "z" && e.shiftKey && keyOf("redo") === "Ctrl+Y") {
+      e.preventDefault(); // Ctrl+Shift+Z redoes too while redo has its default key
       redo();
     }
     return;
   }
-  if (e.altKey) return;
   if (k === "escape" && ui.throwing) {
     e.preventDefault();
     return ACT.throwCancel();
@@ -494,56 +451,16 @@ document.addEventListener("keydown", (e) => {
       e.preventDefault();
       return ACT.mmDel();
     }
-    if (m.type === "help") {
-      e.preventDefault();
-      ACT.closeModal();
-    }
+    if (!typing && runHotkey(e, ["menu"])) e.preventDefault();
     return;
   }
-  if (ui.atk && K()) {
-    const a = ui.atk;
-    const A = ent(a.att);
-    const atkKeys = {
-      w: () => {
-        a.w = (a.w + 1) % A.weapons.length;
-        a.mode = "pr";
-        a.err = "";
-      },
-      t: () => {
-        const ts = targetsFor(a.att);
-        if (ts.length) a.tgt = cycle(ts, a.tgt, 1);
-        a.err = "";
-      },
-    };
-    if (!e.shiftKey && atkKeys[k]) {
-      e.preventDefault();
-      atkKeys[k]();
-      ui.focus = "#roll";
-      render();
-      return;
-    }
-    if (/^[0-9]$/.test(k)) {
-      const r = document.getElementById("roll");
-      if (r) r.focus();
-      return;
-    }
-  }
-  const glob = { "/": () => ACT.search(), "?": ACT.help };
-  if (glob[e.key]) {
+  if (runHotkey(e)) {
     e.preventDefault();
-    glob[e.key]();
     return;
   }
-  if (k === "delete" && ui.mapSel) {
-    e.preventDefault();
-    ACT.objDel(ui.mapSel);
-    return;
-  }
-  const map = !K() ? KEYS.idle : ["end", "defeat"].includes(K().phase) ? {} : KEYS.fight;
-  const fn = map[k];
-  if (fn) {
-    e.preventDefault();
-    fn();
+  if (ui.atk && K() && /^[0-9]$/.test(k)) {
+    const r = document.getElementById("roll");
+    if (r) r.focus();
     return;
   }
   if (isRoll && k.length === 1) e.preventDefault();

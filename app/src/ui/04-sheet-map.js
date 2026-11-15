@@ -234,7 +234,7 @@ function weaponRows(e, d) {
         const v = E.weaponView(s, e, d, ctx());
         const loads = v.caliber ? E.loadsFor(ctx(), v.caliber) : [];
         return `<div class="line t"><div class="grow"><input style="width:100%" autocomplete="off" data-c="setWeapon" data-id="${e.id}" data-i="${i}" id="w-${e.id}-${i}" list="dl-weapons" value="${h(s.n)}">
-      <div class="s dim">${e.kind === "pc" ? famTag(e, s.n) + " · " : ""}${v.missing ? "unknown weapon" : `${v.melee ? "melee" : h(v.type)} · ${fmt(v.ap)} AP · ${v.count > 1 ? `burst ${v.count} · ` : ""}Dam ${fmt(v.base)} Pen ${fmt(v.pen)}${v.ok ? "" : ` · <span class="warn">blank stats</span>`}${s.jammed ? ` · <span class="bad">JAMMED</span>` : ""}`}</div>
+      <div class="s dim">${e.kind === "pc" ? famTag(e, s.n) + " · " : ""}${v.missing ? "unknown weapon" : `${v.melee ? "melee" : h(v.type)} · ${fmt(v.ap)} AP · ${v.count > 1 ? `burst ${v.count} · ` : ""}Dam ${fmt(v.base)} Pen ${fmt(v.pen)}${v.ok ? "" : ` · <span class="warn">blank stats</span>`}${s.broken ? ` · <span class="bad">BROKEN</span>` : s.jammed ? ` · <span class="bad">${s.dropped ? "DROPPED" : "JAMMED"}</span>` : ""}`}</div>
       ${
         loads.length
           ? `<select style="width:100%" data-c="setLoad" data-id="${e.id}" data-i="${i}" id="l-${e.id}-${i}"><option value="">Choose ammo</option>${options(
@@ -243,7 +243,7 @@ function weaponRows(e, d) {
             )}</select>`
           : ""
       }</div>
-      ${v.usesAmmo ? `<label class="f" style="width:48px">Mag/${v.cap}${bindNum(e.id, `weapons.${i}.mag`, s.mag)}</label>${btn("reloadSlot", `${e.id}|${i}`, "Reload", "", "tiny")}` : ""}${s.jammed ? btn("clearSlot", `${e.id}|${i}`, "Clear", "", "tiny") : ""}<button class="btn tiny" data-a="delWeapon" data-v="${e.id}|${i}" title="Remove">X</button></div>`;
+      ${v.usesAmmo ? `<label class="f" style="width:48px">Mag/${v.cap}${bindNum(e.id, `weapons.${i}.mag`, s.mag)}</label>${btn("reloadSlot", `${e.id}|${i}`, "Reload", "", "tiny")}` : ""}${s.jammed ? btn("clearSlot", `${e.id}|${i}`, s.dropped ? "Pick up" : "Clear", "", "tiny") : ""}<button class="btn tiny" data-a="delWeapon" data-v="${e.id}|${i}" title="Remove">X</button></div>`;
       })
       .join("") +
     `<div class="line"><input class="grow" id="addW-${e.id}" list="dl-weapons" placeholder="Add weapon: type, Enter" data-enter="addWeapon" data-id="${e.id}"></div>`
@@ -440,7 +440,7 @@ function mapOptions() {
 }
 function encounterWin(open) {
   if (!open)
-    return `<section class="win w-enc closed"><header class="wt"><span>Encounter</span></header><div class="wb"><div class="row"><span class="s dim grow">No fight running.</span><button class="btn primary" data-primary="1" data-a="setupOpen" data-v="1">${kbd("B")}Set up encounter</button></div></div></section>`;
+    return `<section class="win w-enc closed"><header class="wt"><span>Encounter</span></header><div class="wb"><div class="row"><span class="s dim grow">No fight running.</span><button class="btn primary" data-primary="1" data-a="setupOpen" data-v="1">${kbd(hk("begin"))}Set up encounter</button></div></div></section>`;
   const sc = S.scene;
   const M = mapOf();
   const fx = sc.effects
@@ -452,7 +452,7 @@ function encounterWin(open) {
   const nFx = sc.effects.length;
   // One panel, labelled groups. Desktop puts the action bar on top; phones pin it to the bottom of the screen, in thumb reach.
   const group = (cls, label, body) => `<div class="egrp ${cls}"><div class="eglabel">${label}</div><div class="egbody">${body}</div></div>`;
-  const actions = `<div class="encactions">${btn("setupOpen", "", "Close", "", "", "Hide the map. Enemies you added stay in the list.")}<span class="spacer"></span>${btn("beginC", "1", "Sneak in", "H", "", "Start with a stealth phase")}<button class="btn primary big" data-a="beginC" data-v="">${kbd("B")}Begin combat</button></div>`;
+  const actions = `<div class="encactions">${btn("setupOpen", "", "Close", "", "", "Hide the map. Enemies you added stay in the list.")}<span class="spacer"></span>${btn("beginC", "1", "Sneak in", "H", "", "Start with a stealth phase")}<button class="btn primary big" data-a="beginC" data-v="">${kbd(hk("begin"))}Begin combat</button></div>`;
   const scene = group(
     "g-scene",
     "Scene",
@@ -578,7 +578,7 @@ function mapExtras() {
     const km = ui.keyMove,
       e = ent(km.id),
       m = ui.pendingMove;
-    return `<div class="moveconfirm"><span class="bright">Walk ${h(e.name)}</span><span><b>${km.steps}</b> AP · <b>${fmt(E.fix(km.steps * speedOf(e)))}</b> m · ${km.ang}°</span><span class="s dim">${fmt(E.fix(speedOf(e)))} m per AP (AGI ${der(e).sp.A}). ${kbd("A")}${kbd("D")} turn · ${kbd("W")}${kbd("S")} 1 AP more or less · ${kbd("Enter")} walk · ${kbd("Esc")} stop</span>${m ? `<span class="spacer"></span><button class="btn primary tiny" data-a="moveConfirm" data-v="">Walk ${fmt(m.cost)} AP</button>` : ""}</div>`;
+    return `<div class="moveconfirm"><span class="bright">Walk ${h(e.name)}</span><span><b>${km.steps}</b> AP · <b>${fmt(E.fix(km.steps * speedOf(e)))}</b> m · ${km.ang}°</span><span class="s dim">${fmt(E.fix(speedOf(e)))} m per AP (AGI ${der(e).sp.A}). ${kbd(hk("kmLeft"))}${kbd(hk("kmRight"))} turn · ${kbd(hk("kmMore"))}${kbd(hk("kmLess"))} 1 AP more or less · ${kbd("Enter")} walk · ${kbd("Esc")} stop</span>${m ? `<span class="spacer"></span><button class="btn primary tiny" data-a="moveConfirm" data-v="">Walk ${fmt(m.cost)} AP</button>` : ""}</div>`;
   }
   const pm = ui.pendingMove && ent(ui.pendingMove.id);
   if (pm) {

@@ -106,6 +106,98 @@ let pass = 0,
     await p.locator(".body [data-a]").first().click();
     assert.strictEqual(await top(), before, "still where it was");
   });
+  await step("aiming at the weapon: no damage, can break it or knock it away; picking up costs double the jam (14 Nov)", async () => {
+    await p.evaluate(() => {
+      ACT.setupOpen("1");
+      ACT.randomRoom();
+      ACT.addPick(allTemplates()[0].n);
+      ACT.beginC("");
+      beginRounds();
+      startTurn(S.chars[0].id);
+      ACT.attack();
+      const T = ent(ui.atk.tgt);
+      T.weapons = [{ n: "Pipe Pistol", mag: 5 }];
+      T.activeW = 0;
+      T.hp = 99;
+      S.chars[0].ap = 99;
+      render();
+    });
+    assert.ok(await p.locator(".bp-Weapon:not([disabled])").count(), "the Weapon target is open for a gun in hand");
+    await p.locator(".bp-Weapon").click();
+    const shot = (r) =>
+      p.evaluate((r) => {
+        const rnd = Math.random;
+        Math.random = () => r;
+        try {
+          const T = ent(ui.atk.tgt);
+          T.weapons[0].mag = 5;
+          ui.atk.part = "Weapon";
+          ui.atk.loc = "Body";
+          const gun = S.chars[0].weapons[ui.atk.w];
+          gun.mag = 5;
+          gun.jammed = false;
+          ui.atk.roll = "50";
+          ui.atk.ov.hit = "95";
+          fire();
+          return { hp: T.hp, slot: { ...T.weapons[0] }, res: ui.atk.res, err: ui.atk.err };
+        } finally {
+          Math.random = rnd;
+        }
+      }, r);
+    const a = await shot(0);
+    assert.strictEqual(a.err, "", a.err);
+    assert.strictEqual(a.hp, 99, "no damage");
+    assert.ok(a.slot.broken, "a knock roll of 00 breaks it");
+    assert.ok(/BROKEN/.test(a.res.disarm), a.res.disarm);
+    assert.ok(await p.locator(".bp-Weapon[disabled]").count(), "a broken weapon can't be aimed at again");
+    await p.evaluate(() => {
+      const T = ent(ui.atk.tgt);
+      delete T.weapons[0].broken;
+      render();
+
+    });
+    const held = await shot(0.999);
+    assert.ok(!held.slot.broken && !held.slot.dropped, "a high knock roll: held on");
+    const cost = await p.evaluate(() => {
+      const T = ent(ui.atk.tgt);
+      const v0 = E.weaponView(T.weapons[0], T, der(T), ctx()).clearJam;
+      Object.assign(T.weapons[0], { dropped: true, jammed: true });
+      const v1 = E.weaponView(T.weapons[0], T, der(T), ctx()).clearJam;
+      return [v0, v1];
+    });
+    assert.strictEqual(cost[1], cost[0] * 2, "picking it up costs double the jam");
+    const after = await p.evaluate(() => {
+      const c = S.chars[0];
+      c.weapons[0].broken = true;
+      Object.assign(c.weapons[1] || {}, { dropped: true, jammed: true });
+      weaponsBack();
+      return c.weapons.map((s) => !!(s.broken || s.dropped || s.jammed));
+    });
+    assert.ok(after.every((x) => !x), "after the fight both are back in hand");
+  });
+  await step("a jammed weapon gets a big JAMMED stamp over its picture, and Clear jam shows only then (14 Nov)", async () => {
+    const n0 = await p.evaluate(() => {
+      const c = S.chars[0];
+      c.weapons[c.activeW || 0].jammed = false;
+      c.ap = 99;
+      ui.atk.w = c.activeW || 0;
+      render();
+      return document.querySelectorAll(".wstamp, .acts [data-a='clearJamBtn']").length;
+    });
+    assert.strictEqual(n0, 0, "nothing while it works");
+    const got = await p.evaluate(() => {
+      const c = S.chars[0];
+      c.weapons[c.activeW || 0].jammed = true;
+      render();
+      return [document.querySelector(".wcard.full .wstamp")?.textContent || "", document.querySelectorAll(".acts [data-a='clearJamBtn']").length];
+    });
+    assert.ok(/^JAMMED/.test(got[0]), got[0]);
+    assert.strictEqual(got[1], 1, "Clear jam button appears");
+    await p.evaluate(() => {
+      S.chars[0].weapons[S.chars[0].activeW || 0].jammed = false;
+      render();
+    });
+  });
   await step("loadout: the weapon in use shows mag, reserve, fire and reload AP; the other is slim", async () => {
     await p.evaluate(() => {
       ACT.setupOpen("1");
