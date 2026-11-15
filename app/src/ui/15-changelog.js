@@ -4,7 +4,7 @@
 var CHANGELOG = [
   {
     date: "14 Nov 2026",
-    ver: "",
+    ver: "4eb4281",
     title: "The combat menu stays where you scrolled it; 8 more weapon icons",
     items: [
       "Clicking or typing in the turn panel no longer scrolls it back; it stays where you left it.",
